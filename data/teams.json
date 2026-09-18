@@ -1,0 +1,66 @@
+[
+  {
+    "id": "team-001",
+    "name": "横浜ブルーウィングス",
+    "sport": "soccer",
+    "areaId": "area-14",
+    "homeVenue": "みなとみらいスタジアム",
+    "logo": "images/teams/team-001.webp"
+  },
+  {
+    "id": "team-002",
+    "name": "東京ユナイテッド",
+    "sport": "soccer",
+    "areaId": "area-13",
+    "homeVenue": "東京セントラルフィールド",
+    "logo": "images/teams/team-002.webp"
+  },
+  {
+    "id": "team-003",
+    "name": "大阪ファルコンズ",
+    "sport": "baseball",
+    "areaId": "area-27",
+    "homeVenue": "なにわドーム",
+    "logo": "images/teams/team-003.webp"
+  },
+  {
+    "id": "team-004",
+    "name": "名古屋グランズ",
+    "sport": "baseball",
+    "areaId": "area-23",
+    "homeVenue": "なごやスタジアム",
+    "logo": "images/teams/team-004.webp"
+  },
+  {
+    "id": "team-005",
+    "name": "札幌ノーザンベアーズ",
+    "sport": "basketball",
+    "areaId": "area-01",
+    "homeVenue": "さっぽろアリーナ",
+    "logo": "images/teams/team-005.webp"
+  },
+  {
+    "id": "team-006",
+    "name": "仙台スパークス",
+    "sport": "basketball",
+    "areaId": "area-04",
+    "homeVenue": "せんだいアリーナ",
+    "logo": "images/teams/team-006.webp"
+  },
+  {
+    "id": "team-007",
+    "name": "福岡シーガルズ",
+    "sport": "volleyball",
+    "areaId": "area-40",
+    "homeVenue": "はかた総合体育館",
+    "logo": "images/teams/team-007.webp"
+  },
+  {
+    "id": "team-008",
+    "name": "広島ウェーブス",
+    "sport": "volleyball",
+    "areaId": "area-34",
+    "homeVenue": "ひろしま体育館",
+    "logo": "images/teams/team-008.webp"
+  }
+]

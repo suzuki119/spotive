@@ -167,11 +167,14 @@ $font-body: "Noto Sans JP", sans-serif;
 
 | 項目 | 使うもの |
 | --- | --- |
-| HTML | 素の HTML5（テンプレートエンジンなし） |
+| マークアップ | 素の HTML5 ＋ **PHP 8**（テンプレートエンジンやフレームワークは使わない） |
+| サーバーサイド | **PHP 8.0 以上**（Laravel などのフレームワークは使わない） |
+| データベース | **MySQL 8.0**（`db/schema.sql` が正） |
+| 実行環境 | **XAMPP**（Apache ＋ MySQL）。`http://localhost/spotive/` で開く |
 | CSS | **SCSS**（Live Sass Compiler でコンパイル） |
 | JavaScript | **素の JavaScript**（フレームワークなし） |
 | 地図 | **Leaflet**（CDN 読み込み、OpenStreetMap、API キー不要） |
-| ビルドツール | なし（npm / Vite / webpack は使わない） |
+| ビルドツール | なし（npm / Vite / webpack / Composer は使わない） |
 
 ### SCSS のコンパイル
 
@@ -299,7 +302,203 @@ images/
 
 ---
 
-## 4. コーディング規約
+## 4. PHP・データベースのルール
+
+SPOTIVE は PHP と MySQL を使います。**データベースの正は `db/schema.sql` です。**
+テーブルやカラムを増やしたくなったら、自分のコードで回避せず、まず `schema.sql` を直してチームに共有してください。
+
+ここに書かれているルールは、**個人情報と認証を扱うため**のものです。SPOTIVE は本人確認書類（`identity_verifications`）、電話番号、パスワードを持つので、書き方を間違えると事故になります。面倒でも守ってください。
+
+### ファイル構成
+
+```
+index.php              ← トップページ
+config/
+└── db.php             ← DB 接続（PDO）。全ページここから読み込む
+db/
+└── schema.sql         ← テーブル定義。これが正
+pages/                 ← 各ページ（PHP が必要なものは .php）
+```
+
+- **PHP の処理が必要なページだけ `.php`**、静的なページは `.html` のままで構いません
+- ファイル名の付け方は HTML と同じです（英小文字＋ハイフン。`match-detail.php`）
+- インデントはスペース2、これも他と同じです
+
+### 基本の書き方
+
+```php
+<?php
+
+declare(strict_types=1);
+
+require_once __DIR__ . '/config/db.php';
+
+// ① ここでデータを取得する（HTML は書かない）
+$tournaments = ...;
+
+?>
+<!DOCTYPE html>
+<html lang="ja">
+  <!-- ② ここから下は表示だけ（SQL は書かない） -->
+</html>
+```
+
+- **ファイルの先頭で `declare(strict_types=1);` を書く**
+- **上半分でデータ取得、下半分で表示**。この 2 つを混ぜない。HTML の途中に SQL を書かない
+- 他のファイルを読み込むときは `require_once __DIR__ . '/...'` を使う（相対パスだけだと、どこから呼ばれるかで壊れます）
+- **ファイル末尾に閉じタグ `?>` を書かない**（後ろに空白や改行が混ざると、余計な出力になってヘッダー送信のエラーになります）
+- `<?php` と `<?=` は使ってよい。**`<?` （短縮タグ）は使わない**（環境によって動きません）
+
+HTML の中で PHP を書くときは、閉じ方が分かる**代替構文**を使います。
+
+```php
+<?php if ($tournaments === []) : ?>
+  <p class="match-list__empty">見つかりませんでした。</p>
+<?php else : ?>
+  <?php foreach ($tournaments as $t) : ?>
+    <li class="match-list__item"><?= h($t['title']) ?></li>
+  <?php endforeach; ?>
+<?php endif; ?>
+```
+
+`{ }` ではなく `: ... endif;` `: ... endforeach;` を使ってください。HTML と混ざったときに、どこで閉じているかが追えます。
+
+### 出力は必ずエスケープする
+
+**画面に出す値は、例外なく `h()` を通します。**
+
+```php
+/** HTML エスケープ。出力時は必ずこれを通す */
+function h(?string $value): string
+{
+  return htmlspecialchars((string) $value, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+}
+```
+
+```php
+<!-- ○ -->
+<h3><?= h($t['title']) ?></h3>
+<a href="match-detail.php?id=<?= (int) $t['id'] ?>">詳細</a>
+
+<!-- × そのまま出さない -->
+<h3><?= $t['title'] ?></h3>
+```
+
+- 文字列は `h()`、数値は `(int)` / `(float)` でキャストしてから出す
+- **DB から取った値も必ずエスケープします。** 大会名やニックネームはユーザーが入力したものなので、`<script>` を書き込まれる可能性があります
+- URL に値を入れるときも同じ。`h()` か `urlencode()` を通す
+
+### SQL は必ずプレースホルダを使う
+
+**変数を SQL の文字列に連結しないでください。** 例外はありません。
+
+```php
+// ○ プレースホルダを使う
+$stmt = $pdo->prepare(
+  'SELECT id, title FROM v_public_tournaments WHERE venue_prefecture = :pref'
+);
+$stmt->execute([':pref' => $pref]);
+$rows = $stmt->fetchAll();
+
+// × 連結する（SQL インジェクション）
+$rows = $pdo->query("SELECT id, title FROM v_public_tournaments WHERE venue_prefecture = '$pref'");
+```
+
+- カラム名や `ORDER BY` はプレースホルダにできません。**並び順を切り替えたいときは、許可する値の配列を用意して、その中から選ぶ**形にします
+
+```php
+$allowed = ['starts_at' => 'starts_at ASC', 'fee' => 'entry_fee_yen ASC'];
+$order   = $allowed[$_GET['sort'] ?? ''] ?? 'starts_at ASC';
+```
+
+### データベース接続
+
+- 接続は **`config/db.php` の `db()` 関数だけ**を使います。各ページで `new PDO(...)` を書かないでください
+- 接続オプションは `config/db.php` で統一しています。ページ側で変えないこと
+  - `ERRMODE_EXCEPTION`（エラーを例外にする）
+  - `EMULATE_PREPARES = false`（プレースホルダを MySQL 側で処理する。これが false でないとプレースホルダの意味が薄れます）
+  - `charset=utf8mb4`、`time_zone = '+09:00'`（`schema.sql` と揃えています）
+- **接続情報を書き換えたファイルをコミットしないでください。** 自分の環境だけパスワードが違う場合は、コミットに含めないよう気をつけること
+
+### 公開する大会は必ずビューから取る
+
+`schema.sql` には公開用のビュー **`v_public_tournaments`** があります。一覧・地図・トップページは、**`tournaments` テーブルを直接見ずに、このビューを使ってください。**
+
+```php
+// ○
+$pdo->query('SELECT * FROM v_public_tournaments WHERE ...');
+
+// × 下書きや中止の大会まで出てしまう
+$pdo->query('SELECT * FROM tournaments WHERE ...');
+```
+
+ビューは次をやってくれます。
+
+- `status = 'published'` の大会だけに絞る（`draft` や `cancelled` を公開しない）
+- `is_verified`（Lv.4 の確認済みフラグ）を付ける
+- `organizer_name` を出す（`organizer_profiles.display_name` があればそれ、無ければ `users.nickname`）
+
+直接 `tournaments` を触ってよいのは、主催者本人の管理画面（自分の下書きを見る）と、審査画面だけです。
+
+### 信頼レベル（Lv.1〜4）の扱い
+
+`schema.sql` の設計に合わせます。**自分で判定ロジックを作らないでください。**
+
+| レベル | 見る場所 |
+| --- | --- |
+| Lv.1 一般ユーザー | `users.trust_level = 1` |
+| Lv.2 本人確認済み | `users.trust_level = 2` |
+| Lv.3 主催者認証済み | `users.trust_level = 3`（資格の有効性は `organizer_profiles.status = 'active'`） |
+| Lv.4 大会確認済み | `tournaments.verification_status = 'verified'`（ビューでは `is_verified`） |
+
+- Lv.4 は**ユーザーではなく「大会」に付く**レベルです。混同しないこと
+- 主催者としての操作を許可する前に、`trust_level` だけでなく `organizer_profiles.status` と `verified_until` も確認します（停止・期限切れがあります）
+
+### パスワードと認証情報
+
+- パスワードは **`password_hash($password, PASSWORD_DEFAULT)`** で保存し、照合は **`password_verify()`** を使います。`md5()` / `sha1()` は使いません
+- **トークンやコードを平文で保存しない。** `schema.sql` が `token_hash CHAR(64)` `code_hash CHAR(64)` になっているのは、SHA-256 のハッシュだけを保存する設計だからです。平文はメールや SMS で送るだけで、DB には入れません
+- メールアドレスは `email`（入力そのまま）と `email_normalized`（小文字化＋trim）の両方を入れます。重複判定は `email_normalized` で行います
+- 電話番号は **E.164 形式**（`+819012345678`）で `phone_e164` に入れます。`090-1234-5678` のまま保存しない
+
+### 個人情報・アップロードファイル
+
+- **本名と生年月日は `users` に入れません。** 確認済みの氏名・生年月日は `identity_verifications` 側です（`users.birthdate` は自己申告の値）
+- 本人確認書類などのアップロードは `attachments` に記録し、**実ファイルは公開ディレクトリの外**に置きます。`images/` に本人確認書類を置かないでください。URL を知られたら誰でも見られます
+- 本名、生年月日、電話番号、書類の中身を、**ログや `error_log` に出さない**こと
+
+### エラーの扱い
+
+- **エラーの内容を画面に出さない。** SQL 文やファイルパスが見えると、攻撃の手がかりになります
+- 画面には「読み込めませんでした」程度の案内を出し、詳細は `error_log()` に送ります
+
+```php
+try {
+  $rows = ...;
+} catch (PDOException $e) {
+  error_log('[SPOTIVE] DB error: ' . $e->getMessage());
+  $dbError = true;  // 画面には案内文だけ出す
+}
+```
+
+- **DB に繋がらなくても、ページが白画面にならないようにします。** 一覧が空の状態で描画されるようにしておけば、DB がまだ無いメンバーでもレイアウトの確認ができます
+
+### 受け取った値の扱い
+
+- `$_GET` / `$_POST` は**そのまま使わない**。必ず型を決めて受け取ります
+
+```php
+$pref   = trim((string) ($_GET['pref'] ?? ''));
+$maxFee = filter_var($_GET['max_fee'] ?? null, FILTER_VALIDATE_INT);
+$id     = (int) ($_GET['id'] ?? 0);
+```
+
+- フォームの送信（登録・更新・削除）は **POST** を使います。GET で更新しないこと
+- ログイン後・登録後は **`header('Location: ...'); exit;` でリダイレクト**します（リロードで二重送信されるのを防ぐため）
+
+---
+
+## 5. コーディング規約
 
 ### class の命名規則：BEM
 
@@ -478,7 +677,7 @@ fix/header-overlap        不具合修正
 
 ---
 
-## 5. 作業後に必ずやること（提出前チェックリスト）
+## 6. 作業後に必ずやること（提出前チェックリスト）
 
 コミット・PR の前に、**毎回**次を確認してください。ビルドコマンドはありません。
 
@@ -498,9 +697,22 @@ fix/header-overlap        不具合修正
       （カラーコードを直書きしていない、8 の倍数以外の余白を使っていない）
 - [ ] **ファイル名が命名規則に従っている**（小文字・ハイフン）
 
+PHP を触ったときは、加えて次も確認してください。
+
+- [ ] **`php -l ファイル名` で構文エラーが出ない**
+      （VSCode のターミナルで実行。エラーがあると画面が真っ白になります）
+- [ ] **画面に出す値を全部 `h()` に通している**（数値は `(int)` キャスト）
+- [ ] **SQL に変数を連結していない**（プレースホルダになっている）
+- [ ] **`new PDO(...)` をページに直接書いていない**（`db()` を使っている）
+- [ ] **公開一覧は `v_public_tournaments` から取っている**
+- [ ] **エラーの詳細が画面に出ていない**（SQL 文やファイルパスが見えていない）
+- [ ] **ファイル末尾に `?>` を書いていない**
+- [ ] **接続情報を書き換えた `config/db.php` をコミットしていない**
+- [ ] **本名・電話番号・書類の内容をログに出していない**
+
 ---
 
-## 6. 迷ったときは
+## 7. 迷ったときは
 
 - このファイルに書かれていないルールが必要になったら、**勝手に決めずにチームで決めて、このファイルに追記する**
 - 既存のルールを変えたいときも、まず相談する。自分のページだけ別ルールにしない
