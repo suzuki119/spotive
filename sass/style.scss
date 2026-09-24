@@ -2,6 +2,113 @@
 @use "form";
 @use "sports-map";
 
-body{
+@use "sass:math";
+
+body {
   background-color: #f5f5f5;
+}
+
+.inner {
+  width: 90%;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.btn {
+  width: 70px;
+  height: 50px;
+  text-align: center;
+  align-content: center;
+  display: block;
+  margin: 30px auto 0;
+  border-radius: 50px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  color: rgba(0, 0, 0, 0.5);
+  transition: box-shadow .3s;
+
+  &:hover {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+  }
+}
+
+.input {
+  display: block;
+  margin: 30px auto 0;
+  width: 100%;
+  max-width: 300px;
+  height: 50px;
+  border-radius: 50px;
+  box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.2);
+  padding-left: 20px;
+
+}
+
+.account-type {
+  border-bottom: solid 2px rgba(0, 0, 0, 0.2);
+  padding-bottom: 50px;
+  margin-top: 50px;
+  color: gray;
+
+  h1 {
+    text-align: center;
+    font-weight: bold;
+    font-size: 30px;
+    margin-top: 60px;
+    margin-bottom: 30px;
+  }
+
+  p {
+    text-align: center;
+    color: rgba(0, 0, 0, 0.8);
+  }
+
+
+  &-btn {
+    width: 70px;
+    height: 50px;
+    text-align: center;
+    display: block;
+    margin: 30px auto 0;
+    border-radius: 50px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    color: rgba(0, 0, 0, 0.5);
+    transition: box-shadow .3s;
+
+    &:hover {
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+    }
+  }
+
+  article {
+    margin-top: 40px;
+  }
+
+  &-organizer {
+    margin-top: 20px;
+  }
+}
+
+.account-type-signin {
+  margin-top: 50px;
+
+  p {
+    text-align: center;
+    color: rgba(0, 0, 0, 0.8);
+  }
+
+  &-btn {
+    width: 90px;
+    height: 50px;
+    text-align: center;
+    display: block;
+    margin: 30px auto 0;
+    border-radius: 50px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    color: rgba(0, 0, 0, 0.5);
+    transition: box-shadow .3s;
+
+    &:hover {
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+    }
+  }
 }

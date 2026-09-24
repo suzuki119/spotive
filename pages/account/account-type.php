@@ -3,48 +3,110 @@
 /**
  * pages/account/account-type.php
  * アカウント種別の選択画面。一般ユーザー / 主催者アカウントを選ぶ
- *
- * SPOTIVE のアカウントは 1 種類で、主催者は「一般アカウント＋主催者認証（Lv.3）」。
- * ここでは、その流れの入口を示す。
  */
 
 declare(strict_types=1);
 
-require_once __DIR__ . '/../../lib/auth.php';
-require_once __DIR__ . '/../../lib/layout.php';
+require_once __DIR__ . '/../../config/db.php';
 
-$user = current_user();
+// ここでデータを取得する（HTML は書かない）
 
-page_header('アカウント種別の選択', 'どちらで始めますか？');
 ?>
-<div class="choice">
-  <section class="choice__item">
-    <h2 class="choice__title">観戦する</h2>
-    <p class="choice__lead">
-      試合を探して、お気に入りに登録できます。メールアドレスだけで始められます。
-    </p>
-    <a class="button button--primary" href="register.php">新規登録へ</a>
-  </section>
+<!DOCTYPE html>
+<html lang="ja">
 
-  <section class="choice__item">
-    <h2 class="choice__title">大会を主催する</h2>
-    <p class="choice__lead">
-      大会を掲載するには、次の順に進みます。
-    </p>
-    <ol class="choice__steps">
-      <li>アカウント登録（Lv.1）</li>
-      <li>本人確認（Lv.2）</li>
-      <li>主催者認証（Lv.3）</li>
-      <li>大会の登録・確認（Lv.4）</li>
-    </ol>
-    <?php if ($user === null) : ?>
-      <a class="button button--primary" href="register.php">まず登録する</a>
-    <?php else : ?>
-      <a class="button button--primary" href="<?= h(base_path()) ?>/pages/organizer/register.php">
-        主催者認証を申請する
-      </a>
-    <?php endif; ?>
-  </section>
-</div>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>アカウント種別の選択 | SPOTIVE</title>
 
-<?php page_footer(); ?>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/the-new-css-reset/css/reset.min.css">
+  <link rel="stylesheet" href="../../css/style.css">
+</head>
+
+<body>
+  <header class="site-header"> <?php
+                                // header.phpを読み込む
+                                include_once '../header.php';
+                                ?></header>
+
+  <main class="l-main">
+
+    <div class="inner">
+
+      <div class="account-type">
+        <h1>ようこそ！</h1>
+        <p>
+          メールアドレスを入力し
+          <br>
+          アカウント登録を開始しましょう
+        </p>
+
+        <form action="" method="POST">
+          <label for="email"></label>
+
+          <input
+            type="email"
+            id="email"
+            name="email"
+            placeholder="email"
+            required
+            class="account-type-email input">
+
+          <button type="submit" class="account-type-btn">登録</button>
+        </form>
+
+        <article>
+          <p>大会・イベントを主催する方</p>
+          <span class="account-type-organizer btn">登録</span>
+        </article>
+      </div>
+
+      <hr>
+
+      <div class="account-type-signin">
+        <p>すでにアカウントをお持ちですか？</p>
+        <button class="account-type-signin-btn">Sign in</button>
+      </div>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <?php
+    // menu-bar.phpを読み込む
+    include_once '../menu-bar.php';
+    ?>
+  </footer>
+
+  <script src="../../js/main.js"></script>
+</body>
+
+</html><?php
+
+        /**
+         * pages/account/account-type.php
+         * アカウント種別の選択画面。一般ユーザー / 主催者アカウントを選ぶ
+         */
+
+        declare(strict_types=1);
+
+        require_once __DIR__ . '/../../config/db.php';
+
+        // ここでデータを取得する（HTML は書かない）
+
+        ?>
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>アカウント種別の選択 | SPOTIVE</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/the-new-css-reset/css/reset.min.css">
+  <link rel="stylesheet" href="../../css/style.css">
+</head>
