@@ -1,6 +1,6 @@
 /**
  * home.js
- * ホーム画面（pages/home/home.html）の処理。
+ * ホーム画面（pages/home/home.php）の処理。
  * おすすめの試合・近くの試合の表示。
  */
 

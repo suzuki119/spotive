@@ -1,6 +1,6 @@
 /**
  * favorite.js
- * お気に入り画面（pages/favorite/favorite.html）の処理。
+ * お気に入り画面（pages/favorite/favorite.php）の処理。
  */
 
 document.addEventListener("DOMContentLoaded", () => {

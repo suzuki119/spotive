@@ -1,3 +1,17 @@
+<?php
+
+/**
+ * pages/account/account-type.php
+ * アカウント種別の選択画面。一般ユーザー / 主催者アカウントを選ぶ
+ */
+
+declare(strict_types=1);
+
+require_once __DIR__ . '/../../config/db.php';
+
+// ここでデータを取得する（HTML は書かない）
+
+?>
 <!DOCTYPE html>
 <html lang="ja">
   <head>
@@ -15,7 +29,6 @@
   </head>
 
   <body>
-    <!-- 一般ユーザー / 主催者アカウントの選択画面 -->
     <header class="site-header"></header>
 
     <main class="l-main"></main>

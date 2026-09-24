@@ -1,3 +1,17 @@
+<?php
+
+/**
+ * pages/home/home.php
+ * ホーム画面。ログイン後のおすすめ・近くの試合を表示
+ */
+
+declare(strict_types=1);
+
+require_once __DIR__ . '/../../config/db.php';
+
+// ここでデータを取得する（HTML は書かない）
+
+?>
 <!DOCTYPE html>
 <html lang="ja">
   <head>
@@ -15,7 +29,6 @@
   </head>
 
   <body>
-    <!-- ログイン後のホーム画面。おすすめ・近くの試合を表示 -->
     <header class="site-header"></header>
 
     <main class="l-main"></main>

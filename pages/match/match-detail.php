@@ -1,3 +1,17 @@
+<?php
+
+/**
+ * pages/match/match-detail.php
+ * 試合詳細画面。会場アクセス・周辺施設・ホテル・天気
+ */
+
+declare(strict_types=1);
+
+require_once __DIR__ . '/../../config/db.php';
+
+// ここでデータを取得する（HTML は書かない）
+
+?>
 <!DOCTYPE html>
 <html lang="ja">
   <head>
@@ -15,7 +29,6 @@
   </head>
 
   <body>
-    <!-- 試合詳細。会場アクセス・周辺施設・ホテル・天気 -->
     <header class="site-header"></header>
 
     <main class="l-main"></main>

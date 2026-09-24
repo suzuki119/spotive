@@ -1,3 +1,17 @@
+<?php
+
+/**
+ * pages/favorite/favorite.php
+ * お気に入り画面。お気に入り登録した試合・チーム
+ */
+
+declare(strict_types=1);
+
+require_once __DIR__ . '/../../config/db.php';
+
+// ここでデータを取得する（HTML は書かない）
+
+?>
 <!DOCTYPE html>
 <html lang="ja">
   <head>
@@ -15,7 +29,6 @@
   </head>
 
   <body>
-    <!-- お気に入り登録した試合・チーム -->
     <header class="site-header"></header>
 
     <main class="l-main"></main>

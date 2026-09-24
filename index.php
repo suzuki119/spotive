@@ -153,10 +153,10 @@ try {
       <a class="site-header__logo" href="index.php">SPOTIVE</a>
 
       <nav class="site-header__nav">
-        <a class="site-header__link" href="pages/map/map.html">マップ</a>
-        <a class="site-header__link" href="pages/match/match-list.html">試合一覧</a>
-        <a class="site-header__link" href="pages/favorite/favorite.html">お気に入り</a>
-        <a class="site-header__link" href="pages/account/login.html">ログイン</a>
+        <a class="site-header__link" href="pages/map/map.php">マップ</a>
+        <a class="site-header__link" href="pages/match/match-list.php">試合一覧</a>
+        <a class="site-header__link" href="pages/favorite/favorite.php">お気に入り</a>
+        <a class="site-header__link" href="pages/account/login.php">ログイン</a>
       </nav>
     </header>
 
@@ -167,7 +167,7 @@ try {
         <p class="hero__lead">
           全国のスポーツ観戦情報を、地図から簡単に探せます。
         </p>
-        <a class="button button--accent" href="pages/map/map.html">
+        <a class="button button--accent" href="pages/map/map.php">
           地図から探す
         </a>
       </section>
@@ -270,7 +270,7 @@ try {
                     <h3 class="match-card__title">
                       <a
                         class="match-card__link"
-                        href="pages/match/match-detail.html?id=<?= (int) $t['id'] ?>"
+                        href="pages/match/match-detail.php?id=<?= (int) $t['id'] ?>"
                       >
                         <?= h($t['title']) ?>
                       </a>

@@ -1,3 +1,17 @@
+<?php
+
+/**
+ * pages/match/match-list.php
+ * 試合一覧画面。条件に合う試合の一覧
+ */
+
+declare(strict_types=1);
+
+require_once __DIR__ . '/../../config/db.php';
+
+// ここでデータを取得する（HTML は書かない）
+
+?>
 <!DOCTYPE html>
 <html lang="ja">
   <head>
@@ -15,7 +29,6 @@
   </head>
 
   <body>
-    <!-- 条件に合う試合の一覧 -->
     <header class="site-header"></header>
 
     <main class="l-main"></main>

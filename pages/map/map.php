@@ -1,3 +1,17 @@
+<?php
+
+/**
+ * pages/map/map.php
+ * 観戦マップ画面。Leaflet の地図から試合を探す
+ */
+
+declare(strict_types=1);
+
+require_once __DIR__ . '/../../config/db.php';
+
+// ここでデータを取得する（HTML は書かない）
+
+?>
 <!DOCTYPE html>
 <html lang="ja">
   <head>
@@ -19,7 +33,6 @@
   </head>
 
   <body>
-    <!-- Leaflet の地図から試合を探す画面 -->
     <header class="site-header"></header>
 
     <main class="l-main"></main>

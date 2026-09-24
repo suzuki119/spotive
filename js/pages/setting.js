@@ -1,6 +1,6 @@
 /**
  * setting.js
- * 設定画面（pages/setting/setting.html）の処理。
+ * 設定画面（pages/setting/setting.php）の処理。
  */
 
 document.addEventListener("DOMContentLoaded", () => {

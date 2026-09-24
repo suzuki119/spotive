@@ -1,3 +1,17 @@
+<?php
+
+/**
+ * pages/setting/notification-setting.php
+ * 通知設定画面。通知の受け取り設定
+ */
+
+declare(strict_types=1);
+
+require_once __DIR__ . '/../../config/db.php';
+
+// ここでデータを取得する（HTML は書かない）
+
+?>
 <!DOCTYPE html>
 <html lang="ja">
   <head>
@@ -15,7 +29,6 @@
   </head>
 
   <body>
-    <!-- 通知の受け取り設定 -->
     <header class="site-header"></header>
 
     <main class="l-main"></main>

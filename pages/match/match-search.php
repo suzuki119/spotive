@@ -1,3 +1,17 @@
+<?php
+
+/**
+ * pages/match/match-search.php
+ * 試合を探す画面。地域・日時・競技・料金での絞り込み検索
+ */
+
+declare(strict_types=1);
+
+require_once __DIR__ . '/../../config/db.php';
+
+// ここでデータを取得する（HTML は書かない）
+
+?>
 <!DOCTYPE html>
 <html lang="ja">
   <head>
@@ -15,7 +29,6 @@
   </head>
 
   <body>
-    <!-- 地域・日時・競技・料金での絞り込み検索 -->
     <header class="site-header"></header>
 
     <main class="l-main"></main>

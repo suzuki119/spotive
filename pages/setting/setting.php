@@ -1,3 +1,17 @@
+<?php
+
+/**
+ * pages/setting/setting.php
+ * 設定画面。設定メニューのトップ
+ */
+
+declare(strict_types=1);
+
+require_once __DIR__ . '/../../config/db.php';
+
+// ここでデータを取得する（HTML は書かない）
+
+?>
 <!DOCTYPE html>
 <html lang="ja">
   <head>
@@ -15,7 +29,6 @@
   </head>
 
   <body>
-    <!-- 設定メニューのトップ -->
     <header class="site-header"></header>
 
     <main class="l-main"></main>

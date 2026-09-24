@@ -1,6 +1,6 @@
 /**
  * map.js
- * 観戦マップ画面（pages/map/map.html）の処理。
+ * 観戦マップ画面（pages/map/map.php）の処理。
  * Leaflet 1.9.4 を使う。バージョンは各自で変えないこと。
  */
 
