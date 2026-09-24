@@ -22,53 +22,53 @@ require_once __DIR__ . '/../../config/db.php';
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link
-    href="https://fonts.googleapis.com/css2?family=Jost:wght@400;600&family=Noto+Sans+JP:wght@400;500;700&display=swap"
-    rel="stylesheet" />
-  <link rel="stylesheet" href="../../css/style.css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/the-new-css-reset/css/reset.min.css">
+  <link rel="stylesheet" href="../../css/style.css">
 </head>
 
 <body>
   <header class="site-header"> <?php
                                 // header.phpを読み込む
-                                include_once 'header.php';
+                                include_once '../header.php';
                                 ?></header>
 
   <main class="l-main">
 
     <div class="inner">
-      <h1>ようこそ！</h1>
 
-      <div class="acount">
+      <div class="account-type">
+        <h1>ようこそ！</h1>
         <p>
           メールアドレスを入力し
           <br>
           アカウント登録を開始しましょう
         </p>
 
-        <label for="email"></label>
+        <form action="" method="POST">
+          <label for="email"></label>
 
-        <input
-          type="email"
-          id="email"
-          name="email"
-          placeholder="email"
-          required
-          class="acount_email input">
+          <input
+            type="email"
+            id="email"
+            name="email"
+            placeholder="email"
+            required
+            class="account-type-email input">
 
-        <button class="acount_btn">登録</button>
+          <button type="submit" class="account-type-btn">登録</button>
+        </form>
 
         <article>
           <p>大会・イベントを主催する方</p>
-          <span class="acount_organizer btn">登録</span>
+          <span class="account-type-organizer btn">登録</span>
         </article>
       </div>
 
       <hr>
 
-      <div class="signin">
+      <div class="account-type-signin">
         <p>すでにアカウントをお持ちですか？</p>
-        <button class="signin_btn">Sign in</button>
+        <button class="account-type-signin-btn">Sign in</button>
       </div>
     </div>
   </main>
@@ -76,11 +76,37 @@ require_once __DIR__ . '/../../config/db.php';
   <footer class="site-footer">
     <?php
     // menu-bar.phpを読み込む
-    include_once 'menu-bar.php';
+    include_once '../menu-bar.php';
     ?>
   </footer>
 
   <script src="../../js/main.js"></script>
 </body>
 
-</html>
+</html><?php
+
+        /**
+         * pages/account/account-type.php
+         * アカウント種別の選択画面。一般ユーザー / 主催者アカウントを選ぶ
+         */
+
+        declare(strict_types=1);
+
+        require_once __DIR__ . '/../../config/db.php';
+
+        // ここでデータを取得する（HTML は書かない）
+
+        ?>
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>アカウント種別の選択 | SPOTIVE</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/the-new-css-reset/css/reset.min.css">
+  <link rel="stylesheet" href="../../css/style.css">
+</head>
