@@ -90,7 +90,6 @@ require_once __DIR__ . '/../../config/db.php';
          * アカウント種別の選択画面。一般ユーザー / 主催者アカウントを選ぶ
          */
 
-        declare(strict_types=1);
 
         require_once __DIR__ . '/../../config/db.php';
 
