@@ -83,29 +83,4 @@ require_once __DIR__ . '/../../config/db.php';
   <script src="../../js/main.js"></script>
 </body>
 
-</html><?php
-
-        /**
-         * pages/account/account-type.php
-         * アカウント種別の選択画面。一般ユーザー / 主催者アカウントを選ぶ
-         */
-
-
-        require_once __DIR__ . '/../../config/db.php';
-
-        // ここでデータを取得する（HTML は書かない）
-
-        ?>
-<!DOCTYPE html>
-<html lang="ja">
-
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>アカウント種別の選択 | SPOTIVE</title>
-
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/the-new-css-reset/css/reset.min.css">
-  <link rel="stylesheet" href="../../css/style.css">
-</head>
+</html>
