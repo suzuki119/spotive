@@ -1,0 +1,5 @@
+# 環境ごとの DB 接続設定（各自の環境で作る。コミットしない）
+config/db.local.php
+
+# macOS
+.DS_Store

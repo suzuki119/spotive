@@ -4,9 +4,12 @@
  * config/db.php
  * データベース接続（PDO）を返す。
  *
- * ローカル環境ごとにユーザー名・パスワードが違う場合は、
- * このファイルをコピーして各自の値に直してください。
- * 認証情報を書き換えたものは Git にコミットしないこと。
+ * ローカル環境ごとに接続先が違う場合は、このファイルを直さず
+ * config/db.local.php を置いて、違う値だけを上書きしてください。
+ * （db.local.php は .gitignore に入れてあり、コミットされません）
+ *
+ *   <?php
+ *   return ['port' => 8889, 'pass' => 'root'];   // 例: MAMP
  */
 
 declare(strict_types=1);
@@ -28,14 +31,24 @@ function db(): PDO
     return $pdo;
   }
 
+  // 環境ごとの違いは config/db.local.php で上書きする
+  $local = is_file(__DIR__ . '/db.local.php') ? (array) require __DIR__ . '/db.local.php' : [];
+  $conf  = $local + [
+    'host' => DB_HOST,
+    'port' => DB_PORT,
+    'name' => DB_NAME,
+    'user' => DB_USER,
+    'pass' => DB_PASS,
+  ];
+
   $dsn = sprintf(
     'mysql:host=%s;port=%d;dbname=%s;charset=utf8mb4',
-    DB_HOST,
-    DB_PORT,
-    DB_NAME
+    $conf['host'],
+    $conf['port'],
+    $conf['name']
   );
 
-  $pdo = new PDO($dsn, DB_USER, DB_PASS, [
+  $pdo = new PDO($dsn, $conf['user'], $conf['pass'], [
     PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
     PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
     PDO::ATTR_EMULATE_PREPARES   => false,

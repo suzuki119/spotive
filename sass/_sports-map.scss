@@ -1,0 +1,470 @@
+// 観戦マップ画面（pages/map/map.php）専用のスタイル。
+// 前身プロジェクト（sport.map/css/style.css）の地図まわりを移植したもの。
+// 色は暫定値。_variables.scss ができたらそちらの変数に置き換えること。
+
+$map-panel: #ffffff;
+$map-text: #1c2024;
+$map-muted: #60646c;
+$map-line: #e0e1e6;
+$map-accent: #0b6bcb;
+$map-bp: 760px;
+
+.sports-map {
+  display: grid;
+  grid-template-columns: 360px 1fr;
+  min-height: 0;
+  height: calc(100vh - 120px); // ヘッダー・フッターの高さぶんを引く
+  color: $map-text;
+  font-size: 14px;
+
+  button,
+  select,
+  input {
+    font: inherit;
+    color: inherit;
+  }
+
+  @media (max-width: $map-bp) {
+    grid-template-columns: 1fr;
+    height: auto;
+  }
+}
+
+.sports-map__side {
+  overflow-y: auto;
+  background: $map-panel;
+  border-right: 1px solid $map-line;
+
+  @media (max-width: $map-bp) {
+    overflow: visible;
+    border-right: 0;
+  }
+}
+
+.sports-map__canvas {
+  position: relative;
+
+  @media (max-width: $map-bp) {
+    order: -1; // スマホでは地図を先に見せる
+    height: 55vh;
+  }
+}
+
+#map {
+  position: absolute;
+  inset: 0;
+
+  @media (max-width: $map-bp) {
+    position: relative;
+    height: 100%;
+  }
+}
+
+// ---- 絞り込み ----
+.sports-map__filters {
+  border-bottom: 1px solid $map-line;
+
+  summary {
+    padding: 12px 16px;
+    font-weight: bold;
+    cursor: pointer;
+  }
+
+  fieldset {
+    margin: 0 0 12px;
+    padding: 0;
+    border: 0;
+  }
+
+  legend {
+    margin-bottom: 6px;
+    font-size: 12px;
+    color: $map-muted;
+  }
+
+  #filters {
+    padding: 0 16px 12px;
+  }
+}
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+
+  // 何も選んでいない＝すべて表示なので、薄くせず普通に見せる
+  &:not(:has(input:checked)) .chip span {
+    opacity: 1;
+  }
+}
+
+.chip {
+  input {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  span {
+    display: inline-block;
+    padding: 4px 10px;
+    border: 1px solid $map-line;
+    border-radius: 999px;
+    cursor: pointer;
+    opacity: 0.55;
+    user-select: none;
+  }
+
+  input:checked + span {
+    opacity: 1;
+    border-color: var(--c);
+    background: color-mix(in srgb, var(--c) 12%, white);
+  }
+
+  input:focus-visible + span {
+    outline: 2px solid $map-accent;
+  }
+}
+
+.chip-all {
+  padding: 2px 8px;
+  font-size: 11px;
+  color: $map-muted;
+  background: none;
+  border: 1px dashed $map-line;
+  border-radius: 999px;
+  cursor: pointer;
+
+  &[aria-pressed="true"] {
+    color: $map-accent;
+    border-style: solid;
+    border-color: $map-accent;
+  }
+
+  &:focus-visible {
+    outline: 2px solid $map-accent;
+  }
+}
+
+.seg {
+  display: flex;
+  border: 1px solid $map-line;
+  border-radius: 8px;
+  overflow: hidden;
+
+  label {
+    flex: 1;
+  }
+
+  input {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  span {
+    display: block;
+    padding: 6px 0;
+    text-align: center;
+    cursor: pointer;
+    border-right: 1px solid $map-line;
+  }
+
+  label:last-child span {
+    border-right: 0;
+  }
+
+  input:checked + span {
+    background: $map-accent;
+    color: #fff;
+  }
+
+  input:focus-visible + span {
+    outline: 2px solid $map-accent;
+  }
+}
+
+.grid2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+
+  label {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    margin: 0;
+    font-size: 12px;
+    color: $map-muted;
+  }
+
+  select {
+    width: 100%;
+    padding: 6px 8px;
+    border: 1px solid $map-line;
+    border-radius: 8px;
+    background: #fff;
+  }
+}
+
+.sports-map .link {
+  margin-top: 10px;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: $map-accent;
+  cursor: pointer;
+}
+
+// ---- 試合リスト ----
+.list-head {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 10px 16px;
+  background: $map-panel;
+  border-bottom: 1px solid $map-line;
+
+  select {
+    width: auto;
+    padding: 6px 8px;
+    border: 1px solid $map-line;
+    border-radius: 8px;
+    background: #fff;
+  }
+}
+
+.list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+
+  .empty {
+    padding: 32px 16px;
+    text-align: center;
+    color: $map-muted;
+  }
+}
+
+.card {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 12px 16px;
+  text-align: left;
+  background: none;
+  border: 0;
+  border-bottom: 1px solid $map-line;
+  border-left: 4px solid var(--c);
+  cursor: pointer;
+
+  &:hover {
+    background: #f7f8fa;
+  }
+}
+
+.card-icon {
+  font-size: 20px;
+}
+
+.card-body {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.card-meta,
+.card-sub {
+  font-size: 12px;
+  color: $map-muted;
+}
+
+.card-title {
+  font-weight: bold;
+}
+
+.card-sub {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.card-price {
+  font-weight: bold;
+  white-space: nowrap;
+  text-align: right;
+
+  small {
+    display: block;
+    font-size: 10px;
+    font-weight: normal;
+    color: $map-muted;
+  }
+}
+
+// ---- 地図の上に重ねる UI ----
+.map-tools {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  z-index: 1000;
+  display: flex;
+  gap: 6px;
+
+  button {
+    padding: 6px 10px;
+    background: #fff;
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    border-radius: 8px;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.15);
+    cursor: pointer;
+  }
+}
+
+.status {
+  position: absolute;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1000;
+  padding: 8px 14px;
+  color: #fff;
+  background: rgba(28, 32, 36, 0.85);
+  border-radius: 999px;
+  white-space: nowrap;
+}
+
+// ---- ピン型マーカー ----
+.pin-icon {
+  background: none;
+  border: 0;
+}
+
+.pin {
+  width: 34px;
+  height: 34px;
+  display: grid;
+  place-items: center;
+  background: var(--c);
+  border: 2px solid #fff;
+  border-radius: 50% 50% 50% 0;
+  transform: rotate(-45deg);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.35);
+
+  span {
+    transform: rotate(45deg);
+    font-size: 16px;
+    line-height: 1;
+  }
+}
+
+// 会場ピンに出す試合数
+.pin-count {
+  position: absolute;
+  top: -8px;
+  right: -10px;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 4px;
+  font-size: 11px;
+  line-height: 14px;
+  text-align: center;
+  color: #fff;
+  background: $map-text;
+  border: 2px solid #fff;
+  border-radius: 999px;
+}
+
+// ---- ポップアップ ----
+.pop {
+  padding-right: 12px;
+  font-size: 13px;
+
+  .tag {
+    display: inline-block;
+    align-self: flex-start;
+    padding: 2px 8px;
+    font-size: 11px;
+    color: #fff;
+    background: var(--c);
+    border-radius: 999px;
+  }
+}
+
+.pop-title {
+  margin: 6px 0;
+  font-size: 15px;
+  font-weight: bold;
+}
+
+.pop-sub {
+  margin: -2px 0 8px;
+  font-size: 12px;
+  color: $map-muted;
+}
+
+.pop-games {
+  list-style: none;
+  margin: 0 0 8px;
+  padding: 0;
+  max-height: 230px;
+  overflow-y: auto;
+
+  li {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding: 6px;
+    border-top: 1px solid $map-line;
+
+    &.is-focus {
+      background: color-mix(in srgb, #{$map-accent} 10%, white);
+      border-radius: 6px;
+    }
+  }
+}
+
+.pop-meta {
+  font-size: 12px;
+  color: $map-muted;
+}
+
+.pop-more {
+  margin-bottom: 8px;
+  font-size: 12px;
+  color: $map-muted;
+}
+
+.pop-note {
+  margin-bottom: 8px;
+  padding: 6px 8px;
+  font-size: 11px;
+  color: #8a5a00;
+  background: #fff4d6;
+  border-radius: 6px;
+}
+
+.pop-actions {
+  display: flex;
+  gap: 6px;
+
+  .btn {
+    flex: 1;
+    padding: 6px 8px;
+    text-align: center;
+    text-decoration: none;
+    color: $map-text !important;
+    background: #fff;
+    border: 1px solid $map-line;
+    border-radius: 8px;
+    cursor: pointer;
+  }
+}

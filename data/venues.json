@@ -1,0 +1,2943 @@
+{
+  "AGFフィールド": {
+    "lat": 35.66417,
+    "lng": 139.52722,
+    "pref": "東京都",
+    "area": "関東",
+    "wikipedia": "東京スタジアム (多目的スタジアム)",
+    "source": "wikipedia"
+  },
+  "AGF鈴鹿体育館": {
+    "lat": 34.84281,
+    "lng": 136.59093,
+    "pref": "三重県",
+    "area": "近畿",
+    "osm": "amenity/dojo",
+    "osmName": "AGF鈴鹿体育館",
+    "source": "nominatim"
+  },
+  "ALSOKぐんまアリーナ": {
+    "lat": 36.43839,
+    "lng": 139.04253,
+    "pref": "群馬県",
+    "area": "関東",
+    "wikipedia": "群馬県総合スポーツセンター",
+    "source": "wikipedia"
+  },
+  "ANCアリーナ": {
+    "lat": 36.27221,
+    "lng": 137.92018,
+    "pref": "長野県",
+    "area": "中部",
+    "osm": "leisure/sports_hall",
+    "osmName": "ANCアリーナ",
+    "source": "nominatim"
+  },
+  "Asueアリーナ大阪": {
+    "lat": 34.65963,
+    "lng": 135.44485,
+    "pref": "大阪府",
+    "area": "近畿",
+    "osm": "leisure/sports_centre",
+    "osmName": "Asueアリーナ大阪",
+    "source": "nominatim"
+  },
+  "Asueアリーナ大阪(大阪市中央体育館)": {
+    "lat": 34.65963,
+    "lng": 135.44485,
+    "pref": "大阪府",
+    "area": "近畿",
+    "osm": "leisure/sports_centre",
+    "osmName": "Asueアリーナ大阪",
+    "source": "nominatim"
+  },
+  "Axisバードスタジアム": {
+    "lat": 35.45821,
+    "lng": 134.22168,
+    "pref": "鳥取県",
+    "area": "中国・四国",
+    "wikipedia": "鳥取市営サッカー場",
+    "source": "wikipedia",
+    "query": "Axisバードスタジアム"
+  },
+  "Balcom BMW Stadium": {
+    "lat": 34.37773,
+    "lng": 132.42433,
+    "pref": "広島県",
+    "area": "中国・四国",
+    "address": "広島県広島市西区観音新町2-11-124",
+    "source": "manual",
+    "note": "住所の出典: https://league-one.jp/stadium/28（国土地理院の住所検索で位置を求めた）"
+  },
+  "CITY FOOTBALL STATION": {
+    "lat": 36.33757,
+    "lng": 139.64529,
+    "pref": "栃木県",
+    "area": "関東",
+    "osm": "leisure/pitch",
+    "osmName": "CITY FOOTBALL STATION",
+    "source": "nominatim"
+  },
+  "CNAアリーナ★あきた": {
+    "lat": 39.72578,
+    "lng": 140.08771,
+    "pref": "秋田県",
+    "area": "北海道・東北",
+    "osm": "leisure/sports_centre",
+    "osmName": "CNAアリーナ★あきた (秋田市立体育館)",
+    "source": "nominatim"
+  },
+  "CNAアリーナ☆あきた": {
+    "lat": 39.72564,
+    "lng": 140.08769,
+    "pref": "秋田県",
+    "area": "北海道・東北",
+    "wikipedia": "秋田市立体育館",
+    "source": "wikipedia"
+  },
+  "CNAアリーナ☆あきた（予定）": {
+    "lat": 39.72564,
+    "lng": 140.08769,
+    "pref": "秋田県",
+    "area": "北海道・東北",
+    "wikipedia": "秋田市立体育館",
+    "source": "wikipedia"
+  },
+  "EBARA WAVE アリーナおおた": {
+    "lat": 35.5645,
+    "lng": 139.72786,
+    "pref": "東京都",
+    "area": "関東",
+    "wikipedia": "大田区総合体育館",
+    "source": "wikipedia"
+  },
+  "EBARA WAVE アリーナおおた(大田区総合体育館)": {
+    "lat": 35.5645,
+    "lng": 139.72786,
+    "pref": "東京都",
+    "area": "関東",
+    "wikipedia": "大田区総合体育館",
+    "source": "wikipedia"
+  },
+  "FLAT HACHINOHE": {
+    "lat": 40.51145,
+    "lng": 141.42786,
+    "pref": "青森県",
+    "area": "北海道・東北",
+    "osm": "leisure/park",
+    "osmName": "FLAT HACHINOHE",
+    "source": "nominatim"
+  },
+  "Fアリーナいちき串木野": {
+    "lat": 31.71615,
+    "lng": 130.29654,
+    "pref": "鹿児島県",
+    "area": "九州・沖縄",
+    "address": "鹿児島県いちき串木野市生福5298-3",
+    "source": "manual",
+    "note": "公式サイト・自治体サイト等の住所から国土地理院の住所検索で位置を求めた"
+  },
+  "GIKENスタジアム": {
+    "lat": 33.51106,
+    "lng": 133.50268,
+    "pref": "高知県",
+    "area": "中国・四国",
+    "wikipedia": "高知県立春野総合運動公園陸上競技場",
+    "source": "wikipedia",
+    "query": "GIKENスタジアム"
+  },
+  "GLION ARENA KOBE": {
+    "lat": 34.68244,
+    "lng": 135.19597,
+    "pref": "兵庫県",
+    "area": "近畿",
+    "wikipedia": "GLION ARENA KOBE",
+    "source": "wikipedia"
+  },
+  "HAPPINESS ARENA": {
+    "lat": 32.75995,
+    "lng": 129.86373,
+    "pref": "長崎県",
+    "area": "九州・沖縄",
+    "osm": "leisure/sports_hall",
+    "osmName": "HAPPINESS ARENA",
+    "source": "nominatim"
+  },
+  "HOS住吉スポーツセンター": {
+    "lat": 34.59232,
+    "lng": 135.51207,
+    "pref": "大阪府",
+    "area": "近畿",
+    "address": "大阪府大阪市住吉区浅香1-8-15",
+    "source": "manual",
+    "note": "公式サイト・自治体サイト等の住所から国土地理院の住所検索で位置を求めた"
+  },
+  "IAIスタジアム日本平": {
+    "lat": 34.9847,
+    "lng": 138.48125,
+    "pref": "静岡県",
+    "area": "中部",
+    "osm": "leisure/stadium",
+    "osmName": "ＩＡＩスタジアム日本平",
+    "source": "nominatim"
+  },
+  "IGアリーナ": {
+    "lat": 35.19045,
+    "lng": 136.90267,
+    "pref": "愛知県",
+    "area": "中部",
+    "osm": "leisure/stadium",
+    "osmName": "IGアリーナ",
+    "source": "nominatim"
+  },
+  "INPEX酒田アリーナ": {
+    "lat": 38.89314,
+    "lng": 139.82212,
+    "pref": "山形県",
+    "area": "北海道・東北",
+    "osm": "building/yes",
+    "osmName": "INPEX酒田アリーナ（国体記念体育館）",
+    "source": "nominatim"
+  },
+  "IRISOアリーナ横手": {
+    "lat": 39.29552,
+    "lng": 140.54901,
+    "pref": "秋田県",
+    "area": "北海道・東北",
+    "osm": "leisure/sports_hall",
+    "osmName": "IRISOアリーナ横手",
+    "source": "nominatim"
+  },
+  "J:comアリーナ下関": {
+    "lat": 33.96598,
+    "lng": 130.93169,
+    "pref": "山口県",
+    "area": "中国・四国",
+    "address": "山口県下関市向洋町1-11-1",
+    "source": "manual",
+    "note": "公式サイト・自治体サイト等の住所から国土地理院の住所検索で位置を求めた"
+  },
+  "JFE晴れの国スタジアム": {
+    "lat": 34.68074,
+    "lng": 133.91953,
+    "pref": "岡山県",
+    "area": "中国・四国",
+    "osm": "leisure/stadium",
+    "osmName": "JFE晴れの国スタジアム",
+    "source": "nominatim"
+  },
+  "JIT リサイクルインク スタジアム": {
+    "lat": 35.62228,
+    "lng": 138.5897,
+    "pref": "山梨県",
+    "area": "中部",
+    "wikipedia": "山梨県小瀬スポーツ公園陸上競技場",
+    "source": "wikipedia",
+    "query": "JIT リサイクルインク スタジアム"
+  },
+  "KBSホール（京都市）": {
+    "lat": 35.02352,
+    "lng": 135.75868,
+    "pref": "京都府",
+    "area": "近畿",
+    "osm": "amenity/events_venue",
+    "osmName": "KBS京都放送会館",
+    "source": "nominatim"
+  },
+  "KUROKIRI STADIUM": {
+    "lat": 31.78917,
+    "lng": 131.16056,
+    "pref": "宮崎県",
+    "area": "九州・沖縄",
+    "wikipedia": "宮崎県山之口陸上競技場",
+    "source": "wikipedia",
+    "query": "KUROKIRI STADIUM"
+  },
+  "LaLa arena TOKYO-BAY": {
+    "lat": 35.68381,
+    "lng": 139.98973,
+    "pref": "千葉県",
+    "area": "関東",
+    "osm": "building/sports_hall",
+    "osmName": "LaLa arena TOKYO-BAY",
+    "source": "nominatim"
+  },
+  "MAZDA Zoom-Zoomスタジアム広島": {
+    "lat": 34.39185,
+    "lng": 132.48433,
+    "pref": "広島県",
+    "area": "中国・四国",
+    "wikipedia": "MAZDA Zoom-Zoom スタジアム広島",
+    "source": "wikipedia",
+    "query": "MAZDA Zoom-Zoomスタジアム広島"
+  },
+  "MUFGスタジアム": {
+    "lat": 35.67786,
+    "lng": 139.71351,
+    "pref": "東京都",
+    "area": "関東",
+    "osm": "leisure/stadium",
+    "osmName": "MUFGスタジアム",
+    "source": "nominatim"
+  },
+  "NACK5スタジアム大宮": {
+    "lat": 35.91619,
+    "lng": 139.63347,
+    "pref": "埼玉県",
+    "area": "関東",
+    "osm": "leisure/stadium",
+    "osmName": "NACK5スタジアム大宮",
+    "source": "nominatim"
+  },
+  "NDソフトスタジアム山形": {
+    "lat": 38.33557,
+    "lng": 140.37744,
+    "pref": "山形県",
+    "area": "北海道・東北",
+    "osm": "leisure/stadium",
+    "osmName": "NDソフトスタジアム山形",
+    "source": "nominatim"
+  },
+  "OKBぎふ清流アリーナ": {
+    "lat": 35.39132,
+    "lng": 136.72561,
+    "pref": "岐阜県",
+    "area": "中部",
+    "osm": "leisure/sports_centre",
+    "osmName": "OKBぎふ清流アリーナ",
+    "source": "nominatim"
+  },
+  "OPEN HOUSE ARENA OTA": {
+    "lat": 36.27467,
+    "lng": 139.39388,
+    "pref": "群馬県",
+    "area": "関東",
+    "address": "群馬県太田市飯塚町1059-1",
+    "source": "manual",
+    "note": "公式サイト・自治体サイト等の住所から国土地理院の住所検索で位置を求めた"
+  },
+  "PEACE STADIUM Connected by SoftBank": {
+    "lat": 32.75905,
+    "lng": 129.86425,
+    "pref": "長崎県",
+    "area": "九州・沖縄",
+    "osm": "building/stadium",
+    "osmName": "PEACE STADIUM Connected by SoftBank",
+    "source": "nominatim"
+  },
+  "SAGAアリーナ": {
+    "lat": 33.27475,
+    "lng": 130.29285,
+    "pref": "佐賀県",
+    "area": "九州・沖縄",
+    "osm": "leisure/stadium",
+    "osmName": "SAGAアリーナ",
+    "source": "nominatim"
+  },
+  "SHOWAグループ総合体育館": {
+    "lat": 34.80851,
+    "lng": 134.82254,
+    "pref": "兵庫県",
+    "area": "近畿",
+    "address": "兵庫県加古川市西神吉町鼎1010",
+    "source": "manual",
+    "note": "公式サイト・自治体サイト等の住所から国土地理院の住所検索で位置を求めた"
+  },
+  "TOYOTA ARENA TOKYO": {
+    "lat": 35.62738,
+    "lng": 139.78309,
+    "pref": "東京都",
+    "area": "関東",
+    "osm": "amenity/bicycle_rental",
+    "osmName": "TOYOTA ARENA TOKYO",
+    "source": "nominatim"
+  },
+  "Uvanceとどろきスタジアム by Fujitsu": {
+    "lat": 35.58554,
+    "lng": 139.6527,
+    "pref": "神奈川県",
+    "area": "関東",
+    "wikipedia": "等々力陸上競技場",
+    "source": "wikipedia",
+    "query": "Uvanceとどろきスタジアム by Fujitsu"
+  },
+  "YANMAR HANASAKA STADIUM": {
+    "lat": 34.61538,
+    "lng": 135.51666,
+    "pref": "大阪府",
+    "area": "近畿",
+    "wikipedia": "長居球技場",
+    "source": "wikipedia",
+    "query": "YANMAR HANASAKA STADIUM"
+  },
+  "YKK AP ARENA": {
+    "lat": 36.70651,
+    "lng": 137.21459,
+    "pref": "富山県",
+    "area": "中部",
+    "wikipedia": "富山市総合体育館",
+    "source": "wikipedia"
+  },
+  "YKK APアリーナ": {
+    "lat": 36.70651,
+    "lng": 137.21459,
+    "pref": "富山県",
+    "area": "中部",
+    "wikipedia": "富山市総合体育館",
+    "source": "wikipedia"
+  },
+  "ZOZOマリンスタジアム": {
+    "lat": 35.64523,
+    "lng": 140.03086,
+    "pref": "千葉県",
+    "area": "関東",
+    "osm": "leisure/stadium",
+    "osmName": "ZOZOマリンスタジアム",
+    "source": "nominatim"
+  },
+  "アースケア敷島サッカー・ラグビー場": {
+    "lat": 36.41157,
+    "lng": 139.05321,
+    "pref": "群馬県",
+    "area": "関東",
+    "address": "前橋市敷島町66",
+    "source": "manual",
+    "note": "住所の出典: https://league-one.jp/stadium/55（国土地理院の住所検索で位置を求めた）"
+  },
+  "アイル・アリーナ ウイング・ハット春日部": {
+    "lat": 35.95078,
+    "lng": 139.75047,
+    "pref": "埼玉県",
+    "area": "関東",
+    "osm": "amenity/bicycle_rental",
+    "osmName": "アイル・アリーナ ウイング・ハット春日部",
+    "source": "nominatim"
+  },
+  "アイル・アリーナウィング・ハット春日部": {
+    "lat": 35.95062,
+    "lng": 139.75078,
+    "pref": "埼玉県",
+    "area": "関東",
+    "address": "埼玉県春日部市谷原新田1557-1",
+    "source": "manual",
+    "note": "公式サイト等の住所から国土地理院の住所検索で位置を求めた"
+  },
+  "アシックス里山スタジアム": {
+    "lat": 34.04103,
+    "lng": 132.9583,
+    "pref": "愛媛県",
+    "area": "中国・四国",
+    "osm": "leisure/park",
+    "osmName": "アシックス里山スタジアム",
+    "source": "nominatim"
+  },
+  "アスティとくしま": {
+    "lat": 34.05315,
+    "lng": 134.56389,
+    "pref": "徳島県",
+    "area": "中国・四国",
+    "wikipedia": "徳島県立産業観光交流センター",
+    "source": "wikipedia"
+  },
+  "アスリートタウン延岡アリーナ": {
+    "lat": 32.58035,
+    "lng": 131.65756,
+    "pref": "宮崎県",
+    "area": "九州・沖縄",
+    "address": "宮崎県延岡市大貫町1-2894",
+    "source": "manual",
+    "note": "公式サイト等の住所から国土地理院の住所検索で位置を求めた"
+  },
+  "アダストリアみとアリーナ": {
+    "lat": 36.38043,
+    "lng": 140.44877,
+    "pref": "茨城県",
+    "area": "関東",
+    "osm": "building/yes",
+    "osmName": "アダストリアみとアリーナ",
+    "source": "nominatim"
+  },
+  "あなぶきアリーナ香川(メイン)": {
+    "lat": 34.35369,
+    "lng": 134.04537,
+    "pref": "香川県",
+    "area": "中国・四国",
+    "osm": "leisure/pitch",
+    "osmName": "あなぶきアリーナ香川（サブアリーナ）",
+    "source": "nominatim"
+  },
+  "アミノバリューホール": {
+    "lat": 34.16906,
+    "lng": 134.61542,
+    "pref": "徳島県",
+    "area": "中国・四国",
+    "osm": "leisure/sports_hall",
+    "osmName": "アミノバリューホール",
+    "source": "nominatim"
+  },
+  "アリーナ立川立飛": {
+    "lat": 35.71544,
+    "lng": 139.41642,
+    "pref": "東京都",
+    "area": "関東",
+    "wikipedia": "アリーナ立川立飛",
+    "source": "wikipedia"
+  },
+  "イオンモール岡山": {
+    "lat": 34.66288,
+    "lng": 133.91813,
+    "pref": "岡山県",
+    "area": "中国・四国",
+    "osm": "amenity/bicycle_rental",
+    "osmName": "イオンモール岡山",
+    "source": "nominatim"
+  },
+  "イオンモール秋田": {
+    "lat": 39.66327,
+    "lng": 140.16046,
+    "pref": "秋田県",
+    "area": "北海道・東北",
+    "osm": "shop/mall",
+    "osmName": "イオンモール秋田",
+    "source": "nominatim"
+  },
+  "イオンモール白山": {
+    "lat": 36.54404,
+    "lng": 136.58209,
+    "pref": "石川県",
+    "area": "中部",
+    "osm": "shop/mall",
+    "osmName": "イオンモール白山",
+    "source": "nominatim"
+  },
+  "いしかわ総合スポーツセンター": {
+    "lat": 36.57956,
+    "lng": 136.59821,
+    "pref": "石川県",
+    "area": "中部",
+    "osm": "leisure/sports_centre",
+    "osmName": "いしかわ総合スポーツセンター",
+    "source": "nominatim"
+  },
+  "いちご宮崎新富サッカー場": {
+    "lat": 32.07372,
+    "lng": 131.4914,
+    "pref": "宮崎県",
+    "area": "九州・沖縄",
+    "osm": "leisure/pitch",
+    "osmName": "いちご宮崎新富サッカー場",
+    "source": "nominatim"
+  },
+  "いわぎんスタジアム": {
+    "lat": 39.64794,
+    "lng": 141.13784,
+    "pref": "岩手県",
+    "area": "北海道・東北",
+    "osm": "leisure/stadium",
+    "osmName": "盛岡南公園球技場(いわぎんスタジアム)",
+    "source": "nominatim"
+  },
+  "いわき市立総合体育館": {
+    "lat": 37.03062,
+    "lng": 140.8965,
+    "pref": "福島県",
+    "area": "北海道・東北",
+    "address": "福島県いわき市平下荒川字南作100",
+    "source": "manual",
+    "note": "公式サイト・自治体サイト等の住所から国土地理院の住所検索で位置を求めた"
+  },
+  "ウィングアリーナ刈谷": {
+    "lat": 35.01937,
+    "lng": 137.01034,
+    "pref": "愛知県",
+    "area": "中部",
+    "osm": "building/yes",
+    "osmName": "ウィングアリーナ刈谷",
+    "source": "nominatim"
+  },
+  "ウェーブスタジアム刈谷": {
+    "lat": 35.01903,
+    "lng": 137.01198,
+    "pref": "愛知県",
+    "area": "中部",
+    "osm": "leisure/stadium",
+    "osmName": "ウェーブスタジアム刈谷",
+    "source": "nominatim"
+  },
+  "エア・ウォーターアリーナ松本": {
+    "lat": 36.2567,
+    "lng": 137.98082,
+    "pref": "長野県",
+    "area": "中部",
+    "address": "長野県松本市美須々5-1",
+    "source": "manual",
+    "note": "公式サイト・自治体サイト等の住所から国土地理院の住所検索で位置を求めた"
+  },
+  "えがお健康スタジアム": {
+    "lat": 32.83691,
+    "lng": 130.80014,
+    "pref": "熊本県",
+    "area": "九州・沖縄",
+    "osm": "leisure/stadium",
+    "osmName": "えがお健康スタジアム",
+    "source": "nominatim"
+  },
+  "エコパスタジアム": {
+    "lat": 34.74343,
+    "lng": 137.97073,
+    "pref": "静岡県",
+    "area": "中部",
+    "osm": "leisure/stadium",
+    "osmName": "エコパスタジアム",
+    "source": "nominatim"
+  },
+  "エスコンフィールドHOKKAIDO": {
+    "lat": 42.99015,
+    "lng": 141.5498,
+    "pref": "北海道",
+    "area": "北海道・東北",
+    "osm": "leisure/stadium",
+    "osmName": "エスコンフィールドHOKKAIDO",
+    "source": "nominatim"
+  },
+  "エスフォルタアリーナ八王子(メイン)": {
+    "lat": 35.6399,
+    "lng": 139.29254,
+    "pref": "東京都",
+    "area": "関東",
+    "osm": "leisure/sports_centre",
+    "osmName": "エスフォルタアリーナ八王子",
+    "source": "nominatim"
+  },
+  "エディオンピースウイング広島": {
+    "lat": 34.40151,
+    "lng": 132.45458,
+    "pref": "広島県",
+    "area": "中国・四国",
+    "osm": "leisure/stadium",
+    "osmName": "エディオンピースウイング広島",
+    "source": "nominatim"
+  },
+  "エフピコアリーナふくやま": {
+    "lat": 34.46681,
+    "lng": 133.36762,
+    "pref": "広島県",
+    "area": "中国・四国",
+    "osm": "leisure/park",
+    "osmName": "エフピコアリーナふくやま公園",
+    "source": "nominatim"
+  },
+  "エントリオ": {
+    "lat": 35.25449,
+    "lng": 136.82173,
+    "pref": "愛知県",
+    "area": "中部",
+    "wikipedia": "豊田合成記念体育館",
+    "source": "wikipedia"
+  },
+  "おおきにアリーナ舞洲": {
+    "lat": 34.66547,
+    "lng": 135.39763,
+    "pref": "大阪府",
+    "area": "近畿",
+    "osm": "leisure/sports_centre",
+    "osmName": "おおきにアリーナ舞洲",
+    "source": "nominatim"
+  },
+  "オープンハウスアリーナ太田": {
+    "lat": 36.27467,
+    "lng": 139.39388,
+    "pref": "群馬県",
+    "area": "関東",
+    "address": "群馬県太田市飯塚町1059-1",
+    "source": "manual",
+    "note": "公式サイト・自治体サイト等の住所から国土地理院の住所検索で位置を求めた"
+  },
+  "オールガイナーレYAJINスタジアム": {
+    "lat": 35.44773,
+    "lng": 133.30769,
+    "pref": "鳥取県",
+    "area": "中国・四国",
+    "wikipedia": "オールガイナーレYAJINスタジアム",
+    "source": "wikipedia",
+    "query": "オールガイナーレYAJINスタジアム"
+  },
+  "カクヒログループスーパーアリーナ（青森市総合体育館）": {
+    "lat": 40.81397,
+    "lng": 140.74592,
+    "pref": "青森県",
+    "area": "北海道・東北",
+    "wikipedia": "青森市総合体育館",
+    "source": "wikipedia"
+  },
+  "カルッツかわさき": {
+    "lat": 35.52962,
+    "lng": 139.70893,
+    "pref": "神奈川県",
+    "area": "関東",
+    "osm": "amenity/theatre",
+    "osmName": "カルッツかわさき 川崎市スポーツ・文化総合センター",
+    "source": "nominatim"
+  },
+  "カンセキスタジアムとちぎ": {
+    "lat": 36.51503,
+    "lng": 139.85745,
+    "pref": "栃木県",
+    "area": "関東",
+    "osm": "leisure/stadium",
+    "osmName": "カンセキスタジアムとちぎ",
+    "source": "nominatim"
+  },
+  "クラサスドーム大分": {
+    "lat": 33.20089,
+    "lng": 131.65839,
+    "pref": "大分県",
+    "area": "九州・沖縄",
+    "wikipedia": "大分スポーツ公園総合競技場",
+    "source": "wikipedia",
+    "query": "クラサスドーム大分"
+  },
+  "グリーンアリーナ神戸": {
+    "lat": 34.67816,
+    "lng": 135.07474,
+    "pref": "兵庫県",
+    "area": "近畿",
+    "osm": "building/yes",
+    "osmName": "グリーンアリーナ神戸",
+    "source": "nominatim"
+  },
+  "クレバリーホームアリーナ（鹿屋市）": {
+    "lat": 31.38095,
+    "lng": 130.84868,
+    "pref": "鹿児島県",
+    "area": "九州・沖縄",
+    "address": "鹿児島県鹿屋市向江町29-1",
+    "source": "manual",
+    "note": "公式サイト等の住所から国土地理院の住所検索で位置を求めた"
+  },
+  "クロコくんホール": {
+    "lat": 35.0953,
+    "lng": 136.92172,
+    "pref": "愛知県",
+    "area": "中部",
+    "address": "愛知県名古屋市南区東又兵ヱ町5-1-16",
+    "source": "manual",
+    "note": "公式サイト・自治体サイト等の住所から国土地理院の住所検索で位置を求めた"
+  },
+  "コナミスポーツクラブ 本店": {
+    "lat": 34.74498,
+    "lng": 135.3556,
+    "pref": "兵庫県",
+    "area": "近畿",
+    "osm": "leisure/fitness_centre",
+    "osmName": "コナミスポーツクラブ 本店西宮",
+    "source": "nominatim"
+  },
+  "このはなアリーナ": {
+    "lat": 34.98833,
+    "lng": 138.42675,
+    "pref": "静岡県",
+    "area": "中部",
+    "wikipedia": "静岡県草薙総合運動場体育館",
+    "source": "wikipedia"
+  },
+  "サイデン化学アリーナさいたま": {
+    "lat": 35.85531,
+    "lng": 139.60908,
+    "pref": "埼玉県",
+    "area": "関東",
+    "wikipedia": "さいたま市記念総合体育館",
+    "source": "wikipedia"
+  },
+  "サロンパスアリーナ": {
+    "lat": 33.36497,
+    "lng": 130.52374,
+    "pref": "佐賀県",
+    "area": "九州・沖縄",
+    "address": "佐賀県鳥栖市藤木町字切ノ口2461",
+    "source": "manual",
+    "note": "公式サイト・自治体サイト等の住所から国土地理院の住所検索で位置を求めた"
+  },
+  "サンアリーナせんだい": {
+    "lat": 31.85153,
+    "lng": 130.30266,
+    "pref": "鹿児島県",
+    "area": "九州・沖縄",
+    "osm": "leisure/sports_centre",
+    "osmName": "サンアリーナせんだい",
+    "source": "nominatim"
+  },
+  "サンガスタジアム by KYOCERA": {
+    "lat": 35.01704,
+    "lng": 135.58489,
+    "pref": "京都府",
+    "area": "近畿",
+    "osm": "leisure/stadium",
+    "osmName": "サンガスタジアム by KYOCERA",
+    "source": "nominatim"
+  },
+  "サンシティ越谷市民ホール": {
+    "lat": 35.87364,
+    "lng": 139.7903,
+    "pref": "埼玉県",
+    "area": "関東",
+    "address": "埼玉県越谷市南越谷1-2876-1",
+    "source": "manual",
+    "note": "公式サイト等の住所から国土地理院の住所検索で位置を求めた"
+  },
+  "サンプロ アルウィン": {
+    "lat": 36.17961,
+    "lng": 137.91714,
+    "pref": "長野県",
+    "area": "中部",
+    "osm": "leisure/stadium",
+    "osmName": "サンプロ・アルウィン",
+    "source": "nominatim"
+  },
+  "ジェイテクトアリーナ奈良": {
+    "lat": 34.49072,
+    "lng": 135.79142,
+    "pref": "奈良県",
+    "area": "近畿",
+    "osm": "leisure/sports_centre",
+    "osmName": "ジェイテクトアリーナ奈良（第１体育館）",
+    "source": "nominatim"
+  },
+  "シゲトーアリーナ岡山": {
+    "lat": 34.67745,
+    "lng": 133.91992,
+    "pref": "岡山県",
+    "area": "中国・四国",
+    "osm": "leisure/sports_hall",
+    "osmName": "シゲトーアリーナ岡山",
+    "source": "nominatim"
+  },
+  "シティホールプラザ アオーレ長岡": {
+    "lat": 37.44639,
+    "lng": 138.85111,
+    "pref": "新潟県",
+    "area": "中部",
+    "wikipedia": "長岡市シティホールプラザアオーレ長岡",
+    "source": "wikipedia"
+  },
+  "シャボン玉石けん くくる糸満": {
+    "lat": 26.12282,
+    "lng": 127.66677,
+    "pref": "沖縄県",
+    "area": "九州・沖縄",
+    "osm": "building/civic",
+    "osmName": "糸満市観光文化交流拠点施設 シャボン玉石けん くくる糸満",
+    "source": "nominatim"
+  },
+  "シンコースポーツ寒川アリーナ(寒川総合体育館)": {
+    "lat": 35.37514,
+    "lng": 139.38557,
+    "pref": "神奈川県",
+    "area": "関東",
+    "osm": "leisure/sports_hall",
+    "osmName": "寒川総合体育館",
+    "source": "nominatim",
+    "query": "シンコースポーツ寒川アリーナ(寒川総合体育館)"
+  },
+  "スカイアリーナ座間": {
+    "lat": 35.49617,
+    "lng": 139.40308,
+    "pref": "神奈川県",
+    "area": "関東",
+    "wikipedia": "座間市立市民体育館",
+    "source": "wikipedia"
+  },
+  "スカイホール豊田": {
+    "lat": 35.08175,
+    "lng": 137.16304,
+    "pref": "愛知県",
+    "area": "中部",
+    "osm": "leisure/sports_centre",
+    "osmName": "豊田市総合体育館 スカイホール豊田",
+    "source": "nominatim"
+  },
+  "スピアーズえどりくフィールド（江戸川区陸上競技場）": {
+    "lat": 35.65517,
+    "lng": 139.85243,
+    "pref": "東京都",
+    "area": "関東",
+    "wikipedia": "江戸川区陸上競技場",
+    "source": "wikipedia"
+  },
+  "セービング陸上競技場": {
+    "lat": 33.96689,
+    "lng": 130.93314,
+    "pref": "山口県",
+    "area": "中国・四国",
+    "wikipedia": "下関市営下関陸上競技場",
+    "source": "wikipedia",
+    "query": "セービング陸上競技場"
+  },
+  "セーレン・ドリームアリーナ（福井県営体育館）": {
+    "lat": 36.05369,
+    "lng": 136.182,
+    "pref": "福井県",
+    "area": "中部",
+    "wikipedia": "福井県営体育館",
+    "source": "wikipedia"
+  },
+  "ゼビオアリーナ仙台": {
+    "lat": 38.2303,
+    "lng": 140.88725,
+    "pref": "宮城県",
+    "area": "北海道・東北",
+    "osm": "leisure/stadium",
+    "osmName": "ゼビオアリーナ仙台",
+    "source": "nominatim"
+  },
+  "ソユースタジアム": {
+    "lat": 39.7215,
+    "lng": 140.0958,
+    "pref": "秋田県",
+    "area": "北海道・東北",
+    "osm": "leisure/sports_centre",
+    "osmName": "ソユースタジアム",
+    "source": "nominatim"
+  },
+  "ダイセンアリーナ西尾": {
+    "lat": 34.8849,
+    "lng": 137.08511,
+    "pref": "愛知県",
+    "area": "中部",
+    "address": "愛知県西尾市小島町大郷1-1",
+    "source": "manual",
+    "note": "公式サイト・自治体サイト等の住所から国土地理院の住所検索で位置を求めた"
+  },
+  "たけびしスタジアム京都": {
+    "lat": 34.99348,
+    "lng": 135.71396,
+    "pref": "京都府",
+    "area": "近畿",
+    "wikipedia": "京都市西京極総合運動公園陸上競技場兼球技場",
+    "source": "wikipedia",
+    "query": "たけびしスタジアム京都"
+  },
+  "ツイン21アトリウム（大阪市）": {
+    "lat": 34.69236,
+    "lng": 135.53099,
+    "pref": "大阪府",
+    "area": "近畿",
+    "address": "大阪府大阪市中央区城見2-1-61",
+    "source": "manual",
+    "note": "公式サイト等の住所から国土地理院の住所検索で位置を求めた"
+  },
+  "つるしんアリーナ小真木原": {
+    "lat": 38.71276,
+    "lng": 139.81323,
+    "pref": "山形県",
+    "area": "北海道・東北",
+    "address": "山形県鶴岡市小真木原町2-1",
+    "source": "manual",
+    "note": "公式サイト・自治体サイト等の住所から国土地理院の住所検索で位置を求めた"
+  },
+  "デンカビッグスワンスタジアム": {
+    "lat": 37.88258,
+    "lng": 139.05916,
+    "pref": "新潟県",
+    "area": "中部",
+    "osm": "leisure/stadium",
+    "osmName": "デンカビッグスワンスタジアム",
+    "source": "nominatim"
+  },
+  "とうほう・みんなのスタジアム": {
+    "lat": 37.72326,
+    "lng": 140.3613,
+    "pref": "福島県",
+    "area": "北海道・東北",
+    "osm": "leisure/stadium",
+    "osmName": "とうほう・みんなのスタジアム",
+    "source": "nominatim"
+  },
+  "とくぎんトモニアリーナ(徳島市立体育館)": {
+    "lat": 34.07644,
+    "lng": 134.54996,
+    "pref": "徳島県",
+    "area": "中国・四国",
+    "osm": "leisure/sports_hall",
+    "osmName": "徳島市立体育館",
+    "source": "nominatim",
+    "query": "とくぎんトモニアリーナ(徳島市立体育館)"
+  },
+  "とくぎんトモニアリーナ那賀(那賀町総合体育館)": {
+    "lat": 33.85036,
+    "lng": 134.5043,
+    "pref": "徳島県",
+    "area": "中国・四国",
+    "address": "徳島県那賀郡那賀町和食郷字南川136-2",
+    "source": "manual",
+    "note": "公式サイト・自治体サイト等の住所から国土地理院の住所検索で位置を求めた"
+  },
+  "とちぎん・ブレックスアリーナ宇都宮": {
+    "lat": 36.56119,
+    "lng": 139.91069,
+    "pref": "栃木県",
+    "area": "関東",
+    "wikipedia": "宇都宮市体育館",
+    "source": "wikipedia"
+  },
+  "トッケイセキュリティ平塚総合体育館": {
+    "lat": 35.34151,
+    "lng": 139.33861,
+    "pref": "神奈川県",
+    "area": "関東",
+    "osm": "leisure/stadium",
+    "osmName": "トッケイセキュリティ平塚総合体育館",
+    "source": "nominatim"
+  },
+  "とり野菜みそ BLUECATS ARENA": {
+    "lat": 36.73383,
+    "lng": 136.70239,
+    "pref": "石川県",
+    "area": "中部",
+    "address": "石川県かほく市浜北イ19-1",
+    "source": "manual",
+    "note": "公式サイト・自治体サイト等の住所から国土地理院の住所検索で位置を求めた"
+  },
+  "ナイスアリーナ": {
+    "lat": 39.39905,
+    "lng": 140.03361,
+    "pref": "秋田県",
+    "area": "北海道・東北",
+    "osm": "leisure/sports_centre",
+    "osmName": "ナイスアリーナ (由利本荘アリーナ)",
+    "source": "nominatim"
+  },
+  "にっしんでんきアリーナ京都(京都市体育館)": {
+    "lat": 34.9955,
+    "lng": 135.71503,
+    "pref": "京都府",
+    "area": "近畿",
+    "wikipedia": "京都市体育館",
+    "source": "wikipedia"
+  },
+  "ニッパツ三ツ沢球技場": {
+    "lat": 35.46903,
+    "lng": 139.6037,
+    "pref": "神奈川県",
+    "area": "関東",
+    "osm": "leisure/stadium",
+    "osmName": "ニッパツ三ツ沢球技場",
+    "source": "nominatim"
+  },
+  "ニンジニアスタジアム": {
+    "lat": 33.7682,
+    "lng": 132.79761,
+    "pref": "愛媛県",
+    "area": "中国・四国",
+    "osm": "leisure/stadium",
+    "osmName": "ニンジニアスタジアム",
+    "source": "nominatim"
+  },
+  "ノエビアスタジアム神戸": {
+    "lat": 34.6567,
+    "lng": 135.16976,
+    "pref": "兵庫県",
+    "area": "近畿",
+    "osm": "leisure/stadium",
+    "osmName": "ノエビアスタジアム神戸",
+    "source": "nominatim"
+  },
+  "パークアリーナ小牧": {
+    "lat": 35.30576,
+    "lng": 136.92187,
+    "pref": "愛知県",
+    "area": "中部",
+    "osm": "leisure/park",
+    "osmName": "パークアリーナ小牧（スポーツ公園）",
+    "source": "nominatim"
+  },
+  "バタフライアリーナ所沢": {
+    "lat": 35.81002,
+    "lng": 139.46316,
+    "pref": "埼玉県",
+    "area": "関東",
+    "source": "manual",
+    "note": "バタフライアリーナ所沢(所沢市民体育館) と同じ施設"
+  },
+  "バタフライアリーナ所沢(所沢市民体育館)": {
+    "lat": 35.81002,
+    "lng": 139.46316,
+    "pref": "埼玉県",
+    "area": "関東",
+    "osm": "leisure/sports_hall",
+    "osmName": "所沢市民体育館",
+    "source": "nominatim",
+    "query": "バタフライアリーナ所沢(所沢市民体育館)"
+  },
+  "パナソニックアリーナ": {
+    "lat": 34.80028,
+    "lng": 135.64425,
+    "pref": "大阪府",
+    "area": "近畿",
+    "wikipedia": "パナソニックアリーナ",
+    "source": "wikipedia"
+  },
+  "パナソニックスタジアム吹田": {
+    "lat": 34.80271,
+    "lng": 135.5381,
+    "pref": "大阪府",
+    "area": "近畿",
+    "wikipedia": "市立吹田サッカースタジアム",
+    "source": "wikipedia",
+    "query": "パナソニックスタジアム吹田"
+  },
+  "ハピネスアリーナ": {
+    "lat": 32.76,
+    "lng": 129.86361,
+    "pref": "長崎県",
+    "area": "九州・沖縄",
+    "wikipedia": "HAPPINESS ARENA",
+    "source": "wikipedia"
+  },
+  "パロマ瑞穂スタジアム": {
+    "lat": 35.12277,
+    "lng": 136.9443,
+    "pref": "愛知県",
+    "area": "中部",
+    "osm": "leisure/stadium",
+    "osmName": "パロマ瑞穂スタジアム",
+    "source": "nominatim"
+  },
+  "パロマ瑞穂ラグビー場": {
+    "lat": 35.12106,
+    "lng": 136.94287,
+    "pref": "愛知県",
+    "area": "中部",
+    "address": "愛知県名古屋市瑞穂区山下通5丁目4",
+    "source": "manual",
+    "note": "住所の出典: https://league-one.jp/stadium/15（国土地理院の住所検索で位置を求めた）"
+  },
+  "ハワイアンズスタジアムいわき": {
+    "lat": 37.01731,
+    "lng": 140.86436,
+    "pref": "福島県",
+    "area": "北海道・東北",
+    "wikipedia": "いわきグリーンフィールド",
+    "source": "wikipedia",
+    "query": "ハワイアンズスタジアムいわき"
+  },
+  "バンダイナムコアリーナ松江(松江市総合体育館)": {
+    "lat": 35.47129,
+    "lng": 133.06601,
+    "pref": "島根県",
+    "area": "中国・四国",
+    "osm": "leisure/sports_hall",
+    "osmName": "バンダイナムコアリーナ松江",
+    "source": "nominatim"
+  },
+  "バンテリンドーム ナゴヤ": {
+    "lat": 35.186,
+    "lng": 136.9474,
+    "pref": "愛知県",
+    "area": "中部",
+    "osm": "leisure/stadium",
+    "osmName": "バンテリンドーム ナゴヤ",
+    "source": "nominatim"
+  },
+  "ビーラインスポーツパーク姶良体育館": {
+    "lat": 31.72488,
+    "lng": 130.60538,
+    "pref": "鹿児島県",
+    "area": "九州・沖縄",
+    "address": "鹿児島県姶良市平松2392",
+    "source": "manual",
+    "note": "公式サイト・自治体サイト等の住所から国土地理院の住所検索で位置を求めた"
+  },
+  "ひがしんアリーナ(墨田区総合体育館)": {
+    "lat": 35.69942,
+    "lng": 139.81711,
+    "pref": "東京都",
+    "area": "関東",
+    "wikipedia": "墨田区総合体育館",
+    "source": "wikipedia"
+  },
+  "ひたちなか市総合運動公園総合体育館": {
+    "lat": 36.39347,
+    "lng": 140.58461,
+    "pref": "茨城県",
+    "area": "関東",
+    "wikipedia": "ひたちなか市総合運動公園総合体育館",
+    "source": "wikipedia"
+  },
+  "フアマーク・インドアスタジアム": {
+    "lat": 13.7575,
+    "lng": 100.62333,
+    "pref": "群馬県",
+    "area": "関東",
+    "wikipedia": "フアマーク・インドアスタジアム",
+    "source": "wikipedia"
+  },
+  "フクダ電子アリーナ": {
+    "lat": 35.57754,
+    "lng": 140.12216,
+    "pref": "千葉県",
+    "area": "関東",
+    "osm": "leisure/stadium",
+    "osmName": "フクダ電子アリーナ",
+    "source": "nominatim"
+  },
+  "プライフーズスタジアム": {
+    "lat": 40.59047,
+    "lng": 141.45611,
+    "pref": "青森県",
+    "area": "北海道・東北",
+    "wikipedia": "八戸市多賀多目的運動場",
+    "source": "wikipedia",
+    "query": "プライフーズスタジアム"
+  },
+  "プロシードアリーナHIKONE": {
+    "lat": 35.24694,
+    "lng": 136.24444,
+    "pref": "滋賀県",
+    "area": "近畿",
+    "wikipedia": "彦根市スポーツ・文化交流センター",
+    "source": "wikipedia"
+  },
+  "ベイコム総合体育館": {
+    "lat": 34.73161,
+    "lng": 135.42369,
+    "pref": "兵庫県",
+    "area": "近畿",
+    "osm": "leisure/sports_centre",
+    "osmName": "ベイコム総合体育館",
+    "source": "nominatim"
+  },
+  "ベスト電器スタジアム": {
+    "lat": 33.58591,
+    "lng": 130.46084,
+    "pref": "福岡県",
+    "area": "九州・沖縄",
+    "osm": "leisure/stadium",
+    "osmName": "ベスト電器スタジアム",
+    "source": "nominatim"
+  },
+  "ベネックス総合運動公園 かきどまり陸上競技場": {
+    "lat": 32.77238,
+    "lng": 129.81738,
+    "pref": "長崎県",
+    "area": "九州・沖縄",
+    "address": "長崎市柿泊町2210番地",
+    "source": "manual",
+    "note": "住所の出典: https://league-one.jp/stadium/44（国土地理院の住所検索で位置を求めた）"
+  },
+  "ベルーナドーム": {
+    "lat": 35.76854,
+    "lng": 139.42047,
+    "pref": "埼玉県",
+    "area": "関東",
+    "osm": "leisure/stadium",
+    "osmName": "ベルーナドーム",
+    "source": "nominatim"
+  },
+  "ホワイトリング": {
+    "lat": 36.6047,
+    "lng": 138.20627,
+    "pref": "長野県",
+    "area": "中部",
+    "osm": "leisure/sports_centre",
+    "osmName": "ホワイトリング",
+    "source": "nominatim"
+  },
+  "ホンダヒート・グリーンスタジアム": {
+    "lat": 36.55652,
+    "lng": 139.98649,
+    "pref": "栃木県",
+    "area": "関東",
+    "osm": "leisure/stadium",
+    "osmName": "ホンダヒート・グリーンスタジアム",
+    "source": "nominatim"
+  },
+  "マービーふれあいセンター（倉敷市）": {
+    "lat": 34.63327,
+    "lng": 133.69911,
+    "pref": "岡山県",
+    "area": "中国・四国",
+    "osm": "amenity/community_centre",
+    "osmName": "マービーふれあいセンター",
+    "source": "nominatim"
+  },
+  "マエダアリーナ（新青森県総合運動公園）": {
+    "lat": 40.84141,
+    "lng": 140.84353,
+    "pref": "青森県",
+    "area": "北海道・東北",
+    "osm": "leisure/park",
+    "osmName": "新青森県総合運動公園",
+    "source": "nominatim",
+    "query": "マエダアリーナ（新青森県総合運動公園）"
+  },
+  "ミクニワールドスタジアム北九州": {
+    "lat": 33.89117,
+    "lng": 130.88873,
+    "pref": "福岡県",
+    "area": "九州・沖縄",
+    "osm": "leisure/stadium",
+    "osmName": "ミクニワールドスタジアム北九州",
+    "source": "nominatim"
+  },
+  "みずほPayPayドーム福岡": {
+    "lat": 33.59532,
+    "lng": 130.36212,
+    "pref": "福岡県",
+    "area": "九州・沖縄",
+    "osm": "leisure/stadium",
+    "osmName": "福岡ペイペイドーム",
+    "source": "nominatim"
+  },
+  "むつマエダアリーナ": {
+    "lat": 41.28144,
+    "lng": 141.17292,
+    "pref": "青森県",
+    "area": "北海道・東北",
+    "osm": "leisure/pitch",
+    "osmName": "むつマエダアリーナ",
+    "source": "nominatim"
+  },
+  "メルカリスタジアム": {
+    "lat": 35.99174,
+    "lng": 140.64053,
+    "pref": "茨城県",
+    "area": "関東",
+    "wikipedia": "茨城県立カシマサッカースタジアム",
+    "source": "wikipedia",
+    "query": "メルカリスタジアム"
+  },
+  "ヤマト市民体育館前橋": {
+    "lat": 36.36508,
+    "lng": 139.0801,
+    "pref": "群馬県",
+    "area": "関東",
+    "osm": "leisure/park",
+    "osmName": "ヤマト市民体育館前橋",
+    "source": "nominatim"
+  },
+  "ヤマハスタジアム": {
+    "lat": 34.72515,
+    "lng": 137.87515,
+    "pref": "静岡県",
+    "area": "中部",
+    "osm": "leisure/stadium",
+    "osmName": "ヤマハスタジアム",
+    "source": "nominatim"
+  },
+  "ヤンマースタジアム長居": {
+    "lat": 34.61411,
+    "lng": 135.51851,
+    "pref": "大阪府",
+    "area": "近畿",
+    "osm": "leisure/stadium",
+    "osmName": "ヤンマースタジアム長居",
+    "source": "nominatim"
+  },
+  "ユアテックスタジアム仙台": {
+    "lat": 38.31914,
+    "lng": 140.88187,
+    "pref": "宮城県",
+    "area": "北海道・東北",
+    "osm": "leisure/stadium",
+    "osmName": "ユアテックスタジアム仙台",
+    "source": "nominatim"
+  },
+  "ユナイテッドトヨタ キズナアリーナ 益城(益城町総合体育館)": {
+    "lat": 32.78606,
+    "lng": 130.82175,
+    "pref": "熊本県",
+    "area": "九州・沖縄",
+    "wikipedia": "益城町総合体育館",
+    "source": "wikipedia",
+    "query": "ユナイテッドトヨタ キズナアリーナ 益城(益城町総合体育館)"
+  },
+  "ユピテルアリーナ霧島": {
+    "lat": 31.85558,
+    "lng": 130.77251,
+    "pref": "鹿児島県",
+    "area": "九州・沖縄",
+    "address": "鹿児島県霧島市牧園町宿窪田2992",
+    "source": "manual",
+    "note": "公式サイト・自治体サイト等の住所から国土地理院の住所検索で位置を求めた"
+  },
+  "よつ葉アリーナ十勝": {
+    "lat": 42.93333,
+    "lng": 143.20194,
+    "pref": "北海道",
+    "area": "北海道・東北",
+    "wikipedia": "帯広市総合体育館",
+    "source": "wikipedia"
+  },
+  "リクルートスタッフィング リック&スー旭川体育館": {
+    "lat": 43.79306,
+    "lng": 142.37639,
+    "pref": "北海道",
+    "area": "北海道・東北",
+    "wikipedia": "旭川市総合体育館",
+    "source": "wikipedia"
+  },
+  "リプロ武道館": {
+    "lat": 35.97028,
+    "lng": 139.60942,
+    "pref": "埼玉県",
+    "area": "関東",
+    "wikipedia": "埼玉県立武道館",
+    "source": "wikipedia"
+  },
+  "レモンガススタジアム平塚": {
+    "lat": 35.34366,
+    "lng": 139.34114,
+    "pref": "神奈川県",
+    "area": "関東",
+    "osm": "leisure/stadium",
+    "osmName": "レモンガススタジアム平塚",
+    "source": "nominatim"
+  },
+  "ロートアリーナ奈良": {
+    "lat": 34.69514,
+    "lng": 135.82803,
+    "pref": "奈良県",
+    "area": "近畿",
+    "wikipedia": "奈良市中央体育館",
+    "source": "wikipedia"
+  },
+  "ロートフィールド奈良": {
+    "lat": 34.69851,
+    "lng": 135.82919,
+    "pref": "奈良県",
+    "area": "近畿",
+    "wikipedia": "奈良市鴻ノ池陸上競技場",
+    "source": "wikipedia",
+    "query": "ロートフィールド奈良"
+  },
+  "愛媛県武道館": {
+    "lat": 33.81082,
+    "lng": 132.7456,
+    "pref": "愛媛県",
+    "area": "中国・四国",
+    "osm": "building/civic",
+    "osmName": "愛媛県武道館",
+    "source": "nominatim"
+  },
+  "旭川市総合体育館": {
+    "lat": 43.79279,
+    "lng": 142.3762,
+    "pref": "北海道",
+    "area": "北海道・東北",
+    "osm": "leisure/sports_centre",
+    "osmName": "旭川市総合体育館",
+    "source": "nominatim"
+  },
+  "安濃中央総合公園内体育館": {
+    "lat": 34.7694,
+    "lng": 136.43599,
+    "pref": "三重県",
+    "area": "近畿",
+    "address": "三重県津市安濃町田端上野818",
+    "source": "manual",
+    "note": "公式サイト・自治体サイト等の住所から国土地理院の住所検索で位置を求めた"
+  },
+  "伊藤鉱業アリーナつがる（つがる市総合体育館）": {
+    "lat": 40.80842,
+    "lng": 140.37968,
+    "pref": "青森県",
+    "area": "北海道・東北",
+    "address": "青森県つがる市木造若緑64",
+    "source": "manual",
+    "note": "公式サイト・自治体サイト等の住所から国土地理院の住所検索で位置を求めた"
+  },
+  "伊予市民体育館": {
+    "lat": 33.74718,
+    "lng": 132.68628,
+    "pref": "愛媛県",
+    "area": "中国・四国",
+    "address": "愛媛県伊予市森甲91-1",
+    "source": "manual",
+    "note": "公式サイト・自治体サイト等の住所から国土地理院の住所検索で位置を求めた"
+  },
+  "維新みらいふスタジアム": {
+    "lat": 34.15447,
+    "lng": 131.43742,
+    "pref": "山口県",
+    "area": "中国・四国",
+    "wikipedia": "維新百年記念公園陸上競技場",
+    "source": "wikipedia",
+    "query": "維新みらいふスタジアム"
+  },
+  "一関ヒロセユードーム": {
+    "lat": 38.94058,
+    "lng": 141.15543,
+    "pref": "岩手県",
+    "area": "北海道・東北",
+    "address": "岩手県一関市狐禅寺字石ノ瀬25-3",
+    "source": "manual",
+    "note": "公式サイト・自治体サイト等の住所から国土地理院の住所検索で位置を求めた"
+  },
+  "一宮市総合体育館": {
+    "lat": 35.35786,
+    "lng": 136.79942,
+    "pref": "愛知県",
+    "area": "中部",
+    "wikipedia": "一宮市総合体育館",
+    "source": "wikipedia"
+  },
+  "浦和駒場体育館": {
+    "lat": 35.87239,
+    "lng": 139.66225,
+    "pref": "埼玉県",
+    "area": "関東",
+    "wikipedia": "浦和駒場体育館",
+    "source": "wikipedia"
+  },
+  "駅前不動産スタジアム": {
+    "lat": 33.37168,
+    "lng": 130.52021,
+    "pref": "佐賀県",
+    "area": "九州・沖縄",
+    "osm": "leisure/stadium",
+    "osmName": "駅前不動産スタジアム",
+    "source": "nominatim"
+  },
+  "越前市アイシンスポーツアリーナ": {
+    "lat": 35.89921,
+    "lng": 136.15569,
+    "pref": "福井県",
+    "area": "中部",
+    "wikipedia": "武生中央公園総合体育館",
+    "source": "wikipedia"
+  },
+  "越谷市立総合体育館": {
+    "lat": 35.90275,
+    "lng": 139.81347,
+    "pref": "埼玉県",
+    "area": "関東",
+    "osm": "leisure/sports_hall",
+    "osmName": "越谷市立総合体育館",
+    "source": "nominatim"
+  },
+  "横浜BUNTAI": {
+    "lat": 35.44097,
+    "lng": 139.63652,
+    "pref": "神奈川県",
+    "area": "関東",
+    "osm": "leisure/sports_centre",
+    "osmName": "横浜BUNTAI",
+    "source": "nominatim"
+  },
+  "横浜アリーナ": {
+    "lat": 35.51227,
+    "lng": 139.62019,
+    "pref": "神奈川県",
+    "area": "関東",
+    "osm": "leisure/stadium",
+    "osmName": "横浜アリーナ",
+    "source": "nominatim"
+  },
+  "横浜スタジアム": {
+    "lat": 35.44328,
+    "lng": 139.64084,
+    "pref": "神奈川県",
+    "area": "関東",
+    "osm": "leisure/stadium",
+    "osmName": "横浜スタジアム",
+    "source": "nominatim"
+  },
+  "横浜国際プール": {
+    "lat": 35.56413,
+    "lng": 139.59445,
+    "pref": "神奈川県",
+    "area": "関東",
+    "osm": "leisure/sports_centre",
+    "osmName": "横浜国際プール",
+    "source": "nominatim"
+  },
+  "横浜武道館": {
+    "lat": 35.43974,
+    "lng": 139.63634,
+    "pref": "神奈川県",
+    "area": "関東",
+    "osm": "leisure/sports_centre",
+    "osmName": "横浜武道館",
+    "source": "nominatim"
+  },
+  "岡崎中央総合公園総合体育館": {
+    "lat": 34.94728,
+    "lng": 137.21212,
+    "pref": "愛知県",
+    "area": "中部",
+    "wikipedia": "岡崎中央総合公園総合体育館",
+    "source": "wikipedia"
+  },
+  "岡山武道館": {
+    "lat": 34.68087,
+    "lng": 133.91377,
+    "pref": "岡山県",
+    "area": "中国・四国",
+    "osm": "leisure/stadium",
+    "osmName": "岡山武道館",
+    "source": "nominatim"
+  },
+  "沖縄サントリーアリーナ": {
+    "lat": 26.33292,
+    "lng": 127.78364,
+    "pref": "沖縄県",
+    "area": "九州・沖縄",
+    "wikipedia": "沖縄アリーナ",
+    "source": "wikipedia"
+  },
+  "沖縄県総合運動公園陸上競技場": {
+    "lat": 26.3086,
+    "lng": 127.82112,
+    "pref": "沖縄県",
+    "area": "九州・沖縄",
+    "osm": "leisure/stadium",
+    "osmName": "沖縄県総合運動公園陸上競技場",
+    "source": "nominatim"
+  },
+  "荻野運動公園シティアクセス相模スポーツホール": {
+    "lat": 35.47956,
+    "lng": 139.31955,
+    "pref": "神奈川県",
+    "area": "関東",
+    "address": "神奈川県厚木市中荻野1500",
+    "source": "manual",
+    "note": "公式サイト・自治体サイト等の住所から国土地理院の住所検索で位置を求めた"
+  },
+  "屋島レクザムフィールド": {
+    "lat": 34.34121,
+    "lng": 134.10166,
+    "pref": "香川県",
+    "area": "中国・四国",
+    "wikipedia": "高松市屋島競技場",
+    "source": "wikipedia",
+    "query": "屋島レクザムフィールド"
+  },
+  "貝塚コスモスシアター": {
+    "lat": 34.43751,
+    "lng": 135.35928,
+    "pref": "大阪府",
+    "area": "近畿",
+    "address": "大阪府貝塚市畠中1-18-1",
+    "source": "manual",
+    "note": "公式サイト等の住所から国土地理院の住所検索で位置を求めた"
+  },
+  "楽天モバイル 最強パーク宮城": {
+    "lat": 38.25614,
+    "lng": 140.90266,
+    "pref": "宮城県",
+    "area": "北海道・東北",
+    "osm": "leisure/stadium",
+    "osmName": "楽天モバイル 最強パーク宮城",
+    "source": "nominatim"
+  },
+  "笠岡総合体育館": {
+    "lat": 34.50212,
+    "lng": 133.48834,
+    "pref": "岡山県",
+    "area": "中国・四国",
+    "osm": "leisure/sports_centre",
+    "osmName": "笠岡総合体育館",
+    "source": "nominatim"
+  },
+  "釜石鵜住居復興スタジアム": {
+    "lat": 39.32749,
+    "lng": 141.89349,
+    "pref": "岩手県",
+    "area": "北海道・東北",
+    "osm": "leisure/stadium",
+    "osmName": "釜石鵜住居復興スタジアム",
+    "source": "nominatim"
+  },
+  "茅ヶ崎市総合体育館": {
+    "lat": 35.33491,
+    "lng": 139.40325,
+    "pref": "神奈川県",
+    "area": "関東",
+    "osm": "building/yes",
+    "osmName": "茅ヶ崎市総合体育館",
+    "source": "nominatim"
+  },
+  "刈谷市体育館": {
+    "lat": 34.99078,
+    "lng": 136.98497,
+    "pref": "愛知県",
+    "area": "中部",
+    "wikipedia": "刈谷市体育館",
+    "source": "wikipedia"
+  },
+  "感謝と挑戦のTYK体育館（多治見市）": {
+    "lat": 35.31761,
+    "lng": 137.12961,
+    "pref": "岐阜県",
+    "area": "中部",
+    "wikipedia": "多治見市総合体育館",
+    "source": "wikipedia"
+  },
+  "丸亀市民体育館": {
+    "lat": 34.26304,
+    "lng": 133.78878,
+    "pref": "香川県",
+    "area": "中国・四国",
+    "osm": "leisure/sports_centre",
+    "osmName": "丸亀市民体育館",
+    "source": "nominatim"
+  },
+  "岐阜メモリアルセンター で愛ドーム": {
+    "lat": 35.44141,
+    "lng": 136.76399,
+    "pref": "岐阜県",
+    "area": "中部",
+    "wikipedia": "岐阜メモリアルセンター",
+    "source": "wikipedia"
+  },
+  "岐阜メモリアルセンター ヒマラヤスタジアム岐阜": {
+    "lat": 35.44132,
+    "lng": 136.76608,
+    "pref": "岐阜県",
+    "area": "中部",
+    "wikipedia": "岐阜メモリアルセンター長良川競技場",
+    "source": "wikipedia",
+    "query": "岐阜メモリアルセンター ヒマラヤスタジアム岐阜"
+  },
+  "菊陽町総合体育館": {
+    "lat": 32.8796,
+    "lng": 130.83258,
+    "pref": "熊本県",
+    "area": "九州・沖縄",
+    "address": "熊本県菊池郡菊陽町大字原水5352-3",
+    "source": "manual",
+    "note": "住所の出典: https://www.town.kikuyo.lg.jp/kiji0033993/index.html（国土地理院の住所検索で位置を求めた）"
+  },
+  "久留米アリーナ": {
+    "lat": 33.32158,
+    "lng": 130.53081,
+    "pref": "福岡県",
+    "area": "九州・沖縄",
+    "wikipedia": "久留米アリーナ",
+    "source": "wikipedia"
+  },
+  "久留米総合スポーツセンター陸上競技場": {
+    "lat": 33.32102,
+    "lng": 130.53093,
+    "pref": "福岡県",
+    "area": "九州・沖縄",
+    "address": "久留米市東櫛原町173(中央公園内)",
+    "source": "manual",
+    "note": "住所の出典: https://league-one.jp/stadium/46（国土地理院の住所検索で位置を求めた）"
+  },
+  "京セラドーム大阪": {
+    "lat": 34.6693,
+    "lng": 135.47609,
+    "pref": "大阪府",
+    "area": "近畿",
+    "osm": "leisure/stadium",
+    "osmName": "京セラドーム大阪",
+    "source": "nominatim"
+  },
+  "近鉄花園ラグビー場": {
+    "lat": 34.66892,
+    "lng": 135.62625,
+    "pref": "大阪府",
+    "area": "近畿",
+    "wikipedia": "東大阪市花園ラグビー場",
+    "source": "wikipedia",
+    "query": "近鉄花園ラグビー場"
+  },
+  "金岡公園体育館": {
+    "lat": 34.57044,
+    "lng": 135.50647,
+    "pref": "大阪府",
+    "area": "近畿",
+    "osm": "leisure/sports_centre",
+    "osmName": "金岡公園体育館",
+    "source": "nominatim"
+  },
+  "金沢ゴーゴーカレースタジアム": {
+    "lat": 36.59612,
+    "lng": 136.65767,
+    "pref": "石川県",
+    "area": "中部",
+    "osm": "leisure/stadium",
+    "osmName": "金沢スタジアム",
+    "source": "nominatim"
+  },
+  "金沢市総合体育館": {
+    "lat": 36.53963,
+    "lng": 136.64949,
+    "pref": "石川県",
+    "area": "中部",
+    "address": "石川県金沢市泉野出町3-8-1",
+    "source": "manual",
+    "note": "住所の出典: https://www.bleague.jp/arena_detail/?ArenaCD=304（国土地理院の住所検索で位置を求めた）"
+  },
+  "駒沢オリンピック公園総合運動場陸上競技場": {
+    "lat": 35.6256,
+    "lng": 139.66357,
+    "pref": "東京都",
+    "area": "関東",
+    "osm": "leisure/stadium",
+    "osmName": "駒沢オリンピック公園総合運動場陸上競技場",
+    "source": "nominatim"
+  },
+  "駒沢屋内球技場（世田谷区）": {
+    "lat": 35.62314,
+    "lng": 139.66283,
+    "pref": "東京都",
+    "area": "関東",
+    "osm": "leisure/sports_centre",
+    "osmName": "屋内球技場",
+    "source": "nominatim"
+  },
+  "熊谷スポーツ文化公園ラグビー場": {
+    "lat": 36.16832,
+    "lng": 139.4019,
+    "pref": "埼玉県",
+    "area": "関東",
+    "address": "埼玉県熊谷市上川上810",
+    "source": "manual",
+    "note": "住所の出典: https://league-one.jp/stadium/1（国土地理院の住所検索で位置を求めた）"
+  },
+  "熊本県立総合体育館": {
+    "lat": 32.81446,
+    "lng": 130.70151,
+    "pref": "熊本県",
+    "area": "九州・沖縄",
+    "osm": "leisure/pitch",
+    "osmName": "熊本県立総合体育館",
+    "source": "nominatim"
+  },
+  "厚木市荻野運動公園競技場": {
+    "lat": 35.48111,
+    "lng": 139.32222,
+    "pref": "神奈川県",
+    "area": "関東",
+    "wikipedia": "厚木市荻野運動公園競技場",
+    "source": "wikipedia"
+  },
+  "広島グリーンアリーナ": {
+    "lat": 34.39942,
+    "lng": 132.45511,
+    "pref": "広島県",
+    "area": "中国・四国",
+    "wikipedia": "広島県立総合体育館",
+    "source": "wikipedia"
+  },
+  "広島サンプラザホール": {
+    "lat": 34.37087,
+    "lng": 132.39446,
+    "pref": "広島県",
+    "area": "中国・四国",
+    "address": "広島県広島市西区商工センター3-1-1",
+    "source": "manual",
+    "note": "公式サイト・自治体サイト等の住所から国土地理院の住所検索で位置を求めた"
+  },
+  "江戸川区スポーツセンター": {
+    "lat": 35.668,
+    "lng": 139.86256,
+    "pref": "東京都",
+    "area": "関東",
+    "wikipedia": "江戸川区スポーツセンター",
+    "source": "wikipedia"
+  },
+  "江戸川区総合体育館": {
+    "lat": 35.71732,
+    "lng": 139.8763,
+    "pref": "東京都",
+    "area": "関東",
+    "osm": "leisure/sports_centre",
+    "osmName": "江戸川区総合体育館",
+    "source": "nominatim"
+  },
+  "江東区夢の島競技場": {
+    "lat": 35.6486,
+    "lng": 139.82494,
+    "pref": "東京都",
+    "area": "関東",
+    "osm": "amenity/bicycle_rental",
+    "osmName": "夢の島競技場",
+    "source": "nominatim"
+  },
+  "荒川総合スポーツセンター": {
+    "lat": 35.73585,
+    "lng": 139.79128,
+    "pref": "東京都",
+    "area": "関東",
+    "osm": "leisure/sports_centre",
+    "osmName": "荒川総合スポーツセンター",
+    "source": "nominatim"
+  },
+  "香陵アリーナ": {
+    "lat": 35.09547,
+    "lng": 138.86482,
+    "pref": "静岡県",
+    "area": "中部",
+    "source": "manual",
+    "note": "沼津市総合体育館（香陵アリーナ）と同じ施設"
+  },
+  "高崎アリーナ": {
+    "lat": 36.31641,
+    "lng": 139.01268,
+    "pref": "群馬県",
+    "area": "関東",
+    "osm": "leisure/sports_centre",
+    "osmName": "高崎アリーナ",
+    "source": "nominatim"
+  },
+  "高松市総合体育館": {
+    "lat": 34.34218,
+    "lng": 134.07418,
+    "pref": "香川県",
+    "area": "中国・四国",
+    "osm": "leisure/stadium",
+    "osmName": "高松市総合体育館",
+    "source": "nominatim"
+  },
+  "国立代々木競技場 第二体育館": {
+    "lat": 35.66775,
+    "lng": 139.70014,
+    "pref": "東京都",
+    "area": "関東",
+    "wikipedia": "国立代々木競技場",
+    "source": "wikipedia"
+  },
+  "国立代々木競技場第一体育館": {
+    "lat": 35.66775,
+    "lng": 139.70014,
+    "pref": "東京都",
+    "area": "関東",
+    "wikipedia": "国立代々木競技場",
+    "source": "wikipedia"
+  },
+  "国立代々木競技場第二体育館": {
+    "lat": 35.66775,
+    "lng": 139.70014,
+    "pref": "東京都",
+    "area": "関東",
+    "wikipedia": "国立代々木競技場",
+    "source": "wikipedia"
+  },
+  "黒部市総合体育センター": {
+    "lat": 36.88142,
+    "lng": 137.42783,
+    "pref": "富山県",
+    "area": "中部",
+    "osm": "leisure/sports_centre",
+    "osmName": "黒部市総合体育センター",
+    "source": "nominatim"
+  },
+  "今治市営中央体育館": {
+    "lat": 34.07177,
+    "lng": 132.99289,
+    "pref": "愛媛県",
+    "area": "中国・四国",
+    "address": "愛媛県今治市別宮町6-2-2",
+    "source": "manual",
+    "note": "公式サイト・自治体サイト等の住所から国土地理院の住所検索で位置を求めた"
+  },
+  "阪神甲子園球場": {
+    "lat": 34.72137,
+    "lng": 135.36165,
+    "pref": "兵庫県",
+    "area": "近畿",
+    "osm": "leisure/stadium",
+    "osmName": "阪神甲子園球場",
+    "source": "nominatim"
+  },
+  "埼玉スタジアム2002": {
+    "lat": 35.90307,
+    "lng": 139.71761,
+    "pref": "埼玉県",
+    "area": "関東",
+    "osm": "leisure/stadium",
+    "osmName": "埼玉スタジアム 2002",
+    "source": "nominatim"
+  },
+  "札幌厚別公園競技場": {
+    "lat": 43.01876,
+    "lng": 141.46417,
+    "pref": "北海道",
+    "area": "北海道・東北",
+    "osm": "leisure/stadium",
+    "osmName": "札幌厚別公園競技場",
+    "source": "nominatim"
+  },
+  "三協フロンテア柏スタジアム": {
+    "lat": 35.84848,
+    "lng": 139.97517,
+    "pref": "千葉県",
+    "area": "関東",
+    "wikipedia": "日立柏サッカー場",
+    "source": "wikipedia",
+    "query": "三協フロンテア柏スタジアム"
+  },
+  "三重県営サンアリーナ サブアリーナ": {
+    "lat": 34.48956,
+    "lng": 136.76897,
+    "pref": "三重県",
+    "area": "近畿",
+    "wikipedia": "三重県営サンアリーナ",
+    "source": "wikipedia"
+  },
+  "三友エンジニア体育文化センター": {
+    "lat": 38.1437,
+    "lng": 140.27101,
+    "pref": "山形県",
+    "area": "北海道・東北",
+    "address": "山形県上山市けやきの森2-1",
+    "source": "manual",
+    "note": "公式サイト・自治体サイト等の住所から国土地理院の住所検索で位置を求めた"
+  },
+  "山科地域体育館（京都市）": {
+    "lat": 34.97628,
+    "lng": 135.81313,
+    "pref": "京都府",
+    "area": "近畿",
+    "address": "京都府京都市山科区椥辻西浦町1-12",
+    "source": "manual",
+    "note": "公式サイト等の住所から国土地理院の住所検索で位置を求めた"
+  },
+  "山形県総合運動公園": {
+    "lat": 38.33596,
+    "lng": 140.37755,
+    "pref": "山形県",
+    "area": "北海道・東北",
+    "osm": "leisure/park",
+    "osmName": "山形県総合運動公園",
+    "source": "nominatim"
+  },
+  "山形市総合スポーツセンター": {
+    "lat": 38.28042,
+    "lng": 140.34758,
+    "pref": "山形県",
+    "area": "北海道・東北",
+    "osm": "leisure/park",
+    "osmName": "山形市総合スポーツセンター",
+    "source": "nominatim"
+  },
+  "山陽ふれあい公園総合体育館": {
+    "lat": 34.76803,
+    "lng": 134.02039,
+    "pref": "岡山県",
+    "area": "中国・四国",
+    "address": "岡山県赤磐市正崎1368",
+    "source": "manual",
+    "note": "公式サイト・自治体サイト等の住所から国土地理院の住所検索で位置を求めた"
+  },
+  "四国化成MEGLIO スタジアム": {
+    "lat": 34.26163,
+    "lng": 133.78591,
+    "pref": "香川県",
+    "area": "中国・四国",
+    "wikipedia": "香川県立丸亀競技場",
+    "source": "wikipedia",
+    "query": "四国化成MEGLIO スタジアム"
+  },
+  "志布志運動公園体育館": {
+    "lat": 31.46491,
+    "lng": 131.08319,
+    "pref": "鹿児島県",
+    "area": "九州・沖縄",
+    "address": "鹿児島県志布志市志布志町安楽190-46",
+    "source": "manual",
+    "note": "公式サイト・自治体サイト等の住所から国土地理院の住所検索で位置を求めた"
+  },
+  "滋賀ダイハツアリーナ": {
+    "lat": 34.97083,
+    "lng": 135.95102,
+    "pref": "滋賀県",
+    "area": "近畿",
+    "osm": "leisure/sports_hall",
+    "osmName": "滋賀ダイハツアリーナ",
+    "source": "nominatim"
+  },
+  "滋賀ダイハツアリーナ(予定)": {
+    "lat": 34.97083,
+    "lng": 135.95102,
+    "pref": "滋賀県",
+    "area": "近畿",
+    "osm": "leisure/sports_hall",
+    "osmName": "滋賀ダイハツアリーナ",
+    "source": "nominatim"
+  },
+  "鹿児島県総合体育センター体育館": {
+    "lat": 31.56671,
+    "lng": 130.55502,
+    "pref": "鹿児島県",
+    "area": "九州・沖縄",
+    "osm": "leisure/sports_hall",
+    "osmName": "鹿児島県総合体育センター体育館",
+    "source": "nominatim"
+  },
+  "七尾総合市民体育館": {
+    "lat": 37.04405,
+    "lng": 136.95244,
+    "pref": "石川県",
+    "area": "中部",
+    "address": "石川県七尾市小島町西部4",
+    "source": "manual",
+    "note": "公式サイト等の住所から国土地理院の住所検索で位置を求めた"
+  },
+  "実総アリーナ": {
+    "lat": 31.52042,
+    "lng": 130.33775,
+    "pref": "鹿児島県",
+    "area": "九州・沖縄",
+    "address": "鹿児島県日置市吹上町中原1353-5",
+    "source": "manual",
+    "note": "公式サイト・自治体サイト等の住所から国土地理院の住所検索で位置を求めた"
+  },
+  "守口市民体育館": {
+    "lat": 34.73521,
+    "lng": 135.56777,
+    "pref": "大阪府",
+    "area": "近畿",
+    "osm": "leisure/sports_centre",
+    "osmName": "守口市民体育館",
+    "source": "nominatim"
+  },
+  "秋葉台文化体育館": {
+    "lat": 35.38805,
+    "lng": 139.4435,
+    "pref": "神奈川県",
+    "area": "関東",
+    "address": "神奈川県藤沢市遠藤2000-1",
+    "source": "manual",
+    "note": "公式サイト・自治体サイト等の住所から国土地理院の住所検索で位置を求めた"
+  },
+  "春日井市総合体育館": {
+    "lat": 35.27071,
+    "lng": 136.9648,
+    "pref": "愛知県",
+    "area": "中部",
+    "address": "愛知県春日井市鷹来町4196-3",
+    "source": "manual",
+    "note": "公式サイト等の住所から国土地理院の住所検索で位置を求めた"
+  },
+  "松山市総合コミュニティセンター": {
+    "lat": 33.83585,
+    "lng": 132.75515,
+    "pref": "愛媛県",
+    "area": "中国・四国",
+    "osm": "amenity/community_centre",
+    "osmName": "松山市総合コミュニティセンター",
+    "source": "nominatim"
+  },
+  "沼津市総合体育館（香陵アリーナ）": {
+    "lat": 35.09547,
+    "lng": 138.86482,
+    "pref": "静岡県",
+    "area": "中部",
+    "osm": "building/public",
+    "osmName": "沼津市総合体育館",
+    "source": "nominatim",
+    "query": "沼津市総合体育館（香陵アリーナ）"
+  },
+  "照葉積水ハウスアリーナ": {
+    "lat": 33.66767,
+    "lng": 130.41761,
+    "pref": "福岡県",
+    "area": "九州・沖縄",
+    "osm": "leisure/stadium",
+    "osmName": "照葉積水ハウスアリーナ (福岡市総合体育館)",
+    "source": "nominatim"
+  },
+  "上尾運動公園体育館": {
+    "lat": 35.9676,
+    "lng": 139.60288,
+    "pref": "埼玉県",
+    "area": "関東",
+    "osm": "leisure/sports_centre",
+    "osmName": "上尾運動公園体育館",
+    "source": "nominatim"
+  },
+  "新潟市東総合スポーツセンター": {
+    "lat": 37.91516,
+    "lng": 139.10505,
+    "pref": "新潟県",
+    "area": "中部",
+    "osm": "leisure/sports_centre",
+    "osmName": "東総合スポーツセンター",
+    "source": "nominatim"
+  },
+  "新発田市カルチャーセンター": {
+    "lat": 37.94766,
+    "lng": 139.3381,
+    "pref": "新潟県",
+    "area": "中部",
+    "address": "新潟県新発田市本町4-16-83",
+    "source": "manual",
+    "note": "公式サイト等の住所から国土地理院の住所検索で位置を求めた"
+  },
+  "深谷ビッグタートル": {
+    "lat": 36.17652,
+    "lng": 139.27153,
+    "pref": "埼玉県",
+    "area": "関東",
+    "osm": "leisure/sports_centre",
+    "osmName": "深谷ビッグタートル",
+    "source": "nominatim"
+  },
+  "神戸総合運動公園ユニバー記念競技場": {
+    "lat": 34.68214,
+    "lng": 135.08027,
+    "pref": "兵庫県",
+    "area": "近畿",
+    "wikipedia": "神戸総合運動公園ユニバー記念競技場",
+    "source": "wikipedia"
+  },
+  "水戸信用金庫スタジアム": {
+    "lat": 36.45724,
+    "lng": 140.53826,
+    "pref": "茨城県",
+    "area": "関東",
+    "osm": "leisure/stadium",
+    "osmName": "水戸信用金庫スタジアム",
+    "source": "nominatim"
+  },
+  "水島緑地福田公園体育館": {
+    "lat": 34.53052,
+    "lng": 133.7701,
+    "pref": "岡山県",
+    "area": "中国・四国",
+    "address": "岡山県倉敷市福田町古新田1027",
+    "source": "manual",
+    "note": "公式サイト・自治体サイト等の住所から国土地理院の住所検索で位置を求めた"
+  },
+  "世田谷区総合運動場体育館": {
+    "lat": 35.62879,
+    "lng": 139.61441,
+    "pref": "東京都",
+    "area": "関東",
+    "address": "東京都世田谷区大蔵4-6-1",
+    "source": "manual",
+    "note": "公式サイト・自治体サイト等の住所から国土地理院の住所検索で位置を求めた"
+  },
+  "正田醤油スタジアム群馬": {
+    "lat": 36.4116,
+    "lng": 139.0532,
+    "pref": "群馬県",
+    "area": "関東",
+    "osm": "leisure/stadium",
+    "osmName": "正田醤油スタジアム群馬",
+    "source": "nominatim"
+  },
+  "盛岡タカヤアリーナ": {
+    "lat": 39.69089,
+    "lng": 141.12044,
+    "pref": "岩手県",
+    "area": "北海道・東北",
+    "osm": "leisure/sports_centre",
+    "osmName": "盛岡タカヤアリーナ（盛岡市総合アリーナ）",
+    "source": "nominatim"
+  },
+  "青森県武道館": {
+    "lat": 40.59372,
+    "lng": 140.50358,
+    "pref": "青森県",
+    "area": "北海道・東北",
+    "wikipedia": "青森県武道館",
+    "source": "wikipedia"
+  },
+  "静岡市中央体育館": {
+    "lat": 34.98163,
+    "lng": 138.38502,
+    "pref": "静岡県",
+    "area": "中部",
+    "osm": "leisure/sports_hall",
+    "osmName": "静岡市中央体育館",
+    "source": "nominatim"
+  },
+  "静岡市北部体育館": {
+    "lat": 35.01864,
+    "lng": 138.37375,
+    "pref": "静岡県",
+    "area": "中部",
+    "address": "静岡県静岡市葵区松富4-14-1",
+    "source": "manual",
+    "note": "公式サイト等の住所から国土地理院の住所検索で位置を求めた"
+  },
+  "千葉ポートアリーナ": {
+    "lat": 35.60385,
+    "lng": 140.11099,
+    "pref": "千葉県",
+    "area": "関東",
+    "osm": "amenity/bicycle_rental",
+    "osmName": "千葉ポートアリーナ",
+    "source": "nominatim"
+  },
+  "川越運動公園陸上競技場": {
+    "lat": 35.9315,
+    "lng": 139.52776,
+    "pref": "埼玉県",
+    "area": "関東",
+    "address": "埼玉県川越市下老袋388−1",
+    "source": "manual",
+    "note": "住所の出典: https://league-one.jp/stadium/67（国土地理院の住所検索で位置を求めた）"
+  },
+  "船橋アリーナ": {
+    "lat": 35.72965,
+    "lng": 140.05255,
+    "pref": "千葉県",
+    "area": "関東",
+    "osm": "building/yes",
+    "osmName": "船橋アリーナ",
+    "source": "nominatim"
+  },
+  "善通寺市民体育館": {
+    "lat": 34.23911,
+    "lng": 133.79237,
+    "pref": "香川県",
+    "area": "中国・四国",
+    "osm": "leisure/sports_centre",
+    "osmName": "善通寺市民体育館",
+    "source": "nominatim"
+  },
+  "相好アリーナ四日市": {
+    "lat": 34.95253,
+    "lng": 136.6118,
+    "pref": "三重県",
+    "area": "近畿",
+    "address": "三重県四日市市日永東1-3-21",
+    "source": "manual",
+    "note": "公式サイト・自治体サイト等の住所から国土地理院の住所検索で位置を求めた"
+  },
+  "相模原ギオンスタジアム": {
+    "lat": 35.52725,
+    "lng": 139.38631,
+    "pref": "神奈川県",
+    "area": "関東",
+    "osm": "leisure/stadium",
+    "osmName": "相模原ギオンスタジアム",
+    "source": "nominatim"
+  },
+  "草津市立滋賀トヨタアリーナ": {
+    "lat": 35.02504,
+    "lng": 135.95325,
+    "pref": "滋賀県",
+    "area": "近畿",
+    "address": "滋賀県草津市野村3-3-27",
+    "source": "manual",
+    "note": "公式サイト・自治体サイト等の住所から国土地理院の住所検索で位置を求めた"
+  },
+  "太田市運動公園陸上競技場": {
+    "lat": 36.27467,
+    "lng": 139.39388,
+    "pref": "群馬県",
+    "area": "関東",
+    "address": "太田市飯塚町1059",
+    "source": "manual",
+    "note": "住所の出典: https://league-one.jp/stadium/56（国土地理院の住所検索で位置を求めた）"
+  },
+  "代々木第二体育館（渋谷区）": {
+    "lat": 35.66643,
+    "lng": 139.69868,
+    "pref": "東京都",
+    "area": "関東",
+    "osm": "leisure/sports_centre",
+    "osmName": "代々木第二体育館",
+    "source": "nominatim"
+  },
+  "大崎町総合体育館": {
+    "lat": 31.4361,
+    "lng": 131.03395,
+    "pref": "鹿児島県",
+    "area": "九州・沖縄",
+    "address": "鹿児島県曽於郡大崎町神領2488-1",
+    "source": "manual",
+    "note": "住所の出典: https://www.town.kagoshima-osaki.lg.jp/kh_shougaisports/sougoutaiikukann.html（国土地理院の住所検索で位置を求めた）"
+  },
+  "大浜だいしんアリーナ": {
+    "lat": 34.58162,
+    "lng": 135.46008,
+    "pref": "大阪府",
+    "area": "近畿",
+    "address": "大阪府堺市堺区大浜北町5-7-1",
+    "source": "manual",
+    "note": "公式サイト・自治体サイト等の住所から国土地理院の住所検索で位置を求めた"
+  },
+  "大和ハウス プレミストドーム": {
+    "lat": 43.01516,
+    "lng": 141.40969,
+    "pref": "北海道",
+    "area": "北海道・東北",
+    "osm": "building/stadium",
+    "osmName": "大和ハウス　 プレミストドーム",
+    "source": "nominatim"
+  },
+  "大和工業アリーナ姫路": {
+    "lat": 34.82352,
+    "lng": 134.67424,
+    "pref": "兵庫県",
+    "area": "近畿",
+    "address": "兵庫県姫路市西延末450",
+    "source": "manual",
+    "note": "公式サイト・自治体サイト等の住所から国土地理院の住所検索で位置を求めた"
+  },
+  "池田市五月山体育館": {
+    "lat": 34.82827,
+    "lng": 135.4286,
+    "pref": "大阪府",
+    "area": "近畿",
+    "address": "大阪府池田市綾羽2-7-1",
+    "source": "manual",
+    "note": "公式サイト等の住所から国土地理院の住所検索で位置を求めた"
+  },
+  "秩父宮記念体育館": {
+    "lat": 35.33237,
+    "lng": 139.48901,
+    "pref": "神奈川県",
+    "area": "関東",
+    "osm": "leisure/sports_centre",
+    "osmName": "秩父宮記念体育館",
+    "source": "nominatim"
+  },
+  "中央区立総合スポーツセンター": {
+    "lat": 35.68681,
+    "lng": 139.78906,
+    "pref": "東京都",
+    "area": "関東",
+    "address": "東京都中央区日本橋浜町2-59-1",
+    "source": "manual",
+    "note": "公式サイト・自治体サイト等の住所から国土地理院の住所検索で位置を求めた"
+  },
+  "中国電力坂スポーツ施設": {
+    "lat": 34.34451,
+    "lng": 132.50711,
+    "pref": "広島県",
+    "area": "中国・四国",
+    "address": "広島県安芸郡坂町平成ヶ浜4丁目1",
+    "source": "manual",
+    "note": "住所の出典: https://league-one.jp/stadium/66（国土地理院の住所検索で位置を求めた）"
+  },
+  "町田GIONスタジアム": {
+    "lat": 35.59251,
+    "lng": 139.43886,
+    "pref": "東京都",
+    "area": "関東",
+    "osm": "leisure/stadium",
+    "osmName": "町田GIONスタジアム",
+    "source": "nominatim"
+  },
+  "町田市立総合体育館": {
+    "lat": 35.53623,
+    "lng": 139.47934,
+    "pref": "東京都",
+    "area": "関東",
+    "osm": "leisure/sports_hall",
+    "osmName": "町田市立総合体育館",
+    "source": "nominatim"
+  },
+  "調整中": {
+    "query": "調整中",
+    "lat": null,
+    "lng": null,
+    "note": "見つからず。query を別名に変えるか、lat/lng/area を手入力してください",
+    "failedAt": "2026-09-15T03:27:37.132Z"
+  },
+  "長野Uスタジアム": {
+    "lat": 36.58016,
+    "lng": 138.16976,
+    "pref": "長野県",
+    "area": "中部",
+    "osm": "leisure/stadium",
+    "osmName": "長野Uスタジアム",
+    "source": "nominatim"
+  },
+  "長野総合運動公園体育館": {
+    "lat": 36.65961,
+    "lng": 138.2299,
+    "pref": "長野県",
+    "area": "中部",
+    "address": "長野県長野市吉田5-1-19",
+    "source": "manual",
+    "note": "公式サイト等の住所から国土地理院の住所検索で位置を求めた"
+  },
+  "津山総合体育館": {
+    "lat": 35.06867,
+    "lng": 134.00752,
+    "pref": "岡山県",
+    "area": "中国・四国",
+    "address": "岡山県津山市山北669",
+    "source": "manual",
+    "note": "公式サイト等の住所から国土地理院の住所検索で位置を求めた"
+  },
+  "津市久居体育館": {
+    "lat": 34.68181,
+    "lng": 136.48476,
+    "pref": "三重県",
+    "area": "近畿",
+    "address": "三重県津市久居野村町877-1",
+    "source": "manual",
+    "note": "公式サイト・自治体サイト等の住所から国土地理院の住所検索で位置を求めた"
+  },
+  "島津アリーナ京都": {
+    "lat": 35.02341,
+    "lng": 135.72841,
+    "pref": "京都府",
+    "area": "近畿",
+    "osm": "building/yes",
+    "osmName": "島津アリーナ京都",
+    "source": "nominatim"
+  },
+  "東員町総合体育館": {
+    "lat": 35.07445,
+    "lng": 136.5836,
+    "pref": "三重県",
+    "area": "近畿",
+    "address": "三重県員弁郡東員町大字山田1600",
+    "source": "manual",
+    "note": "住所の出典: https://www.bleague.jp/arena_detail/?ArenaCD=686（国土地理院の住所検索で位置を求めた）"
+  },
+  "東急ドレッセとどろきアリーナ": {
+    "lat": 35.58729,
+    "lng": 139.64736,
+    "pref": "神奈川県",
+    "area": "関東",
+    "wikipedia": "川崎市とどろきアリーナ",
+    "source": "wikipedia"
+  },
+  "東京ドーム": {
+    "lat": 35.70557,
+    "lng": 139.75197,
+    "pref": "東京都",
+    "area": "関東",
+    "osm": "leisure/stadium",
+    "osmName": "東京ドーム",
+    "source": "nominatim"
+  },
+  "東京体育館": {
+    "lat": 35.6798,
+    "lng": 139.71252,
+    "pref": "東京都",
+    "area": "関東",
+    "osm": "leisure/arena",
+    "osmName": "東京体育館",
+    "source": "nominatim"
+  },
+  "東大阪アリーナ": {
+    "lat": 34.65789,
+    "lng": 135.5933,
+    "pref": "大阪府",
+    "area": "近畿",
+    "osm": "leisure/sports_centre",
+    "osmName": "東大阪アリーナ",
+    "source": "nominatim"
+  },
+  "東北ヒロセ シーアリーナ": {
+    "lat": 39.63389,
+    "lng": 141.94278,
+    "pref": "岩手県",
+    "area": "北海道・東北",
+    "wikipedia": "宮古市民総合体育館",
+    "source": "wikipedia"
+  },
+  "藤枝総合運動公園サッカー場": {
+    "lat": 34.88159,
+    "lng": 138.23289,
+    "pref": "静岡県",
+    "area": "中部",
+    "osm": "leisure/stadium",
+    "osmName": "藤枝総合運動公園サッカー場",
+    "source": "nominatim"
+  },
+  "徳島文理大学高松駅キャンパスアリーナ": {
+    "lat": 34.35086,
+    "lng": 134.04468,
+    "pref": "香川県",
+    "area": "中国・四国",
+    "address": "香川県高松市浜ノ町8-53",
+    "source": "manual",
+    "note": "公式サイト等の住所から国土地理院の住所検索で位置を求めた"
+  },
+  "敦賀市総合運動公園体育館": {
+    "lat": 35.64247,
+    "lng": 136.03271,
+    "pref": "福井県",
+    "area": "中部",
+    "osm": "leisure/sports_centre",
+    "osmName": "敦賀市総合運動公園体育館",
+    "source": "nominatim"
+  },
+  "日環アリーナ栃木": {
+    "lat": 36.5123,
+    "lng": 139.86624,
+    "pref": "栃木県",
+    "area": "関東",
+    "osm": "leisure/sports_hall",
+    "osmName": "日環アリーナ栃木",
+    "source": "nominatim"
+  },
+  "日産スタジアム": {
+    "lat": 35.50999,
+    "lng": 139.60638,
+    "pref": "神奈川県",
+    "area": "関東",
+    "osm": "leisure/stadium",
+    "osmName": "日産スタジアム",
+    "source": "nominatim"
+  },
+  "日本製鉄堺体育館": {
+    "lat": 34.59675,
+    "lng": 135.46214,
+    "pref": "大阪府",
+    "area": "近畿",
+    "wikipedia": "日本製鉄堺体育館",
+    "source": "wikipedia"
+  },
+  "日本大学文理学部 百周年記念館": {
+    "lat": 35.66337,
+    "lng": 139.63434,
+    "pref": "東京都",
+    "area": "関東",
+    "address": "東京都世田谷区桜上水3-25-40",
+    "source": "manual",
+    "note": "公式サイト・自治体サイト等の住所から国土地理院の住所検索で位置を求めた"
+  },
+  "日立市池の川さくらアリーナ": {
+    "lat": 36.57654,
+    "lng": 140.64749,
+    "pref": "茨城県",
+    "area": "関東",
+    "osm": "leisure/sports_centre",
+    "osmName": "日立市池の川さくらアリーナ",
+    "source": "nominatim"
+  },
+  "柏の葉公園総合競技場": {
+    "lat": 35.89639,
+    "lng": 139.93759,
+    "pref": "千葉県",
+    "area": "関東",
+    "address": "千葉県柏市柏の葉4−1",
+    "source": "manual",
+    "note": "住所の出典: https://league-one.jp/stadium/2（国土地理院の住所検索で位置を求めた）"
+  },
+  "白波スタジアム": {
+    "lat": 31.56483,
+    "lng": 130.56019,
+    "pref": "鹿児島県",
+    "area": "九州・沖縄",
+    "wikipedia": "鹿児島県立鴨池陸上競技場",
+    "source": "wikipedia",
+    "query": "白波スタジアム"
+  },
+  "函館サーモン・まるなまアリーナ": {
+    "lat": 41.78201,
+    "lng": 140.78262,
+    "pref": "北海道",
+    "area": "北海道・東北",
+    "osm": "amenity/bicycle_rental",
+    "osmName": "函館サーモン・まるなまアリーナ",
+    "source": "nominatim"
+  },
+  "函館どつくスポーツガーデン": {
+    "lat": 41.78599,
+    "lng": 140.74528,
+    "pref": "北海道",
+    "area": "北海道・東北",
+    "wikipedia": "千代台公園陸上競技場",
+    "source": "wikipedia",
+    "query": "函館どつくスポーツガーデン"
+  },
+  "八代トヨオカ地建アリーナ": {
+    "lat": 32.50477,
+    "lng": 130.61052,
+    "pref": "熊本県",
+    "area": "九州・沖縄",
+    "osm": "leisure/sports_hall",
+    "osmName": "八代トヨオカ地建アリーナ",
+    "source": "nominatim"
+  },
+  "飛騨高山ビッグアリーナ": {
+    "lat": 36.15029,
+    "lng": 137.2327,
+    "pref": "岐阜県",
+    "area": "中部",
+    "osm": "leisure/sports_centre",
+    "osmName": "飛騨高山ビッグアリーナ",
+    "source": "nominatim"
+  },
+  "俵田翁記念体育館": {
+    "lat": 33.94683,
+    "lng": 131.2722,
+    "pref": "山口県",
+    "area": "中国・四国",
+    "osm": "leisure/sports_centre",
+    "osmName": "俵田翁記念体育館",
+    "source": "nominatim"
+  },
+  "品川区立戸越体育館": {
+    "lat": 35.61082,
+    "lng": 139.72061,
+    "pref": "東京都",
+    "area": "関東",
+    "osm": "leisure/sports_centre",
+    "osmName": "戸越体育館",
+    "source": "nominatim"
+  },
+  "浜松アリーナ": {
+    "lat": 34.71777,
+    "lng": 137.76686,
+    "pref": "静岡県",
+    "area": "中部",
+    "osm": "leisure/sports_centre",
+    "osmName": "浜松アリーナ",
+    "source": "nominatim"
+  },
+  "富山県西部体育センター": {
+    "lat": 36.64234,
+    "lng": 137.00023,
+    "pref": "富山県",
+    "area": "中部",
+    "osm": "leisure/sports_centre",
+    "osmName": "富山県西部体育センター",
+    "source": "nominatim"
+  },
+  "富山県総合運動公園陸上競技場": {
+    "lat": 36.62501,
+    "lng": 137.19556,
+    "pref": "富山県",
+    "area": "中部",
+    "osm": "leisure/stadium",
+    "osmName": "総合運動公園陸上競技場",
+    "source": "nominatim"
+  },
+  "富士宮市民体育館": {
+    "lat": 35.26043,
+    "lng": 138.60948,
+    "pref": "静岡県",
+    "area": "中部",
+    "osm": "leisure/pitch",
+    "osmName": "富士宮市民体育館",
+    "source": "nominatim"
+  },
+  "武蔵野市立武蔵野陸上競技場": {
+    "lat": 35.71785,
+    "lng": 139.5676,
+    "pref": "東京都",
+    "area": "関東",
+    "wikipedia": "武蔵野市立武蔵野陸上競技場",
+    "source": "wikipedia"
+  },
+  "福岡武道館": {
+    "lat": 33.58243,
+    "lng": 130.37775,
+    "pref": "福岡県",
+    "area": "九州・沖縄",
+    "osm": "leisure/sports_hall",
+    "osmName": "福岡武道館",
+    "source": "nominatim"
+  },
+  "福山通運ローズスタジアム": {
+    "lat": 34.44093,
+    "lng": 133.3952,
+    "pref": "広島県",
+    "area": "中国・四国",
+    "wikipedia": "福山市竹ヶ端運動公園陸上競技場",
+    "source": "wikipedia"
+  },
+  "福田公園体育館（倉敷市）": {
+    "lat": 34.53336,
+    "lng": 133.76813,
+    "pref": "岡山県",
+    "area": "中国・四国",
+    "osm": "leisure/sports_centre",
+    "osmName": "福田公園体育館",
+    "source": "nominatim"
+  },
+  "福島トヨタクラウンアリーナ": {
+    "lat": 37.75253,
+    "lng": 140.43639,
+    "pref": "福島県",
+    "area": "北海道・東北",
+    "address": "福島県福島市仁井田字西下川原41-1",
+    "source": "manual",
+    "note": "公式サイト・自治体サイト等の住所から国土地理院の住所検索で位置を求めた"
+  },
+  "平和堂HATOスタジアム": {
+    "lat": 35.28222,
+    "lng": 136.255,
+    "pref": "滋賀県",
+    "area": "近畿",
+    "wikipedia": "平和堂HATOスタジアム",
+    "source": "manual",
+    "note": "彦根総合スポーツ公園陸上競技場（滋賀県彦根市松原町3028）"
+  },
+  "宝来屋 ボンズアリーナ": {
+    "lat": 37.39736,
+    "lng": 140.36392,
+    "pref": "福島県",
+    "area": "北海道・東北",
+    "wikipedia": "郡山総合体育館",
+    "source": "wikipedia"
+  },
+  "豊橋市総合体育館": {
+    "lat": 34.75811,
+    "lng": 137.32494,
+    "pref": "愛知県",
+    "area": "中部",
+    "wikipedia": "豊橋市総合体育館",
+    "source": "wikipedia"
+  },
+  "豊田スタジアム": {
+    "lat": 35.08459,
+    "lng": 137.17087,
+    "pref": "愛知県",
+    "area": "中部",
+    "osm": "leisure/stadium",
+    "osmName": "豊田スタジアム",
+    "source": "nominatim"
+  },
+  "豊田合成記念体育館(エントリオ)": {
+    "lat": 35.25454,
+    "lng": 136.82167,
+    "pref": "愛知県",
+    "area": "中部",
+    "osm": "leisure/sports_hall",
+    "osmName": "豊田合成記念体育館",
+    "source": "nominatim"
+  },
+  "北ガスアリーナ札幌46": {
+    "lat": 43.0679,
+    "lng": 141.36348,
+    "pref": "北海道",
+    "area": "北海道・東北",
+    "osm": "leisure/sports_centre",
+    "osmName": "北ガスアリーナ札幌46",
+    "source": "nominatim"
+  },
+  "北海きたえーる": {
+    "lat": 43.04398,
+    "lng": 141.37625,
+    "pref": "北海道",
+    "area": "北海道・東北",
+    "osm": "leisure/sports_centre",
+    "osmName": "北海きたえーる",
+    "source": "nominatim"
+  },
+  "北九州市立総合体育館": {
+    "lat": 33.87317,
+    "lng": 130.84175,
+    "pref": "福岡県",
+    "area": "九州・沖縄",
+    "osm": "building/yes",
+    "osmName": "北九州市立総合体育館",
+    "source": "nominatim"
+  },
+  "北里アリーナ富士": {
+    "lat": 35.19517,
+    "lng": 138.69087,
+    "pref": "静岡県",
+    "area": "中部",
+    "osm": "building/yes",
+    "osmName": "北里アリーナ富士",
+    "source": "nominatim"
+  },
+  "味の素スタジアム": {
+    "lat": 35.66419,
+    "lng": 139.52708,
+    "pref": "東京都",
+    "area": "関東",
+    "osm": "leisure/stadium",
+    "osmName": "味の素スタジアム",
+    "source": "nominatim"
+  },
+  "名古屋金城ふ頭アリーナ": {
+    "lat": 35.04886,
+    "lng": 136.84719,
+    "pref": "愛知県",
+    "area": "中部",
+    "wikipedia": "名古屋金城ふ頭アリーナ",
+    "source": "wikipedia"
+  },
+  "名古屋市中村スポーツセンター": {
+    "lat": 35.17417,
+    "lng": 136.85699,
+    "pref": "愛知県",
+    "area": "中部",
+    "osm": "leisure/sports_centre",
+    "osmName": "中村スポーツセンター",
+    "source": "nominatim"
+  },
+  "名古屋市東スポーツセンター": {
+    "lat": 35.18892,
+    "lng": 136.94638,
+    "pref": "愛知県",
+    "area": "中部",
+    "address": "愛知県名古屋市東区大幸南1-1-10",
+    "source": "manual",
+    "note": "公式サイト等の住所から国土地理院の住所検索で位置を求めた"
+  },
+  "名古屋市枇杷島スポーツセンター": {
+    "lat": 35.18879,
+    "lng": 136.87504,
+    "pref": "愛知県",
+    "area": "中部",
+    "osm": "leisure/sports_centre",
+    "osmName": "枇杷島スポーツセンター",
+    "source": "nominatim"
+  },
+  "明治神宮野球場": {
+    "lat": 35.67452,
+    "lng": 139.71721,
+    "pref": "東京都",
+    "area": "関東",
+    "osm": "leisure/stadium",
+    "osmName": "明治神宮野球場",
+    "source": "nominatim"
+  },
+  "鳴門・大塚スポーツパークポカリスエットスタジアム": {
+    "lat": 34.16786,
+    "lng": 134.61786,
+    "pref": "徳島県",
+    "area": "中国・四国",
+    "wikipedia": "徳島県鳴門総合運動公園陸上競技場",
+    "source": "wikipedia",
+    "query": "鳴門・大塚スポーツパークポカリスエットスタジアム"
+  },
+  "有明アリーナ(サブ)": {
+    "lat": 35.64334,
+    "lng": 139.79446,
+    "pref": "東京都",
+    "area": "関東",
+    "osm": "leisure/stadium",
+    "osmName": "有明アリーナ",
+    "source": "nominatim"
+  },
+  "有明アリーナ(メイン)": {
+    "lat": 35.64334,
+    "lng": 139.79446,
+    "pref": "東京都",
+    "area": "関東",
+    "osm": "leisure/stadium",
+    "osmName": "有明アリーナ",
+    "source": "nominatim"
+  },
+  "有明コロシアム": {
+    "lat": 35.63646,
+    "lng": 139.7901,
+    "pref": "東京都",
+    "area": "関東",
+    "osm": "leisure/stadium",
+    "osmName": "有明コロシアム",
+    "source": "nominatim"
+  },
+  "和歌山ビッグホエール": {
+    "lat": 34.22131,
+    "lng": 135.19085,
+    "pref": "和歌山県",
+    "area": "近畿",
+    "osm": "leisure/stadium",
+    "osmName": "和歌山ビッグホエール",
+    "source": "nominatim"
+  },
+  "和光市民文化センターサンアゼリア": {
+    "lat": 35.77951,
+    "lng": 139.60425,
+    "pref": "埼玉県",
+    "area": "関東",
+    "address": "埼玉県和光市広沢1-5",
+    "source": "manual",
+    "note": "公式サイト等の住所から国土地理院の住所検索で位置を求めた"
+  }
+}
