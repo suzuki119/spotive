@@ -2,39 +2,57 @@
 
 /**
  * pages/setting/account-setting.php
- * アカウント設定画面。アカウント情報・退会
+ * アカウント情報・退会
+ *
+ * 表示しているのは users の中身と、いま有効なセッションの数。
+ * 退会（status = 'deleted'）は、大会や申請の扱いを決めてから作る。
  */
 
 declare(strict_types=1);
 
-require_once __DIR__ . '/../../config/db.php';
+require_once __DIR__ . '/../../lib/account.php';
+require_once __DIR__ . '/../../lib/layout.php';
 
-// ここでデータを取得する（HTML は書かない）
+$user = require_login();
 
+$sessions = (int) db_one(
+  'SELECT COUNT(*) AS c FROM auth_sessions
+    WHERE user_id = :u AND revoked_at IS NULL AND expires_at > NOW()',
+  ['u' => $user['id']]
+)['c'];
+
+page_header('アカウント設定', 'アカウント設定');
 ?>
-<!DOCTYPE html>
-<html lang="ja">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>アカウント設定 | SPOTIVE</title>
 
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Jost:wght@400;600&family=Noto+Sans+JP:wght@400;500;700&display=swap"
-      rel="stylesheet"
-    />
-    <link rel="stylesheet" href="../../css/style.css" />
-  </head>
+<dl class="detail">
+  <dt class="detail__label">ニックネーム</dt>
+  <dd class="detail__value"><?= h((string) $user['nickname']) ?></dd>
 
-  <body>
-    <header class="site-header"></header>
+  <dt class="detail__label">メールアドレス</dt>
+  <dd class="detail__value">
+    <?= h((string) $user['email']) ?>
+    <?= $user['email_verified_at'] !== null ? '（確認済み）' : '（未確認）' ?>
+  </dd>
 
-    <main class="l-main"></main>
+  <dt class="detail__label">電話番号</dt>
+  <dd class="detail__value">
+    <?= h((string) $user['phone_e164']) ?>
+    <?= $user['phone_verified_at'] !== null ? '（確認済み）' : '（未確認）' ?>
+  </dd>
 
-    <footer class="site-footer"></footer>
+  <dt class="detail__label">信頼レベル</dt>
+  <dd class="detail__value"><?= h(level_label((int) $user['trust_level'])) ?></dd>
 
-    <script src="../../js/main.js"></script>
-  </body>
-</html>
+  <dt class="detail__label">最終ログイン</dt>
+  <dd class="detail__value"><?= h(format_datetime((string) $user['last_login_at'])) ?></dd>
+
+  <dt class="detail__label">ログイン中の端末</dt>
+  <dd class="detail__value"><?= $sessions ?>件</dd>
+</dl>
+
+<p class="form-page__note">
+  ニックネームやメールアドレスの変更、退会はまだ作っていません。<br />
+  <a href="setting.php">マイページへ戻る</a>
+</p>
+
+<?php page_footer(); ?>

@@ -1,0 +1,451 @@
+// アカウント・主催者・運営の画面で使うフォームまわり。
+// 色は暫定値。_variables.scss ができたらそちらの変数に置き換えること。
+
+$form-text: #1c2024;
+$form-muted: #60646c;
+$form-line: #e0e1e6;
+$form-accent: #0b6bcb;
+$form-danger: #e5484d;
+$form-bp: 760px;
+
+.site-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 12px 20px;
+  background: #fff;
+  border-bottom: 1px solid $form-line;
+}
+
+.site-header__logo {
+  font-family: Jost, sans-serif;
+  font-size: 20px;
+  font-weight: 600;
+  color: $form-text;
+  text-decoration: none;
+}
+
+.site-header__nav {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 14px;
+  margin-left: auto;
+  font-size: 14px;
+}
+
+.site-header__link {
+  color: $form-accent;
+  text-decoration: none;
+  background: none;
+  border: 0;
+  padding: 0;
+  font: inherit;
+  cursor: pointer;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+.site-header__logout {
+  display: inline;
+}
+
+.site-footer {
+  padding: 24px 20px;
+  color: $form-muted;
+  font-size: 13px;
+  text-align: center;
+  border-top: 1px solid $form-line;
+}
+
+// ---- ページの枠 ----
+.form-page {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 24px 16px 64px;
+  color: $form-text;
+  line-height: 1.7;
+}
+
+.form-page__title {
+  margin: 0 0 16px;
+  font-size: 22px;
+}
+
+.form-page__subtitle {
+  margin: 32px 0 12px;
+  padding-bottom: 6px;
+  font-size: 16px;
+  border-bottom: 1px solid $form-line;
+}
+
+.form-page__lead {
+  margin: 0 0 20px;
+}
+
+.form-page__note {
+  margin-top: 24px;
+  font-size: 13px;
+  color: $form-muted;
+
+  a {
+    color: $form-accent;
+  }
+}
+
+// ---- お知らせ ----
+.notice {
+  margin: 0 0 20px;
+  padding: 12px 14px;
+  border-radius: 8px;
+  font-size: 14px;
+
+  &--info {
+    color: #0b4a8a;
+    background: #e7f1fb;
+  }
+
+  &--success {
+    color: #1a6b3c;
+    background: #dcf5e5;
+  }
+
+  &--error {
+    color: #8a1c1f;
+    background: #fdecec;
+  }
+}
+
+// ---- フォーム ----
+.form {
+  margin: 0;
+}
+
+.form--inline {
+  display: inline-block;
+  margin-right: 8px;
+}
+
+.form__field {
+  margin-bottom: 18px;
+}
+
+.form__label {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.form__input,
+.form__select,
+.form__textarea {
+  width: 100%;
+  padding: 9px 10px;
+  font: inherit;
+  color: inherit;
+  background: #fff;
+  border: 1px solid $form-line;
+  border-radius: 8px;
+
+  &:focus-visible {
+    outline: 2px solid $form-accent;
+    outline-offset: 1px;
+  }
+}
+
+.form__input--half {
+  width: calc(50% - 4px);
+}
+
+.form__textarea {
+  resize: vertical;
+}
+
+.form__hint {
+  margin: 6px 0 0;
+  font-size: 12px;
+  color: $form-muted;
+}
+
+.form__field--check {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.form__check {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.form__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.field-error {
+  margin: 6px 0 0;
+  font-size: 12px;
+  color: $form-danger;
+}
+
+// ---- ボタン ----
+.button {
+  display: inline-block;
+  padding: 10px 18px;
+  font: inherit;
+  color: $form-text;
+  text-align: center;
+  text-decoration: none;
+  background: #fff;
+  border: 1px solid $form-line;
+  border-radius: 8px;
+  cursor: pointer;
+
+  &:hover {
+    background: #f7f8fa;
+  }
+
+  &--primary {
+    color: #fff;
+    background: $form-accent;
+    border-color: $form-accent;
+
+    &:hover {
+      opacity: 0.9;
+      background: $form-accent;
+    }
+  }
+
+  &--danger {
+    color: #fff;
+    background: $form-danger;
+    border-color: $form-danger;
+
+    &:hover {
+      opacity: 0.9;
+      background: $form-danger;
+    }
+  }
+
+  &--small {
+    padding: 5px 10px;
+    font-size: 13px;
+  }
+}
+
+// ---- 表示のための部品 ----
+.detail {
+  display: grid;
+  grid-template-columns: 160px 1fr;
+  gap: 10px 16px;
+  margin: 0 0 24px;
+  font-size: 14px;
+
+  @media (max-width: $form-bp) {
+    grid-template-columns: 1fr;
+    gap: 2px;
+  }
+}
+
+.detail__label {
+  color: $form-muted;
+}
+
+.detail__value {
+  margin: 0;
+}
+
+.detail__note {
+  display: block;
+  font-size: 12px;
+  color: $form-muted;
+}
+
+.table {
+  width: 100%;
+  margin-bottom: 24px;
+  font-size: 14px;
+  border-collapse: collapse;
+
+  th,
+  td {
+    padding: 10px 8px;
+    text-align: left;
+    vertical-align: top;
+    border-bottom: 1px solid $form-line;
+  }
+
+  th {
+    font-size: 12px;
+    color: $form-muted;
+  }
+}
+
+.doc-list {
+  margin: 0 0 20px;
+  padding: 0;
+  list-style: none;
+  font-size: 14px;
+}
+
+.doc-list__item {
+  padding: 8px 0;
+  border-bottom: 1px solid $form-line;
+
+  &--empty {
+    color: $form-muted;
+  }
+}
+
+// ---- マイページ ----
+.level-card {
+  padding: 20px;
+  margin-bottom: 28px;
+  background: #fff;
+  border: 1px solid $form-line;
+  border-radius: 12px;
+}
+
+.level-card__name {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.level-card__level {
+  margin: 4px 0 16px;
+  color: $form-accent;
+  font-weight: 700;
+}
+
+.level-steps {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 0 0 16px;
+  padding: 0;
+  list-style: none;
+  counter-reset: step;
+}
+
+.level-steps__item {
+  padding: 6px 12px;
+  font-size: 13px;
+  border: 1px solid $form-line;
+  border-radius: 999px;
+
+  &.is-done {
+    color: #1a6b3c;
+    background: #dcf5e5;
+    border-color: #b7e4c8;
+  }
+
+  a {
+    color: $form-accent;
+  }
+}
+
+.setting-menu__list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+
+  li {
+    border-bottom: 1px solid $form-line;
+  }
+
+  a {
+    display: block;
+    padding: 12px 4px;
+    color: $form-accent;
+    text-decoration: none;
+  }
+}
+
+.event-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.event-list__item {
+  padding: 10px 0;
+  border-bottom: 1px solid $form-line;
+}
+
+.event-list__meta {
+  display: block;
+  font-size: 12px;
+  color: $form-muted;
+}
+
+// ---- アカウント種別の選択 ----
+.choice {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+
+  @media (max-width: $form-bp) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.choice__item {
+  padding: 20px;
+  background: #fff;
+  border: 1px solid $form-line;
+  border-radius: 12px;
+}
+
+.choice__title {
+  margin: 0 0 8px;
+  font-size: 17px;
+}
+
+.choice__lead {
+  margin: 0 0 12px;
+  font-size: 14px;
+}
+
+.choice__steps {
+  margin: 0 0 16px;
+  padding-left: 1.2em;
+  font-size: 13px;
+  color: $form-muted;
+}
+
+// ---- 審査画面 ----
+.queue-tabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 24px;
+}
+
+.queue-tabs__item {
+  padding: 8px 14px;
+  font-size: 14px;
+  color: $form-text;
+  text-decoration: none;
+  border: 1px solid $form-line;
+  border-radius: 999px;
+
+  &.is-current {
+    color: #fff;
+    background: $form-accent;
+    border-color: $form-accent;
+  }
+}
+
+.queue-tabs__count {
+  margin-left: 6px;
+  font-size: 12px;
+  opacity: 0.8;
+}
