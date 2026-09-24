@@ -94,6 +94,18 @@ function base_path(): string
   return $depth === 0 ? '.' : rtrim(str_repeat('../', $depth), '/');
 }
 
+/**
+ * CSS や JS の URL。ファイルを更新すると ?v= の値が変わるので、
+ * ブラウザが古いキャッシュを使い続けることがなくなる
+ * （AGENTS.md のチェックリスト「キャッシュで古い CSS が残ります」への対策）。
+ */
+function asset(string $path): string
+{
+  $file    = dirname(__DIR__) . '/' . ltrim($path, '/');
+  $version = is_file($file) ? (string) filemtime($file) : '0';
+  return url($path) . '?v=' . $version;
+}
+
 /** 指定の URL へ移動して終了する。POST の後は必ずこれでリダイレクトする */
 function redirect(string $path): never
 {

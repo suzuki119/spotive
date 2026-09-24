@@ -84,7 +84,7 @@ function page_header(string $title, string $heading = ''): void
       href="https://fonts.googleapis.com/css2?family=Jost:wght@400;600&family=Noto+Sans+JP:wght@400;500;700&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="<?= h($base) ?>/css/style.css" />
+    <link rel="stylesheet" href="<?= h(asset('css/style.css')) ?>" />
   </head>
 
   <body>
@@ -139,7 +139,7 @@ function page_footer(): void
       <p class="site-footer__copyright">&copy; SPOTIVE</p>
     </footer>
 
-    <script src="<?= h($base) ?>/js/main.js"></script>
+    <script src="<?= h(asset('js/main.js')) ?>"></script>
   </body>
 </html>
   <?php

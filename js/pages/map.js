@@ -27,7 +27,9 @@ document.addEventListener("DOMContentLoaded", () => {
     "4to6": [4001, 6000],
     o6: [6001, Infinity],
   };
-  const MOBILE = window.matchMedia("(max-width: 760px)");
+  // AGENTS.md のブレイクポイント（タブレット 768px）に合わせる。
+  // これ未満がスマホ表示＝絞り込みと詳細を下から出すシートで扱う
+  const MOBILE = window.matchMedia("(max-width: 767px)");
   const POPUP_GAME_LIMIT = 5;
 
   // 競技コードは index.php の SPORT_LABELS と揃える。色とアイコンは地図の見た目用
@@ -295,9 +297,29 @@ document.addEventListener("DOMContentLoaded", () => {
     const marker = L.marker([first.v.lat, first.v.lng], { icon, title: first.v.name });
     marker.venueGames = venueGames;
     marker.focusId = null;
-    marker.bindPopup(() => venuePopupHtml(marker.venueGames, marker.focusId), { maxWidth: 300 });
     marker.on("popupclose", () => { marker.focusId = null; });
+
+    // スマホはポップアップではなく、画面下から出るシートに詳細を出す
+    marker.on("click", () => {
+      if (MOBILE.matches) openMatchSheet(marker);
+    });
+
+    applyMarkerMode(marker);
     return marker;
+  }
+
+  /**
+   * 画面幅に応じて、ピンの出し方を切り替える。
+   * PC はその場のポップアップ、スマホは下から出るシート。
+   */
+  function applyMarkerMode(marker) {
+    if (MOBILE.matches) {
+      marker.unbindPopup();
+      return;
+    }
+    if (!marker.getPopup()) {
+      marker.bindPopup(() => venuePopupHtml(marker.venueGames, marker.focusId), { maxWidth: 300 });
+    }
   }
 
   function venuePopupHtml(venueGames, focusId) {
@@ -432,7 +454,9 @@ document.addEventListener("DOMContentLoaded", () => {
       layer.addLayer(marker);
     });
 
-    $("#result-count").textContent = `${visible.length}件の試合`;
+    const countText = `${visible.length}件の試合`;
+    $("#result-count").textContent = countText;
+    $("#filter-count").textContent = countText;   // スマホは一覧が無いのでこちらで知らせる
     $("#list").innerHTML = visible.length
       ? visible.map(cardHtml).join("")
       : '<li class="empty">条件に合う試合がありません。<br>条件を変えてみてください。</li>';
@@ -462,6 +486,46 @@ document.addEventListener("DOMContentLoaded", () => {
     map.fitBounds(bounds, { padding: [40, 40], maxZoom: 13 });
   }
 
+  // -----------------------------------------------------------------
+  // 下から出るシート（スマホ）
+  //   絞り込みと試合の詳細は、同じ場所に入れ替わりで出す。
+  //   どちらか一方だけが開いている状態を保つ。
+  // -----------------------------------------------------------------
+  const filterPanel  = $("#filter-panel");
+  const filterToggle = $("#filter-toggle");
+  const matchSheet   = $("#match-sheet");
+  const matchBody    = $("#match-sheet-body");
+
+  function openFilterSheet() {
+    closeMatchSheet();
+    filterPanel.classList.add("is-open");
+    filterToggle.setAttribute("aria-expanded", "true");
+    filterPanel.scrollTop = 0;   // 前に開いたときの位置を引きずらない
+  }
+
+  function closeFilterSheet() {
+    filterPanel.classList.remove("is-open");
+    filterToggle.setAttribute("aria-expanded", "false");
+  }
+
+  function openMatchSheet(marker) {
+    closeFilterSheet();
+    matchBody.innerHTML = venuePopupHtml(marker.venueGames, marker.focusId);
+    matchSheet.classList.add("is-open");
+    matchSheet.setAttribute("aria-hidden", "false");
+    matchSheet.scrollTop = 0;
+  }
+
+  function closeMatchSheet() {
+    matchSheet.classList.remove("is-open");
+    matchSheet.setAttribute("aria-hidden", "true");
+  }
+
+  function closeSheets() {
+    closeFilterSheet();
+    closeMatchSheet();
+  }
+
   function focusGame(id) {
     const game = games.find((g) => g.id === id);
     if (!game) return;
@@ -469,15 +533,26 @@ document.addEventListener("DOMContentLoaded", () => {
     if (!marker) return;
     marker.closePopup(); // 閉じると focusId が消えるので、先に閉じてから選んだ試合を設定する
     marker.focusId = id;
+
+    // スマホは地図まで戻したうえで、詳細をシートに出す
+    const showDetail = () => {
+      if (MOBILE.matches) {
+        openMatchSheet(marker);
+        return;
+      }
+      marker.openPopup();
+    };
+
     if (MOBILE.matches) $("#map").scrollIntoView({ behavior: "smooth", block: "start" });
+
     if (layer.zoomToShowLayer) {
       layer.zoomToShowLayer(marker, () => {
         map.panTo(marker.getLatLng(), { animate: false });
-        marker.openPopup();
+        showDetail();
       });
     } else {
       map.setView(marker.getLatLng(), 14);
-      marker.openPopup();
+      showDetail();
     }
   }
 
@@ -507,7 +582,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
   $("#list").addEventListener("click", (e) => {
     const card = e.target.closest(".card");
-    if (card) focusGame(Number(card.dataset.id));
+    if (!card) return;
+    // スマホは一覧が全画面なので、選んだら閉じて地図に戻る
+    if (MOBILE.matches) closeFilterSheet();
+    focusGame(Number(card.dataset.id));
   });
 
   $("#sort").addEventListener("change", () => {
@@ -515,8 +593,29 @@ document.addEventListener("DOMContentLoaded", () => {
     render();
   });
 
-  $("#fit").addEventListener("click", fitToResults);
-  $("#locate").addEventListener("click", locate);
+  $("#fit").addEventListener("click", () => { closeSheets(); fitToResults(); });
+  $("#locate").addEventListener("click", () => { closeSheets(); locate(); });
+
+  // ハンバーガーで絞り込みを開閉する（スマホ）
+  filterToggle.addEventListener("click", () => {
+    if (filterPanel.classList.contains("is-open")) {
+      closeFilterSheet();
+    } else {
+      openFilterSheet();
+    }
+  });
+
+  $("#filter-close").addEventListener("click", closeFilterSheet);
+  $("#match-sheet-close").addEventListener("click", closeMatchSheet);
+
+  // 地図の余白をタップしたらシートを閉じる
+  map.on("click", closeSheets);
+
+  // Esc でも閉じられるようにする
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") closeSheets();
+  });
+
 
   map.on("locationfound", (e) => {
     userLatLng = e.latlng;
@@ -537,8 +636,12 @@ document.addEventListener("DOMContentLoaded", () => {
     render();
   });
 
-  // 画面サイズが変わったら地図のサイズを再計算
-  MOBILE.addEventListener("change", () => map.invalidateSize());
+  // 画面サイズが変わったら、地図のサイズとピンの出し方をそろえ直す
+  MOBILE.addEventListener("change", () => {
+    map.invalidateSize();
+    closeSheets();
+    venueMarkers.forEach(applyMarkerMode);
+  });
 
   // -----------------------------------------------------------------
   // 読み込み
