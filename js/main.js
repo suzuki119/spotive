@@ -6,4 +6,10 @@
 
 document.addEventListener("DOMContentLoaded", () => {
   // 共通処理の初期化をここにまとめる
+
+  // 　　back（戻る）をクリックすると前のページに戻る
+  const backButton = document.querySelector(".back");
+  backButton.addEventListener("click", () => {
+    history.back();
+  });
 });

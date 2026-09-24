@@ -873,13 +873,23 @@ body {
 
 .input {
   display: block;
-  margin: 30px auto 0;
+  margin: 12px auto 0;
   width: 100%;
-  max-width: 300px;
+  max-width: 400px;
   height: 50px;
-  border-radius: 50px;
   box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.2);
   padding-left: 20px;
+}
+.input::-moz-placeholder {
+  color: rgba(0, 0, 0, 0.2);
+}
+.input::placeholder {
+  color: rgba(0, 0, 0, 0.2);
+}
+
+.back {
+  box-shadow: none;
+  margin-top: 10px;
 }
 
 .account-type {
@@ -899,25 +909,21 @@ body {
   text-align: center;
   color: rgba(0, 0, 0, 0.8);
 }
-.account-type-btn {
-  width: 70px;
-  height: 50px;
-  text-align: center;
-  display: block;
-  margin: 30px auto 0;
-  border-radius: 50px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-  color: rgba(0, 0, 0, 0.5);
-  transition: box-shadow 0.3s;
-}
-.account-type-btn:hover {
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
-}
 .account-type article {
   margin-top: 40px;
 }
 .account-type-organizer {
   margin-top: 20px;
+}
+.account-type-email {
+  display: block;
+  margin: 30px auto 0;
+  width: 100%;
+  max-width: 300px;
+  height: 50px;
+  border-radius: 50px;
+  box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.2);
+  padding-left: 20px;
 }
 
 .account-type-signin {
@@ -940,5 +946,20 @@ body {
 }
 .account-type-signin-btn:hover {
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+}
+
+.register-title {
+  font-size: 22px;
+}
+.register-form {
+  width: 100%;
+  max-width: 400px;
+  margin: 30px auto 0;
+}
+
+.verification {
+  width: 230px;
+  height: 43px;
+  background: url(../images/icons/Group.svg) no-repeat 88% center/8%;
 }
 /*# sourceMappingURL=style.css.map */
