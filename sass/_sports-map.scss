@@ -1,5 +1,14 @@
 // 観戦マップ画面（pages/map/map.php）専用のスタイル。
 // 前身プロジェクト（sport.map/css/style.css）の地図まわりを移植したもの。
+//
+// スマホを基準に書き、min-width で広い画面に広げる（AGENTS.md「対応デバイス」）。
+//
+//   スマホ … 地図だけを見せる。試合一覧は出さない。
+//            絞り込みは「絞り込み」ボタンで全画面に開き、
+//            ピンを押すと試合の詳細が画面下から出る。
+//   PC   … 左に試合一覧を出す。絞り込みは一覧の上に重なるパネル、
+//            詳細はピンのポップアップ。
+//
 // 色は暫定値。_variables.scss ができたらそちらの変数に置き換えること。
 
 $map-panel: #ffffff;
@@ -7,13 +16,29 @@ $map-text: #1c2024;
 $map-muted: #60646c;
 $map-line: #e0e1e6;
 $map-accent: #0b6bcb;
-$map-bp: 760px;
+$bp-tablet: 768px;
+
+// サイトヘッダーの高さぶん。ヘッダーの中身が決まったら、ここだけ直せばよい
+$site-header-height: 48px;
+
+// 画面下からせり上がるパネルの共通の振る舞い
+@mixin slide-up-panel {
+  position: fixed;
+  z-index: 1100; // Leaflet のコントロール（1000）より前に出す
+  overflow-y: auto;
+  overscroll-behavior: contain; // パネルの端まで送っても背後の地図が動かない
+  background: $map-panel;
+  transform: translateY(100%);
+  visibility: hidden;
+  transition: transform 0.2s ease, visibility 0.2s ease;
+}
+
+@mixin slide-up-open {
+  transform: translateY(0);
+  visibility: visible;
+}
 
 .sports-map {
-  display: grid;
-  grid-template-columns: 360px 1fr;
-  min-height: 0;
-  height: calc(100vh - 120px); // ヘッダー・フッターの高さぶんを引く
   color: $map-text;
   font-size: 14px;
 
@@ -24,66 +49,177 @@ $map-bp: 760px;
     color: inherit;
   }
 
-  @media (max-width: $map-bp) {
-    grid-template-columns: 1fr;
-    height: auto;
+  @media (min-width: $bp-tablet) {
+    display: grid;
+    grid-template-columns: 360px 1fr;
+    min-height: 0;
+    height: calc(100vh - 120px); // ヘッダー・フッターの高さぶんを引く
   }
 }
 
+// スマホでは、この中身（絞り込み → 結果一覧）がまるごと全画面で出る。
+// PC では左の固定サイドバーに戻る。
 .sports-map__side {
-  overflow-y: auto;
-  background: $map-panel;
-  border-right: 1px solid $map-line;
+  @include slide-up-panel;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  padding-bottom: 32px;
 
-  @media (max-width: $map-bp) {
-    overflow: visible;
-    border-right: 0;
+  &.is-open {
+    @include slide-up-open;
+  }
+
+  .logo {
+    display: none; // スマホではサイトヘッダーがあるので出さない
+  }
+
+  @media (min-width: $bp-tablet) {
+    position: static;
+    z-index: auto;
+    padding-bottom: 0;
+    overflow-y: auto;
+    border-right: 1px solid $map-line;
+    box-shadow: none;
+    transform: none;
+    visibility: visible;
+    transition: none;
+
+    .logo {
+      display: inline-block;
+      padding: 16px 16px 0;
+      font-family: Jost, sans-serif;
+      font-weight: 600;
+      color: $map-text;
+      text-decoration: none;
+    }
   }
 }
 
+// スマホは地図で画面を埋める
 .sports-map__canvas {
   position: relative;
+  height: calc(100vh - #{$site-header-height});
+  height: calc(100dvh - #{$site-header-height});
 
-  @media (max-width: $map-bp) {
-    order: -1; // スマホでは地図を先に見せる
-    height: 55vh;
+  @media (min-width: $bp-tablet) {
+    height: auto;
   }
 }
 
 #map {
   position: absolute;
   inset: 0;
+}
 
-  @media (max-width: $map-bp) {
-    position: relative;
-    height: 100%;
+// ---- パネル上部の帯 ----
+// スクロールしても「閉じる」に手が届くよう貼り付ける
+.sheet__head {
+  position: sticky;
+  top: 0;
+  z-index: 2; // 下の .list-head より前に出す
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 16px;
+  padding: 16px;
+  background: $map-panel;
+  border-bottom: 1px solid $map-line;
+}
+
+.sheet__title {
+  margin: 0;
+  font-size: 15px;
+  font-weight: bold;
+}
+
+.sheet__count {
+  margin-left: auto;
+  font-size: 12px;
+  color: $map-muted;
+}
+
+.sheet__close {
+  padding: 4px 12px;
+  font-size: 12px;
+  color: $map-muted;
+  background: none;
+  border: 1px solid $map-line;
+  border-radius: 999px;
+  cursor: pointer;
+
+  &:hover {
+    background: #f7f8fa;
   }
 }
 
 // ---- 絞り込み ----
+// スマホではパネルの中身として普通に並ぶ。PC だけ一覧の上に重なるパネルになる
 .sports-map__filters {
-  border-bottom: 1px solid $map-line;
-
-  summary {
-    padding: 12px 16px;
-    font-weight: bold;
-    cursor: pointer;
-  }
-
   fieldset {
-    margin: 0 0 12px;
+    margin: 0 16px 16px;
     padding: 0;
     border: 0;
   }
 
   legend {
-    margin-bottom: 6px;
+    margin-bottom: 8px;
     font-size: 12px;
     color: $map-muted;
   }
 
-  #filters {
-    padding: 0 16px 12px;
+  #filters > .grid2,
+  #filters > .link {
+    margin-left: 16px;
+    margin-right: 16px;
+  }
+
+  @media (min-width: $bp-tablet) {
+    @include slide-up-panel;
+    bottom: 0;
+    left: 0;
+    width: 360px;
+    max-height: calc(100vh - 120px);
+    padding-bottom: 16px;
+    border-radius: 16px 16px 0 0;
+    box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.2);
+  }
+}
+
+// PC は aside が開閉の目印を持ち、中の絞り込みパネルだけが出入りする
+@media (min-width: $bp-tablet) {
+  .sports-map__side.is-open .sports-map__filters {
+    @include slide-up-open;
+  }
+}
+
+// ---- 試合の詳細 ----
+// スマホ・PC とも画面下から出る（PC ではピンのポップアップを使うので非表示）
+.match-sheet {
+  @include slide-up-panel;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  max-height: 70vh;
+  padding-bottom: 16px;
+  border-radius: 16px 16px 0 0;
+  box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.2);
+
+  &.is-open {
+    @include slide-up-open;
+  }
+
+  @media (min-width: $bp-tablet) {
+    display: none;
+  }
+}
+
+.match-sheet__body {
+  padding: 0 16px;
+
+  .pop-games {
+    max-height: none; // シートの中は縦に余裕があるので切らない
   }
 }
 
@@ -91,7 +227,7 @@ $map-bp: 760px;
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
 
   // 何も選んでいない＝すべて表示なので、薄くせず普通に見せる
   &:not(:has(input:checked)) .chip span {
@@ -108,7 +244,7 @@ $map-bp: 760px;
 
   span {
     display: inline-block;
-    padding: 4px 10px;
+    padding: 4px 12px;
     border: 1px solid $map-line;
     border-radius: 999px;
     cursor: pointer;
@@ -128,7 +264,7 @@ $map-bp: 760px;
 }
 
 .chip-all {
-  padding: 2px 8px;
+  padding: 4px 8px;
   font-size: 11px;
   color: $map-muted;
   background: none;
@@ -165,7 +301,7 @@ $map-bp: 760px;
 
   span {
     display: block;
-    padding: 6px 0;
+    padding: 8px 0;
     text-align: center;
     cursor: pointer;
     border-right: 1px solid $map-line;
@@ -188,7 +324,7 @@ $map-bp: 760px;
 .grid2 {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 10px;
+  gap: 12px;
 
   label {
     display: flex;
@@ -201,7 +337,7 @@ $map-bp: 760px;
 
   select {
     width: 100%;
-    padding: 6px 8px;
+    padding: 8px;
     border: 1px solid $map-line;
     border-radius: 8px;
     background: #fff;
@@ -209,7 +345,7 @@ $map-bp: 760px;
 }
 
 .sports-map .link {
-  margin-top: 10px;
+  margin-top: 12px;
   padding: 0;
   border: 0;
   background: none;
@@ -219,23 +355,27 @@ $map-bp: 760px;
 
 // ---- 試合リスト ----
 .list-head {
-  position: sticky;
-  top: 0;
-  z-index: 1;
+  // スマホでは絞り込みの帯と二重に貼り付いてしまうので固定しない
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 8px;
-  padding: 10px 16px;
+  padding: 12px 16px;
   background: $map-panel;
   border-bottom: 1px solid $map-line;
 
   select {
     width: auto;
-    padding: 6px 8px;
+    padding: 8px;
     border: 1px solid $map-line;
     border-radius: 8px;
     background: #fff;
+  }
+
+  @media (min-width: $bp-tablet) {
+    position: sticky;
+    top: 0;
+    z-index: 1;
   }
 }
 
@@ -254,7 +394,7 @@ $map-bp: 760px;
 .card {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
   width: 100%;
   padding: 12px 16px;
   text-align: left;
@@ -278,7 +418,7 @@ $map-bp: 760px;
   min-width: 0;
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 4px;
 }
 
 .card-meta,
@@ -311,21 +451,34 @@ $map-bp: 760px;
 }
 
 // ---- 地図の上に重ねる UI ----
+// スマホでは「絞り込み・現在地・結果全体」の 3 つが画面の左上に並ぶ
 .map-tools {
   position: absolute;
-  top: 10px;
-  left: 10px;
+  top: 8px;
+  left: 8px;
   z-index: 1000;
   display: flex;
-  gap: 6px;
+  flex-wrap: wrap;
+  gap: 8px;
 
   button {
-    padding: 6px 10px;
+    padding: 8px 12px;
     background: #fff;
     border: 1px solid rgba(0, 0, 0, 0.2);
     border-radius: 8px;
     box-shadow: 0 1px 4px rgba(0, 0, 0, 0.15);
     cursor: pointer;
+  }
+}
+
+// 絞り込みの開閉ボタン。画面幅にかかわらず、地図の左上に置く
+.map-tools__filter {
+  font-weight: bold;
+
+  &[aria-expanded="true"] {
+    color: #fff;
+    background: $map-accent;
+    border-color: $map-accent;
   }
 }
 
@@ -335,7 +488,7 @@ $map-bp: 760px;
   left: 50%;
   transform: translateX(-50%);
   z-index: 1000;
-  padding: 8px 14px;
+  padding: 8px 16px;
   color: #fff;
   background: rgba(28, 32, 36, 0.85);
   border-radius: 999px;
@@ -383,7 +536,7 @@ $map-bp: 760px;
   border-radius: 999px;
 }
 
-// ---- ポップアップ ----
+// ---- 詳細（PC はポップアップ、スマホはシートの中身）----
 .pop {
   padding-right: 12px;
   font-size: 13px;
@@ -391,7 +544,7 @@ $map-bp: 760px;
   .tag {
     display: inline-block;
     align-self: flex-start;
-    padding: 2px 8px;
+    padding: 4px 8px;
     font-size: 11px;
     color: #fff;
     background: var(--c);
@@ -400,13 +553,13 @@ $map-bp: 760px;
 }
 
 .pop-title {
-  margin: 6px 0;
+  margin: 8px 0;
   font-size: 15px;
   font-weight: bold;
 }
 
 .pop-sub {
-  margin: -2px 0 8px;
+  margin: 0 0 8px;
   font-size: 12px;
   color: $map-muted;
 }
@@ -415,19 +568,19 @@ $map-bp: 760px;
   list-style: none;
   margin: 0 0 8px;
   padding: 0;
-  max-height: 230px;
+  max-height: 232px;
   overflow-y: auto;
 
   li {
     display: flex;
     flex-direction: column;
-    gap: 2px;
-    padding: 6px;
+    gap: 4px;
+    padding: 8px;
     border-top: 1px solid $map-line;
 
     &.is-focus {
       background: color-mix(in srgb, #{$map-accent} 10%, white);
-      border-radius: 6px;
+      border-radius: 8px;
     }
   }
 }
@@ -445,20 +598,20 @@ $map-bp: 760px;
 
 .pop-note {
   margin-bottom: 8px;
-  padding: 6px 8px;
+  padding: 8px;
   font-size: 11px;
   color: #8a5a00;
   background: #fff4d6;
-  border-radius: 6px;
+  border-radius: 8px;
 }
 
 .pop-actions {
   display: flex;
-  gap: 6px;
+  gap: 8px;
 
   .btn {
     flex: 1;
-    padding: 6px 8px;
+    padding: 8px;
     text-align: center;
     text-decoration: none;
     color: $map-text !important;
