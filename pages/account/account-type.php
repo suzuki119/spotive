@@ -17,7 +17,6 @@ $user = current_user();
 
 page_header('アカウント種別の選択', 'どちらで始めますか？');
 ?>
-
 <div class="choice">
   <section class="choice__item">
     <h2 class="choice__title">観戦する</h2>
