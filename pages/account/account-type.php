@@ -14,27 +14,73 @@ require_once __DIR__ . '/../../config/db.php';
 ?>
 <!DOCTYPE html>
 <html lang="ja">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>アカウント種別の選択 | SPOTIVE</title>
 
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Jost:wght@400;600&family=Noto+Sans+JP:wght@400;500;700&display=swap"
-      rel="stylesheet"
-    />
-    <link rel="stylesheet" href="../../css/style.css" />
-  </head>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>アカウント種別の選択 | SPOTIVE</title>
 
-  <body>
-    <header class="site-header"></header>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Jost:wght@400;600&family=Noto+Sans+JP:wght@400;500;700&display=swap"
+    rel="stylesheet" />
+  <link rel="stylesheet" href="../../css/style.css" />
+</head>
 
-    <main class="l-main"></main>
+<body>
+  <header class="site-header"> <?php
+                                // header.phpを読み込む
+                                include_once 'header.php';
+                                ?></header>
 
-    <footer class="site-footer"></footer>
+  <main class="l-main">
 
-    <script src="../../js/main.js"></script>
-  </body>
+    <div class="inner">
+      <h1>ようこそ！</h1>
+
+      <div class="acount">
+        <p>
+          メールアドレスを入力し
+          <br>
+          アカウント登録を開始しましょう
+        </p>
+
+        <label for="email"></label>
+
+        <input
+          type="email"
+          id="email"
+          name="email"
+          placeholder="email"
+          required
+          class="acount_email input">
+
+        <button class="acount_btn">登録</button>
+
+        <article>
+          <p>大会・イベントを主催する方</p>
+          <span class="acount_organizer btn">登録</span>
+        </article>
+      </div>
+
+      <hr>
+
+      <div class="signin">
+        <p>すでにアカウントをお持ちですか？</p>
+        <button class="signin_btn">Sign in</button>
+      </div>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <?php
+    // menu-bar.phpを読み込む
+    include_once 'menu-bar.php';
+    ?>
+  </footer>
+
+  <script src="../../js/main.js"></script>
+</body>
+
 </html>
