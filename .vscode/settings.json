@@ -16,5 +16,5 @@
   "files.eol": "\n",
   "files.insertFinalNewline": true,
   "files.trimTrailingWhitespace": true,
-  "terminal.integrated.fontSize": 20
+  "terminal.integrated.fontSize": 12
 }
