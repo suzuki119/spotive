@@ -16,7 +16,7 @@ require_once __DIR__ . '/../../config/db.php';
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>アカウント種別の選択 | SPOTIVE</title>
+  <title>パスワード設定 | SPOTIVE</title>
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -34,47 +34,13 @@ require_once __DIR__ . '/../../config/db.php';
 
     <div class="inner">
 
-      <div class="account-type">
-        <h1>ようこそ！</h1>
-        <p>
-          メールアドレスを入力し
-          <br>
-          アカウント登録を開始しましょう
-        </p>
-
-        <form action="./register/register.php" method="POST">
-          <label for="email"></label>
-
-          <input
-            type="email"
-            id="email"
-            name="email"
-            placeholder="email"
-            required
-            class="account-type-email input">
-
-          <button type="submit" class="account-type-btn btn">登録</button>
-        </form>
-
-        <article>
-          <p>大会・イベントを主催する方</p>
-          <span class="account-type-organizer btn">登録</span>
-        </article>
-      </div>
-
-      <hr>
-
-      <div class="account-type-signin">
-        <p>すでにアカウントをお持ちですか？</p>
-        <button class="account-type-signin-btn">Sign in</button>
-      </div>
     </div>
   </main>
 
   <footer class="site-footer">
     <?php
     // menu-bar.phpを読み込む
-    include_once __DIR__ . '/../menu-bar.php';
+    include_once '../menu-bar.php';
     ?>
   </footer>
 
