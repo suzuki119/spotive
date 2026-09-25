@@ -85,11 +85,12 @@ $mapTournamentsJson = json_encode(
   <link
     rel="stylesheet"
     href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css" />
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/the-new-css-reset/css/reset.min.css">
   <link rel="stylesheet" href="<?= h(asset('css/style.css')) ?>" />
 </head>
 
 <body>
-  <header class="site-header"></header>
 
   <main class="l-main">
     <div class="sports-map">
@@ -192,8 +193,7 @@ $mapTournamentsJson = json_encode(
             id="filter-toggle"
             type="button"
             aria-controls="filter-panel"
-            aria-expanded="false"
-          >
+            aria-expanded="false">
             <span aria-hidden="true">☰</span> 絞り込み
           </button>
           <button id="locate" type="button"><span aria-hidden="true">📍</span> 現在地</button>
@@ -225,6 +225,7 @@ $mapTournamentsJson = json_encode(
   <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
   <script src="<?= h(asset('js/main.js')) ?>"></script>
   <script src="<?= h(asset('js/pages/map.js')) ?>"></script>
+  <?php require __DIR__ . '/../menu-bar.php'; ?>
 </body>
 
 </html>
