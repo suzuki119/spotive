@@ -1029,7 +1029,8 @@ body {
   margin-top: 50px;
   color: gray;
 }
-.account-type h1 {
+.account-type-title {
+  color: #000;
   text-align: center;
   font-weight: bold;
   font-size: 30px;
@@ -1170,5 +1171,68 @@ body {
 }
 .confirm-btn {
   width: 200px;
+}
+
+.organizer {
+  color: #000;
+  display: grid;
+  grid-template-columns: 1fr;
+  row-gap: 10px;
+  width: 200px;
+  margin: 50px auto 0;
+}
+.organizer label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+}
+.organizer input {
+  -webkit-appearance: none;
+     -moz-appearance: none;
+          appearance: none;
+  width: 20px;
+  height: 20px;
+  border: 2px solid #000;
+  border-radius: 50%;
+  position: relative;
+  cursor: pointer;
+}
+.organizer input:checked::after {
+  content: "";
+  width: 10px;
+  height: 10px;
+  background: #000;
+  border-radius: 50%;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  -webkit-animation: potti 0.3s ease;
+          animation: potti 0.3s ease;
+}
+
+@-webkit-keyframes potti {
+  0% {
+    transform: translate(-50%, -50%) scale(0);
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(1);
+  }
+}
+
+@keyframes potti {
+  0% {
+    transform: translate(-50%, -50%) scale(0);
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(1);
+  }
+}
+.organizer-input-title {
+  font-size: 22px;
+}
+.organizer-input article {
+  margin-top: 25px;
 }
 /*# sourceMappingURL=style.css.map */
