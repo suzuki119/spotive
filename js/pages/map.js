@@ -7,6 +7,10 @@
  *   1. data/matches.json（仮データ。DB ができるまでの置き換え用）
  *   2. map.php が v_public_tournaments から埋め込んだ大会（#map-tournaments）
  * 会場の座標・都道府県・エリアは data/venues.json（会場マスタ）で補う。
+ *
+ * 背景地図は地理院タイル（日本のみ配信）が既定。日本の外はタイルが無いので、
+ * 地図の下地の色がそのまま海として見える。世界を見たいときは
+ * 右上の切り替えで OpenStreetMap を選ぶ。
  */
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -31,6 +35,11 @@ document.addEventListener("DOMContentLoaded", () => {
   // これ未満がスマホ表示＝絞り込みと詳細を下から出すシートで扱う
   const MOBILE = window.matchMedia("(max-width: 767px)");
   const POPUP_GAME_LIMIT = 5;
+
+  // 地図の拡大率
+  const START_ZOOM = 5;        // 日本全体（現在地が使えないとき）
+  const LOCATE_ZOOM = 13;      // 現在地を中心にしたとき。まわりの街が分かるくらい
+  const FOCUS_ZOOM = 16;       // 一覧から試合を選んだとき。会場が特定できるくらい
 
   // 競技コードは index.php の SPORT_LABELS と揃える。色とアイコンは地図の見た目用
   const SPORTS = {
@@ -113,7 +122,18 @@ document.addEventListener("DOMContentLoaded", () => {
     zoomSnap: 0,            // ピンチで少しずつ滑らかに拡大縮小できるようにする（整数に丸めない）
     maxBounds: PAN_BOUNDS,  // この範囲の外へはドラッグできない
     maxBoundsViscosity: 1.0, // 1.0 = 範囲の端でぴたっと止める
-  }).setView([36.5, 137.5], 5);
+  });
+
+  // 日本全体が画面に収まる倍率より小さく縮小できないようにする（画面サイズで変わるので毎回計算）。
+  // 最初の表示より前に決めておくこと。あとから決めると、画面が広いときに
+  // 倍率の引き上げがアニメーション付きで走り、その完了が
+  // 現在地への移動を上書きしてしまう
+  const updateMinZoom = () => map.setMinZoom(map.getBoundsZoom(JAPAN_BOUNDS));
+  updateMinZoom();
+
+  // 最初の表示は日本全体。広い画面では START_ZOOM より最小倍率のほうが大きくなる
+  map.setView([36.5, 137.5], Math.max(START_ZOOM, map.getMinZoom()), { animate: false });
+
   L.control.zoom({ position: "bottomright" }).addTo(map);
 
   // Mac のトラックパッドに合わせる：2本指でなぞると移動、ピンチ（＝ctrl+ホイール）で拡大縮小。
@@ -133,9 +153,6 @@ document.addEventListener("DOMContentLoaded", () => {
     map.panBy([dx, dy], { animate: false });
   }, { passive: false });
 
-  // 日本全体が画面に収まる倍率より小さく縮小できないようにする（画面サイズで変わるので毎回計算）
-  const updateMinZoom = () => map.setMinZoom(map.getBoundsZoom(JAPAN_BOUNDS));
-  updateMinZoom();
   map.on("resize", updateMinZoom);
 
   // 背景地図（タイル）。拡大縮小に応じて画像を差し替えるので Google マップのように動く。
@@ -165,29 +182,6 @@ document.addEventListener("DOMContentLoaded", () => {
     ? L.markerClusterGroup({ showCoverageOnHover: false, maxClusterRadius: 45, disableClusteringAtZoom: 13 })
     : L.layerGroup();
   layer.addTo(map);
-
-  // -----------------------------------------------------------------
-  // 日本以外をグレーで覆う
-  // -----------------------------------------------------------------
-  // 大きな四角形から、日本の島々の形をくり抜いた多角形を重ねる
-  function addJapanMask(outline) {
-    const MASK_OUTER = [[-10, 90], [-10, 180], [70, 180], [70, 90]];
-    const mask = L.polygon([MASK_OUTER, ...outline], {
-      stroke: false,
-      fillColor: "#5f6670",
-      interactive: false, // クリックを下の地図やマーカーに通す
-      attribution: '輪郭: <a href="https://www.naturalearthdata.com/" target="_blank" rel="noopener">Natural Earth</a>',
-    }).addTo(map);
-
-    // 輪郭データの精度は数km程度で、拡大すると埋立地などとずれて見えるため、
-    // 拡大するほど薄くし、市街地レベル（ズーム9以上）では消す
-    const updateMask = () => {
-      const z = map.getZoom();
-      mask.setStyle({ fillOpacity: z <= 7 ? 0.45 : z === 8 ? 0.25 : 0 });
-    };
-    updateMask();
-    map.on("zoomend", updateMask);
-  }
 
   // -----------------------------------------------------------------
   // 試合データの組み立て
@@ -545,15 +539,15 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (MOBILE.matches) $("#map").scrollIntoView({ behavior: "smooth", block: "start" });
 
-    if (layer.zoomToShowLayer) {
-      layer.zoomToShowLayer(marker, () => {
-        map.panTo(marker.getLatLng(), { animate: false });
-        showDetail();
-      });
-    } else {
-      map.setView(marker.getLatLng(), 14);
-      showDetail();
-    }
+    // すでにもっと寄っているときは、わざわざ引かない
+    const zoom = Math.max(map.getZoom(), FOCUS_ZOOM);
+
+    // FOCUS_ZOOM は「まとめ表示をやめる倍率」(disableClusteringAtZoom = 13) より
+    // 大きいので、ここまで寄ればピンは必ず 1 本で出る。
+    // animate: false にすると移動の完了がその場で確定するため、
+    // まとめ解除を待ってから詳細を出す、という順番が確実になる
+    map.setView(marker.getLatLng(), zoom, { animate: false });
+    showDetail();
   }
 
   let statusTimer;
@@ -565,9 +559,35 @@ document.addEventListener("DOMContentLoaded", () => {
     statusTimer = setTimeout(() => { el.hidden = true; }, 3000);
   }
 
-  function locate() {
+  // 最初の表示だけは、アニメーションなしでいきなり現在地にする
+  let locateInstant = false;
+
+  function locate(instant = false) {
     showStatus("現在地を取得中…");
-    map.locate({ setView: true, maxZoom: 11 });
+    locateInstant = instant;
+    // 寄せ方は locationfound 側で決めるので、ここでは位置を取るだけにする
+    map.locate({ setView: false });
+  }
+
+  /**
+   * 最初の表示を現在地にする。
+   * すでに位置情報が許可されているときだけ行い、開いた途端に
+   * 許可を求めるダイアログを出すことはしない（許可していない人には日本全体を見せる）。
+   */
+  function locateOnStartIfAllowed() {
+    if (!navigator.permissions?.query) {
+      return;   // 対応していないブラウザでは何もしない
+    }
+    navigator.permissions
+      .query({ name: "geolocation" })
+      .then((status) => {
+        if (status.state === "granted") {
+          locate(true);   // 開いた直後なので、動かさずにいきなり現在地を出す
+        }
+      })
+      .catch(() => {
+        // 問い合わせに失敗しても、日本全体の表示のままで問題ない
+      });
   }
 
   // -----------------------------------------------------------------
@@ -622,6 +642,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
   map.on("locationfound", (e) => {
     userLatLng = e.latlng;
+    map.setView(e.latlng, LOCATE_ZOOM, { animate: !locateInstant });
+    locateInstant = false;
     if (!userMarker) {
       userMarker = L.circleMarker(e.latlng, { radius: 8, color: "#fff", weight: 3, fillColor: "#0b6bcb", fillOpacity: 1 })
         .bindTooltip("現在地")
@@ -692,9 +714,7 @@ document.addEventListener("DOMContentLoaded", () => {
     buildSportChips(new Set(games.map((g) => g.sport)));
     render();
 
-    // 輪郭は 130KB ほどあるので、試合の表示を待たせないように後から重ねる
-    loadJson("../../data/japan-outline.json")
-      .then(addJapanMask)
-      .catch((err) => console.error("[SPOTIVE] 日本の輪郭を読み込めませんでした", err));
+    // 位置情報が許可済みなら、最初から自分のまわりを見せる
+    locateOnStartIfAllowed();
   })();
 });
