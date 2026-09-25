@@ -2,10 +2,30 @@
 
 declare(strict_types=1);
 
-require_once __DIR__ . '../../../../config/db.php';
+session_start();
+
+require_once __DIR__ . '/../../../config/db.php';
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+
+  // account-type.phpからメールアドレスが送られてきた場合
+  if (isset($_POST['email'])) {
+
+    $_SESSION['register']['email'] = $_POST['email'];
+  }
+
+  // このregister.phpで名前・電話番号が送られてきた場合
+  if (isset($_POST['name'])) {
+
+    $_SESSION['register']['name'] = $_POST['name'];
+    $_SESSION['register']['tel'] = $_POST['tel'] ?? '';
+
+    header('Location: ../pasword.php');
+    exit;
+  }
+}
 
 ?>
-
 <!DOCTYPE html>
 <html lang="ja">
 
@@ -23,14 +43,8 @@ require_once __DIR__ . '../../../../config/db.php';
     <div class="inner">
       <div class="register">
         <h1 class="register-title">アカウント登録</h1>
-        <?php
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-          $email = $_POST['email'] ?? '';
-          echo $email;
-        }
-        ?>
-        <form action="../pasward.php" method="POST">
 
+        <form action="" method="POST">
           <article class="register-form">
             <p>氏名</p>
             <input
