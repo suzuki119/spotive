@@ -16,7 +16,19 @@ body {
   width: 90%;
   max-width: $mw;
   margin: 0 auto;
+}
 
+// --- ブレークポイント ---
+$breakpoints: (
+  mobile: 375px,
+  tablet: 768px,
+  desktop: 1100px
+);
+
+@mixin mq($breakpoint: desktop) {
+  @media (max-width: map-get($breakpoints, $breakpoint)) {
+    @content;
+  }
 }
 
 .btn {
@@ -142,6 +154,9 @@ body {
     margin: auto;
     width: 80%;
     border-radius: 100px;
+    @include mq(desktop) {
+      width: 90%;
+    }
   }
 
   // 項目は画面の中央にまとめる。
@@ -154,6 +169,13 @@ body {
     margin: 0 auto;
     padding: 0;
     list-style: none;
+    @include mq(desktop) {
+      gap: 8px;
+    }
+  }
+
+  &__item {
+    width: 65px;
   }
 
   &__link {
@@ -179,6 +201,13 @@ body {
     font-size: 12px;
     line-height: 1.2;
     white-space: nowrap;
+  }
+}
+
+.leaflet-touch .leaflet-bar{
+  margin-bottom: 5px;
+  @include mq(desktop) {
+    margin-bottom: 125px;
   }
 }
 

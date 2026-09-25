@@ -7,6 +7,10 @@
  *   1. data/matches.json（仮データ。DB ができるまでの置き換え用）
  *   2. map.php が v_public_tournaments から埋め込んだ大会（#map-tournaments）
  * 会場の座標・都道府県・エリアは data/venues.json（会場マスタ）で補う。
+ *
+ * 背景地図は地理院タイル（日本のみ配信）が既定。日本の外はタイルが無いので、
+ * 地図の下地の色がそのまま海として見える。世界を見たいときは
+ * 右上の切り替えで OpenStreetMap を選ぶ。
  */
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -31,6 +35,11 @@ document.addEventListener("DOMContentLoaded", () => {
   // これ未満がスマホ表示＝絞り込みと詳細を下から出すシートで扱う
   const MOBILE = window.matchMedia("(max-width: 767px)");
   const POPUP_GAME_LIMIT = 5;
+
+  // 地図の拡大率
+  const START_ZOOM = 5;        // 日本全体（現在地が使えないとき）
+  const LOCATE_ZOOM = 13;      // 現在地を中心にしたとき。まわりの街が分かるくらい
+  const FOCUS_ZOOM = 16;       // 一覧から試合を選んだとき。会場が特定できるくらい
 
   // 競技コードは index.php の SPORT_LABELS と揃える。色とアイコンは地図の見た目用
   const SPORTS = {
@@ -113,43 +122,139 @@ document.addEventListener("DOMContentLoaded", () => {
     zoomSnap: 0,            // ピンチで少しずつ滑らかに拡大縮小できるようにする（整数に丸めない）
     maxBounds: PAN_BOUNDS,  // この範囲の外へはドラッグできない
     maxBoundsViscosity: 1.0, // 1.0 = 範囲の端でぴたっと止める
-  }).setView([36.5, 137.5], 5);
+  });
+
+  // 日本全体が画面に収まる倍率より小さく縮小できないようにする（画面サイズで変わるので毎回計算）。
+  // 最初の表示より前に決めておくこと。あとから決めると、画面が広いときに
+  // 倍率の引き上げがアニメーション付きで走り、その完了が
+  // 現在地への移動を上書きしてしまう
+  const updateMinZoom = () => map.setMinZoom(map.getBoundsZoom(JAPAN_BOUNDS));
+  updateMinZoom();
+
+  // 最初の表示は日本全体。広い画面では START_ZOOM より最小倍率のほうが大きくなる
+  map.setView([36.5, 137.5], Math.max(START_ZOOM, map.getMinZoom()), { animate: false });
+
   L.control.zoom({ position: "bottomright" }).addTo(map);
 
   // Mac のトラックパッドに合わせる：2本指でなぞると移動、ピンチ（＝ctrl+ホイール）で拡大縮小。
+  // マウスのホイールも移動になるので、拡大縮小したいときは ⌘ または Ctrl を押しながら回す。
+  //
+  // ピンチ（＝ctrl+ホイール）は Leaflet 本体と同じやり方で処理する。
+  //
+  // スマホの 2 本指ピンチ（Leaflet の TouchZoom）は、操作しているあいだ
+  // 毎フレーム map._move(center, zoom, { pinch: true }) を呼ぶだけで、
+  // タイルは読み直さない。GridLayer が pinch を見て更新を止めるため、
+  // 見た目だけが連続的に拡大され、指を離した時点で一度だけ確定する。
+  // トラックパッドでも同じ動きにする。
+  //
+  // 注意：_moveStart / _move / _animateZoom は Leaflet の内部処理で、
+  // 公式には非公開（先頭が _）。AGENTS.md で 1.9.4 に固定しているので
+  // 採用するが、Leaflet を上げるときはここが動くか必ず確認すること。
+  // 使えないときは、溜めてから setZoomAround する従来の方式に落ちる。
+  const WHEEL_PX_PER_ZOOM = 60;   // この画素数ぶんのピンチで 1 段階
+  const PINCH_END_DELAY = 120;    // これだけ操作が途切れたらピンチ終了とみなす
+
+  const canPinchSmoothly = typeof map._moveStart === "function"
+    && typeof map._move === "function"
+    && typeof map._animateZoom === "function";
+
+  let pinchZoom = null;    // ピンチ中の行き先の倍率。操作していないときは null
+  let pinchCenter = null;
+  let pinchPoint = null;   // 指の位置。この点が動かないように拡大する
+  let pinchFrame = null;
+  let pinchEndTimer = null;
+
+  /** point を動かさずに zoom にするための地図の中心 */
+  function zoomAroundCenter(point, zoom) {
+    const scale = map.getZoomScale(zoom);
+    const viewHalf = map.getSize().divideBy(2);
+    const offset = point.subtract(viewHalf).multiplyBy(1 - 1 / scale);
+    return map.containerPointToLatLng(viewHalf.add(offset));
+  }
+
+  /** 1 フレームぶんの見た目の更新。タイルは読み直さない */
+  function pinchStep() {
+    pinchFrame = null;
+    if (pinchZoom === null || pinchPoint === null) {
+      return;
+    }
+    pinchCenter = zoomAroundCenter(pinchPoint, pinchZoom);
+    map._move(pinchCenter, pinchZoom, { pinch: true, round: false });
+  }
+
+  /** 指が止まったので確定する。ここで初めてタイルを読み直す */
+  function endPinch() {
+    pinchEndTimer = null;
+    if (pinchZoom === null) {
+      return;
+    }
+    if (pinchFrame !== null) {
+      cancelAnimationFrame(pinchFrame);
+      pinchFrame = null;
+    }
+
+    const zoom = pinchZoom;
+    const point = pinchPoint;
+    const center = pinchCenter;
+    pinchZoom = pinchCenter = pinchPoint = null;
+
+    if (canPinchSmoothly) {
+      map._animateZoom(center ?? map.getCenter(), zoom, true, false);
+      return;
+    }
+    map.setZoomAround(point, zoom);
+  }
+
+  // Mac のトラックパッドに合わせる：2本指でなぞると移動、ピンチで拡大縮小。
   // マウスのホイールも移動になるので、拡大縮小したいときは ⌘ または Ctrl を押しながら回す。
   map.getContainer().addEventListener("wheel", (e) => {
     e.preventDefault(); // ページ側がスクロールしないようにする
     // 行単位・ページ単位で届くことがあるので、だいたいの画素数にそろえる
     const unit = e.deltaMode === 1 ? 16 : e.deltaMode === 2 ? map.getSize().y : 1;
-    const dx = e.deltaX * unit;
-    const dy = e.deltaY * unit;
 
     if (e.ctrlKey || e.metaKey) { // ピンチ操作はブラウザが ctrl+ホイールとして送ってくる
-      const point = map.mouseEventToContainerPoint(e);
-      map.setZoomAround(point, map.getZoom() - dy * 0.01, { animate: false });
+      if (pinchZoom === null && canPinchSmoothly) {
+        map._moveStart(true, false);   // zoomstart / movestart を出す
+      }
+
+      // 端を越えた値を溜めこむと戻ってこられなくなるので、その場で止めておく
+      const from = pinchZoom ?? map.getZoom();
+      pinchZoom = Math.min(
+        map.getMaxZoom(),
+        Math.max(map.getMinZoom(), from - (e.deltaY * unit) / WHEEL_PX_PER_ZOOM)
+      );
+      pinchPoint = map.mouseEventToContainerPoint(e);
+
+      if (canPinchSmoothly && pinchFrame === null) {
+        pinchFrame = requestAnimationFrame(pinchStep);
+      }
+      clearTimeout(pinchEndTimer);
+      pinchEndTimer = setTimeout(endPinch, PINCH_END_DELAY);
       return;
     }
-    map.panBy([dx, dy], { animate: false });
+
+    map.panBy([e.deltaX * unit, e.deltaY * unit], { animate: false });
   }, { passive: false });
 
-  // 日本全体が画面に収まる倍率より小さく縮小できないようにする（画面サイズで変わるので毎回計算）
-  const updateMinZoom = () => map.setMinZoom(map.getBoundsZoom(JAPAN_BOUNDS));
-  updateMinZoom();
   map.on("resize", updateMinZoom);
 
   // 背景地図（タイル）。拡大縮小に応じて画像を差し替えるので Google マップのように動く。
   // OpenStreetMap・地理院タイルとも、クレジット表記はライセンス上の義務
+  // updateWhenZooming: false … 拡大縮小している最中はタイルを取り直さない。
+  // ピンチのあいだは今あるタイルを引き伸ばして見せ、指が止まってから読み直す
   const gsiPale = L.tileLayer("https://cyberjapandata.gsi.go.jp/xyz/pale/{z}/{x}/{y}.png", {
     maxZoom: 18,
+    updateWhenZooming: false,
     attribution: '<a href="https://maps.gsi.go.jp/development/ichiran.html" target="_blank" rel="noopener">地理院タイル</a>',
   });
   const gsiStd = L.tileLayer("https://cyberjapandata.gsi.go.jp/xyz/std/{z}/{x}/{y}.png", {
     maxZoom: 18,
+    updateWhenZooming: false,
     attribution: '<a href="https://maps.gsi.go.jp/development/ichiran.html" target="_blank" rel="noopener">地理院タイル</a>',
   });
   const osm = L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
     maxZoom: 19,
+    updateWhenZooming: false,
     attribution: '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> contributors',
   });
   gsiPale.addTo(map);
@@ -165,29 +270,6 @@ document.addEventListener("DOMContentLoaded", () => {
     ? L.markerClusterGroup({ showCoverageOnHover: false, maxClusterRadius: 45, disableClusteringAtZoom: 13 })
     : L.layerGroup();
   layer.addTo(map);
-
-  // -----------------------------------------------------------------
-  // 日本以外をグレーで覆う
-  // -----------------------------------------------------------------
-  // 大きな四角形から、日本の島々の形をくり抜いた多角形を重ねる
-  function addJapanMask(outline) {
-    const MASK_OUTER = [[-10, 90], [-10, 180], [70, 180], [70, 90]];
-    const mask = L.polygon([MASK_OUTER, ...outline], {
-      stroke: false,
-      fillColor: "#5f6670",
-      interactive: false, // クリックを下の地図やマーカーに通す
-      attribution: '輪郭: <a href="https://www.naturalearthdata.com/" target="_blank" rel="noopener">Natural Earth</a>',
-    }).addTo(map);
-
-    // 輪郭データの精度は数km程度で、拡大すると埋立地などとずれて見えるため、
-    // 拡大するほど薄くし、市街地レベル（ズーム9以上）では消す
-    const updateMask = () => {
-      const z = map.getZoom();
-      mask.setStyle({ fillOpacity: z <= 7 ? 0.45 : z === 8 ? 0.25 : 0 });
-    };
-    updateMask();
-    map.on("zoomend", updateMask);
-  }
 
   // -----------------------------------------------------------------
   // 試合データの組み立て
@@ -430,7 +512,18 @@ document.addEventListener("DOMContentLoaded", () => {
   // -----------------------------------------------------------------
   // 描画
   // -----------------------------------------------------------------
-  function render() {
+  /**
+   * 絞り込み → 一覧 → 地図の表示範囲 → ピン、の順で更新する。
+   *
+   * 順番が大事。MarkerCluster は「今の表示範囲」を見てピンを置くので、
+   * 地図を動かす前にピンを置くと、動かした先にあるピンが地図に出てこない。
+   *
+   * @param {"none"|"auto"|"always"} fit 地図を結果に合わせるか
+   *   none   … 動かさない（最初の読み込み時。位置の決定は別で行う）
+   *   auto   … 結果が 1 件も画面に入っていないときだけ寄せ直す
+   *   always … 必ず結果全体に合わせる（エリアを選んだとき）
+   */
+  function render({ fit = "auto" } = {}) {
     const f = readFilters();
     visible = games.filter((g) => matches(g, f));
 
@@ -440,26 +533,39 @@ document.addEventListener("DOMContentLoaded", () => {
       visible.sort((a, b) => a.start - b.start);
     }
 
-    layer.clearLayers();
-    venueMarkers.clear();
-    const byVenue = new Map();
-    [...visible].sort((a, b) => a.start - b.start).forEach((g) => {
-      const key = placeKey(g);
-      if (!byVenue.has(key)) byVenue.set(key, []);
-      byVenue.get(key).push(g);
-    });
-    byVenue.forEach((venueGames, key) => {
-      const marker = makeVenueMarker(venueGames);
-      venueMarkers.set(key, marker);
-      layer.addLayer(marker);
-    });
-
     const countText = `${visible.length}件の試合`;
     $("#result-count").textContent = countText;
     $("#filter-count").textContent = countText;   // スマホは一覧が無いのでこちらで知らせる
     $("#list").innerHTML = visible.length
       ? visible.map(cardHtml).join("")
       : '<li class="empty">条件に合う試合がありません。<br>条件を変えてみてください。</li>';
+
+    if (fit === "always") {
+      fitToResults();
+    } else if (fit === "auto") {
+      ensureResultsVisible();
+    }
+
+    drawMarkers();
+  }
+
+  /** いまの絞り込み結果を、会場ごとにまとめてピンにする */
+  function drawMarkers() {
+    layer.clearLayers();
+    venueMarkers.clear();
+
+    const byVenue = new Map();
+    [...visible].sort((a, b) => a.start - b.start).forEach((g) => {
+      const key = placeKey(g);
+      if (!byVenue.has(key)) byVenue.set(key, []);
+      byVenue.get(key).push(g);
+    });
+
+    byVenue.forEach((venueGames, key) => {
+      const marker = makeVenueMarker(venueGames);
+      venueMarkers.set(key, marker);
+      layer.addLayer(marker);
+    });
   }
 
   function cardHtml(g) {
@@ -483,7 +589,33 @@ document.addEventListener("DOMContentLoaded", () => {
   function fitToResults() {
     if (!visible.length) return;
     const bounds = L.latLngBounds(visible.map((g) => [g.v.lat, g.v.lng]));
-    map.fitBounds(bounds, { padding: [40, 40], maxZoom: 13 });
+    map.fitBounds(bounds, { padding: [40, 40], maxZoom: FOCUS_ZOOM, animate: false });
+  }
+
+  /**
+   * 現在地を中心に置いたまま、見つかった試合がすべて入る範囲。
+   * 現在地をはさんで反対側にも同じだけ広げることで、中心をずらさずに広げる。
+   */
+  function boundsAroundUser(latlng) {
+    const bounds = L.latLngBounds([latlng, latlng]);
+    visible.forEach((g) => {
+      bounds.extend([g.v.lat, g.v.lng]);
+      bounds.extend([2 * latlng.lat - g.v.lat, 2 * latlng.lng - g.v.lng]);
+    });
+    return bounds;
+  }
+
+  /**
+   * 絞り込んだ結果が 1 件も画面に入っていなければ、見える位置へ寄せ直す。
+   * 絞り込むたびに地図が動くと落ち着かないので、見えているときは動かさない。
+   */
+  function ensureResultsVisible() {
+    if (!visible.length) return;
+    const view = map.getBounds();
+    const inView = visible.some((g) => view.contains(L.latLng(g.v.lat, g.v.lng)));
+    if (!inView) {
+      fitToResults();
+    }
   }
 
   // -----------------------------------------------------------------
@@ -529,31 +661,32 @@ document.addEventListener("DOMContentLoaded", () => {
   function focusGame(id) {
     const game = games.find((g) => g.id === id);
     if (!game) return;
-    const marker = venueMarkers.get(placeKey(game));
-    if (!marker) return;
-    marker.closePopup(); // 閉じると focusId が消えるので、先に閉じてから選んだ試合を設定する
-    marker.focusId = id;
-
-    // スマホは地図まで戻したうえで、詳細をシートに出す
-    const showDetail = () => {
-      if (MOBILE.matches) {
-        openMatchSheet(marker);
-        return;
-      }
-      marker.openPopup();
-    };
 
     if (MOBILE.matches) $("#map").scrollIntoView({ behavior: "smooth", block: "start" });
 
-    if (layer.zoomToShowLayer) {
-      layer.zoomToShowLayer(marker, () => {
-        map.panTo(marker.getLatLng(), { animate: false });
-        showDetail();
-      });
-    } else {
-      map.setView(marker.getLatLng(), 14);
-      showDetail();
+    // すでにもっと寄っているときは、わざわざ引かない
+    const zoom = Math.max(map.getZoom(), FOCUS_ZOOM);
+
+    // FOCUS_ZOOM は「まとめ表示をやめる倍率」(disableClusteringAtZoom = 13) より
+    // 大きいので、ここまで寄ればピンは 1 本で出る。
+    // animate: false にすると移動がその場で確定するので、順番が読める
+    map.setView([game.v.lat, game.v.lng], zoom, { animate: false });
+
+    // 動かしたあとの表示範囲でピンを置き直す。
+    // MarkerCluster は今の表示範囲にあるピンしか地図に置かないので、
+    // これをやらないと、移動先のピンが出てこないまま詳細も開けない
+    drawMarkers();
+
+    // 置き直しで作り直されているので、ここで取得すること
+    const marker = venueMarkers.get(placeKey(game));
+    if (!marker) return;
+    marker.focusId = id;   // ポップアップで、選んだ試合を先頭に出すため
+
+    if (MOBILE.matches) {
+      openMatchSheet(marker);
+      return;
     }
+    marker.openPopup();
   }
 
   let statusTimer;
@@ -565,9 +698,35 @@ document.addEventListener("DOMContentLoaded", () => {
     statusTimer = setTimeout(() => { el.hidden = true; }, 3000);
   }
 
-  function locate() {
+  // 最初の表示だけは、アニメーションなしでいきなり現在地にする
+  let locateInstant = false;
+
+  function locate(instant = false) {
     showStatus("現在地を取得中…");
-    map.locate({ setView: true, maxZoom: 11 });
+    locateInstant = instant;
+    // 寄せ方は locationfound 側で決めるので、ここでは位置を取るだけにする
+    map.locate({ setView: false });
+  }
+
+  /**
+   * 最初の表示を現在地にする。
+   * すでに位置情報が許可されているときだけ行い、開いた途端に
+   * 許可を求めるダイアログを出すことはしない（許可していない人には日本全体を見せる）。
+   */
+  function locateOnStartIfAllowed() {
+    if (!navigator.permissions?.query) {
+      return;   // 対応していないブラウザでは何もしない
+    }
+    navigator.permissions
+      .query({ name: "geolocation" })
+      .then((status) => {
+        if (status.state === "granted") {
+          locate(true);   // 開いた直後なので、動かさずにいきなり現在地を出す
+        }
+      })
+      .catch(() => {
+        // 問い合わせに失敗しても、日本全体の表示のままで問題ない
+      });
   }
 
   // -----------------------------------------------------------------
@@ -575,10 +734,13 @@ document.addEventListener("DOMContentLoaded", () => {
   // -----------------------------------------------------------------
   form.addEventListener("change", (e) => {
     if (e.target.name === "sport") syncSportAll();
-    render();
-    if (e.target.name === "area") fitToResults();
+    // エリアを選んだときは必ずそこへ。ほかの条件は、結果が画面外のときだけ寄せ直す
+    render({ fit: e.target.name === "area" ? "always" : "auto" });
   });
-  form.addEventListener("reset", () => setTimeout(() => { syncSportAll(); render(); fitToResults(); }, 0));
+  form.addEventListener("reset", () => setTimeout(() => {
+    syncSportAll();
+    render({ fit: "always" });   // 条件を戻したので、全件が見える位置に合わせ直す
+  }, 0));
 
   $("#list").addEventListener("click", (e) => {
     const card = e.target.closest(".card");
@@ -622,6 +784,19 @@ document.addEventListener("DOMContentLoaded", () => {
 
   map.on("locationfound", (e) => {
     userLatLng = e.latlng;
+    if (locateInstant) {
+      // 開いた直後。現在地を中心に置いたまま、試合が画面に入る広さにする
+      // （現在地だけに寄せると、近くに無い競技が画面の外に出てしまう）
+      map.fitBounds(boundsAroundUser(e.latlng), {
+        padding: [40, 40],
+        maxZoom: LOCATE_ZOOM,
+        animate: false,
+      });
+    } else {
+      map.setView(e.latlng, LOCATE_ZOOM);
+    }
+    locateInstant = false;
+    drawMarkers();   // 動かしたあとの表示範囲で置き直す
     if (!userMarker) {
       userMarker = L.circleMarker(e.latlng, { radius: 8, color: "#fff", weight: 3, fillColor: "#0b6bcb", fillOpacity: 1 })
         .bindTooltip("現在地")
@@ -690,11 +865,9 @@ document.addEventListener("DOMContentLoaded", () => {
     games = finalize([...fromMatches, ...fromTournaments]);
 
     buildSportChips(new Set(games.map((g) => g.sport)));
-    render();
+    render({ fit: "none" });
 
-    // 輪郭は 130KB ほどあるので、試合の表示を待たせないように後から重ねる
-    loadJson("../../data/japan-outline.json")
-      .then(addJapanMask)
-      .catch((err) => console.error("[SPOTIVE] 日本の輪郭を読み込めませんでした", err));
+    // 位置情報が許可済みなら、最初から自分のまわりを見せる
+    locateOnStartIfAllowed();
   })();
 });

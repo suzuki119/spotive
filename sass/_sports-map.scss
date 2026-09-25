@@ -16,6 +16,7 @@ $map-text: #1c2024;
 $map-muted: #60646c;
 $map-line: #e0e1e6;
 $map-accent: #0b6bcb;
+$map-sea: #bed2ff; // 淡色地図の海と同じ色。タイルが出ていないところに出る
 $bp-tablet: 768px;
 
 // サイトヘッダーの高さぶん。ヘッダーの中身が決まったら、ここだけ直せばよい
@@ -100,8 +101,8 @@ $site-header-height: 48px;
 // スマホは地図で画面を埋める
 .sports-map__canvas {
   position: relative;
-  height: calc(100vh - #{$site-header-height});
-  height: calc(100dvh - #{$site-header-height});
+  height: 100vh;
+  height: 100dvh; // iOS Safari の vh バグ対策。Safari 15.4 以降は不要だが、古いバージョンのために残す
 
   @media (min-width: $bp-tablet) {
     height: auto;
@@ -111,6 +112,11 @@ $site-header-height: 48px;
 #map {
   position: absolute;
   inset: 0;
+
+  // Leaflet の既定の下地は #ddd（灰色）で、タイルが出ていない場所
+  // （日本の外・拡大縮小してタイルを差し替えている最中）に出てしまう。
+  // 淡色地図の海と同じ色にしておけば、そこが見えても地図となじむ
+  background: $map-sea;
 }
 
 // ---- パネル上部の帯 ----

@@ -94,6 +94,12 @@ function base_path(): string
   return $depth === 0 ? '.' : rtrim(str_repeat('../', $depth), '/');
 }
 
+// ブラウザが古い HTML を使い回すと、?v= の付いた新しい CSS / JS にたどり着けない。
+// 毎回サーバーに確認させる（画像や CSS 自体は ?v= があるのでキャッシュされてよい）
+if (!headers_sent()) {
+  header('Cache-Control: no-cache, must-revalidate');
+}
+
 /**
  * CSS や JS の URL。ファイルを更新すると ?v= の値が変わるので、
  * ブラウザが古いキャッシュを使い続けることがなくなる
