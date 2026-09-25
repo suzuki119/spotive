@@ -40,7 +40,7 @@ function account_start_signup(array $in): void
       $email,
       '【SPOTIVE】登録済みのメールアドレスです',
       "このメールアドレスは既に登録されています。\n"
-        . app_url('pages/account/login.php') . " からログインしてください。\n"
+        . app_url('pages/account/signin.php') . " からログインしてください。\n"
     );
     return;
   }
@@ -134,6 +134,77 @@ function account_complete_signup(string $token, array $in): int
     audit_log($userId, 'user.register', 'user', $userId, ['flow' => 'email_first']);
     return $userId;
   });
+}
+
+/**
+ * 画面で入力しきってから一度に登録する流れ（account-type → register → pasword → confirm）用。
+ *
+ * メールのリンクを先に踏ませる account_complete_signup() とは入口が違うだけで、
+ * 重複の確認・正規化・規約同意の記録・監査ログは同じものを通す。
+ *
+ * この時点ではメールアドレスが本人のものか確かめられていないので、
+ * trust_level は 0（仮登録）のまま。確認メールのリンクを開くと Lv.1 になる。
+ *
+ * @return int 作成したユーザー ID
+ */
+function account_register(array $in): int
+{
+  (new Validator($in))
+    ->required('email', 'メールアドレス')->email('email')
+    ->required('nickname', 'お名前')->length('nickname', 'お名前', 1, 50)
+    ->required('phone', '電話番号')->phone('phone')
+    ->required('birthdate', '生年月日')->date('birthdate', '生年月日')->minAge('birthdate', 13)
+    ->required('password', 'パスワード')->password('password')
+    ->accepted('agree_terms', '利用規約')
+    ->accepted('agree_privacy', 'プライバシーポリシー')
+    ->validate();
+
+  rate_limit_hit('register:ip:' . rate_limit_ip(), 10, 3600);
+
+  $rawEmail = trim((string) $in['email']);
+  $email    = strtolower($rawEmail);
+  $phone    = Validator::normalizePhone((string) $in['phone']);
+  $policies = account_current_policies();
+
+  $userId = db_transaction(static function () use ($rawEmail, $email, $phone, $in, $policies): int {
+    $dup = db_one(
+      'SELECT id FROM users WHERE email_normalized = :e OR phone_e164 = :p',
+      ['e' => $email, 'p' => $phone]
+    );
+    if ($dup !== null) {
+      // 実在アカウントの列挙を防ぐため、どちらが重複かは明かさない
+      throw new AppError('このメールアドレスまたは電話番号は既に登録されています。');
+    }
+
+    $userId = db_insert('users', [
+      'email'            => $rawEmail,
+      'email_normalized' => $email,
+      'phone_e164'       => $phone,
+      'password_hash'    => hash_password((string) $in['password']),
+      'nickname'         => trim((string) $in['nickname']),
+      'birthdate'        => (string) $in['birthdate'],
+      'trust_level'      => LEVEL_PROVISIONAL,   // メール確認がまだなので仮登録
+      'status'           => 'active',            // ログインは可。機能はレベルで制限する
+    ]);
+
+    // いつ・どの版の規約に同意したかを残す
+    foreach (['terms', 'privacy'] as $kind) {
+      db_insert('user_agreements', [
+        'user_id'    => $userId,
+        'policy_id'  => $policies[$kind],
+        'ip'         => request_ip_binary(),
+        'user_agent' => request_user_agent(),
+      ]);
+    }
+
+    audit_log($userId, 'user.register', 'user', $userId, ['flow' => 'form']);
+    return $userId;
+  });
+
+  // 本人のアドレスか確かめるためのリンクを送る。失敗しても登録自体は止めない
+  account_send_email_verification($userId, $rawEmail);
+
+  return $userId;
 }
 
 /** 有効な「登録待ち」トークンの行を返す。無効なら AppError */

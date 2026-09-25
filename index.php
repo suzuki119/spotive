@@ -10,6 +10,11 @@
 declare(strict_types=1);
 
 require_once __DIR__ . '/config/db.php';
+require_once __DIR__ . '/lib/auth.php';   // ログイン状態を見るため（h() などもここから）
+
+session_boot();
+
+$user = current_user();
 
 /** 競技コード => 表示名。schema.sql の tournaments.sport は自由入力の VARCHAR */
 const SPORT_LABELS = [
@@ -21,12 +26,6 @@ const SPORT_LABELS = [
   'tennis'     => 'テニス',
   'badminton'  => 'バドミントン',
 ];
-
-/** HTML エスケープ。出力時は必ずこれを通す */
-function h(?string $value): string
-{
-  return htmlspecialchars((string) $value, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
-}
 
 /** 競技コードを表示名に変換する */
 function sport_label(string $sport): string
@@ -156,7 +155,19 @@ try {
         <a class="site-header__link" href="pages/map/map.php">マップ</a>
         <a class="site-header__link" href="pages/match/match-list.php">試合一覧</a>
         <a class="site-header__link" href="pages/favorite/favorite.php">お気に入り</a>
-        <a class="site-header__link" href="pages/account/login.php">ログイン</a>
+
+        <?php if ($user === null) : ?>
+          <a class="site-header__link" href="pages/account/signin.php">ログイン</a>
+          <a class="site-header__link" href="pages/account/account-type.php">新規登録</a>
+        <?php else : ?>
+          <span class="site-header__user"><?= h((string) $user['nickname']) ?> さん</span>
+          <a class="site-header__link" href="pages/setting/profile.php">ユーザー情報の編集</a>
+          <!-- ログアウトは他サイトから叩かれないよう POST で送る -->
+          <form class="site-header__logout" action="pages/account/logout.php" method="post">
+            <?= csrf_field() ?>
+            <button class="site-header__link" type="submit">ログアウト</button>
+          </form>
+        <?php endif; ?>
       </nav>
     </header>
 
