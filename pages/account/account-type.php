@@ -35,7 +35,7 @@ require_once __DIR__ . '/../../config/db.php';
     <div class="inner">
 
       <div class="account-type">
-        <h1>ようこそ！</h1>
+        <h1 class=account-type-title>ようこそ！</h1>
         <p>
           メールアドレスを入力し
           <br>
@@ -58,7 +58,11 @@ require_once __DIR__ . '/../../config/db.php';
 
         <article>
           <p>大会・イベントを主催する方</p>
-          <span class="account-type-organizer btn">登録</span>
+          <form action="../account/register/organizer-register.php">
+            <button class="account-type-organizer btn">
+              登録
+            </button>
+          </form>
         </article>
       </div>
 
@@ -72,10 +76,7 @@ require_once __DIR__ . '/../../config/db.php';
   </main>
 
   <footer class="site-footer">
-    <?php
-    // menu-bar.phpを読み込む
-    include_once __DIR__ . '/../menu-bar.php';
-    ?>
+
   </footer>
 
   <script src="../../js/main.js"></script>
