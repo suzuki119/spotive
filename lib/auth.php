@@ -78,7 +78,7 @@ function require_login(): array
     return $user;
   }
   flash('ログインが必要です。', 'error');
-  redirect(url('pages/account/login.php') . '?next=' . urlencode(current_url()));
+  redirect(url('pages/account/signin.php') . '?next=' . urlencode(current_url()));
 }
 
 /** 信頼レベルが足りなければ、次にやることの案内へ送る */

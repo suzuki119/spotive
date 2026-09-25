@@ -7,29 +7,31 @@
 
 declare(strict_types=1);
 
-session_start();
+require_once __DIR__ . '/../../lib/account.php';
+
+session_boot();
 
 $error = '';
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+if (is_post()) {
+  $password = (string) ($_POST['password'] ?? '');
+  $passwordConfirm = (string) ($_POST['password-confirm'] ?? '');
 
-  $password = $_POST['password'] ?? '';
-  $passwordConfirm = $_POST['password-confirm'] ?? '';
+  // 登録の最後と同じ決まり（10文字以上・英字と数字か記号）でここでも確かめる。
+  // 最後まで進んでから弾かれると、入力し直しになってしまう
+  $v = (new Validator(['password' => $password]))
+    ->required('password', 'パスワード')
+    ->password('password');
 
-  if ($password === '' || $passwordConfirm === '') {
-
-    $error = 'パスワードを入力してください。';
+  if ($v->fails()) {
+    $error = $v->errors()['password'];
+  } elseif ($passwordConfirm === '') {
+    $error = '確認用のパスワードを入力してください。';
   } elseif ($password !== $passwordConfirm) {
-
     $error = 'パスワードが一致していません。';
   } else {
-
-    // パスワードをセッションに保存
     $_SESSION['register']['password'] = $password;
-
-    // 確認ページへ移動
-    header('Location: confirm.php');
-    exit;
+    redirect('confirm.php');
   }
 }
 

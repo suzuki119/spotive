@@ -1,10 +1,24 @@
 <?php
 
+/**
+ * pages/account/confirm.php
+ * 入力内容の確認。ここで規約に同意して complete.php へ送る。
+ */
+
 declare(strict_types=1);
 
-session_start();
+require_once __DIR__ . '/../../lib/support.php';
+
+session_boot();
 
 $register = $_SESSION['register'] ?? [];
+
+// 入力が足りないまま直接開かれたら、最初の画面へ戻す
+foreach (['email', 'nickname', 'phone', 'birthdate', 'password'] as $key) {
+  if (($register[$key] ?? '') === '') {
+    redirect('account-type.php');
+  }
+}
 
 ?>
 
@@ -36,14 +50,10 @@ $register = $_SESSION['register'] ?? [];
           登録内容の確認
         </h1>
 
-        <?php if (!empty($register['name'])): ?>
-          <article class="confirm-item">
-            <p class="confirm-item-label">氏名</p>
-            <p class="confirm-item-value">
-              <?= htmlspecialchars($register['name'], ENT_QUOTES, 'UTF-8') ?>
-            </p>
-          </article>
-        <?php endif; ?>
+        <article class="confirm-item">
+          <p class="confirm-item-label">お名前</p>
+          <p class="confirm-item-value"><?= h($register['nickname']) ?></p>
+        </article>
 
 
         <?php if (!empty($register['representative_name'])): ?>
@@ -66,24 +76,21 @@ $register = $_SESSION['register'] ?? [];
         <?php endif; ?>
 
 
-        <?php if (!empty($register['tel'])): ?>
-          <article class="confirm-item">
-            <p class="confirm-item-label">電話番号</p>
-            <p class="confirm-item-value">
-              <?= htmlspecialchars($register['tel'], ENT_QUOTES, 'UTF-8') ?>
-            </p>
-          </article>
-        <?php endif; ?>
+        <article class="confirm-item">
+          <p class="confirm-item-label">電話番号</p>
+          <p class="confirm-item-value"><?= h($register['phone']) ?></p>
+        </article>
+
+        <article class="confirm-item">
+          <p class="confirm-item-label">生年月日</p>
+          <p class="confirm-item-value"><?= h($register['birthdate']) ?></p>
+        </article>
 
 
-        <?php if (!empty($register['email'])): ?>
-          <article class="confirm-item">
-            <p class="confirm-item-label">メールアドレス</p>
-            <p class="confirm-item-value">
-              <?= htmlspecialchars($register['email'], ENT_QUOTES, 'UTF-8') ?>
-            </p>
-          </article>
-        <?php endif; ?>
+        <article class="confirm-item">
+          <p class="confirm-item-label">メールアドレス</p>
+          <p class="confirm-item-value"><?= h($register['email']) ?></p>
+        </article>
 
 
         <?php if (!empty($register['address'])): ?>
@@ -96,16 +103,30 @@ $register = $_SESSION['register'] ?? [];
         <?php endif; ?>
 
 
-        <?php if (!empty($register['password'])): ?>
-          <article class="confirm-item">
-            <p class="confirm-item-label">パスワード</p>
-            <p>••••••••</p>
-          </article>
-        <?php endif; ?>
+        <article class="confirm-item">
+          <p class="confirm-item-label">パスワード</p>
+          <p>••••••••</p>
+        </article>
 
 
+
+        <?php foreach (take_flash() as $message) : ?>
+          <p class="notice notice--<?= h($message['type']) ?>"><?= h($message['message']) ?></p>
+        <?php endforeach; ?>
 
         <form action="complete.php" method="POST">
+          <?= csrf_field() ?>
+
+          <div class="confirm-agree">
+            <label class="form__check">
+              <input type="checkbox" name="agree_terms" value="1" required />
+              <span>利用規約に同意します</span>
+            </label>
+            <label class="form__check">
+              <input type="checkbox" name="agree_privacy" value="1" required />
+              <span>プライバシーポリシーに同意します</span>
+            </label>
+          </div>
 
           <button type="submit" class="next btn confirm-btn ">
             この内容で登録する

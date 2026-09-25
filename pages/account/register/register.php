@@ -1,29 +1,49 @@
 <?php
 
+/**
+ * pages/account/register/register.php
+ * アカウント登録の入力（お名前・電話番号・生年月日）。
+ * 入力はセッションに溜めていき、confirm.php で確認して complete.php で登録する。
+ */
+
 declare(strict_types=1);
 
-session_start();
+require_once __DIR__ . '/../../../lib/account.php';
 
-require_once __DIR__ . '/../../../config/db.php';
+session_boot();
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+$errors = [];
 
-  // account-type.phpからメールアドレスが送られてきた場合
+if (is_post()) {
+  // account-type.php からメールアドレスが送られてきた場合
   if (isset($_POST['email'])) {
-
-    $_SESSION['register']['email'] = $_POST['email'];
+    $_SESSION['register']['email'] = trim((string) $_POST['email']);
   }
 
-  // このregister.phpで名前・電話番号が送られてきた場合
-  if (isset($_POST['name'])) {
+  // この画面から お名前・電話番号・生年月日 が送られてきた場合
+  if (isset($_POST['nickname'])) {
+    $input = [
+      'nickname'  => trim((string) $_POST['nickname']),
+      'phone'     => trim((string) ($_POST['phone'] ?? '')),
+      'birthdate' => (string) ($_POST['birthdate'] ?? ''),
+    ];
 
-    $_SESSION['register']['name'] = $_POST['name'];
-    $_SESSION['register']['tel'] = $_POST['tel'] ?? '';
+    // ここで確かめておかないと、最後の登録で弾かれて入力し直しになる
+    $v = (new Validator($input))
+      ->required('nickname', 'お名前')->length('nickname', 'お名前', 1, 50)
+      ->required('phone', '電話番号')->phone('phone')
+      ->required('birthdate', '生年月日')->date('birthdate', '生年月日')->minAge('birthdate', 13);
 
-    header('Location: ../pasword.php');
-    exit;
+    if ($v->fails()) {
+      $errors = $v->errors();
+    } else {
+      $_SESSION['register'] += $input;
+      redirect('../pasword.php');
+    }
   }
 }
+
+$saved = $_SESSION['register'] ?? [];
 
 ?>
 <!DOCTYPE html>
@@ -46,24 +66,48 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         <form action="" method="POST">
           <article class="register-form">
-            <p>氏名</p>
+            <p>お名前</p>
             <input
               type="text"
-              id="name"
-              name="name"
+              id="nickname"
+              name="nickname"
+              value="<?= h(old($saved, 'nickname')) ?>"
               placeholder="田中　太郎"
+              maxlength="50"
               required
               class="register-form-name input">
+            <?php if (isset($errors['nickname'])) : ?>
+              <p class="field-error"><?= h($errors['nickname']) ?></p>
+            <?php endif; ?>
           </article>
+
           <article class="register-form">
             <p>電話番号</p>
             <input
               type="tel"
-              id="tel"
-              name="tel"
+              id="phone"
+              name="phone"
+              value="<?= h(old($saved, 'phone')) ?>"
               placeholder="09012345678"
               required
               class="register-form-tel input">
+            <?php if (isset($errors['phone'])) : ?>
+              <p class="field-error"><?= h($errors['phone']) ?></p>
+            <?php endif; ?>
+          </article>
+
+          <article class="register-form">
+            <p>生年月日</p>
+            <input
+              type="date"
+              id="birthdate"
+              name="birthdate"
+              value="<?= h(old($saved, 'birthdate')) ?>"
+              required
+              class="register-form-birthdate input">
+            <?php if (isset($errors['birthdate'])) : ?>
+              <p class="field-error"><?= h($errors['birthdate']) ?></p>
+            <?php endif; ?>
           </article>
           <button type="button" class="verification btn">本人確認</button>
           <button type="submit" class="next btn">次へ</button>
