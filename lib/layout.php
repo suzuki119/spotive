@@ -96,8 +96,8 @@ function page_header(string $title, string $heading = ''): void
         <a class="site-header__link" href="<?= h($base) ?>/pages/match/match-list.php">試合一覧</a>
 
         <?php if ($user === null) : ?>
-          <a class="site-header__link" href="<?= h($base) ?>/pages/account/login.php">ログイン</a>
-          <a class="site-header__link" href="<?= h($base) ?>/pages/account/register.php">新規登録</a>
+          <a class="site-header__link" href="<?= h($base) ?>/pages/account/signin.php">ログイン</a>
+          <a class="site-header__link" href="<?= h($base) ?>/pages/account/account-type.php">新規登録</a>
         <?php else : ?>
           <a class="site-header__link" href="<?= h($base) ?>/pages/setting/setting.php">
             <?= h((string) $user['nickname']) ?> さん

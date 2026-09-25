@@ -70,7 +70,7 @@ require_once __DIR__ . '/../../config/db.php';
 
       <div class="account-type-signin">
         <p>すでにアカウントをお持ちですか？</p>
-        <button class="account-type-signin-btn">Sign in</button>
+        <a href="signin.php" class="account-type-signin-btn btn">Sign in</a>
       </div>
     </div>
   </main>

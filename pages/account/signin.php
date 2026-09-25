@@ -1,19 +1,24 @@
 <?php
 
 /**
- * pages/account/login.php
- * 一般ユーザーのログイン。
+ * pages/account/signin.php
+ * ログイン。
+ *
+ * 照合そのものは lib/account.php の account_login() が行う。
+ * パスワードの照合、失敗回数の記録、連続失敗時のロック、
+ * 利用停止アカウントの拒否はそちらにまとめてある。
+ *
  * next= が付いていれば、ログイン後にそのページへ戻す。
  */
 
 declare(strict_types=1);
 
 require_once __DIR__ . '/../../lib/account.php';
-require_once __DIR__ . '/../../lib/layout.php';
 
-$next   = safe_next($_GET['next'] ?? $_POST['next'] ?? null, url('pages/setting/setting.php'));
-$error  = null;
-$errors = [];
+session_boot();
+
+$next  = safe_next($_GET['next'] ?? $_POST['next'] ?? null, url('pages/map/map.php'));
+$error = null;
 
 if (is_logged_in()) {
   redirect($next);
@@ -31,60 +36,96 @@ if (is_post()) {
     $user = account_login((string) $_POST['email'], (string) $_POST['password']);
     login_user((int) $user['id']);
 
-    flash('ログインしました。', 'success');
     redirect($next);
   } catch (AppError $e) {
-    $error  = $e->getMessage();
-    $errors = $e->fields();
+    $error = $e->getMessage();
   } catch (PDOException $e) {
     error_log('[SPOTIVE] DB error: ' . $e->getMessage());
     $error = 'ただいまログインできません。時間をおいてお試しください。';
   }
 }
 
-page_header('ログイン', 'ログイン');
 ?>
+<!DOCTYPE html>
+<html lang="ja">
 
-<?php if ($error !== null) : ?>
-  <p class="notice notice--error"><?= h($error) ?></p>
-<?php endif; ?>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-<form class="form" action="login.php" method="post">
-  <?= csrf_field() ?>
-  <input type="hidden" name="next" value="<?= h($next) ?>" />
+  <title>ログイン | SPOTIVE</title>
 
-  <div class="form__field">
-    <label class="form__label" for="email">メールアドレス</label>
-    <input
-      class="form__input"
-      type="email"
-      id="email"
-      name="email"
-      value="<?= h(old($_POST, 'email')) ?>"
-      autocomplete="email"
-      required
-    />
-    <?php field_error($errors, 'email'); ?>
-  </div>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 
-  <div class="form__field">
-    <label class="form__label" for="password">パスワード</label>
-    <input
-      class="form__input"
-      type="password"
-      id="password"
-      name="password"
-      autocomplete="current-password"
-      required
-    />
-    <?php field_error($errors, 'password'); ?>
-  </div>
+  <link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/the-new-css-reset/css/reset.min.css">
 
-  <button class="button button--primary" type="submit">ログイン</button>
-</form>
+  <link rel="stylesheet" href="<?= h(asset('css/style.css')) ?>">
+</head>
 
-<p class="form-page__note">
-  アカウントをお持ちでない方は <a href="register.php">新規登録</a> へ。
-</p>
+<body>
 
-<?php page_footer(); ?>
+  <header class="site-header"></header>
+
+  <main class="l-main">
+
+    <div class="inner">
+
+      <?php if ($error !== null) : ?>
+        <p class="error"><?= h($error) ?></p>
+      <?php endif; ?>
+
+      <div class="signin">
+        <h1 class="signin-title">ログイン</h1>
+
+        <form action="signin.php" method="post">
+          <?= csrf_field() ?>
+          <input type="hidden" name="next" value="<?= h($next) ?>">
+
+          <article class="signin-form">
+            <p>メールアドレス</p>
+            <input
+              type="email"
+              id="email"
+              name="email"
+              value="<?= h(old($_POST, 'email')) ?>"
+              placeholder="email"
+              autocomplete="email"
+              required
+              class="signin-form-email input">
+          </article>
+
+          <article class="signin-form">
+            <p>パスワード</p>
+            <input
+              type="password"
+              id="password"
+              name="password"
+              placeholder="パスワードを入力"
+              autocomplete="current-password"
+              required
+              class="signin-form-password input">
+          </article>
+
+          <button type="submit" class="next btn">ログイン</button>
+        </form>
+
+        <div class="signin-register">
+          <p>アカウントをお持ちでない方</p>
+          <a href="account-type.php" class="btn">新規登録</a>
+        </div>
+      </div>
+
+    </div>
+
+  </main>
+
+  <footer class="site-footer"></footer>
+
+  <script src="<?= h(asset('js/main.js')) ?>"></script>
+
+</body>
+
+</html>

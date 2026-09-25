@@ -119,6 +119,18 @@ $form-bp: 760px;
 }
 
 // ---- フォーム ----
+// the-new-css-reset は all: unset で、チェックボックスやラジオの見た目まで
+// 消してしまう（大きさが 0x0 になり、画面に出ない）。表示を戻しておく
+input[type="checkbox"],
+input[type="radio"] {
+  appearance: auto;
+  width: 16px;
+  height: 16px;
+  margin: 0;
+  accent-color: $form-accent;   // サイトの色に合わせる
+  cursor: pointer;
+}
+
 .form {
   margin: 0;
 }
@@ -239,6 +251,14 @@ $form-bp: 760px;
     padding: 5px 10px;
     font-size: 13px;
   }
+}
+
+// 登録の確認画面。規約への同意欄
+.confirm-agree {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 24px 0 16px;
 }
 
 // ---- 表示のための部品 ----

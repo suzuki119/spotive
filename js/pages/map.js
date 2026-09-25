@@ -40,6 +40,8 @@ document.addEventListener("DOMContentLoaded", () => {
   const START_ZOOM = 5;        // 日本全体（現在地が使えないとき）
   const LOCATE_ZOOM = 13;      // 現在地を中心にしたとき。まわりの街が分かるくらい
   const FOCUS_ZOOM = 16;       // 一覧から試合を選んだとき。会場が特定できるくらい
+  const FLY_DURATION = 2.2;    // 秒。一覧から選んだ試合へ飛ぶのにかける時間。
+                               // いちばん引いたところで県名が読める程度にゆっくり見せる
 
   // 競技コードは index.php の SPORT_LABELS と揃える。色とアイコンは地図の見た目用
   const SPORTS = {
@@ -240,21 +242,16 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // 背景地図（タイル）。拡大縮小に応じて画像を差し替えるので Google マップのように動く。
   // OpenStreetMap・地理院タイルとも、クレジット表記はライセンス上の義務
-  // updateWhenZooming: false … 拡大縮小している最中はタイルを取り直さない。
-  // ピンチのあいだは今あるタイルを引き伸ばして見せ、指が止まってから読み直す
   const gsiPale = L.tileLayer("https://cyberjapandata.gsi.go.jp/xyz/pale/{z}/{x}/{y}.png", {
     maxZoom: 18,
-    updateWhenZooming: false,
     attribution: '<a href="https://maps.gsi.go.jp/development/ichiran.html" target="_blank" rel="noopener">地理院タイル</a>',
   });
   const gsiStd = L.tileLayer("https://cyberjapandata.gsi.go.jp/xyz/std/{z}/{x}/{y}.png", {
     maxZoom: 18,
-    updateWhenZooming: false,
     attribution: '<a href="https://maps.gsi.go.jp/development/ichiran.html" target="_blank" rel="noopener">地理院タイル</a>',
   });
   const osm = L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
     maxZoom: 19,
-    updateWhenZooming: false,
     attribution: '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> contributors',
   });
   gsiPale.addTo(map);
@@ -658,35 +655,120 @@ document.addEventListener("DOMContentLoaded", () => {
     closeMatchSheet();
   }
 
+  // 飛んでいる最中に別の試合を選ばれたら、古いほうは打ち切る
+  let flyToken = 0;
+  let flyFrame = null;
+
+  /**
+   * 目的地まで「引きながら移動し、近づいたら寄る」動きで移す。
+   *
+   * Leaflet の flyTo は引き切ってから動き出すため、前半は同じ場所で
+   * 縮んでいるだけに見える。ここでは中心と倍率を別々に動かし、
+   * 引いている最中から目的地へ向かうようにしている。
+   *
+   * _moveStart / _move / _moveEnd は Leaflet の内部処理（ピンチと同じ）。
+   * flyTo: true を渡すと、移動中にピンやタイルが作り直されない。
+   */
+  function flyToPlace(target, targetZoom, onArrive) {
+    const start = map.getCenter();
+    const zStart = map.getZoom();
+
+    // 出発地と目的地の両方が画面に入る倍率。いちばん引いたときにここまで下げる
+    const overview = map.getBoundsZoom(L.latLngBounds([start, target]), false, L.point(80, 80));
+    const zMid = Math.max(map.getMinZoom(), Math.min(zStart, targetZoom, overview));
+    const dip = Math.max(0, (zStart + targetZoom) / 2 - zMid);
+
+    // 中心の進み方。両端をゆるめ、いちばん引いたあたりで最も速く動かす
+    const easeMove = (t) => (1 - Math.cos(Math.PI * t)) / 2;
+
+    const total = FLY_DURATION * 1000;
+    const startedAt = performance.now();
+
+    if (flyFrame !== null) cancelAnimationFrame(flyFrame);
+    map._moveStart(true, false);
+
+    const step = (now) => {
+      const t = Math.min(1, (now - startedAt) / total);
+      const p = easeMove(t);
+
+      const center = L.latLng(
+        start.lat + (target.lat - start.lat) * p,
+        start.lng + (target.lng - start.lng) * p
+      );
+      // 倍率は山なり。最初から下がり始め、真ん中で zMid、最後に目的の倍率へ戻る
+      const zoom = zStart + (targetZoom - zStart) * t - dip * Math.sin(Math.PI * t);
+
+      map._move(center, Math.max(map.getMinZoom(), zoom), { flyTo: true, round: false });
+
+      if (t < 1) {
+        flyFrame = requestAnimationFrame(step);
+        return;
+      }
+      flyFrame = null;
+      map._move(target, targetZoom, { flyTo: true, round: false });
+      map._moveEnd(true);
+      onArrive();
+    };
+
+    flyFrame = requestAnimationFrame(step);
+  }
+
+  /**
+   * 一覧で選んだ試合へ地図を移す。
+   * いきなり飛ばすと、どこへ移ったのか分からないので、
+   * 引きながら向かう動きで、どのあたりの県かを見せる。
+   */
   function focusGame(id) {
     const game = games.find((g) => g.id === id);
     if (!game) return;
 
     if (MOBILE.matches) $("#map").scrollIntoView({ behavior: "smooth", block: "start" });
 
-    // すでにもっと寄っているときは、わざわざ引かない
+    const target = L.latLng(game.v.lat, game.v.lng);
     const zoom = Math.max(map.getZoom(), FOCUS_ZOOM);
+    const token = ++flyToken;
+    let arrived = false;
 
-    // FOCUS_ZOOM は「まとめ表示をやめる倍率」(disableClusteringAtZoom = 13) より
-    // 大きいので、ここまで寄ればピンは 1 本で出る。
-    // animate: false にすると移動がその場で確定するので、順番が読める
-    map.setView([game.v.lat, game.v.lng], zoom, { animate: false });
+    /** 着いてから、ピンを置き直して詳細を開く */
+    const arrive = () => {
+      if (arrived || token !== flyToken) return;
+      arrived = true;
 
-    // 動かしたあとの表示範囲でピンを置き直す。
-    // MarkerCluster は今の表示範囲にあるピンしか地図に置かないので、
-    // これをやらないと、移動先のピンが出てこないまま詳細も開けない
-    drawMarkers();
+      // MarkerCluster は今の表示範囲にあるピンしか置かないので、
+      // 着いてから置き直す。ピンは作り直されるのでここで取得すること
+      drawMarkers();
 
-    // 置き直しで作り直されているので、ここで取得すること
-    const marker = venueMarkers.get(placeKey(game));
-    if (!marker) return;
-    marker.focusId = id;   // ポップアップで、選んだ試合を先頭に出すため
+      const marker = venueMarkers.get(placeKey(game));
+      if (!marker) return;
+      marker.focusId = id;   // ポップアップで、選んだ試合を先頭に出すため
 
-    if (MOBILE.matches) {
-      openMatchSheet(marker);
+      if (MOBILE.matches) {
+        openMatchSheet(marker);
+        return;
+      }
+      marker.openPopup();
+    };
+
+    // すでにその場所を見ているなら、動かさずにそのまま開く
+    if (map.getCenter().distanceTo(target) < 1 && Math.abs(map.getZoom() - zoom) < 0.01) {
+      arrive();
       return;
     }
-    marker.openPopup();
+
+    // 動きが何かで止まっても詳細が開くように、時間で保険をかける
+    const fallback = setTimeout(arrive, (FLY_DURATION + 0.6) * 1000);
+    const done = () => {
+      clearTimeout(fallback);
+      arrive();
+    };
+
+    if (typeof map._moveStart === "function" && typeof map._move === "function") {
+      flyToPlace(target, zoom, done);
+      return;
+    }
+    // 内部処理が使えない場合は Leaflet 本来の flyTo に任せる
+    map.once("moveend", done);
+    map.flyTo(target, zoom, { duration: FLY_DURATION });
   }
 
   let statusTimer;
