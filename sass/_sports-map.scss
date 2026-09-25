@@ -101,8 +101,8 @@ $site-header-height: 48px;
 // スマホは地図で画面を埋める
 .sports-map__canvas {
   position: relative;
-  height: calc(100vh - #{$site-header-height});
-  height: calc(100dvh - #{$site-header-height});
+  height: 100vh;
+  height: 100dvh; // iOS Safari の vh バグ対策。Safari 15.4 以降は不要だが、古いバージョンのために残す
 
   @media (min-width: $bp-tablet) {
     height: auto;
