@@ -12,7 +12,7 @@ body {
   margin: 0 auto;
 }
 
-@mixin inner($mw:1200px, $w:90%) {
+@mixin inner($mw: 1200px, $w: 90%) {
   width: 90%;
   max-width: $mw;
   margin: 0 auto;
@@ -179,6 +179,8 @@ body {
     line-height: 1.2;
     white-space: nowrap;
   }
+}
+
 // ____________________________アカウント登録　個人＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿
 
 .register {
@@ -197,4 +199,47 @@ body {
   width: 230px;
   height: 43px;
   background: url(../images/icons/Group.svg)no-repeat 88% center/8%; //animationで小さくしたタイミングで画像を入れ替えて大きくする
+}
+
+//__________________________________アカウントパスワード登録＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿
+
+.pasword {
+  margin-top: 12px;
+
+  &-title {
+    font-size: 22px;
+  }
+
+  &-form {
+    width: 100%;
+    max-width: 400px;
+    margin: 10px auto 0;
+  }
+}
+
+//________________________________アカウント　登録確認画面＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿
+.confirm {
+  &-title {
+    font-size: 22px;
+  }
+
+  &-item {
+    width: 100%;
+    max-width: 400px;
+    margin: 41px auto 0;
+
+    &-label {
+      font-size: 14px;
+    }
+
+    &-value {
+      font-size: 16px;
+      font-weight: bold;
+      margin-top: 28px;
+    }
+  }
+
+  &-btn {
+    width: 200px;
+  }
 }

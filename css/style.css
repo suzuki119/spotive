@@ -1124,7 +1124,7 @@ body {
   line-height: 1.2;
   white-space: nowrap;
 }
-/*# sourceMappingURL=style.css.map */
+
 .register-title {
   font-size: 22px;
 }
@@ -1138,5 +1138,37 @@ body {
   width: 230px;
   height: 43px;
   background: url(../images/icons/Group.svg) no-repeat 88% center/8%;
+}
+
+.pasword {
+  margin-top: 12px;
+}
+.pasword-title {
+  font-size: 22px;
+}
+.pasword-form {
+  width: 100%;
+  max-width: 400px;
+  margin: 10px auto 0;
+}
+
+.confirm-title {
+  font-size: 22px;
+}
+.confirm-item {
+  width: 100%;
+  max-width: 400px;
+  margin: 41px auto 0;
+}
+.confirm-item-label {
+  font-size: 14px;
+}
+.confirm-item-value {
+  font-size: 16px;
+  font-weight: bold;
+  margin-top: 28px;
+}
+.confirm-btn {
+  width: 200px;
 }
 /*# sourceMappingURL=style.css.map */
