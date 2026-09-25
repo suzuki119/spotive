@@ -608,8 +608,11 @@ document.addEventListener("DOMContentLoaded", () => {
   $("#filter-close").addEventListener("click", closeFilterSheet);
   $("#match-sheet-close").addEventListener("click", closeMatchSheet);
 
-  // 地図の余白をタップしたらシートを閉じる
-  map.on("click", closeSheets);
+  // 地図を触ったらシートを閉じる。
+  // ピンや Leaflet のボタン（ズーム・地図の種類）は map の click まで
+  // イベントを通さないので、地図コンテナでキャプチャして拾う。
+  // ピンの場合はこのあとマーカー側の処理が走り、詳細シートが開く
+  map.getContainer().addEventListener("click", closeSheets, true);
 
   // Esc でも閉じられるようにする
   document.addEventListener("keydown", (e) => {

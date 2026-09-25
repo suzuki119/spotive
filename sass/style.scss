@@ -12,6 +12,13 @@ body {
   margin: 0 auto;
 }
 
+@mixin inner($mw:1200px, $w:90%) {
+  width: 90%;
+  max-width: $mw;
+  margin: 0 auto;
+
+}
+
 .btn {
   width: 70px;
   height: 50px;
@@ -108,5 +115,63 @@ body {
     &:hover {
       box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
     }
+  }
+}
+
+//メニューのscss
+
+.menu-bar {
+  // 画面下に貼り付ける。bottom / left / width は
+  // position: fixed を持つこの要素側に書かないと効かない
+  position: fixed;
+  bottom: 50px;
+  left: 0;
+  width: 100%;
+  z-index: 1000;
+
+  &__nav {
+    background-color: #fff;
+    border-top: 1px solid #ccc;
+    padding: 8px 0;
+    margin: auto;
+    width: 80%;
+    border-radius: 100px;
+  }
+
+  // 項目は画面の中央にまとめる。
+  // 広い画面でも間延びしないよう、最大幅を決めて中央寄せにする
+  &__list {
+    display: flex;
+    justify-content: center;
+    gap: 32px;
+    max-width: 480px;
+    margin: 0 auto;
+    padding: 0;
+    list-style: none;
+  }
+
+  &__link {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    padding: 4px 8px;
+    color: #333;
+    text-decoration: none;
+
+    &:hover .menu-bar__label {
+      text-decoration: underline;
+    }
+  }
+
+  &__icon {
+    width: 24px;
+    height: 24px;
+  }
+
+  &__label {
+    font-size: 12px;
+    line-height: 1.2;
+    white-space: nowrap;
   }
 }

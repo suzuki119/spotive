@@ -76,7 +76,7 @@ require_once __DIR__ . '/../../config/db.php';
   <footer class="site-footer">
     <?php
     // menu-bar.phpを読み込む
-    include_once '../menu-bar.php';
+    include_once __DIR__ . '/../menu-bar.php';
     ?>
   </footer>
 
