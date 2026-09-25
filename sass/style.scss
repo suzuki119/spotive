@@ -154,6 +154,7 @@ $breakpoints: (
     margin: auto;
     width: 80%;
     border-radius: 100px;
+
     @include mq(desktop) {
       width: 90%;
     }
@@ -169,6 +170,7 @@ $breakpoints: (
     margin: 0 auto;
     padding: 0;
     list-style: none;
+
     @include mq(desktop) {
       gap: 8px;
     }
@@ -204,8 +206,9 @@ $breakpoints: (
   }
 }
 
-.leaflet-touch .leaflet-bar{
+.leaflet-touch .leaflet-bar {
   margin-bottom: 5px;
+
   @include mq(desktop) {
     margin-bottom: 125px;
   }
@@ -360,5 +363,78 @@ $breakpoints: (
 
   article {
     margin-top: 25px;
+  }
+}
+
+
+
+
+
+
+
+//_______________________________________ヘッダーのCSS＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿
+.header {
+  display: flex;
+  justify-content: space-between;
+  position: fixed;
+  width: 100%;
+  max-width: 400px;
+  padding: 20px 0;
+
+  &-title {
+    font-size: 25px;
+    font-weight: bold;
+  }
+
+  &-account {
+    width: 40px;
+    height: 40px;
+    display: block;
+
+    img {
+      width: 40px;
+      height: 40px;
+    }
+  }
+}
+
+//_________________________________________ホームのCSS＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿
+.home-favorite {
+  padding-top: 100px;
+
+  &-title {
+    font-size: 25px;
+    font-weight: bold;
+  }
+
+
+  &-group {
+    width: 180px;
+    height: 120px;
+    display: grid;
+    row-gap: 5px;
+    border: solid 1px #000;
+    border-radius: 15px;
+    padding: 10px 23px;
+
+    &-title {
+      font-size: 12px;
+    }
+
+    &-team {
+      display: grid;
+      grid-template-columns: 5fr 1fr 5fr;
+      align-items: center;
+
+      p {
+        align-items: bottom;
+      }
+
+      img {
+        margin: 0 auto;
+        width: 45px;
+        height: 47px;
+      }
+    }
   }
 }

@@ -1287,4 +1287,59 @@ body {
 .organizer-input article {
   margin-top: 25px;
 }
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  position: fixed;
+  width: 100%;
+  max-width: 400px;
+  padding: 20px 0;
+}
+.header-title {
+  font-size: 25px;
+  font-weight: bold;
+}
+.header-account {
+  width: 40px;
+  height: 40px;
+  display: block;
+}
+.header-account img {
+  width: 40px;
+  height: 40px;
+}
+
+.home-favorite {
+  padding-top: 100px;
+}
+.home-favorite-title {
+  font-size: 25px;
+  font-weight: bold;
+}
+.home-favorite-group {
+  width: 180px;
+  height: 120px;
+  display: grid;
+  row-gap: 5px;
+  border: solid 1px #000;
+  border-radius: 15px;
+  padding: 10px 23px;
+}
+.home-favorite-group-title {
+  font-size: 12px;
+}
+.home-favorite-group-team {
+  display: grid;
+  grid-template-columns: 5fr 1fr 5fr;
+  align-items: center;
+}
+.home-favorite-group-team p {
+  align-items: bottom;
+}
+.home-favorite-group-team img {
+  margin: 0 auto;
+  width: 45px;
+  height: 47px;
+}
 /*# sourceMappingURL=style.css.map */
