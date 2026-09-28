@@ -18,7 +18,7 @@
   padding: 8px;
   background: rgba($color-bg, 0.92);
   border: 1px solid $color-border;
-  border-radius: $radius-lg;
+  border-radius: 100px;
   box-shadow: 0 4px 16px rgba($color-secondary, 0.12);
   backdrop-filter: blur(8px);
   font-family: $font-body;
@@ -56,7 +56,7 @@
     padding: 4px 0;
     background: none;
     border: 0;
-    border-radius: $radius-md;
+    border-radius: 100px;
     color: $color-text;
     font: inherit;
     text-decoration: none;
