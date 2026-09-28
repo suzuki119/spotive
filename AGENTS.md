@@ -42,6 +42,8 @@
 
 **画面を作るときは、常に観戦者の視点を優先してください。**
 
+> **デモ版の扱い：** 現在はデモサイトとして、本人確認・主催者認証・書類の提出・大会の審査を外しています。メール確認が済んだ一般ユーザー（Lv.1）なら誰でも大会を登録でき、登録した時点で地図と一覧に載ります。**将来これらの確認を導入する可能性があります。** 詳しくは「4. PHP・データベースのルール」の「デモ版の扱い」を参照してください。
+
 ### ターゲット
 
 - スポーツ観戦が好きな人
@@ -136,7 +138,7 @@ CSS は「スマホ幅のスタイルを先に書き、`min-width` のメディ�
 
 ### カラー
 
-スポーツと地図に合わせたブルー系です。値は `scss/_variables.scss` にまとめ、**SCSS の中に直接カラーコードを書かないでください。**
+スポーツと地図に合わせたブルー系です。値は `sass/_variables.scss` にまとめ、**SCSS の中に直接カラーコードを書かないでください。**
 
 | 役割 | 変数名 | カラーコード | 用途 |
 | --- | --- | --- | --- |
@@ -232,11 +234,32 @@ $font-body: "Noto Sans JP", sans-serif;
 | マークアップ | 素の HTML5 ＋ **PHP 8**（テンプレートエンジンやフレームワークは使わない） |
 | サーバーサイド | **PHP 8.0 以上**（Laravel などのフレームワークは使わない） |
 | データベース | **MySQL 8.0**（`db/schema.sql` が正） |
-| 実行環境 | **XAMPP**（Apache ＋ MySQL）。`http://localhost/spotive/` で開く |
+| 実行環境 | **XAMPP** または **MAMP**（Apache ＋ MySQL）。環境ごとの違いは下記「環境ごとの設定」で吸収する |
 | CSS | **SCSS**（Live Sass Compiler でコンパイル） |
 | JavaScript | **素の JavaScript**（フレームワークなし） |
 | 地図 | **Leaflet**（CDN 読み込み、OpenStreetMap、API キー不要） |
 | ビルドツール | なし（npm / Vite / webpack / Composer は使わない） |
+
+**現在使っている外部ライブラリ（CDN）**
+
+| ライブラリ | バージョン | 使っている場所 |
+| --- | --- | --- |
+| Leaflet | 1.9.4（固定） | 地図、試合詳細 |
+| Leaflet.markercluster | 1.5.3（固定） | 地図（ピンのまとめ表示） |
+| the-new-css-reset | 未固定 | アカウント・設定などのページ |
+
+ここに無いライブラリを足すときは、先にチームに共有してからこの表に追記してください。
+
+### 環境ごとの設定
+
+XAMPP と MAMP では URL や MySQL のポートが違います。**違いはコミットしないファイルで吸収します。**
+
+| 項目 | XAMPP | MAMP | 設定する場所 |
+| --- | --- | --- | --- |
+| サイトの URL | `http://localhost/spotive/` | `http://localhost:8888/spotive/` | `config/app.php` の `app.base_url`（確認メールのリンクに使う） |
+| MySQL のポート／パスワード | 3306 ／ 空 | 8889 ／ `root` | `config/db.local.php`（`.gitignore` 済み。各自で作る） |
+
+`config/app.php` の `base_url` を自分の環境向けに書き換えた場合は、その変更をコミットしないでください。
 
 ### SCSS のコンパイル
 
@@ -258,25 +281,32 @@ VSCode 拡張 **Live Sass Compiler** を使います。**全員が同じ設定�
 }
 ```
 
-コンパイルされるのは `scss/style.scss` → `css/style.css` の 1 本だけです。
+コンパイルされるのは `sass/style.scss` → `css/style.css` の 1 本だけです。
 
 ### SCSS のファイル構成
 
+フォルダ名は **`sass/`** です。
+
 ```
-scss/
+sass/
 ├── style.scss          ← ここで全パーシャルを @use するだけ。スタイルは書かない
 ├── _variables.scss     ← 色・フォント・余白・角丸・BP の変数
-├── _mixin.scss         ← メディアクエリなどの mixin
-├── _reset.scss         ← リセット CSS
-├── _base.scss          ← body, a, img などの基本スタイル
-├── _header.scss        ← 共通ヘッダー
-├── _footer.scss        ← 共通フッター
-├── _button.scss        ← 共通ボタン
-├── _match-card.scss    ← 共通パーツ（試合カードなど）
-├── _sports-map.scss    ← ページ固有（sports-map.html 用）
-├── _event-detail.scss  ← ページ固有（event-detail.html 用）
+├── _mixin.scss         ← メディアクエリなどの mixin（未作成）
+├── _reset.scss         ← リセット CSS（未作成）
+├── _base.scss          ← body, a, img などの基本スタイル（未作成）
+├── _header.scss        ← 共通ヘッダー（未作成）
+├── _footer.scss        ← 共通フッター（未作成）
+├── _button.scss        ← 共通ボタン（未作成）
+├── _form.scss          ← 共通フォーム（アカウント・設定・主催者ページ）
+├── _match-card.scss    ← 共通パーツ（試合カード）
+├── _sports-map.scss    ← ページ固有（pages/map/map.php 用）
+├── _match-list.scss    ← ページ固有（pages/match/match-list.php 用）
+├── _match-detail.scss  ← ページ固有（pages/match/match-detail.php 用）
+├── _favorite.scss      ← ページ固有（pages/favorite/favorite.php 用）
 └── ...
 ```
+
+「未作成」のパーシャルは、作るときにこの名前を使ってください。現在の `style.scss` にはスタイルが直接書かれている箇所があるので、共通パーツを作るときに該当するパーシャルへ移してください。
 
 **担当ページのスタイルは、必ず自分のページ用のパーシャルに書いてください。** 共通パーツ（`_header.scss` など）を触るときは、他のページが崩れる可能性があるので、事前にチームに共有してください。
 
@@ -290,14 +320,17 @@ scss/
 @use "header";
 @use "footer";
 @use "button";
+@use "form";
 @use "match-card";
 @use "sports-map";
-@use "event-detail";
+@use "match-list";
+@use "match-detail";
+@use "favorite";
 ```
 
 ### コンパイル後の CSS の扱い
 
-`css/style.css` は**コミットします**（GitHub Pages でそのまま公開できる状態を保つため）。ただし次のルールを守ってください。
+`css/style.css` は**コミットします**（clone しただけで、コンパイルせずに表示を確認できるようにするため）。ただし次のルールを守ってください。
 
 - **`css/style.css` を手で編集しない。** 直したいときは必ず SCSS を直して再コンパイルする
 - **`css/style.css` でコンフリクトが起きたら、中身を手で解決しない。** SCSS 側のコンフリクトだけを解決し、再コンパイルして丸ごと上書きする
@@ -369,33 +402,66 @@ images/
 SPOTIVE は PHP と MySQL を使います。**データベースの正は `db/schema.sql` です。**
 テーブルやカラムを増やしたくなったら、自分のコードで回避せず、まず `schema.sql` を直してチームに共有してください。
 
-ここに書かれているルールは、**個人情報と認証を扱うため**のものです。SPOTIVE は本人確認書類（`identity_verifications`）、電話番号、パスワードを持つので、書き方を間違えると事故になります。面倒でも守ってください。
+ここに書かれているルールは、**個人情報と認証を扱うため**のものです。SPOTIVE は電話番号・生年月日・パスワードを持ち、将来は本人確認書類（`identity_verifications`）も扱う可能性があるので、書き方を間違えると事故になります。デモ版でも守ってください。
 
 ### データベースの現状（重要）
 
-**`db/schema.sql` は、今のところ「主催者が大会を掲載し、審査を通す」部分しか設計されていません。**
-ユーザー登録・本人確認・主催者認証・大会の確認（Lv.1〜4）と、公開用ビュー `v_public_tournaments` があります。
+**`db/schema.sql` は、今のところ「ユーザーが大会を掲載する」部分しか設計されていません。**
+ユーザー登録・本人確認・主催者認証・大会の確認（Lv.1〜4）のテーブルと、公開用ビュー `v_public_tournaments` があります（本人確認・主催者認証・大会の確認は、デモ版では使っていません。下記参照）。
 
 一方で、企画書の主役である**観戦者向けの「試合」データ（プロ野球・Bリーグ・Jリーグの試合、チケット価格帯、チーム、会場）のテーブルはまだありません。**
 `data/matches.json` `data/teams.json` `data/areas.json` は、画面を作るための**仮データ**です。DB ができるまでの置き換え用と考えてください。
 
 そのため、今の段階では次のように扱います。
 
-- **主催者が掲載した大会** … `v_public_tournaments` から取る（下記のルールに従う）
+- **ユーザーが掲載した大会** … `v_public_tournaments` から取る（下記のルールに従う）
 - **観戦用の試合データ** … `data/*.json` の仮データで画面を作る
 - **観戦用のテーブル設計は、まだ各自で作らない。** 必要になったらチームで `schema.sql` に追加します
 
 自分の担当ページのためだけに勝手なテーブルを足すと、あとで統合できなくなります。必ず相談してください。
+
+### デモ版の扱い（本人確認・主催者認証・書類・審査）
+
+SPOTIVE は現在**デモサイト**です。「登録した大会が実際に地図に出るか」を確かめられるよう、次の確認を外しています。**将来、実運用に向けてこれらを導入する可能性があります。** テーブル（`identity_verifications`、`organizer_*`、`tournament_verifications`、`attachments`）は、その時のために `schema.sql` に残しています。
+
+| 項目 | 本来の設計 | デモ版の現状 |
+| --- | --- | --- |
+| 本人確認（Lv.2） | 身分証を提出し、運営が審査する | **削除**（`lib/identity.php` と画面・審査キューを削除済み） |
+| 主催者認証（Lv.3） | 主催者として申請し、運営が承認する | **大会の登録には不要**。申請画面と審査画面は残っている |
+| 大会の登録・編集 | Lv.3 のみ | **Lv.1（メール確認済み）なら誰でもできる** |
+| 書類の添付・許認可の入力 | 会場予約確認書・保険などを添付する | **画面に出さない** |
+| 大会の確認（Lv.4） | 審査が終わるまで公開しない | **登録した時点で公開**（地図・一覧・詳細に出る） |
+
+切り替えは `config/app.php` の `verification` にまとめています。
+
+```php
+'require_level' => [
+  'organizer_apply'   => 1,   // 主催者申請に必要なレベル
+  'create_tournament' => 1,   // 大会の登録・編集に必要なレベル（本来は 3）
+],
+'tournament_review_required' => false,  // true で審査・書類・許認可の入力が戻る
+```
+
+- デモ版の間も、**ここ以外の場所でレベルの判定を増やさないでください。** 判定は `require_action_level()` と `config/app.php` の値だけで行い、本番に切り替えるときは設定値を変えるだけで済むようにしておきます
+- 本人確認を戻すときは、git の履歴から `lib/identity.php` と関連する画面を復元し、`lib/account.php` の `recalc_trust_level()` に Lv.2 の判定を戻します
 
 ### ファイル構成
 
 ```
 index.php              ← トップページ
 config/
-└── db.php             ← DB 接続（PDO）。全ページここから読み込む
+├── db.php             ← DB 接続（PDO）。全ページここから読み込む
+├── db.local.php       ← 各自の DB 接続設定（.gitignore 済み。コミットしない）
+└── app.php            ← アプリ全体の設定（URL・保存先・レベルの条件など）
 db/
 └── schema.sql         ← テーブル定義。これが正
-pages/                 ← 各ページ（PHP が必要なものは .php）
+lib/                   ← 共通の処理（認証・大会・バリデーションなど）。ページから require_once する
+pages/                 ← 各ページ。機能ごとにフォルダを分ける（pages/map/map.php、pages/match/match-list.php）
+data/                  ← 観戦用の仮データ（JSON）
+js/
+├── common/            ← 複数ページで使う JS
+└── pages/             ← ページ専用の JS（ページと同じ名前にする）
+tools/                 ← コマンドラインで使う管理用スクリプト（運営アカウントの作成など）
 ```
 
 - **PHP の処理が必要なページだけ `.php`**、静的なページは `.html` のままで構いません
@@ -496,7 +562,7 @@ $order   = $allowed[$_GET['sort'] ?? ''] ?? 'starts_at ASC';
   - `ERRMODE_EXCEPTION`（エラーを例外にする）
   - `EMULATE_PREPARES = false`（プレースホルダを MySQL 側で処理する。これが false でないとプレースホルダの意味が薄れます）
   - `charset=utf8mb4`、`time_zone = '+09:00'`（`schema.sql` と揃えています）
-- **接続情報を書き換えたファイルをコミットしないでください。** 自分の環境だけパスワードが違う場合は、コミットに含めないよう気をつけること
+- **`config/db.php` の接続情報は書き換えないでください。** 自分の環境だけポートやパスワードが違う場合は、`config/db.local.php` を作って上書きします（`.gitignore` 済みなのでコミットされません）
 
 ### 公開する大会は必ずビューから取る
 
@@ -514,7 +580,7 @@ $pdo->query('SELECT * FROM tournaments WHERE ...');
 
 - `status = 'published'` の大会だけに絞る（`draft` や `cancelled` を公開しない）
 - `is_verified`（Lv.4 の確認済みフラグ）を付ける
-- `organizer_name` を出す（`organizer_profiles.display_name` があればそれ、無ければ `users.nickname`）
+- `organizer_name` を出す（`organizer_profiles.display_name` があればそれ、無ければ `users.nickname`。デモ版では多くの場合ニックネームになる）
 
 直接 `tournaments` を触ってよいのは、主催者本人の管理画面（自分の下書きを見る）と、審査画面だけです。
 
@@ -522,12 +588,13 @@ $pdo->query('SELECT * FROM tournaments WHERE ...');
 
 `schema.sql` の設計に合わせます。**自分で判定ロジックを作らないでください。**
 
-| レベル | 見る場所 |
-| --- | --- |
-| Lv.1 一般ユーザー | `users.trust_level = 1` |
-| Lv.2 本人確認済み | `users.trust_level = 2` |
-| Lv.3 主催者認証済み | `users.trust_level = 3`（資格の有効性は `organizer_profiles.status = 'active'`） |
-| Lv.4 大会確認済み | `tournaments.verification_status = 'verified'`（ビューでは `is_verified`） |
+| レベル | 見る場所 | デモ版 |
+| --- | --- | --- |
+| Lv.0 仮登録 | `users.trust_level = 0`（メール未確認） | ログインはできるが大会は登録できない |
+| Lv.1 一般ユーザー | `users.trust_level = 1` | **大会の登録・編集ができる** |
+| Lv.2 本人確認済み | `users.trust_level = 2` | 使っていない（誰もこのレベルにならない） |
+| Lv.3 主催者認証済み | `users.trust_level = 3`（資格の有効性は `organizer_profiles.status = 'active'`） | 承認されればなれるが、大会の登録には不要 |
+| Lv.4 大会確認済み | `tournaments.verification_status = 'verified'`（ビューでは `is_verified`） | 使っていない |
 
 - Lv.4 は**ユーザーではなく「大会」に付く**レベルです。混同しないこと
 - 主催者としての操作を許可する前に、`trust_level` だけでなく `organizer_profiles.status` と `verified_until` も確認します（停止・期限切れがあります）
@@ -542,7 +609,7 @@ $pdo->query('SELECT * FROM tournaments WHERE ...');
 ### 個人情報・アップロードファイル
 
 - **本名と生年月日は `users` に入れません。** 確認済みの氏名・生年月日は `identity_verifications` 側です（`users.birthdate` は自己申告の値）
-- 本人確認書類などのアップロードは `attachments` に記録し、**実ファイルは公開ディレクトリの外**に置きます。`images/` に本人確認書類を置かないでください。URL を知られたら誰でも見られます
+- 書類などのアップロードは `attachments` に記録し、**実ファイルは公開ディレクトリの外**に置きます。`images/` に本人確認書類を置かないでください。URL を知られたら誰でも見られます
 - 本名、生年月日、電話番号、書類の中身を、**ログや `error_log` に出さない**こと
 
 ### エラーの扱い
@@ -785,7 +852,8 @@ PHP を触ったときは、加えて次も確認してください。
 - [ ] **公開一覧は `v_public_tournaments` から取っている**
 - [ ] **エラーの詳細が画面に出ていない**（SQL 文やファイルパスが見えていない）
 - [ ] **ファイル末尾に `?>` を書いていない**
-- [ ] **接続情報を書き換えた `config/db.php` をコミットしていない**
+- [ ] **`config/db.php` の接続情報を書き換えていない**（環境ごとの違いは `config/db.local.php` に書く）
+- [ ] **自分の環境向けに書き換えた `config/app.php` の `base_url` をコミットしていない**
 - [ ] **本名・電話番号・書類の内容をログに出していない**
 
 ---
