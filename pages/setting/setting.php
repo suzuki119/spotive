@@ -14,7 +14,7 @@ require_once __DIR__ . '/../../lib/layout.php';
 
 $user     = require_login();
 $overview = account_overview((int) $user['id']);
-$myEvents = (int) $user['trust_level'] >= LEVEL_ORGANIZER
+$myEvents = (int) $user['trust_level'] >= (int) config('verification.require_level.create_tournament', LEVEL_ORGANIZER)
   ? tournament_list_mine((int) $user['id'])
   : [];
 
@@ -31,7 +31,6 @@ page_header('マイページ', 'マイページ');
     <?php
     $steps = [
       ['level' => LEVEL_USER,       'label' => 'アカウント登録', 'link' => null],
-      ['level' => LEVEL_IDENTIFIED, 'label' => '本人確認',       'link' => $base . '/pages/account/identity.php'],
       ['level' => LEVEL_ORGANIZER,  'label' => '主催者認証',     'link' => $base . '/pages/organizer/register.php'],
     ];
     ?>
@@ -48,11 +47,6 @@ page_header('マイページ', 'マイページ');
 
   <?php if ($overview['next_step'] === 'verify_email') : ?>
     <p class="notice notice--info">メールアドレスの確認が済んでいません。</p>
-  <?php elseif ($overview['next_step'] === 'identity') : ?>
-    <p class="notice notice--info">
-      次は本人確認です。
-      <a href="<?= h($base) ?>/pages/account/identity.php">本人確認へ進む</a>
-    </p>
   <?php elseif ($overview['next_step'] === 'organizer') : ?>
     <p class="notice notice--info">
       次は主催者認証です。
@@ -67,18 +61,6 @@ page_header('マイページ', 'マイページ');
   <h2 class="form-page__subtitle">申請の状況</h2>
 
   <dl class="detail">
-    <dt class="detail__label">本人確認</dt>
-    <dd class="detail__value">
-      <?php if ($overview['identity'] === null) : ?>
-        未申請
-      <?php else : ?>
-        <?= h(status_label((string) $overview['identity']['status'])) ?>
-        <?php if ($overview['identity']['reject_reason'] !== null) : ?>
-          <span class="detail__note"><?= h((string) $overview['identity']['reject_reason']) ?></span>
-        <?php endif; ?>
-      <?php endif; ?>
-    </dd>
-
     <dt class="detail__label">主催者認証</dt>
     <dd class="detail__value">
       <?php if ($overview['application'] === null) : ?>

@@ -442,6 +442,7 @@ document.addEventListener("DOMContentLoaded", () => {
         ${shown.some((g) => g.price != null) ? '<div class="pop-note">価格は最安席の目安です。試合や購入時期によって変わります。</div>' : ""}
         <div class="pop-actions">
           <a class="btn" href="${route}" target="_blank" rel="noopener">ルート</a>
+          <button class="btn" type="button" data-nearby="${v.lat},${v.lng}">周辺施設</button>
         </div>
       </div>`;
   }
@@ -659,6 +660,75 @@ document.addEventListener("DOMContentLoaded", () => {
     closeFilterSheet();
     closeMatchSheet();
   }
+
+  // -----------------------------------------------------------------
+  // 周辺施設（Geoapify のデモ。企画書の機能 6）
+  //   API キーを見せないため、Geoapify へは pages/map/nearby.php が問い合わせる。
+  //   施設のピンは試合のピンとまとめないよう、別のレイヤーに置く。
+  // -----------------------------------------------------------------
+  const NEARBY = {
+    food:        { label: "飲食店",   icon: "🍴" },
+    cafe:        { label: "カフェ",   icon: "☕" },
+    convenience: { label: "コンビニ", icon: "🏪" },
+    hotel:       { label: "ホテル",   icon: "🏨" },
+    parking:     { label: "駐車場",   icon: "🅿️" },
+  };
+  const NEARBY_ZOOM = 15;   // 半径 800m の施設が画面に収まるくらい
+  const nearbyLayer = L.layerGroup().addTo(map);
+  let nearbyAttributed = false;
+
+  async function showNearby(lat, lng) {
+    showStatus("周辺施設を探しています…");
+    let data;
+    try {
+      const res = await fetch(`nearby.php?lat=${encodeURIComponent(lat)}&lng=${encodeURIComponent(lng)}`);
+      data = await res.json();
+    } catch (e) {
+      data = { ok: false, message: "周辺施設を読み込めませんでした。" };
+    }
+    if (!data.ok) {
+      showStatus(data.message);
+      return;
+    }
+
+    // Geoapify の無料プランは、地図の近くにクレジット表記を出すことが条件
+    if (!nearbyAttributed) {
+      map.attributionControl.addAttribution(
+        'Powered by <a href="https://www.geoapify.com/" target="_blank" rel="noopener">Geoapify</a>'
+        + ' | 施設 &copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> contributors'
+      );
+      nearbyAttributed = true;
+    }
+
+    nearbyLayer.clearLayers();
+    data.places.forEach((p) => {
+      const kind = NEARBY[p.kind];
+      if (!kind) return;
+      L.marker([p.lat, p.lng], {
+        icon: L.divIcon({
+          className: "nearby-icon",
+          html: `<span class="nearby-pin nearby-pin--${p.kind}">${kind.icon}</span>`,
+          iconSize: [28, 28],
+          iconAnchor: [14, 14],
+        }),
+        title: p.name,
+      })
+        .bindTooltip(`${esc(p.name)}<br><small>${kind.label} ・ 会場から約${p.distance}m</small>`)
+        .addTo(nearbyLayer);
+    });
+
+    if (map.getZoom() < NEARBY_ZOOM) map.setView([lat, lng], NEARBY_ZOOM);
+    showStatus(data.places.length ? `周辺施設を${data.places.length}件表示しました` : "近くに施設が見つかりませんでした");
+  }
+
+  // ボタンはポップアップ（PC）とシート（スマホ）の中で作り直されるので、document で拾う
+  document.addEventListener("click", (e) => {
+    const button = e.target.closest("[data-nearby]");
+    if (!button) return;
+    const [lat, lng] = button.dataset.nearby.split(",").map(Number);
+    if (MOBILE.matches) closeMatchSheet();   // シートの裏にピンが隠れないようにする
+    showNearby(lat, lng);
+  });
 
   // 飛んでいる最中に別の試合を選ばれたら、古いほうは打ち切る
   let flyToken = 0;
