@@ -18,6 +18,8 @@ if (is_post()) {
   // account-type.php からメールアドレスが送られてきた場合
   if (isset($_POST['email'])) {
     $_SESSION['register']['email'] = trim((string) $_POST['email']);
+    // 主催者の入口から来たか。登録後に主催者の申請へ案内するために覚えておく
+    $_SESSION['register']['intent'] = ($_POST['intent'] ?? '') === 'organizer' ? 'organizer' : 'user';
   }
 
   // この画面から お名前・電話番号・生年月日 が送られてきた場合
@@ -63,6 +65,13 @@ $saved = $_SESSION['register'] ?? [];
     <div class="inner">
       <div class="register">
         <h1 class="register-title">アカウント登録</h1>
+
+        <?php if (($saved['intent'] ?? '') === 'organizer') : ?>
+          <p class="notice notice--info">
+            主催者として登録する前に、まずあなた個人のアカウントを作成します。<br>
+            団体・学校・企業などの情報は、登録後の「主催者登録」で入力します。
+          </p>
+        <?php endif; ?>
 
         <form action="" method="POST">
           <article class="register-form">

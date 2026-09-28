@@ -53,13 +53,14 @@ require_once __DIR__ . '/../../config/db.php';
             required
             class="account-type-email input">
 
-          <button type="submit" class="account-type-btn btn">登録</button>
-        </form>
+          <button type="submit" name="intent" value="user" class="account-type-btn btn">登録</button>
 
-        <article>
-          <p>大会・イベントを主催する方</p>
-          <span class="account-type-organizer btn">登録</span>
-        </article>
+          <!-- 主催者も、まず個人アカウントを作る。主催者の申請はログイン後に行う -->
+          <article>
+            <p>大会・イベントを主催する方</p>
+            <button type="submit" name="intent" value="organizer" class="account-type-organizer btn">登録</button>
+          </article>
+        </form>
       </div>
 
       <hr>
