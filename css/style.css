@@ -1,3 +1,4 @@
+@charset "UTF-8";
 .site-header {
   display: flex;
   align-items: center;
@@ -1523,7 +1524,10 @@ input[type=radio] {
 }
 
 body {
-  background-color: #fafafa;
+  font-family: "Inter", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: bold;
+  font-style: normal;
 }
 
 .inner {
@@ -1853,6 +1857,15 @@ body {
   font-weight: bold;
   margin-bottom: 25px;
 }
+.home-favorite-slider {
+  display: flex;
+  gap: 20px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scroll-snap-type: x mandatory;
+  height: 140px;
+  scrollbar-width: none;
+}
 .home-favorite-group {
   width: 180px;
   height: 120px;
@@ -1862,6 +1875,8 @@ body {
   padding: 10px 23px;
   box-shadow: 2px 2px 4px rgba(170, 170, 170, 0.25);
   background-color: #fff;
+  flex: 0 0 50%;
+  scroll-snap-align: start;
 }
 .home-favorite-group-title {
   font-size: 12px;
@@ -1877,11 +1892,91 @@ body {
   align-items: center;
 }
 .home-favorite-group-team p {
-  align-items: bottom;
+  margin-top: 28px;
+  font-size: 16px;
+  font-weight: bold;
 }
 .home-favorite-group-team img {
   margin: 0 auto;
   width: 45px;
   height: 47px;
+}
+
+.home-now {
+  width: 380px;
+  height: 140px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 30px;
+  border-radius: 15px;
+  padding: 25px;
+  box-shadow: 2px 2px 4px rgba(170, 170, 170, 0.25);
+  background-color: #fff;
+}
+.home-now-group {
+  align-self: center;
+}
+.home-now-group-team {
+  display: grid;
+  grid-template-columns: 5fr 1fr 5fr;
+}
+.home-now-group-team p {
+  margin-top: 28px;
+  font-size: 16px;
+  font-weight: bold;
+}
+.home-now-group-team img {
+  margin: 0 auto;
+  width: 45px;
+  height: 47px;
+}
+.home-now-detall {
+  display: grid;
+  row-gap: 15px;
+}
+.home-now-detall-title {
+  font-weight: normal;
+  font-size: 12px;
+}
+.home-now-detall-team {
+  display: flex;
+  gap: 10px;
+}
+.home-now-detall-team h3 {
+  font-size: 18px;
+  font-weight: bold;
+}
+.home-now-detall-team p {
+  font-size: 15px;
+  margin-top: 5px;
+}
+.home-now-detall-team-time {
+  font-size: 18px;
+  font-weight: bold;
+}
+.home-now-detall-aside {
+  display: flex;
+  gap: 20px;
+  position: relative;
+}
+.home-now-detall-aside::after {
+  content: "｜";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-70%, -50%);
+}
+.home-now-detall-aside span {
+  display: flex;
+  gap: 5px;
+}
+.home-now-detall-aside span img {
+  width: 11px;
+  height: 13px;
+  align-self: center;
+}
+.home-now-detall-aside span p {
+  align-self: center;
+  font-weight: normal;
 }
 /*# sourceMappingURL=style.css.map */

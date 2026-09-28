@@ -7,7 +7,10 @@
 @use "match-detail";
 
 body {
-  background-color: #fafafa;
+  font-family: "Inter", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: bold;
+  font-style: normal;
 }
 
 .inner {
@@ -412,6 +415,16 @@ $breakpoints: (
     margin-bottom: 25px;
   }
 
+  &-slider {
+    display: flex;
+    gap: 20px;
+    overflow-x: auto;
+    overflow-y: hidden;
+
+    scroll-snap-type: x mandatory;
+    height: 140px;
+    scrollbar-width: none;
+  }
 
   &-group {
     width: 180px;
@@ -422,6 +435,8 @@ $breakpoints: (
     padding: 10px 23px;
     box-shadow: 2px 2px 4px rgba(170, 170, 170, 0.25);
     background-color: #fff;
+    flex: 0 0 50%;
+    scroll-snap-align: start;
 
     &-title {
       font-size: 12px;
@@ -439,13 +454,110 @@ $breakpoints: (
       align-items: center;
 
       p {
-        align-items: bottom;
+        margin-top: 28px;
+        font-size: 16px;
+        font-weight: bold;
       }
 
       img {
         margin: 0 auto;
         width: 45px;
         height: 47px;
+      }
+    }
+  }
+}
+
+.home-now {
+  width: 380px;
+  height: 140px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 30px;
+  border-radius: 15px;
+  padding: 25px;
+  box-shadow: 2px 2px 4px rgba(170, 170, 170, 0.25);
+  background-color: #fff;
+
+  &-group {
+    align-self: center;
+
+    &-team {
+      display: grid;
+      grid-template-columns: 5fr 1fr 5fr;
+
+
+      p {
+        margin-top: 28px;
+        font-size: 16px;
+        font-weight: bold;
+      }
+
+      img {
+        margin: 0 auto;
+        width: 45px;
+        height: 47px;
+      }
+    }
+  }
+
+  &-detall {
+    //__________________右側
+    display: grid;
+    row-gap: 15px;
+
+    &-title {
+      font-weight: normal;
+      font-size: 12px;
+    }
+
+    &-team {
+      display: flex;
+      gap: 10px;
+
+      h3 {
+        font-size: 18px;
+        font-weight: bold;
+      }
+
+      p {
+        font-size: 15px;
+        margin-top: 5px;
+      }
+
+      &-time {
+        font-size: 18px;
+        font-weight: bold;
+      }
+    }
+
+    &-aside {
+      display: flex;
+      gap: 20px;
+      position: relative;
+
+      &::after {
+        content: "｜";
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-70%, -50%);
+      }
+
+      span {
+        display: flex;
+        gap: 5px;
+
+        img {
+          width: 11px;
+          height: 13px;
+          align-self: center;
+        }
+
+        p {
+          align-self: center;
+          font-weight: normal;
+        }
       }
     }
   }
