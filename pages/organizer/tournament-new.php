@@ -346,4 +346,4 @@ page_header($id > 0 ? '大会の編集' : '大会の登録', $id > 0 ? '大会�
   <a href="dashboard.php">主催者ページへ戻る</a>
 </p>
 
-<?php page_footer(); ?>
+<?php page_footer();

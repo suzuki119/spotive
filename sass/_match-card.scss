@@ -1,0 +1,101 @@
+// 試合カード（pages/match/match-card.php）。試合一覧とお気に入りで共通。
+// 変えると両方のページに効くので、触るときはチームに共有すること。
+@use "sass:map";
+@use "variables" as *;
+
+.match-card {
+  display: grid;
+  grid-template-columns: 56px 1fr;
+  gap: 4px 12px;
+  padding: 16px;
+  background: $color-bg;
+  border: 1px solid $color-border;
+  border-radius: $radius-lg;
+  color: $color-text;
+  font-family: $font-body;
+
+  @media (min-width: $bp-tablet) {
+    grid-template-columns: 64px 1fr auto;
+    align-items: center;
+    padding: 24px;
+  }
+
+  &__time {
+    margin: 0;
+    font-family: $font-heading;
+    font-weight: 600;
+    font-size: 18px;
+    color: $color-secondary;
+  }
+
+  &__body {
+    min-width: 0; // 長い試合名でカードがはみ出さないようにする
+  }
+
+  &__tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    margin: 0 0 4px;
+  }
+
+  &__sport,
+  &__favorite {
+    padding: 0 8px;
+    border-radius: $radius-full;
+    font-size: 12px;
+    line-height: 1.8;
+  }
+
+  &__sport {
+    color: $color-bg;
+    background: map.get($sport-colors, other);
+
+    @each $sport, $color in $sport-colors {
+      &--#{$sport} {
+        background: $color;
+      }
+    }
+  }
+
+  &__favorite {
+    color: $color-bg;
+    background: $color-accent;
+
+    &.is-hidden {
+      display: none;
+    }
+  }
+
+  &__title {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 700;
+    line-height: 1.5;
+    overflow-wrap: anywhere;
+  }
+
+  &__venue,
+  &__organizer {
+    margin: 4px 0 0;
+    font-size: 14px;
+    color: $color-text-sub;
+  }
+
+  // スマホでは本文の下、時刻の列をあけて右寄せ
+  &__price {
+    grid-column: 2;
+    margin: 4px 0 0;
+    font-family: $font-heading;
+    font-weight: 600;
+    font-size: 16px;
+    color: $color-primary;
+    text-align: right;
+
+    @media (min-width: $bp-tablet) {
+      grid-column: 3;
+      margin: 0;
+      white-space: nowrap;
+    }
+  }
+}

@@ -20,8 +20,8 @@ $menuItems = [
   ['href' => 'index.php',               'icon' => 'home.svg',     'label' => 'ホーム'],
   ['href' => 'pages/map/map.php',       'icon' => 'menu.svg',     'label' => 'メニュー'],
   ['href' => 'pages/map/map.php',       'icon' => 'map.svg',      'label' => '地図'],
-  ['href' => 'pages/list/list.php',     'icon' => 'calendar.svg', 'label' => '一覧'],
-  ['href' => 'pages/about/about.php',   'icon' => 'search.svg',   'label' => '探す'],
+  ['href' => 'pages/match/match-list.php', 'icon' => 'calendar.svg', 'label' => '一覧'],
+  ['href' => 'pages/match/match-search.php', 'icon' => 'search.svg',   'label' => '探す'],
 ];
 
 ?>

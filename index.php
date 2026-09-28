@@ -281,7 +281,7 @@ try {
                     <h3 class="match-card__title">
                       <a
                         class="match-card__link"
-                        href="pages/match/match-detail.php?id=<?= (int) $t['id'] ?>"
+                        href="pages/match/match-detail.php?type=tournament&amp;id=<?= (int) $t['id'] ?>"
                       >
                         <?= h($t['title']) ?>
                       </a>

@@ -5,7 +5,7 @@
     "sport": "soccer",
     "areaId": "area-14",
     "homeVenue": "みなとみらいスタジアム",
-    "logo": "images/teams/team-001.webp"
+    "logo": ""
   },
   {
     "id": "team-002",
@@ -13,7 +13,7 @@
     "sport": "soccer",
     "areaId": "area-13",
     "homeVenue": "東京セントラルフィールド",
-    "logo": "images/teams/team-002.webp"
+    "logo": ""
   },
   {
     "id": "team-003",
@@ -21,7 +21,7 @@
     "sport": "baseball",
     "areaId": "area-27",
     "homeVenue": "なにわドーム",
-    "logo": "images/teams/team-003.webp"
+    "logo": ""
   },
   {
     "id": "team-004",
@@ -29,7 +29,7 @@
     "sport": "baseball",
     "areaId": "area-23",
     "homeVenue": "なごやスタジアム",
-    "logo": "images/teams/team-004.webp"
+    "logo": ""
   },
   {
     "id": "team-005",
@@ -37,7 +37,7 @@
     "sport": "basketball",
     "areaId": "area-01",
     "homeVenue": "さっぽろアリーナ",
-    "logo": "images/teams/team-005.webp"
+    "logo": ""
   },
   {
     "id": "team-006",
@@ -45,7 +45,7 @@
     "sport": "basketball",
     "areaId": "area-04",
     "homeVenue": "せんだいアリーナ",
-    "logo": "images/teams/team-006.webp"
+    "logo": ""
   },
   {
     "id": "team-007",
@@ -53,7 +53,7 @@
     "sport": "volleyball",
     "areaId": "area-40",
     "homeVenue": "はかた総合体育館",
-    "logo": "images/teams/team-007.webp"
+    "logo": ""
   },
   {
     "id": "team-008",
@@ -61,6 +61,70 @@
     "sport": "volleyball",
     "areaId": "area-34",
     "homeVenue": "ひろしま体育館",
-    "logo": "images/teams/team-008.webp"
+    "logo": ""
+  },
+  {
+    "id": "team-009",
+    "name": "埼玉グリーンアローズ",
+    "sport": "soccer",
+    "areaId": "area-11",
+    "homeVenue": "さいたまパークスタジアム",
+    "logo": ""
+  },
+  {
+    "id": "team-010",
+    "name": "静岡オーシャンズ",
+    "sport": "soccer",
+    "areaId": "area-22",
+    "homeVenue": "しずおか海浜スタジアム",
+    "logo": ""
+  },
+  {
+    "id": "team-011",
+    "name": "千葉サンライズ",
+    "sport": "baseball",
+    "areaId": "area-12",
+    "homeVenue": "ちばベイパーク球場",
+    "logo": ""
+  },
+  {
+    "id": "team-012",
+    "name": "福岡サンダーバーズ",
+    "sport": "baseball",
+    "areaId": "area-40",
+    "homeVenue": "はかたベースボールパーク",
+    "logo": ""
+  },
+  {
+    "id": "team-013",
+    "name": "東京スカイホークス",
+    "sport": "basketball",
+    "areaId": "area-13",
+    "homeVenue": "東京ベイアリーナ",
+    "logo": ""
+  },
+  {
+    "id": "team-014",
+    "name": "京都フェニックス",
+    "sport": "basketball",
+    "areaId": "area-26",
+    "homeVenue": "京都みやこアリーナ",
+    "logo": ""
+  },
+  {
+    "id": "team-015",
+    "name": "大阪ブリッツ",
+    "sport": "volleyball",
+    "areaId": "area-27",
+    "homeVenue": "なにわ中央体育館",
+    "logo": ""
+  },
+  {
+    "id": "team-016",
+    "name": "名古屋ストライプス",
+    "sport": "volleyball",
+    "areaId": "area-23",
+    "homeVenue": "なごや市民体育館",
+    "logo": ""
   }
 ]

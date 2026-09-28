@@ -5,6 +5,8 @@
  * アカウント種別の選択画面。一般ユーザー / 主催者アカウントを選ぶ
  */
 
+declare(strict_types=1);
+
 require_once __DIR__ . '/../../config/db.php';
 
 // ここでデータを取得する（HTML は書かない）
@@ -20,6 +22,9 @@ require_once __DIR__ . '/../../config/db.php';
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Jost:wght@400;600&family=Noto+Sans+JP:wght@400;500;700&display=swap"
+    rel="stylesheet" />
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/the-new-css-reset/css/reset.min.css">
   <link rel="stylesheet" href="../../css/style.css">
 </head>
@@ -27,7 +32,7 @@ require_once __DIR__ . '/../../config/db.php';
 <body>
   <header class="site-header"> <?php
                                 // header.phpを読み込む
-                                include_once '../header.php';
+                                include_once __DIR__ . '/../header.php';
                                 ?></header>
 
   <main class="l-main">
@@ -53,17 +58,17 @@ require_once __DIR__ . '/../../config/db.php';
             required
             class="account-type-email input">
 
-          <button type="submit" class="account-type-btn btn">登録</button>
-        </form>
+          <button type="submit" name="intent" value="user" class="account-type-btn btn">登録</button>
 
-        <article>
-          <p>大会・イベントを主催する方</p>
-          <form action="../account/register/organizer-register.php">
-            <button class="account-type-organizer btn">
-              登録
-            </button>
-          </form>
-        </article>
+
+          <article>
+            <p>大会・イベントを主催する方</p>
+            <form action="../account/register/organizer-register.php">
+              <button class="account-type-organizer btn">
+                登録
+              </button>
+            </form>
+          </article>
       </div>
 
       <hr>

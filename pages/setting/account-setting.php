@@ -55,4 +55,4 @@ page_header('アカウント設定', 'アカウント設定');
   <a href="setting.php">マイページへ戻る</a>
 </p>
 
-<?php page_footer(); ?>
+<?php page_footer();

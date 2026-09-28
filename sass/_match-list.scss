@@ -1,0 +1,99 @@
+// 試合一覧画面（pages/match/match-list.php）専用のスタイル。
+// 日付ごとの見出し（match-list__day / __date / __items）はお気に入り画面でも使う。
+@use "variables" as *;
+
+.match-list {
+  max-width: $content-max;
+  margin: 0 auto;
+  padding: 24px 16px $menu-bar-space;
+  font-family: $font-body;
+  color: $color-text;
+
+  @media (min-width: $bp-tablet) {
+    padding: 32px 24px $menu-bar-space;
+  }
+
+  &__head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 16px;
+  }
+
+  &__title {
+    margin: 0;
+    font-family: $font-heading;
+    font-size: 24px;
+    font-weight: 700;
+    color: $color-secondary;
+  }
+
+  &__count {
+    margin: 0;
+    font-size: 14px;
+    color: $color-text-sub;
+  }
+
+  &__filter {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 16px;
+    font-size: 14px;
+    cursor: pointer;
+  }
+
+  &__filter-input {
+    width: 16px;
+    height: 16px;
+    accent-color: $color-primary;
+  }
+
+  &__empty {
+    margin: 24px 0 0;
+    padding: 24px 16px;
+    background: $color-bg;
+    border-radius: $radius-lg;
+    color: $color-text-sub;
+    text-align: center;
+    line-height: 1.8;
+
+    a {
+      color: $color-primary;
+    }
+
+    &.is-hidden {
+      display: none;
+    }
+  }
+
+  &__day {
+    margin-top: 32px;
+
+    &.is-hidden {
+      display: none;
+    }
+  }
+
+  &__date {
+    margin: 0 0 12px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid $color-primary;
+    font-family: $font-heading;
+    font-size: 18px;
+    font-weight: 700;
+    color: $color-secondary;
+  }
+
+  &__items {
+    display: grid;
+    gap: 16px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  &__item.is-hidden {
+    display: none;
+  }
+}

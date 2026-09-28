@@ -133,4 +133,4 @@ page_header('マイページ', 'マイページ');
   </ul>
 </nav>
 
-<?php page_footer(); ?>
+<?php page_footer();

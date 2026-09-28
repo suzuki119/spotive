@@ -130,7 +130,11 @@ document.addEventListener("DOMContentLoaded", () => {
   // 最初の表示より前に決めておくこと。あとから決めると、画面が広いときに
   // 倍率の引き上げがアニメーション付きで走り、その完了が
   // 現在地への移動を上書きしてしまう
-  const updateMinZoom = () => map.setMinZoom(map.getBoundsZoom(JAPAN_BOUNDS));
+  //
+  // 整数に切り捨てること。MarkerCluster はクラスタの木を Math.floor(最小倍率) で作るのに、
+  // ピンを置き直すときは最小倍率を丸めずに使う。小数のままだと、どのピンとも
+  // まとまらない会場（木のいちばん上にいるピン）が、ズームのあとに地図から消える
+  const updateMinZoom = () => map.setMinZoom(Math.floor(map.getBoundsZoom(JAPAN_BOUNDS)));
   updateMinZoom();
 
   // 最初の表示は日本全体。広い画面では START_ZOOM より最小倍率のほうが大きくなる
@@ -298,7 +302,8 @@ document.addEventListener("DOMContentLoaded", () => {
       price: m.priceMin == null ? null : Number(m.priceMin),
       ticketUrl: m.ticketUrl || "",
       url: "",
-      detailUrl: `../match/match-detail.php?id=${encodeURIComponent(m.id)}`,
+      // type= で「仮データの試合」か「主催者の大会」かを分ける（ID の形が違うため）
+      detailUrl: `../match/match-detail.php?type=match&id=${encodeURIComponent(m.id)}`,
       v: {
         name: m.venue,
         lat: Number(lat),
@@ -328,7 +333,7 @@ document.addEventListener("DOMContentLoaded", () => {
       price: t.fee == null ? null : Number(t.fee),
       ticketUrl: "",
       url: "",
-      detailUrl: `../match/match-detail.php?id=${encodeURIComponent(t.id)}`,
+      detailUrl: `../match/match-detail.php?type=tournament&id=${encodeURIComponent(t.id)}`,
       v: {
         name: t.venue,
         lat: Number(t.lat),

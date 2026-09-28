@@ -1,6 +1,10 @@
 @use "sass:math";
 @use "form";
 @use "sports-map";
+@use "match-card";
+@use "match-list";
+@use "favorite";
+@use "match-detail";
 
 body {
   background-color: #fafafa;

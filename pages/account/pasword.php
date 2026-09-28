@@ -47,6 +47,10 @@ if (is_post()) {
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Jost:wght@400;600&family=Noto+Sans+JP:wght@400;500;700&display=swap"
+    rel="stylesheet"
+  />
 
   <link
     rel="stylesheet"
@@ -60,7 +64,7 @@ if (is_post()) {
   <header class="site-header">
     <?php
     // header.phpを読み込む
-    include_once '../header.php';
+    include_once __DIR__ . '/../header.php';
     ?>
   </header>
 

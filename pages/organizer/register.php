@@ -321,4 +321,4 @@ page_header('主催者登録', '主催者認証（Lv.3）');
   <a href="<?= h($base) ?>/pages/setting/setting.php">マイページへ戻る</a>
 </p>
 
-<?php page_footer(); ?>
+<?php page_footer();

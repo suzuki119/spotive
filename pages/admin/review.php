@@ -368,4 +368,4 @@ page_header('審査', '審査キュー');
 
 <?php endif; ?>
 
-<?php page_footer(); ?>
+<?php page_footer();

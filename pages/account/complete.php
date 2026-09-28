@@ -20,8 +20,16 @@ if (!is_post()) {
   redirect('confirm.php');
 }
 
-$register = $_SESSION['register'] ?? [];
-$nickname = (string) ($register['nickname'] ?? '');
+$register    = $_SESSION['register'] ?? [];
+$nickname    = (string) ($register['nickname'] ?? '');
+$isOrganizer = ($register['intent'] ?? '') === 'organizer';
+
+// ログイン後に主催者登録へ戻すための next=。
+// safe_next() は「/ から始まるパス」しか通さないので、サイトのルートからのパスで作る
+$appRoot     = rtrim(str_replace('\\', '/', dirname((string) $_SERVER['SCRIPT_NAME'], 3)), '/');
+$signinUrl   = $isOrganizer
+  ? 'signin.php?next=' . urlencode($appRoot . '/pages/organizer/register.php')
+  : 'signin.php';
 
 try {
   csrf_verify();
@@ -78,8 +86,20 @@ try {
           メール内のリンクを開くと、すべての機能が使えるようになります。
         </p>
 
+        <?php if ($isOrganizer) : ?>
+          <p class="complete-note">
+            主催者として大会を掲載するには、続けて次の手順が必要です。
+          </p>
+          <ol class="complete-steps">
+            <li>確認メールのリンクを開く</li>
+            <li>本人確認をする</li>
+            <li>主催者登録（団体・学校・企業などの情報）を申請する</li>
+            <li>運営の審査で承認されると、主催者として大会を掲載できます</li>
+          </ol>
+        <?php endif; ?>
+
         <p class="complete-note">
-          <a href="signin.php">ログインする</a>
+          <a href="<?= h($signinUrl) ?>">ログインする</a>
         </p>
 
       </div>
