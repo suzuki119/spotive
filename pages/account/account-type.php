@@ -24,8 +24,7 @@ require_once __DIR__ . '/../../config/db.php';
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link
     href="https://fonts.googleapis.com/css2?family=Jost:wght@400;600&family=Noto+Sans+JP:wght@400;500;700&display=swap"
-    rel="stylesheet"
-  />
+    rel="stylesheet" />
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/the-new-css-reset/css/reset.min.css">
   <link rel="stylesheet" href="../../css/style.css">
 </head>
@@ -41,7 +40,7 @@ require_once __DIR__ . '/../../config/db.php';
     <div class="inner">
 
       <div class="account-type">
-        <h1>ようこそ！</h1>
+        <h1 class=account-type-title>ようこそ！</h1>
         <p>
           メールアドレスを入力し
           <br>
@@ -61,12 +60,15 @@ require_once __DIR__ . '/../../config/db.php';
 
           <button type="submit" name="intent" value="user" class="account-type-btn btn">登録</button>
 
-          <!-- 主催者も、まず個人アカウントを作る。主催者の申請はログイン後に行う -->
+
           <article>
             <p>大会・イベントを主催する方</p>
-            <button type="submit" name="intent" value="organizer" class="account-type-organizer btn">登録</button>
+            <form action="../account/register/organizer-register.php">
+              <button class="account-type-organizer btn">
+                登録
+              </button>
+            </form>
           </article>
-        </form>
       </div>
 
       <hr>
@@ -79,10 +81,7 @@ require_once __DIR__ . '/../../config/db.php';
   </main>
 
   <footer class="site-footer">
-    <?php
-    // menu-bar.phpを読み込む
-    include_once __DIR__ . '/../menu-bar.php';
-    ?>
+
   </footer>
 
   <script src="../../js/main.js"></script>
