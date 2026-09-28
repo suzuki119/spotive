@@ -135,4 +135,4 @@ page_header('ユーザー情報の編集', 'ユーザー情報の編集');
   <a href="setting.php">マイページへ戻る</a>
 </p>
 
-<?php page_footer(); ?>
+<?php page_footer();

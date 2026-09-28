@@ -1,0 +1,48 @@
+// 色・フォント・余白・角丸・ブレイクポイントの変数（AGENTS.md「2. デザインルール」）。
+// 値を変えるときは AGENTS.md も一緒に直し、チームに共有すること。
+
+// カラー
+$color-primary: #0B63E5;
+$color-primary-dark: #0847A6;
+$color-primary-light: #E7F0FE;
+$color-secondary: #0F172A;
+$color-accent: #FF6B2C;
+$color-text: #1F2937;
+$color-text-sub: #6B7280;
+$color-border: #E5E7EB;
+$color-bg: #FFFFFF;
+$color-bg-gray: #F5F7FA;
+$color-error: #DC2626;
+
+// 競技ごとの色。js/pages/map.js の SPORTS（地図のピン）と揃える
+$sport-colors: (
+  soccer: #2f9e5b,
+  baseball: #e5484d,
+  basketball: #ef7a1a,
+  volleyball: #3e63dd,
+  futsal: #26a269,
+  tennis: #c2410c,
+  badminton: #0f9b8e,
+  rugby: #8e4ec6,
+  tabletennis: #0284c7,
+  other: #6f6e77,
+);
+
+// フォント
+$font-heading: "Jost", "Noto Sans JP", sans-serif;
+$font-body: "Noto Sans JP", sans-serif;
+
+// 角丸
+$radius-lg: 16px;
+$radius-md: 8px;
+$radius-full: 999px;
+
+// ブレイクポイント（増やさない）
+$bp-tablet: 768px;
+$bp-pc: 1024px;
+
+// コンテンツの最大幅
+$content-max: 1200px;
+
+// 画面下に固定したメニューバー（pages/menu-bar.php）に中身が隠れないようにする余白
+$menu-bar-space: 160px;

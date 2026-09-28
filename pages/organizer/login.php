@@ -75,4 +75,4 @@ page_header('主催者ログイン', '主催者ログイン');
   まだ主催者認証を受けていない方は <a href="register.php">主催者登録</a> へ。
 </p>
 
-<?php page_footer(); ?>
+<?php page_footer();

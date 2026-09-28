@@ -1,0 +1,111 @@
+// お気に入り画面（pages/favorite/favorite.php）専用のスタイル。
+// 試合の並びは _match-list.scss の match-list__day などを使っている。
+@use "variables" as *;
+
+.favorite {
+  max-width: $content-max;
+  margin: 0 auto;
+  padding: 24px 16px $menu-bar-space;
+  font-family: $font-body;
+  color: $color-text;
+
+  @media (min-width: $bp-tablet) {
+    padding: 32px 24px $menu-bar-space;
+  }
+
+  &__title {
+    margin: 0;
+    font-family: $font-heading;
+    font-size: 24px;
+    font-weight: 700;
+    color: $color-secondary;
+  }
+
+  &__note {
+    margin: 8px 0 0;
+    font-size: 14px;
+    color: $color-text-sub;
+  }
+
+  &__section {
+    margin-top: 48px;
+  }
+
+  &__heading {
+    margin: 0;
+    font-size: 20px;
+    font-weight: 700;
+    color: $color-secondary;
+  }
+
+  &__empty {
+    margin: 16px 0 0;
+    padding: 24px 16px;
+    background: $color-bg;
+    border-radius: $radius-lg;
+    color: $color-text-sub;
+    text-align: center;
+    line-height: 1.8;
+
+    &.is-hidden {
+      display: none;
+    }
+  }
+
+  &__sport {
+    margin: 24px 0 8px;
+    font-size: 14px;
+    font-weight: 700;
+    color: $color-text-sub;
+  }
+
+  &__teams {
+    display: grid;
+    gap: 8px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+
+    @media (min-width: $bp-tablet) {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+}
+
+.team-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 12px 16px;
+  background: $color-bg;
+  border: 1px solid $color-border;
+  border-radius: $radius-md;
+
+  &__name {
+    font-weight: 700;
+    overflow-wrap: anywhere;
+  }
+
+  &__toggle {
+    flex-shrink: 0;
+    width: 48px;
+    height: 48px;
+    border: 1px solid $color-border;
+    border-radius: $radius-full;
+    background: $color-bg;
+    color: $color-text-sub;
+    font-size: 24px;
+    line-height: 1;
+    cursor: pointer;
+
+    &:hover {
+      border-color: $color-primary;
+    }
+
+    &.is-active {
+      border-color: $color-accent;
+      color: $color-accent;
+    }
+  }
+}

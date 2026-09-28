@@ -990,6 +990,532 @@ input[type=radio] {
   cursor: pointer;
 }
 
+.match-card {
+  display: grid;
+  grid-template-columns: 56px 1fr;
+  gap: 4px 12px;
+  padding: 16px;
+  background: #FFFFFF;
+  border: 1px solid #E5E7EB;
+  border-radius: 16px;
+  color: #1F2937;
+  font-family: "Noto Sans JP", sans-serif;
+}
+@media (min-width: 768px) {
+  .match-card {
+    grid-template-columns: 64px 1fr auto;
+    align-items: center;
+    padding: 24px;
+  }
+}
+.match-card__time {
+  margin: 0;
+  font-family: "Jost", "Noto Sans JP", sans-serif;
+  font-weight: 600;
+  font-size: 18px;
+  color: #0F172A;
+}
+.match-card__body {
+  min-width: 0;
+}
+.match-card__tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin: 0 0 4px;
+}
+.match-card__sport, .match-card__favorite {
+  padding: 0 8px;
+  border-radius: 999px;
+  font-size: 12px;
+  line-height: 1.8;
+}
+.match-card__sport {
+  color: #FFFFFF;
+  background: #6f6e77;
+}
+.match-card__sport--soccer {
+  background: #2f9e5b;
+}
+.match-card__sport--baseball {
+  background: #e5484d;
+}
+.match-card__sport--basketball {
+  background: #ef7a1a;
+}
+.match-card__sport--volleyball {
+  background: #3e63dd;
+}
+.match-card__sport--futsal {
+  background: #26a269;
+}
+.match-card__sport--tennis {
+  background: #c2410c;
+}
+.match-card__sport--badminton {
+  background: #0f9b8e;
+}
+.match-card__sport--rugby {
+  background: #8e4ec6;
+}
+.match-card__sport--tabletennis {
+  background: #0284c7;
+}
+.match-card__sport--other {
+  background: #6f6e77;
+}
+.match-card__favorite {
+  color: #FFFFFF;
+  background: #FF6B2C;
+}
+.match-card__favorite.is-hidden {
+  display: none;
+}
+.match-card__title {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+.match-card__venue, .match-card__organizer {
+  margin: 4px 0 0;
+  font-size: 14px;
+  color: #6B7280;
+}
+.match-card__price {
+  grid-column: 2;
+  margin: 4px 0 0;
+  font-family: "Jost", "Noto Sans JP", sans-serif;
+  font-weight: 600;
+  font-size: 16px;
+  color: #0B63E5;
+  text-align: right;
+}
+@media (min-width: 768px) {
+  .match-card__price {
+    grid-column: 3;
+    margin: 0;
+    white-space: nowrap;
+  }
+}
+
+.match-list {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 24px 16px 160px;
+  font-family: "Noto Sans JP", sans-serif;
+  color: #1F2937;
+}
+@media (min-width: 768px) {
+  .match-list {
+    padding: 32px 24px 160px;
+  }
+}
+.match-list__head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16px;
+}
+.match-list__title {
+  margin: 0;
+  font-family: "Jost", "Noto Sans JP", sans-serif;
+  font-size: 24px;
+  font-weight: 700;
+  color: #0F172A;
+}
+.match-list__count {
+  margin: 0;
+  font-size: 14px;
+  color: #6B7280;
+}
+.match-list__filter {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 16px;
+  font-size: 14px;
+  cursor: pointer;
+}
+.match-list__filter-input {
+  width: 16px;
+  height: 16px;
+  accent-color: #0B63E5;
+}
+.match-list__empty {
+  margin: 24px 0 0;
+  padding: 24px 16px;
+  background: #FFFFFF;
+  border-radius: 16px;
+  color: #6B7280;
+  text-align: center;
+  line-height: 1.8;
+}
+.match-list__empty a {
+  color: #0B63E5;
+}
+.match-list__empty.is-hidden {
+  display: none;
+}
+.match-list__day {
+  margin-top: 32px;
+}
+.match-list__day.is-hidden {
+  display: none;
+}
+.match-list__date {
+  margin: 0 0 12px;
+  padding-bottom: 8px;
+  border-bottom: 2px solid #0B63E5;
+  font-family: "Jost", "Noto Sans JP", sans-serif;
+  font-size: 18px;
+  font-weight: 700;
+  color: #0F172A;
+}
+.match-list__items {
+  display: grid;
+  gap: 16px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.match-list__item.is-hidden {
+  display: none;
+}
+
+.favorite {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 24px 16px 160px;
+  font-family: "Noto Sans JP", sans-serif;
+  color: #1F2937;
+}
+@media (min-width: 768px) {
+  .favorite {
+    padding: 32px 24px 160px;
+  }
+}
+.favorite__title {
+  margin: 0;
+  font-family: "Jost", "Noto Sans JP", sans-serif;
+  font-size: 24px;
+  font-weight: 700;
+  color: #0F172A;
+}
+.favorite__note {
+  margin: 8px 0 0;
+  font-size: 14px;
+  color: #6B7280;
+}
+.favorite__section {
+  margin-top: 48px;
+}
+.favorite__heading {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 700;
+  color: #0F172A;
+}
+.favorite__empty {
+  margin: 16px 0 0;
+  padding: 24px 16px;
+  background: #FFFFFF;
+  border-radius: 16px;
+  color: #6B7280;
+  text-align: center;
+  line-height: 1.8;
+}
+.favorite__empty.is-hidden {
+  display: none;
+}
+.favorite__sport {
+  margin: 24px 0 8px;
+  font-size: 14px;
+  font-weight: 700;
+  color: #6B7280;
+}
+.favorite__teams {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+@media (min-width: 768px) {
+  .favorite__teams {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.team-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 12px 16px;
+  background: #FFFFFF;
+  border: 1px solid #E5E7EB;
+  border-radius: 8px;
+}
+.team-item__name {
+  font-weight: 700;
+  overflow-wrap: anywhere;
+}
+.team-item__toggle {
+  flex-shrink: 0;
+  width: 48px;
+  height: 48px;
+  border: 1px solid #E5E7EB;
+  border-radius: 999px;
+  background: #FFFFFF;
+  color: #6B7280;
+  font-size: 24px;
+  line-height: 1;
+  cursor: pointer;
+}
+.team-item__toggle:hover {
+  border-color: #0B63E5;
+}
+.team-item__toggle.is-active {
+  border-color: #FF6B2C;
+  color: #FF6B2C;
+}
+
+.match-detail {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 16px 16px 144px;
+  color: #1f2937;
+  font-family: "Noto Sans JP", sans-serif;
+  font-size: 14px;
+  line-height: 1.6;
+}
+@media (min-width: 768px) {
+  .match-detail {
+    padding: 24px 24px 144px;
+  }
+}
+.match-detail__back {
+  display: inline-block;
+  margin-bottom: 16px;
+  color: #0b63e5;
+  text-decoration: none;
+}
+.match-detail__back:hover {
+  color: #0847a6;
+  text-decoration: underline;
+}
+.match-detail__card {
+  padding: 16px;
+  border: 1px solid #e5e7eb;
+  border-radius: 16px;
+  background: #ffffff;
+}
+@media (min-width: 768px) {
+  .match-detail__card {
+    padding: 24px;
+  }
+}
+.match-detail__tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.match-detail__sport {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 12px;
+  border-radius: 999px;
+  color: #ffffff;
+  font-size: 12px;
+  font-weight: 700;
+}
+.match-detail__sport--soccer {
+  background: #2f9e5b;
+}
+.match-detail__sport--baseball {
+  background: #e5484d;
+}
+.match-detail__sport--basketball {
+  background: #ef7a1a;
+}
+.match-detail__sport--volleyball {
+  background: #3e63dd;
+}
+.match-detail__sport--futsal {
+  background: #26a269;
+}
+.match-detail__sport--tennis {
+  background: #c2410c;
+}
+.match-detail__sport--badminton {
+  background: #0f9b8e;
+}
+.match-detail__sport--rugby {
+  background: #8e4ec6;
+}
+.match-detail__sport--tabletennis {
+  background: #0284c7;
+}
+.match-detail__sport--other {
+  background: #6f6e77;
+}
+.match-detail__badge {
+  padding: 4px 12px;
+  border-radius: 999px;
+  background: #e7f0fe;
+  color: #0b63e5;
+  font-size: 12px;
+  font-weight: 700;
+}
+.match-detail__title {
+  margin-top: 12px;
+  color: #0f172a;
+  font-family: "Jost", "Noto Sans JP", sans-serif;
+  font-size: 20px;
+  font-weight: 700;
+  line-height: 1.4;
+}
+@media (min-width: 768px) {
+  .match-detail__title {
+    font-size: 24px;
+  }
+}
+.match-detail__teams {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: 8px;
+  margin-top: 16px;
+  padding: 16px 8px;
+  border-radius: 8px;
+  background: #e7f0fe;
+  text-align: center;
+}
+.match-detail__team {
+  color: #0f172a;
+  font-weight: 700;
+}
+.match-detail__side {
+  display: block;
+  color: #6b7280;
+  font-family: "Jost", "Noto Sans JP", sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+}
+.match-detail__vs {
+  color: #0b63e5;
+  font-family: "Jost", "Noto Sans JP", sans-serif;
+  font-size: 16px;
+  font-weight: 600;
+}
+.match-detail__over {
+  margin-top: 16px;
+  padding: 8px 12px;
+  border-radius: 8px;
+  background: #e5e7eb;
+  color: #6b7280;
+  font-weight: 700;
+}
+.match-detail__info {
+  margin-top: 16px;
+}
+.match-detail__row {
+  display: grid;
+  grid-template-columns: 96px 1fr;
+  gap: 8px;
+  padding: 12px 0;
+  border-top: 1px solid #e5e7eb;
+}
+@media (min-width: 768px) {
+  .match-detail__row {
+    grid-template-columns: 160px 1fr;
+  }
+}
+.match-detail__label {
+  color: #6b7280;
+}
+.match-detail__value {
+  font-weight: 500;
+}
+.match-detail__value--number {
+  font-family: "Jost", "Noto Sans JP", sans-serif;
+  font-weight: 600;
+}
+.match-detail__sub {
+  display: block;
+  color: #6b7280;
+  font-family: "Noto Sans JP", sans-serif;
+  font-size: 12px;
+  font-weight: 400;
+}
+.match-detail__section {
+  margin-top: 32px;
+}
+.match-detail__heading {
+  margin-bottom: 12px;
+  color: #0f172a;
+  font-size: 16px;
+  font-weight: 700;
+}
+.match-detail__text {
+  margin-top: 8px;
+  color: #6b7280;
+}
+.match-detail__cta {
+  display: block;
+  padding: 16px;
+  border-radius: 8px;
+  background: #ff6b2c;
+  color: #ffffff;
+  font-weight: 700;
+  text-align: center;
+  text-decoration: none;
+}
+.match-detail__cta:hover {
+  opacity: 0.9;
+}
+@media (min-width: 768px) {
+  .match-detail__cta {
+    display: inline-block;
+    padding: 16px 48px;
+  }
+}
+.match-detail__map {
+  height: 240px;
+  border: 1px solid #e5e7eb;
+  border-radius: 16px;
+  overflow: hidden;
+}
+@media (min-width: 768px) {
+  .match-detail__map {
+    height: 320px;
+  }
+}
+.match-detail__route {
+  display: block;
+  margin-top: 12px;
+  padding: 12px 16px;
+  border: 1px solid #0b63e5;
+  border-radius: 8px;
+  background: #ffffff;
+  color: #0b63e5;
+  font-weight: 700;
+  text-align: center;
+  text-decoration: none;
+}
+.match-detail__route:hover {
+  background: #e7f0fe;
+  color: #0847a6;
+}
+@media (min-width: 768px) {
+  .match-detail__route {
+    display: inline-block;
+  }
+}
+
 body {
   background-color: #f5f5f5;
 }
