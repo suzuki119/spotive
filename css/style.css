@@ -1711,6 +1711,27 @@ input[type=radio] {
   bottom: calc(16px + env(safe-area-inset-bottom));
   left: 16px;
   z-index: 1000;
+}
+.menu-bar__nav {
+  background: rgba(181, 181, 181, 0.25);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08), inset 0 1px 1px rgba(255, 255, 255, 0.4);
+  padding: 8px 0;
+  margin: auto;
+  width: 80%;
+  border-radius: 100px;
+}
+@media (max-width: 1100px) {
+  .menu-bar__nav {
+    width: 90%;
+  }
+}
+.menu-bar__list {
+  display: flex;
+  justify-content: center;
+  gap: 32px;
   max-width: 480px;
   margin: 0 auto;
   padding: 8px;
@@ -2350,3 +2371,178 @@ body {
   width: 40px;
   height: 40px;
 }
+
+.home-favorite {
+  padding-top: 100px;
+}
+.home-favorite-title {
+  font-size: 25px;
+  font-weight: bold;
+  margin-bottom: 25px;
+}
+.home-favorite-slider {
+  display: flex;
+  gap: 20px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scroll-snap-type: x mandatory;
+  height: 140px;
+  scrollbar-width: none;
+}
+.home-favorite-group {
+  width: 180px;
+  height: 120px;
+  display: grid;
+  row-gap: 5px;
+  border-radius: 15px;
+  padding: 10px 23px;
+  box-shadow: 2px 2px 4px rgba(170, 170, 170, 0.25);
+  background-color: #fff;
+  flex: 0 0 50%;
+  scroll-snap-align: start;
+}
+.home-favorite-group-title {
+  font-size: 12px;
+}
+.home-favorite-group-time {
+  font-size: 15px;
+  font-weight: bold;
+  text-align: center;
+}
+.home-favorite-group-team {
+  display: grid;
+  grid-template-columns: 5fr 1fr 5fr;
+  align-items: center;
+}
+.home-favorite-group-team p {
+  margin-top: 28px;
+  font-size: 16px;
+  font-weight: bold;
+}
+.home-favorite-group-team img {
+  margin: 0 auto;
+  width: 45px;
+  height: 47px;
+}
+
+.home-now {
+  display: grid;
+  row-gap: 25px;
+}
+.home-now-content {
+  margin: 0 auto;
+}
+.home-now-top {
+  width: 380px;
+  height: 140px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 30px;
+  border-radius: 15px;
+  padding: 25px;
+  box-shadow: 2px 2px 4px rgba(170, 170, 170, 0.25);
+  background-color: #fff;
+}
+.home-now hr {
+  width: 344px;
+  height: 1px;
+  background: repeating-linear-gradient(to right, rgba(0, 0, 0, 0.6) 0, rgba(0, 0, 0, 0.6) 4px, transparent 4px, transparent 5px);
+  margin: 0 auto;
+}
+.home-now-bottom {
+  width: 380px;
+  height: 50px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 30px;
+  border-radius: 15px;
+  padding: 17px;
+  box-shadow: 2px 2px 4px rgba(170, 170, 170, 0.25);
+  background-color: #fff;
+}
+.home-now-bottom-price {
+  text-align: right;
+}
+.home-now-bottom span {
+  display: flex;
+  justify-content: space-between;
+  gap: 5px;
+}
+.home-now-bottom span p {
+  font-size: 14px;
+  font-weight: normal;
+  align-self: center;
+}
+.home-now-bottom span img {
+  margin: 0 auto;
+  width: 11px;
+  height: 13px;
+  align-self: center;
+}
+.home-now-group {
+  align-self: center;
+}
+.home-now-group-team {
+  display: grid;
+  grid-template-columns: 5fr 1fr 5fr;
+}
+.home-now-group-team p {
+  margin-top: 28px;
+  font-size: 16px;
+  font-weight: bold;
+}
+.home-now-group-team img {
+  margin: 0 auto;
+  width: 45px;
+  height: 47px;
+}
+.home-now-detall {
+  display: grid;
+  row-gap: 15px;
+}
+.home-now-detall-title {
+  font-weight: normal;
+  font-size: 12px;
+}
+.home-now-detall-team {
+  display: flex;
+  gap: 10px;
+}
+.home-now-detall-team h3 {
+  font-size: 18px;
+  font-weight: bold;
+}
+.home-now-detall-team p {
+  font-size: 15px;
+  margin-top: 5px;
+}
+.home-now-detall-team-time {
+  font-size: 18px;
+  font-weight: bold;
+}
+.home-now-detall-aside {
+  display: flex;
+  gap: 20px;
+  position: relative;
+}
+.home-now-detall-aside::after {
+  content: "｜";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-70%, -50%);
+}
+.home-now-detall-aside aside {
+  display: flex;
+  gap: 5px;
+}
+.home-now-detall-aside aside img {
+  width: 11px;
+  height: 13px;
+  align-self: center;
+}
+.home-now-detall-aside aside p {
+  align-self: center;
+  font-weight: normal;
+}
+/*# sourceMappingURL=style.css.map */
