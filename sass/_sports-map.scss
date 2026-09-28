@@ -542,6 +542,25 @@ $site-header-height: 48px;
   border-radius: 999px;
 }
 
+// ---- 周辺施設のピン（Geoapify のデモ）----
+.nearby-icon {
+  background: none;
+  border: 0;
+}
+
+.nearby-pin {
+  width: 28px;
+  height: 28px;
+  display: grid;
+  place-items: center;
+  font-size: 14px;
+  line-height: 1;
+  background: $map-panel;
+  border: 2px solid $map-accent;
+  border-radius: 999px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
+}
+
 // ---- 詳細（PC はポップアップ、スマホはシートの中身）----
 .pop {
   padding-right: 12px;
@@ -624,6 +643,7 @@ $site-header-height: 48px;
     background: #fff;
     border: 1px solid $map-line;
     border-radius: 8px;
+    font: inherit;
     cursor: pointer;
   }
 }

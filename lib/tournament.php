@@ -105,6 +105,11 @@ function tournament_update(array $user, int $id, array $in): void
   );
   $merged = $sent + $t;
 
+  // 審査を挟まない設定のあいだは、以前の下書きも保存した時点で公開する
+  if (!config('verification.tournament_review_required', true) && $t['status'] === 'draft') {
+    db_update('tournaments', ['status' => 'published'], 'id = :id', ['id' => $id]);
+  }
+
   // 住所を変えたのに緯度経度が来ていなければ、古い位置は捨てて住所から求め直す
   $moved = trim((string) $merged['venue_address']) !== $t['venue_address']
     || trim((string) $merged['venue_prefecture']) !== $t['venue_prefecture'];

@@ -1,0 +1,289 @@
+<?php
+
+/**
+ * index.php
+ * SPOTIVE トップページ。
+ * db/schema.sql の公開用ビュー v_public_tournaments から、
+ * 公開中（status = 'published'）の大会を取得して一覧表示する。
+ */
+
+declare(strict_types=1);
+
+require_once __DIR__ . '/config/db.php';
+require_once __DIR__ . '/lib/auth.php';   // ログイン状態を見るため（h() などもここから）
+require_once __DIR__ . '/lib/match-search.php';
+
+session_boot();
+
+$user = current_user();
+
+/** 競技コード => 表示名。schema.sql の tournaments.sport は自由入力の VARCHAR */
+const SPORT_LABELS = [
+  'soccer'     => 'サッカー',
+  'baseball'   => '野球',
+  'basketball' => 'バスケットボール',
+  'volleyball' => 'バレーボール',
+  'futsal'     => 'フットサル',
+  'tennis'     => 'テニス',
+  'badminton'  => 'バドミントン',
+];
+
+/** 競技コードを表示名に変換する */
+function sport_label(string $sport): string
+{
+  return SPORT_LABELS[$sport] ?? $sport;
+}
+
+/** 2026-10-03 18:00:00 => 10月3日(土) 18:00 */
+function format_date(?string $datetime): string
+{
+  if ($datetime === null || $datetime === '') {
+    return '';
+  }
+
+  $time = strtotime($datetime);
+  if ($time === false) {
+    return '';
+  }
+
+  $youbi = ['日', '月', '火', '水', '木', '金', '土'][(int) date('w', $time)];
+
+  return date('n月j日', $time) . '(' . $youbi . ') ' . date('H:i', $time);
+}
+
+/** 参加費の表示。0 円は「無料」 */
+function format_fee(int $yen): string
+{
+  return $yen === 0 ? '無料' : '¥' . number_format($yen);
+}
+
+// -------------------------------------------------------------------
+// 「条件から探す」の選択肢
+//   検索そのものは pages/match/match-search.php で行う（仮データの試合と掲載大会の両方が対象）。
+//   選択肢も両方から作る
+// -------------------------------------------------------------------
+$searchOptions = match_search_options(load_upcoming_matches());
+
+// -------------------------------------------------------------------
+// 大会の取得
+// -------------------------------------------------------------------
+$tournaments = [];
+$dbError     = null;
+
+try {
+  $stmt = db()->prepare(
+    'SELECT
+       id, title, sport, starts_at, ends_at,
+       venue_name, venue_prefecture, venue_lat, venue_lng, is_indoor,
+       entry_fee_yen, capacity, entry_closes_at,
+       is_verified, organizer_name, organizer_trust_level
+     FROM v_public_tournaments
+     WHERE starts_at >= NOW()
+     ORDER BY starts_at ASC
+     LIMIT 30'
+  );
+  $stmt->execute();
+  $tournaments = $stmt->fetchAll();
+} catch (PDOException $e) {
+  // DB が未構築でもページ自体は開けるようにする（表示崩れの確認ができるように）
+  $dbError = $e->getMessage();
+  error_log('[SPOTIVE] DB error: ' . $dbError);
+}
+
+?>
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SPOTIVE｜スポーツを、もっと身近な日常に</title>
+    <meta
+      name="description"
+      content="全国のスポーツ観戦情報を地図から探せる観戦マップ。地域・日時・競技・料金から、自分に合った観戦が見つかります。"
+    />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Jost:wght@400;600&family=Noto+Sans+JP:wght@400;500;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="css/style.css" />
+  </head>
+
+  <body>
+    <header class="site-header">
+      <a class="site-header__logo" href="index.php">SPOTIVE</a>
+
+      <nav class="site-header__nav">
+        <a class="site-header__link" href="pages/map/map.php">マップ</a>
+        <a class="site-header__link" href="pages/match/match-list.php">試合一覧</a>
+        <a class="site-header__link" href="pages/favorite/favorite.php">お気に入り</a>
+
+        <?php if ($user === null) : ?>
+          <a class="site-header__link" href="pages/account/signin.php">ログイン</a>
+          <a class="site-header__link" href="pages/account/account-type.php">新規登録</a>
+        <?php else : ?>
+          <span class="site-header__user"><?= h((string) $user['nickname']) ?> さん</span>
+          <a class="site-header__link" href="pages/setting/profile.php">ユーザー情報の編集</a>
+          <!-- ログアウトは他サイトから叩かれないよう POST で送る -->
+          <form class="site-header__logout" action="pages/account/logout.php" method="post">
+            <?= csrf_field() ?>
+            <button class="site-header__link" type="submit">ログアウト</button>
+          </form>
+        <?php endif; ?>
+      </nav>
+    </header>
+
+    <main class="l-main">
+      <!-- ファーストビュー -->
+      <section class="hero">
+        <h1 class="hero__title">スポーツを、もっと身近な日常に。</h1>
+        <p class="hero__lead">
+          全国のスポーツ観戦情報を、地図から簡単に探せます。
+        </p>
+        <a class="button button--accent" href="pages/map/map.php">
+          地図から探す
+        </a>
+      </section>
+
+      <!-- 絞り込み -->
+      <section class="search-filter">
+        <h2 class="search-filter__title">条件から探す</h2>
+
+        <form class="search-filter__form" action="pages/match/match-search.php" method="get">
+          <div class="search-filter__field">
+            <label class="search-filter__label" for="sport">競技</label>
+            <select class="search-filter__select" id="sport" name="sport">
+              <option value="">すべての競技</option>
+              <?php foreach ($searchOptions['sports'] as $value => $label) : ?>
+                <option value="<?= h($value) ?>"><?= h($label) ?></option>
+              <?php endforeach; ?>
+            </select>
+          </div>
+
+          <div class="search-filter__field">
+            <label class="search-filter__label" for="pref">開催地域</label>
+            <select class="search-filter__select" id="pref" name="pref">
+              <option value="">すべての地域</option>
+              <?php foreach ($searchOptions['prefs'] as $value) : ?>
+                <option value="<?= h($value) ?>"><?= h($value) ?></option>
+              <?php endforeach; ?>
+            </select>
+          </div>
+
+          <div class="search-filter__field">
+            <label class="search-filter__label" for="when">いつ</label>
+            <select class="search-filter__select" id="when" name="when">
+              <?php foreach (MATCH_SEARCH_WHEN as $value => $label) : ?>
+                <option value="<?= h($value) ?>"><?= h($label) ?></option>
+              <?php endforeach; ?>
+            </select>
+          </div>
+
+          <div class="search-filter__field">
+            <label class="search-filter__label" for="max-price">料金の上限</label>
+            <select class="search-filter__select" id="max-price" name="max_price">
+              <option value="">指定しない</option>
+              <?php foreach (MATCH_SEARCH_PRICES as $value) : ?>
+                <option value="<?= (int) $value ?>">
+                  <?= $value === 0 ? '無料のみ' : h('¥' . number_format($value) . 'まで') ?>
+                </option>
+              <?php endforeach; ?>
+            </select>
+          </div>
+
+          <button class="button button--primary" type="submit">検索する</button>
+        </form>
+      </section>
+
+      <!-- 大会一覧 -->
+      <section class="match-list">
+        <h2 class="match-list__title">
+          これから開催される大会
+          <span class="match-list__count">
+            <?= count($tournaments) ?>件
+          </span>
+        </h2>
+
+        <?php if ($dbError !== null) : ?>
+          <p class="match-list__empty">
+            大会情報を読み込めませんでした。データベースの接続設定を確認してください。
+          </p>
+        <?php elseif ($tournaments === []) : ?>
+          <p class="match-list__empty">
+            これから開催される大会はまだありません。
+          </p>
+        <?php else : ?>
+          <ul class="match-list__items">
+            <?php foreach ($tournaments as $t) : ?>
+              <li class="match-list__item">
+                <article class="match-card">
+                  <div class="match-card__body">
+                    <p class="match-card__tag">
+                      <?= h(sport_label($t['sport'])) ?>
+                    </p>
+
+                    <h3 class="match-card__title">
+                      <a
+                        class="match-card__link"
+                        href="pages/match/match-detail.php?type=tournament&amp;id=<?= (int) $t['id'] ?>"
+                      >
+                        <?= h($t['title']) ?>
+                      </a>
+                    </h3>
+
+                    <?php if ((int) $t['is_verified'] === 1) : ?>
+                      <p class="match-card__badge">確認済み</p>
+                    <?php endif; ?>
+
+                    <dl class="match-card__meta">
+                      <dt class="match-card__meta-label">開催日時</dt>
+                      <dd class="match-card__date">
+                        <?= h(format_date($t['starts_at'])) ?>
+                      </dd>
+
+                      <dt class="match-card__meta-label">会場</dt>
+                      <dd class="match-card__venue">
+                        <?= h($t['venue_prefecture']) ?>
+                        <?= h($t['venue_name']) ?>
+                        <?= (int) $t['is_indoor'] === 1 ? '（屋内）' : '' ?>
+                      </dd>
+
+                      <dt class="match-card__meta-label">参加費</dt>
+                      <dd class="match-card__fee">
+                        <?= h(format_fee((int) $t['entry_fee_yen'])) ?>
+                      </dd>
+
+                      <dt class="match-card__meta-label">定員</dt>
+                      <dd class="match-card__capacity">
+                        <?= (int) $t['capacity'] ?>名
+                      </dd>
+
+                      <dt class="match-card__meta-label">主催</dt>
+                      <dd class="match-card__organizer">
+                        <?= h($t['organizer_name']) ?>
+                      </dd>
+                    </dl>
+
+                    <?php if ($t['entry_closes_at'] !== null) : ?>
+                      <p class="match-card__entry">
+                        募集終了：<?= h(format_date($t['entry_closes_at'])) ?>
+                      </p>
+                    <?php endif; ?>
+                  </div>
+                </article>
+              </li>
+            <?php endforeach; ?>
+          </ul>
+        <?php endif; ?>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <p class="site-footer__copyright">&copy; SPOTIVE</p>
+    </footer>
+
+    <script src="js/main.js"></script>
+  </body>
+</html>

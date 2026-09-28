@@ -44,5 +44,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 
+  // ログイン中の保存に失敗したときや、ブラウザの登録をアカウントに移したときに描き直す
+  SpotiveFavorites.onChange(render);
   render();
 });
