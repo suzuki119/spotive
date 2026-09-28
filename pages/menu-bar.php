@@ -18,10 +18,10 @@ require_once __DIR__ . '/../lib/support.php';
 /** icon はファイル名、label はアイコンの下に出す文字 */
 $menuItems = [
   ['href' => 'index.php',               'icon' => 'home.svg',     'label' => 'ホーム'],
-  ['href' => 'pages/map/map.php',       'icon' => 'menu.svg',     'label' => 'メニュー'],
   ['href' => 'pages/map/map.php',       'icon' => 'map.svg',      'label' => '地図'],
   ['href' => 'pages/match/match-list.php', 'icon' => 'calendar.svg', 'label' => '一覧'],
   ['href' => 'pages/match/match-search.php', 'icon' => 'search.svg',   'label' => '探す'],
+  ['href' => 'pages/favorite/favorite.php', 'icon' => 'favorite.svg', 'label' => 'お気に入り'],
 ];
 
 ?>

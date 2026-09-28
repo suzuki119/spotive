@@ -1011,6 +1011,7 @@ input[type=radio] {
 }
 
 .match-card {
+  position: relative;
   display: grid;
   grid-template-columns: 56px 1fr;
   gap: 4px 12px;
@@ -1098,6 +1099,29 @@ input[type=radio] {
   line-height: 1.5;
   overflow-wrap: anywhere;
 }
+.match-card__link {
+  color: inherit;
+  text-decoration: none;
+}
+.match-card__link::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 16px;
+}
+.match-card__link:focus-visible {
+  outline: none;
+}
+.match-card__link:focus-visible::after {
+  outline: 2px solid #0B63E5;
+  outline-offset: 2px;
+}
+.match-card:has(.match-card__link) {
+  transition: border-color 0.2s ease;
+}
+.match-card:has(.match-card__link):hover {
+  border-color: #0B63E5;
+}
 .match-card__venue, .match-card__organizer {
   margin: 4px 0 0;
   font-size: 14px;
@@ -1120,7 +1144,7 @@ input[type=radio] {
   }
 }
 
-.match-list {
+.schedule-list {
   max-width: 1200px;
   margin: 0 auto;
   padding: 24px 16px 160px;
@@ -1128,29 +1152,29 @@ input[type=radio] {
   color: #1F2937;
 }
 @media (min-width: 768px) {
-  .match-list {
+  .schedule-list {
     padding: 32px 24px 160px;
   }
 }
-.match-list__head {
+.schedule-list__head {
   display: flex;
   align-items: baseline;
   justify-content: space-between;
   gap: 16px;
 }
-.match-list__title {
+.schedule-list__title {
   margin: 0;
   font-family: "Jost", "Noto Sans JP", sans-serif;
   font-size: 24px;
   font-weight: 700;
   color: #0F172A;
 }
-.match-list__count {
+.schedule-list__count {
   margin: 0;
   font-size: 14px;
   color: #6B7280;
 }
-.match-list__filter {
+.schedule-list__filter {
   display: inline-flex;
   align-items: center;
   gap: 8px;
@@ -1158,12 +1182,12 @@ input[type=radio] {
   font-size: 14px;
   cursor: pointer;
 }
-.match-list__filter-input {
+.schedule-list__filter-input {
   width: 16px;
   height: 16px;
   accent-color: #0B63E5;
 }
-.match-list__empty {
+.schedule-list__empty {
   margin: 24px 0 0;
   padding: 24px 16px;
   background: #FFFFFF;
@@ -1172,19 +1196,19 @@ input[type=radio] {
   text-align: center;
   line-height: 1.8;
 }
-.match-list__empty a {
+.schedule-list__empty a {
   color: #0B63E5;
 }
-.match-list__empty.is-hidden {
+.schedule-list__empty.is-hidden {
   display: none;
 }
-.match-list__day {
+.schedule-list__day {
   margin-top: 32px;
 }
-.match-list__day.is-hidden {
+.schedule-list__day.is-hidden {
   display: none;
 }
-.match-list__date {
+.schedule-list__date {
   margin: 0 0 12px;
   padding-bottom: 8px;
   border-bottom: 2px solid #0B63E5;
@@ -1193,14 +1217,14 @@ input[type=radio] {
   font-weight: 700;
   color: #0F172A;
 }
-.match-list__items {
+.schedule-list__items {
   display: grid;
   gap: 16px;
   margin: 0;
   padding: 0;
   list-style: none;
 }
-.match-list__item.is-hidden {
+.schedule-list__item.is-hidden {
   display: none;
 }
 
