@@ -1292,32 +1292,32 @@ input[type=radio] {
 .match-detail {
   max-width: 720px;
   margin: 0 auto;
-  padding: 16px 16px 144px;
-  color: #1f2937;
+  padding: 16px 16px 160px;
+  color: #1F2937;
   font-family: "Noto Sans JP", sans-serif;
   font-size: 14px;
   line-height: 1.6;
 }
 @media (min-width: 768px) {
   .match-detail {
-    padding: 24px 24px 144px;
+    padding: 24px 24px 160px;
   }
 }
 .match-detail__back {
   display: inline-block;
   margin-bottom: 16px;
-  color: #0b63e5;
+  color: #0B63E5;
   text-decoration: none;
 }
 .match-detail__back:hover {
-  color: #0847a6;
+  color: #0847A6;
   text-decoration: underline;
 }
 .match-detail__card {
   padding: 16px;
-  border: 1px solid #e5e7eb;
+  border: 1px solid #E5E7EB;
   border-radius: 16px;
-  background: #ffffff;
+  background: #FFFFFF;
 }
 @media (min-width: 768px) {
   .match-detail__card {
@@ -1335,7 +1335,7 @@ input[type=radio] {
   gap: 4px;
   padding: 4px 12px;
   border-radius: 999px;
-  color: #ffffff;
+  color: #FFFFFF;
   font-size: 12px;
   font-weight: 700;
 }
@@ -1372,14 +1372,14 @@ input[type=radio] {
 .match-detail__badge {
   padding: 4px 12px;
   border-radius: 999px;
-  background: #e7f0fe;
-  color: #0b63e5;
+  background: #E7F0FE;
+  color: #0B63E5;
   font-size: 12px;
   font-weight: 700;
 }
 .match-detail__title {
   margin-top: 12px;
-  color: #0f172a;
+  color: #0F172A;
   font-family: "Jost", "Noto Sans JP", sans-serif;
   font-size: 20px;
   font-weight: 700;
@@ -1398,22 +1398,22 @@ input[type=radio] {
   margin-top: 16px;
   padding: 16px 8px;
   border-radius: 8px;
-  background: #e7f0fe;
+  background: #E7F0FE;
   text-align: center;
 }
 .match-detail__team {
-  color: #0f172a;
+  color: #0F172A;
   font-weight: 700;
 }
 .match-detail__side {
   display: block;
-  color: #6b7280;
+  color: #6B7280;
   font-family: "Jost", "Noto Sans JP", sans-serif;
   font-size: 12px;
   font-weight: 600;
 }
 .match-detail__vs {
-  color: #0b63e5;
+  color: #0B63E5;
   font-family: "Jost", "Noto Sans JP", sans-serif;
   font-size: 16px;
   font-weight: 600;
@@ -1422,8 +1422,8 @@ input[type=radio] {
   margin-top: 16px;
   padding: 8px 12px;
   border-radius: 8px;
-  background: #e5e7eb;
-  color: #6b7280;
+  background: #E5E7EB;
+  color: #6B7280;
   font-weight: 700;
 }
 .match-detail__info {
@@ -1434,7 +1434,7 @@ input[type=radio] {
   grid-template-columns: 96px 1fr;
   gap: 8px;
   padding: 12px 0;
-  border-top: 1px solid #e5e7eb;
+  border-top: 1px solid #E5E7EB;
 }
 @media (min-width: 768px) {
   .match-detail__row {
@@ -1442,7 +1442,7 @@ input[type=radio] {
   }
 }
 .match-detail__label {
-  color: #6b7280;
+  color: #6B7280;
 }
 .match-detail__value {
   font-weight: 500;
@@ -1453,7 +1453,7 @@ input[type=radio] {
 }
 .match-detail__sub {
   display: block;
-  color: #6b7280;
+  color: #6B7280;
   font-family: "Noto Sans JP", sans-serif;
   font-size: 12px;
   font-weight: 400;
@@ -1463,20 +1463,20 @@ input[type=radio] {
 }
 .match-detail__heading {
   margin-bottom: 12px;
-  color: #0f172a;
+  color: #0F172A;
   font-size: 16px;
   font-weight: 700;
 }
 .match-detail__text {
   margin-top: 8px;
-  color: #6b7280;
+  color: #6B7280;
 }
 .match-detail__cta {
   display: block;
   padding: 16px;
   border-radius: 8px;
-  background: #ff6b2c;
-  color: #ffffff;
+  background: #FF6B2C;
+  color: #FFFFFF;
   font-weight: 700;
   text-align: center;
   text-decoration: none;
@@ -1492,7 +1492,7 @@ input[type=radio] {
 }
 .match-detail__map {
   height: 240px;
-  border: 1px solid #e5e7eb;
+  border: 1px solid #E5E7EB;
   border-radius: 16px;
   overflow: hidden;
 }
@@ -1505,17 +1505,17 @@ input[type=radio] {
   display: block;
   margin-top: 12px;
   padding: 12px 16px;
-  border: 1px solid #0b63e5;
+  border: 1px solid #0B63E5;
   border-radius: 8px;
-  background: #ffffff;
-  color: #0b63e5;
+  background: #FFFFFF;
+  color: #0B63E5;
   font-weight: 700;
   text-align: center;
   text-decoration: none;
 }
 .match-detail__route:hover {
-  background: #e7f0fe;
-  color: #0847a6;
+  background: #E7F0FE;
+  color: #0847A6;
 }
 @media (min-width: 768px) {
   .match-detail__route {
@@ -1638,8 +1638,11 @@ body {
   z-index: 1000;
 }
 .menu-bar__nav {
-  background-color: #fff;
-  border-top: 1px solid #ccc;
+  background: rgba(181, 181, 181, 0.25);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08), inset 0 1px 1px rgba(255, 255, 255, 0.4);
   padding: 8px 0;
   margin: auto;
   width: 80%;
@@ -1903,6 +1906,13 @@ body {
 }
 
 .home-now {
+  display: grid;
+  row-gap: 25px;
+}
+.home-now-content {
+  margin: 0 auto;
+}
+.home-now-top {
   width: 380px;
   height: 140px;
   display: grid;
@@ -1912,6 +1922,42 @@ body {
   padding: 25px;
   box-shadow: 2px 2px 4px rgba(170, 170, 170, 0.25);
   background-color: #fff;
+}
+.home-now hr {
+  width: 344px;
+  height: 1px;
+  background: repeating-linear-gradient(to right, rgba(0, 0, 0, 0.6) 0, rgba(0, 0, 0, 0.6) 4px, transparent 4px, transparent 5px);
+  margin: 0 auto;
+}
+.home-now-bottom {
+  width: 380px;
+  height: 50px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 30px;
+  border-radius: 15px;
+  padding: 17px;
+  box-shadow: 2px 2px 4px rgba(170, 170, 170, 0.25);
+  background-color: #fff;
+}
+.home-now-bottom-price {
+  text-align: right;
+}
+.home-now-bottom span {
+  display: flex;
+  justify-content: space-between;
+  gap: 5px;
+}
+.home-now-bottom span p {
+  font-size: 14px;
+  font-weight: normal;
+  align-self: center;
+}
+.home-now-bottom span img {
+  margin: 0 auto;
+  width: 11px;
+  height: 13px;
+  align-self: center;
 }
 .home-now-group {
   align-self: center;
@@ -1966,16 +2012,16 @@ body {
   left: 50%;
   transform: translate(-70%, -50%);
 }
-.home-now-detall-aside span {
+.home-now-detall-aside aside {
   display: flex;
   gap: 5px;
 }
-.home-now-detall-aside span img {
+.home-now-detall-aside aside img {
   width: 11px;
   height: 13px;
   align-self: center;
 }
-.home-now-detall-aside span p {
+.home-now-detall-aside aside p {
   align-self: center;
   font-weight: normal;
 }
