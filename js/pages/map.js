@@ -103,8 +103,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const fmtStart = (g) => {
     const d = g.start;
-    const date = `${d.getMonth() + 1}/${d.getDate()}(${WEEK[d.getDay()]})`;
-    return g.timeTBD ? `${date} 時刻未定` : `${date} ${d.toTimeString().slice(0, 5)}`;
+    const time = g.timeTBD ? "時刻未定" : d.toTimeString().slice(0, 5);
+    // 絞り込みで「今日」を選んでいるときは、どれも今日なので日付を省いて時刻だけにする
+    if (document.querySelector('input[name="period"]:checked')?.value === "today") return time;
+    return `${d.getMonth() + 1}/${d.getDate()}(${WEEK[d.getDay()]}) ${time}`;
   };
   // 価格は最安席の「目安」。試合や購入時期で変わるので必ず「目安」と添える
   const priceText = (g) => (g.price == null ? "価格未登録" : `${yen(g.price)}〜（目安）`);
@@ -277,6 +279,7 @@ document.addEventListener("DOMContentLoaded", () => {
   // -----------------------------------------------------------------
   let games = [];
   let visible = [];
+  const teamLogos = readEmbeddedTeamLogos();
   let userLatLng = null;
   let userMarker = null;
 
@@ -297,6 +300,7 @@ document.addEventListener("DOMContentLoaded", () => {
       sportName: m.sport,
       league: sportOf(sportKey(m.sport)).label,
       title: m.title,
+      teamIds: [m.homeTeamId, m.awayTeamId].filter(Boolean),
       start,
       timeTBD: !m.startTime,
       price: m.priceMin == null ? null : Number(m.priceMin),
@@ -432,6 +436,7 @@ document.addEventListener("DOMContentLoaded", () => {
             ].filter(Boolean).map((link) => ` ・ ${link}`).join("");
             return `
               <li class="${g.id === focusId ? "is-focus" : ""}">
+                ${teamLogosHtml(g, "pop-logos", 56)}
                 <span class="tag" style="--c:${s.color}">${s.icon} ${esc(leagueText(g))}</span>
                 <strong>${esc(g.title)}</strong>
                 <span class="pop-meta">${fmtStart(g)} ・ ${priceText(g)}${detail}</span>
@@ -442,7 +447,16 @@ document.addEventListener("DOMContentLoaded", () => {
         ${shown.some((g) => g.price != null) ? '<div class="pop-note">価格は最安席の目安です。試合や購入時期によって変わります。</div>' : ""}
         <div class="pop-actions">
           <a class="btn" href="${route}" target="_blank" rel="noopener">ルート</a>
-          <button class="btn" type="button" data-nearby="${v.lat},${v.lng}">周辺施設</button>
+          <button class="btn" type="button" data-nearby-toggle aria-expanded="false">周辺施設</button>
+        </div>
+        <div class="pop-nearby" hidden>
+          <p class="pop-nearby__lead">探したい施設を選んでください</p>
+          <div class="pop-nearby__kinds">
+            ${Object.entries(NEARBY).map(([key, k]) => `
+              <button class="pop-nearby__kind" type="button" data-nearby="${v.lat},${v.lng}" data-kind="${key}">
+                ${k.icon} ${k.label}
+              </button>`).join("")}
+          </div>
         </div>
       </div>`;
   }
@@ -571,6 +585,20 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
+  /**
+   * 背景に薄く置く両チームのロゴ。2 チームそろっていないときは出さない。
+   * 一覧のカード（card-logos）と、ピンの詳細（pop-logos）で使う
+   */
+  function teamLogosHtml(g, className, size) {
+    const logos = (g.teamIds || []).slice(0, 2).map((id, side) => (teamLogos[id] || [])[side] || "");
+    if (logos.length < 2 || logos.some((src) => !src)) return "";
+    // 飾りなので読み上げない。チーム名は試合名に書いてある
+    return `
+      <span class="${className}" aria-hidden="true">
+        ${logos.map((src) => `<img src="${esc(src)}" alt="" width="${size}" height="${size}" loading="lazy">`).join("")}
+      </span>`;
+  }
+
   function cardHtml(g) {
     const s = sportOf(g.sport);
     const km = distanceKm(g);
@@ -578,6 +606,7 @@ document.addEventListener("DOMContentLoaded", () => {
     return `
       <li>
         <button class="card" type="button" data-id="${g.id}" style="--c:${s.color}">
+          ${teamLogosHtml(g, "card-logos", 72)}
           <span class="card-icon">${s.icon}</span>
           <span class="card-body">
             <span class="card-meta">${fmtStart(g)} ・ ${esc(leagueText(g))}</span>
@@ -677,11 +706,13 @@ document.addEventListener("DOMContentLoaded", () => {
   const nearbyLayer = L.layerGroup().addTo(map);
   let nearbyAttributed = false;
 
-  async function showNearby(lat, lng) {
-    showStatus("周辺施設を探しています…");
+  /** 選ばれた種類（kind）の施設だけを検索して、地図に出す */
+  async function showNearby(lat, lng, kindKey) {
+    showStatus(`${NEARBY[kindKey].label}を探しています…`);
     let data;
     try {
-      const res = await fetch(`nearby.php?lat=${encodeURIComponent(lat)}&lng=${encodeURIComponent(lng)}`);
+      const query = new URLSearchParams({ lat, lng, kind: kindKey });
+      const res = await fetch(`nearby.php?${query}`);
       data = await res.json();
     } catch (e) {
       data = { ok: false, message: "周辺施設を読み込めませんでした。" };
@@ -718,16 +749,42 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     if (map.getZoom() < NEARBY_ZOOM) map.setView([lat, lng], NEARBY_ZOOM);
-    showStatus(data.places.length ? `周辺施設を${data.places.length}件表示しました` : "近くに施設が見つかりませんでした");
+    const label = NEARBY[kindKey].label;
+    showStatus(data.places.length ? `${label}を${data.places.length}件表示しました` : `近くに${label}が見つかりませんでした`);
   }
 
   // ボタンはポップアップ（PC）とシート（スマホ）の中で作り直されるので、document で拾う
   document.addEventListener("click", (e) => {
+    // 「周辺施設」… いきなり検索せず、まず種類を選んでもらう
+    const toggle = e.target.closest("[data-nearby-toggle]");
+    if (toggle) {
+      const panel = toggle.closest(".pop").querySelector(".pop-nearby");
+      panel.hidden = !panel.hidden;
+      toggle.setAttribute("aria-expanded", panel.hidden ? "false" : "true");
+      if (panel.hidden) return;
+
+      // 吹き出しの update() は中身を作り直してしまうので呼ばない。
+      // 吹き出し（PC）は上に伸びるので、地図の上端からはみ出した分だけ地図をずらす
+      const popupEl = toggle.closest(".leaflet-popup");
+      if (popupEl) {
+        const overflow = map.getContainer().getBoundingClientRect().top + 8 - popupEl.getBoundingClientRect().top;
+        if (overflow > 0) map.panBy([0, -overflow]);
+      } else {
+        // シート（スマホ）は下に伸びるので、選択肢が見える位置まで送る
+        panel.scrollIntoView({ behavior: "smooth", block: "nearest" });
+      }
+      return;
+    }
+
+    // 種類のボタン … 選んだ種類だけを検索する
     const button = e.target.closest("[data-nearby]");
     if (!button) return;
     const [lat, lng] = button.dataset.nearby.split(",").map(Number);
+    button.closest(".pop-nearby__kinds").querySelectorAll(".pop-nearby__kind").forEach((b) => {
+      b.classList.toggle("is-active", b === button);
+    });
     if (MOBILE.matches) closeMatchSheet();   // シートの裏にピンが隠れないようにする
-    showNearby(lat, lng);
+    showNearby(lat, lng, button.dataset.kind);
   });
 
   // 飛んでいる最中に別の試合を選ばれたら、古いほうは打ち切る
@@ -799,7 +856,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (MOBILE.matches) $("#map").scrollIntoView({ behavior: "smooth", block: "start" });
 
-    const target = L.latLng(game.v.lat, game.v.lng);
+    const target = L.latLng(game.v.lat-0.002, game.v.lng);
     const zoom = Math.max(map.getZoom(), FOCUS_ZOOM);
     const token = ++flyToken;
     let arrived = false;
@@ -981,6 +1038,18 @@ document.addEventListener("DOMContentLoaded", () => {
   // -----------------------------------------------------------------
   // 読み込み
   // -----------------------------------------------------------------
+  /** map.php が埋め込んだチームのロゴ（チーム ID => [ホーム側, アウェイ側]） */
+  function readEmbeddedTeamLogos() {
+    const el = document.getElementById("map-team-logos");
+    if (!el) return {};
+    try {
+      const parsed = JSON.parse(el.textContent);
+      return parsed && typeof parsed === "object" ? parsed : {};
+    } catch {
+      return {}; // 読めなくても、ロゴが出ないだけでよい
+    }
+  }
+
   /** map.php が <script type="application/json"> で埋め込んだ大会を読む */
   function readEmbeddedTournaments() {
     const el = document.getElementById("map-tournaments");

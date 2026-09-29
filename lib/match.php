@@ -96,6 +96,31 @@ function load_teams(): array
   return $teams;
 }
 
+/** 仮のロゴ（ホーム側・アウェイ側）。チームごとのロゴ画像ができたら消す */
+const MATCH_PLACEHOLDER_LOGOS = ['images/teams/team1.png', 'images/teams/team2.png'];
+
+/**
+ * チームのロゴ画像のパス（アプリのルートから）。出すときは url() を通すこと。
+ * teams.json の logo の画像がまだ置かれていなければ、仮のロゴを返す。
+ * 仮のロゴも無ければ空文字。
+ *
+ * @param int $side 0 = ホーム側、1 = アウェイ側（仮のロゴをどちらにするか）
+ */
+function match_team_logo(string $teamId, int $side): string
+{
+  static $teams = null;
+  $teams ??= load_teams();
+
+  $root = dirname(__DIR__) . '/';
+  $logo = (string) ($teams[$teamId]['logo'] ?? '');
+  if ($logo !== '' && is_file($root . $logo)) {
+    return $logo;
+  }
+
+  $placeholder = MATCH_PLACEHOLDER_LOGOS[$side === 0 ? 0 : 1];
+  return is_file($root . $placeholder) ? $placeholder : '';
+}
+
 /**
  * 画面で使う 1 試合の形。
  *
