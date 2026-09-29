@@ -2257,16 +2257,11 @@ a.nearby-links__item:hover .nearby-links__image {
 .menu-bar__sub-list {
   display: flex;
   justify-content: center;
-  gap: 32px;
+  gap: 8px;
   max-width: 480px;
   margin: 0 auto;
   padding: 8px 0;
   list-style: none;
-}
-@media (max-width: 1100px) {
-  .menu-bar__sub-list {
-    gap: 8px;
-  }
 }
 .menu-bar__toggle {
   width: 100%;
@@ -2313,11 +2308,6 @@ a.nearby-links__item:hover .nearby-links__image {
   margin: 0 auto;
   padding: 0;
   list-style: none;
-}
-@media (max-width: 1100px) {
-  .menu-bar__list {
-    gap: 8px;
-  }
 }
 .menu-bar__item {
   width: 65px;

@@ -5,11 +5,7 @@ $breakpoints: (
   desktop: 1100px
 );
 
-@mixin mq($breakpoint: desktop) {
-  @media (max-width: map-get($breakpoints, $breakpoint)) {
-    @content;
-  }
-}
+
 
 .menu-bar {
   // 画面下に固定
@@ -76,7 +72,7 @@ $breakpoints: (
   &__sub-list {
     display: flex;
     justify-content: center;
-    gap: 32px;
+    gap: 8px;
 
     max-width: 480px;
     margin: 0 auto;
@@ -84,9 +80,7 @@ $breakpoints: (
 
     list-style: none;
 
-    @include mq(desktop) {
-      gap: 8px;
-    }
+
   }
 
   // =========================
@@ -156,9 +150,8 @@ $breakpoints: (
 
     list-style: none;
 
-    @include mq(desktop) {
-      gap: 8px;
-    }
+
+
   }
 
   // =========================
