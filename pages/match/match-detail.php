@@ -8,12 +8,21 @@
  *   type=match       … data/matches.json の仮データ（id は match-001 の形）
  *   type=tournament  … 主催者が掲載した大会。v_public_tournaments から取る（id は数字）
  *
- * 周辺施設・ホテル・天気は主要機能 5・6（後回し）なので、まだ出さない。
+ * 周辺施設・天気は主要機能 5・6（後回し）なので、まだ出さない。
+ * ホテルだけは、画面確認用の仮データ（lib/hotel.php）で「周辺のホテル」を出している。
+ *
+ * デザインにあってデータに無いもの（リーグ名・節・戦績・最寄り駅・試合の写真）は、
+ * 競技名や所在地、競技の色の絵で代わりにしている。
  */
 
 declare(strict_types=1);
 
 require_once __DIR__ . '/../../lib/match.php';
+require_once __DIR__ . '/../../lib/hotel.php';
+require_once __DIR__ . '/../../lib/favorite.php';
+
+/** 試合の写真が無いときに上に出す写真 */
+const DETAIL_DEFAULT_IMAGE = 'images/sample/sample-match.png';
 
 /** 競技コード => アイコン。js/pages/map.js の SPORTS と揃える（表示名は lib/match.php） */
 const DETAIL_SPORT_ICONS = [
@@ -52,6 +61,7 @@ function detail_from_match(string $id): ?array
     'title'       => (string) ($match['title'] ?? ''),
     'home'        => $teams[$match['homeTeamId'] ?? ''] ?? null,
     'away'        => $teams[$match['awayTeamId'] ?? ''] ?? null,
+    'team_ids'    => array_values(array_filter([(string) ($match['homeTeamId'] ?? ''), (string) ($match['awayTeamId'] ?? '')])),
     'starts_at'   => (string) ($match['date'] ?? '') . ' ' . ($time === '' ? '00:00' : $time),
     'time_tbd'    => $time === '',
     'venue'       => (string) ($match['venue'] ?? ''),
@@ -64,6 +74,7 @@ function detail_from_match(string $id): ?array
     'price_min'   => isset($match['priceMin']) ? (int) $match['priceMin'] : null,
     'price_max'   => isset($match['priceMax']) ? (int) $match['priceMax'] : null,
     'ticket_url'  => (string) ($match['ticketUrl'] ?? ''),
+    'image'       => (string) ($match['image'] ?? ''),
     'organizer'   => null,
     'is_verified' => false,
   ];
@@ -90,6 +101,7 @@ function detail_from_tournament(int $id): ?array
     'title'       => (string) $t['title'],
     'home'        => null,
     'away'        => null,
+    'team_ids'    => [],
     'starts_at'   => (string) $t['starts_at'],
     'time_tbd'    => false,
     'venue'       => (string) $t['venue_name'],
@@ -102,6 +114,7 @@ function detail_from_tournament(int $id): ?array
     'price_min'   => (int) $t['entry_fee_yen'],
     'price_max'   => null,
     'ticket_url'  => '',
+    'image'       => '',
     'organizer'   => (string) $t['organizer_name'],
     'is_verified' => (bool) $t['is_verified'],
   ];
@@ -194,37 +207,77 @@ if ($game !== null) {
   }
 }
 
+// 会場の近くのホテル（仮データ）。仮データの試合から来たときだけ、戻り先として試合を渡す
+$nearHotels = [];
+if ($game !== null && $game['lat'] !== null && $game['lng'] !== null) {
+  $nearHotels = hotels_near((float) $game['lat'], (float) $game['lng']);
+}
+$fromMatchId = $type === 'match' ? $rawId : '';
+
+// デザインの「10/14 ｜ 13:00〜」と、対戦チームのロゴ
+$shortDate = $startsAt === null ? '日程未定' : $startsAt->format('n/j');
+$timeText  = $startsAt === null || $game['time_tbd'] ? '時刻未定' : $startsAt->format('H:i') . '〜';
+$teamList  = $game === null ? [] : match_teams($game['team_ids']);
+
+// 対戦チームの ☆（お気に入り）。ログイン中なら DB、未ログインならブラウザに保存する
+$favoriteState = favorite_client_state();
+
+// 上の写真。試合の写真（matches.json の image）が置かれていればそれ、無ければサンプルの写真
+$heroImage = '';
+foreach ([$game['image'] ?? '', DETAIL_DEFAULT_IMAGE] as $candidate) {
+  if ($candidate !== '' && is_file(dirname(__DIR__, 2) . '/' . $candidate)) {
+    $heroImage = $candidate;
+    break;
+  }
+}
+
 $pageTitle = $game === null ? '試合が見つかりません' : $game['title'];
 
 ?>
 <!DOCTYPE html>
 <html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title><?= h($pageTitle) ?> | SPOTIVE</title>
 
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title><?= h($pageTitle) ?> | SPOTIVE</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Jost:wght@400;600&family=Noto+Sans+JP:wght@400;500;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/the-new-css-reset/css/reset.min.css" />
+    <link rel="stylesheet" href="<?= h(asset('css/style.css')) ?>" />
+  </head>
 
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link
-    href="https://fonts.googleapis.com/css2?family=Jost:wght@400;600&family=Noto+Sans+JP:wght@400;500;700&display=swap"
-    rel="stylesheet" />
-  <link
-    rel="stylesheet"
-    href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <body>
+    <main class="match-detail match-detail--<?= h($sportKey !== '' ? $sportKey : 'other') ?>">
+      <!-- 上の写真。飾りなので読み上げない。写真が 1 枚も無いときは、競技の色とアイコンで代わりにする -->
+      <div class="match-detail__hero" aria-hidden="true">
+        <?php if ($heroImage !== '') : ?>
+          <img class="match-detail__hero-image" src="<?= h(url($heroImage)) ?>" alt="" width="402" height="205" />
+        <?php else : ?>
+          <span class="match-detail__hero-icon"><?= h($sportInfo['icon'] ?? '🏟️') ?></span>
+        <?php endif; ?>
+      </div>
 
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/the-new-css-reset/css/reset.min.css">
-  <link rel="stylesheet" href="<?= h(asset('css/style.css')) ?>" />
-</head>
+      <div class="match-detail__sheet">
+        <div class="match-detail__head">
+          <p class="match-detail__league">
+            <?php if ($game === null) : ?>
+              SPOTIVE
+            <?php else : ?>
+              <?= h($game['organizer'] !== null ? '主催：' . $game['organizer'] : $sportInfo['label']) ?>
+            <?php endif; ?>
+          </p>
+          <!-- 閉じる：来た画面に戻る（js/pages/match-detail.js）。JS が無ければ地図へ -->
+          <a class="match-detail__close" href="<?= h(url('pages/map/map.php')) ?>" data-back aria-label="閉じる">
+            <img src="<?= h(url('images/icons/close.svg')) ?>" alt="" width="24" height="24" />
+          </a>
+        </div>
 
-<body>
-  <main class="l-main">
-    <div class="match-detail">
-      <a class="match-detail__back" href="../map/map.php">← 地図に戻る</a>
-
-      <?php if ($game === null) : ?>
-        <section class="match-detail__card">
+        <?php if ($game === null) : ?>
           <h1 class="match-detail__title">
             <?= $dbError ? '読み込めませんでした' : '試合が見つかりませんでした' ?>
           </h1>
@@ -235,120 +288,155 @@ $pageTitle = $game === null ? '試合が見つかりません' : $game['title'];
               掲載が終わったか、URL が間違っている可能性があります。地図から試合を探してください。
             <?php endif; ?>
           </p>
-        </section>
-      <?php else : ?>
-        <article class="match-detail__card">
-          <div class="match-detail__tags">
-            <span class="match-detail__sport match-detail__sport--<?= h($sportKey) ?>">
-              <span aria-hidden="true"><?= h($sportInfo['icon']) ?></span>
-              <?= h($sportInfo['label']) ?>
-            </span>
-            <?php if ($game['is_verified']) : ?>
-              <span class="match-detail__badge">確認済みの大会</span>
-            <?php endif; ?>
-          </div>
+        <?php else : ?>
+          <!-- 対戦チーム。チームの無い大会は大会名を出す -->
+          <?php if ($teamList !== []) : ?>
+            <h1 class="match-detail__teams">
+              <?php foreach ($teamList as $team) : ?>
+                <span class="match-detail__team">
+                  <?php if ($team['logo'] !== '') : ?>
+                    <img class="match-detail__logo" src="<?= h(url($team['logo'])) ?>" alt="" width="40" height="40" />
+                  <?php endif; ?>
+                  <span class="match-detail__team-name"><?= h($team['name']) ?></span>
+                </span>
+              <?php endforeach; ?>
+            </h1>
 
-          <h1 class="match-detail__title"><?= h($game['title']) ?></h1>
-
-          <?php if ($game['home'] !== null && $game['away'] !== null) : ?>
-            <div class="match-detail__teams">
-              <p class="match-detail__team">
-                <span class="match-detail__side">HOME</span>
-                <?= h($game['home']) ?>
-              </p>
-              <span class="match-detail__vs">VS</span>
-              <p class="match-detail__team">
-                <span class="match-detail__side">AWAY</span>
-                <?= h($game['away']) ?>
-              </p>
+            <!-- 対戦チームをお気に入りに登録・解除する（js/pages/match-detail.js）。見出しの外に置く -->
+            <div class="match-detail__favorites">
+              <?php foreach ($teamList as $i => $team) : ?>
+                <button
+                  class="match-detail__favorite"
+                  type="button"
+                  data-favorite-team="<?= h((string) ($game['team_ids'][$i] ?? '')) ?>"
+                  aria-pressed="false"
+                >
+                  <span class="match-detail__favorite-icon" aria-hidden="true">☆</span>
+                  <span class="match-detail__favorite-name"><?= h($team['name']) ?></span>
+                </button>
+              <?php endforeach; ?>
             </div>
+          <?php else : ?>
+            <h1 class="match-detail__title"><?= h($game['title']) ?></h1>
           <?php endif; ?>
+
+          <?php if ($game['is_verified']) : ?>
+            <p class="match-detail__badge">確認済みの大会</p>
+          <?php endif; ?>
+
+          <?php if ($game['organizer'] !== null) : ?>
+            <!-- 大会は見出しが主催者名なので、競技名はここに出す（試合は見出しが競技名） -->
+            <p class="match-detail__round"><?= h($sportInfo['label']) ?></p>
+          <?php endif; ?>
+
+          <p class="match-detail__when">
+            <?php if ($startsAt !== null) : ?>
+              <time datetime="<?= h($startsAt->format($game['time_tbd'] ? 'Y-m-d' : 'Y-m-d\TH:i')) ?>">
+                <span class="match-detail__date"><?= h($shortDate) ?></span><span class="match-detail__time"><?= h($timeText) ?></span>
+              </time>
+            <?php else : ?>
+              <span class="match-detail__date"><?= h($shortDate) ?></span>
+            <?php endif; ?>
+            <span class="match-detail__venue">
+              <img src="<?= h(url('images/icons/point.svg')) ?>" alt="" width="11" height="14" />
+              <?= h($game['venue']) ?>
+            </span>
+          </p>
 
           <?php if ($isOver) : ?>
             <p class="match-detail__over">この試合は終了しました。</p>
           <?php endif; ?>
 
-          <dl class="match-detail__info">
-            <div class="match-detail__row">
-              <dt class="match-detail__label">日時</dt>
-              <dd class="match-detail__value match-detail__value--number">
-                <?php if ($startsAt !== null) : ?>
-                  <time datetime="<?= h($startsAt->format($game['time_tbd'] ? 'Y-m-d' : 'Y-m-d\TH:i')) ?>"><?= h($dateText) ?></time>
-                <?php else : ?>
-                  未定
-                <?php endif; ?>
-              </dd>
-            </div>
-
-            <div class="match-detail__row">
-              <dt class="match-detail__label">会場</dt>
-              <dd class="match-detail__value">
-                <?= h($game['venue']) ?>
-                <span class="match-detail__sub">
-                  <?= h($game['address'] !== '' ? $game['address'] : $game['prefecture']) ?>
-                  <?php if ($game['is_indoor'] !== null) : ?>
-                    ・<?= $game['is_indoor'] ? '屋内' : '屋外' ?>
-                  <?php endif; ?>
-                </span>
-              </dd>
-            </div>
-
-            <div class="match-detail__row">
-              <dt class="match-detail__label"><?= h($game['price_label']) ?></dt>
-              <dd class="match-detail__value match-detail__value--number">
-                <?= h(detail_price($game['price_min'], $game['price_max'])) ?>
-                <?php if ($game['kind'] === 'match' && $game['price_min'] !== null) : ?>
-                  <span class="match-detail__sub">席の種類や購入時期によって変わります。</span>
-                <?php endif; ?>
-              </dd>
-            </div>
-
-            <?php if ($game['organizer'] !== null) : ?>
-              <div class="match-detail__row">
-                <dt class="match-detail__label">主催</dt>
-                <dd class="match-detail__value"><?= h($game['organizer']) ?></dd>
-              </div>
-            <?php endif; ?>
-          </dl>
-        </article>
-
-        <?php if ($game['kind'] === 'match') : ?>
+          <!-- チケット情報 -->
           <section class="match-detail__section">
-            <h2 class="match-detail__heading">チケット</h2>
-            <?php if ($ticketUrl !== '' && !$isOver) : ?>
-              <a class="match-detail__cta" href="<?= h($ticketUrl) ?>" target="_blank" rel="noopener">
-                公式サイトでチケットを購入
-              </a>
-            <?php else : ?>
-              <p class="match-detail__text">チケットの販売情報は準備中です。</p>
+            <h2 class="match-detail__heading"><?= $game['kind'] === 'match' ? 'チケット情報' : '参加費' ?></h2>
+            <div class="match-detail__ticket">
+              <p class="match-detail__price">
+                <?= h(detail_price($game['price_min'], null)) ?><?= $game['price_min'] !== null && $game['price_min'] > 0 ? '〜' : '' ?>
+              </p>
+              <?php if ($game['kind'] === 'match') : ?>
+                <?php if ($ticketUrl !== '' && !$isOver) : ?>
+                  <a class="match-detail__cta" href="<?= h($ticketUrl) ?>" target="_blank" rel="noopener">チケット販売サイトへ</a>
+                <?php else : ?>
+                  <span class="match-detail__cta is-disabled" aria-disabled="true">販売情報は準備中</span>
+                <?php endif; ?>
+              <?php endif; ?>
+            </div>
+            <?php if ($game['kind'] === 'match' && $game['price_min'] !== null) : ?>
+              <p class="match-detail__note">
+                <?= h($game['price_label']) ?>：<?= h(detail_price($game['price_min'], $game['price_max'])) ?>。席の種類や購入時期によって変わります。
+              </p>
             <?php endif; ?>
           </section>
-        <?php endif; ?>
 
-        <section class="match-detail__section">
-          <h2 class="match-detail__heading">会場へのアクセス</h2>
-          <?php if ($routeUrl !== '') : ?>
-            <div
-              class="match-detail__map"
-              id="detail-map"
-              data-lat="<?= h((string) $game['lat']) ?>"
-              data-lng="<?= h((string) $game['lng']) ?>"
-              data-name="<?= h($game['venue']) ?>"></div>
-            <a class="match-detail__route" href="<?= h($routeUrl) ?>" target="_blank" rel="noopener">
-              ルートを調べる（Google マップ）
+          <!-- アクセス情報 -->
+          <section class="match-detail__section">
+            <h2 class="match-detail__heading">アクセス情報</h2>
+            <dl class="match-detail__access">
+              <div class="match-detail__access-item">
+                <dt><img src="<?= h(url('images/icons/point.svg')) ?>" alt="" width="11" height="14" />現在地から</dt>
+                <dd
+                  data-distance
+                  <?php if ($game['lat'] !== null && $game['lng'] !== null) : ?>
+                    data-lat="<?= (float) $game['lat'] ?>"
+                    data-lng="<?= (float) $game['lng'] ?>"
+                  <?php endif; ?>
+                >—</dd>
+              </div>
+              <div class="match-detail__access-item">
+                <dt><img src="<?= h(url('images/icons/point.svg')) ?>" alt="" width="11" height="14" />所在地</dt>
+                <dd><?= h($game['address'] !== '' ? $game['address'] : $game['prefecture']) ?></dd>
+              </div>
+            </dl>
+            <?php if ($routeUrl !== '') : ?>
+              <a class="match-detail__route" href="<?= h($routeUrl) ?>" target="_blank" rel="noopener">ルートを調べる（Google マップ）</a>
+            <?php else : ?>
+              <p class="match-detail__note">会場の位置情報がまだ登録されていません。</p>
+            <?php endif; ?>
+          </section>
+
+          <!-- 周辺のホテル（仮データ） -->
+          <section class="match-detail__section">
+            <h2 class="match-detail__heading">周辺のホテル</h2>
+            <?php if ($nearHotels !== []) : ?>
+              <p class="match-detail__note">画面確認用の仮データです（実在しません）。</p>
+              <ul class="near-hotels">
+                <?php foreach ($nearHotels as $nearHotel) : ?>
+                  <li>
+                    <a class="near-hotels__item" href="<?= h(url(hotel_detail_path((string) $nearHotel['id'], $fromMatchId))) ?>">
+                      <span class="near-hotels__photo" aria-hidden="true">🏨</span>
+                      <span class="near-hotels__body">
+                        <span class="near-hotels__name"><?= h((string) $nearHotel['name']) ?></span>
+                        <span class="near-hotels__meta">会場から約<?= h(hotel_distance_label((float) $nearHotel['distance'])) ?></span>
+                        <span class="near-hotels__price">¥<?= h(number_format((int) $nearHotel['priceMin'])) ?>〜<small>/1泊</small></span>
+                      </span>
+                    </a>
+                  </li>
+                <?php endforeach; ?>
+              </ul>
+            <?php else : ?>
+              <p class="match-detail__note">会場の近くのホテルはまだ登録されていません。</p>
+            <?php endif; ?>
+            <a class="match-detail__hotel-search" href="<?= h(url('pages/map/map.php?nearby=hotel')) ?>">
+              <span class="match-detail__hotel-icon" aria-hidden="true">🛏️</span>
+              会場周辺のホテルを探す
             </a>
-          <?php else : ?>
-            <p class="match-detail__text">会場の位置情報がまだ登録されていません。</p>
+          </section>
+
+          <!-- 会場の特徴 -->
+          <?php if ($game['is_indoor'] !== null) : ?>
+            <ul class="match-detail__features">
+              <li class="match-detail__feature"><?= $game['is_indoor'] ? '屋内' : '屋外' ?></li>
+            </ul>
           <?php endif; ?>
-        </section>
-      <?php endif; ?>
-    </div>
-  </main>
+        <?php endif; ?>
+      </div>
+    </main>
 
-  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-  <script src="<?= h(asset('js/main.js')) ?>"></script>
-  <script src="<?= h(asset('js/pages/match-detail.js')) ?>"></script>
-  <?php require __DIR__ . '/../menu-bar.php'; ?>
-</body>
-
+    <script src="<?= h(asset('js/main.js')) ?>"></script>
+    <script type="application/json" id="favorite-state"><?= favorite_state_json($favoriteState) ?></script>
+    <script src="<?= h(asset('js/common/favorite-store.js')) ?>"></script>
+    <script src="<?= h(asset('js/pages/match-detail.js')) ?>"></script>
+    <?php require __DIR__ . '/../menu-bar.php'; ?>
+  </body>
 </html>

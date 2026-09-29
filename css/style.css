@@ -1552,237 +1552,326 @@ input[type=radio] {
 }
 
 .match-detail {
+  --sport: #6f6e77;
   max-width: 720px;
   margin: 0 auto;
-  padding: 16px 16px 160px;
+  padding-bottom: 160px;
   color: #1F2937;
   font-family: "Noto Sans JP", sans-serif;
   font-size: 14px;
   line-height: 1.6;
 }
+.match-detail--soccer {
+  --sport: #2f9e5b;
+}
+.match-detail--baseball {
+  --sport: #e5484d;
+}
+.match-detail--basketball {
+  --sport: #ef7a1a;
+}
+.match-detail--volleyball {
+  --sport: #3e63dd;
+}
+.match-detail--futsal {
+  --sport: #26a269;
+}
+.match-detail--tennis {
+  --sport: #c2410c;
+}
+.match-detail--badminton {
+  --sport: #0f9b8e;
+}
+.match-detail--rugby {
+  --sport: #8e4ec6;
+}
+.match-detail--tabletennis {
+  --sport: #0284c7;
+}
+.match-detail--other {
+  --sport: #6f6e77;
+}
+.match-detail__hero {
+  position: relative;
+  overflow: hidden;
+  display: grid;
+  place-items: center;
+  height: 240px;
+  background: linear-gradient(160deg, color-mix(in srgb, var(--sport) 35%, white), var(--sport));
+}
 @media (min-width: 768px) {
-  .match-detail {
-    padding: 24px 24px 160px;
+  .match-detail__hero {
+    height: 320px;
+    border-radius: 0 0 16px 16px;
   }
 }
-.match-detail__back {
-  display: inline-block;
-  margin-bottom: 16px;
-  color: #0B63E5;
-  text-decoration: none;
+.match-detail__hero-image {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  -o-object-fit: cover;
+     object-fit: cover;
 }
-.match-detail__back:hover {
-  color: #0847A6;
-  text-decoration: underline;
+.match-detail__hero-icon {
+  font-size: 80px;
 }
-.match-detail__card {
-  padding: 16px;
-  border: 1px solid #E5E7EB;
-  border-radius: 16px;
-  background: #FFFFFF;
+.match-detail__sheet {
+  position: relative;
+  margin-top: -48px;
+  padding: 24px 16px;
+  border-radius: 32px 32px 0 0;
+  background: #F5F7FA;
 }
 @media (min-width: 768px) {
-  .match-detail__card {
-    padding: 24px;
+  .match-detail__sheet {
+    padding: 32px 24px;
   }
 }
-.match-detail__tags {
+.match-detail__head {
   display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-}
-.match-detail__sport {
-  display: inline-flex;
   align-items: center;
-  gap: 4px;
-  padding: 4px 12px;
-  border-radius: 999px;
-  color: #FFFFFF;
-  font-size: 12px;
-  font-weight: 700;
+  justify-content: space-between;
+  gap: 16px;
 }
-.match-detail__sport--soccer {
-  background: #2f9e5b;
-}
-.match-detail__sport--baseball {
-  background: #e5484d;
-}
-.match-detail__sport--basketball {
-  background: #ef7a1a;
-}
-.match-detail__sport--volleyball {
-  background: #3e63dd;
-}
-.match-detail__sport--futsal {
-  background: #26a269;
-}
-.match-detail__sport--tennis {
-  background: #c2410c;
-}
-.match-detail__sport--badminton {
-  background: #0f9b8e;
-}
-.match-detail__sport--rugby {
-  background: #8e4ec6;
-}
-.match-detail__sport--tabletennis {
-  background: #0284c7;
-}
-.match-detail__sport--other {
-  background: #6f6e77;
-}
-.match-detail__badge {
-  padding: 4px 12px;
-  border-radius: 999px;
-  background: #E7F0FE;
-  color: #0B63E5;
-  font-size: 12px;
-  font-weight: 700;
-}
-.match-detail__title {
-  margin-top: 12px;
+.match-detail__league {
+  margin: 0;
   color: #0F172A;
   font-family: "Jost", "Noto Sans JP", sans-serif;
-  font-size: 20px;
+  font-weight: 600;
+}
+.match-detail__close {
+  display: grid;
+  flex-shrink: 0;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 999px;
+}
+.match-detail__close:hover {
+  background: #E5E7EB;
+}
+.match-detail__title {
+  margin: 16px 0 0;
+  color: #0F172A;
+  font-size: 22px;
   font-weight: 700;
   line-height: 1.4;
 }
-@media (min-width: 768px) {
-  .match-detail__title {
-    font-size: 24px;
-  }
+.match-detail__text {
+  margin: 8px 0 0;
 }
 .match-detail__teams {
   display: grid;
-  grid-template-columns: 1fr auto 1fr;
-  align-items: center;
-  gap: 8px;
-  margin-top: 16px;
-  padding: 16px 8px;
-  border-radius: 8px;
-  background: #E7F0FE;
-  text-align: center;
+  gap: 16px;
+  margin: 16px 0 0;
+  font-size: inherit;
 }
 .match-detail__team {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+.match-detail__logo {
+  width: 40px;
+  height: 40px;
+  -o-object-fit: contain;
+     object-fit: contain;
+}
+.match-detail__team-name {
   color: #0F172A;
+  font-size: 20px;
   font-weight: 700;
 }
-.match-detail__side {
-  display: block;
-  color: #6B7280;
-  font-family: "Jost", "Noto Sans JP", sans-serif;
+.match-detail__favorites {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 16px 0 0;
+}
+.match-detail__favorite {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  min-height: 40px;
+  padding: 4px 12px;
+  border: 1px solid #E5E7EB;
+  border-radius: 999px;
+  background: #FFFFFF;
+  color: #1F2937;
+  font: inherit;
+  font-size: 14px;
+  cursor: pointer;
+}
+.match-detail__favorite:hover {
+  border-color: #FF6B2C;
+}
+.match-detail__favorite.is-active {
+  border-color: #FF6B2C;
+  background: #FF6B2C;
+  color: #FFFFFF;
+}
+.match-detail__favorite-icon {
+  font-size: 16px;
+  line-height: 1;
+}
+.match-detail__badge {
+  display: inline-block;
+  margin: 12px 0 0;
+  padding: 0 12px;
+  border-radius: 999px;
+  background: #E7F0FE;
+  color: #0847A6;
   font-size: 12px;
+  font-weight: 700;
+}
+.match-detail__round {
+  margin: 16px 0 -12px;
+}
+.match-detail__when {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 24px;
+  margin: 16px 0 0;
+  padding-bottom: 24px;
+  border-bottom: 1px solid #0F172A;
+}
+.match-detail__date, .match-detail__time {
+  color: #0F172A;
+  font-family: "Jost", "Noto Sans JP", sans-serif;
+  font-size: 24px;
   font-weight: 600;
 }
-.match-detail__vs {
-  color: #0B63E5;
-  font-family: "Jost", "Noto Sans JP", sans-serif;
-  font-size: 16px;
-  font-weight: 600;
+.match-detail__date {
+  margin-right: 12px;
+  padding-right: 12px;
+  border-right: 1px solid #0F172A;
+}
+.match-detail__venue {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
 }
 .match-detail__over {
-  margin-top: 16px;
+  margin: 16px 0 0;
   padding: 8px 12px;
   border-radius: 8px;
   background: #E5E7EB;
   color: #6B7280;
   font-weight: 700;
 }
-.match-detail__info {
-  margin-top: 16px;
-}
-.match-detail__row {
-  display: grid;
-  grid-template-columns: 96px 1fr;
-  gap: 8px;
-  padding: 12px 0;
-  border-top: 1px solid #E5E7EB;
-}
-@media (min-width: 768px) {
-  .match-detail__row {
-    grid-template-columns: 160px 1fr;
-  }
-}
-.match-detail__label {
-  color: #6B7280;
-}
-.match-detail__value {
-  font-weight: 500;
-}
-.match-detail__value--number {
-  font-family: "Jost", "Noto Sans JP", sans-serif;
-  font-weight: 600;
-}
-.match-detail__sub {
-  display: block;
-  color: #6B7280;
-  font-family: "Noto Sans JP", sans-serif;
-  font-size: 12px;
-  font-weight: 400;
-}
 .match-detail__section {
-  margin-top: 32px;
+  padding: 24px 0;
+  border-bottom: 1px solid #0F172A;
 }
 .match-detail__heading {
-  margin-bottom: 12px;
+  margin: 0 0 16px;
   color: #0F172A;
-  font-size: 16px;
+  font-size: 18px;
   font-weight: 700;
 }
-.match-detail__text {
-  margin-top: 8px;
+.match-detail__note {
+  margin: 8px 0 0;
   color: #6B7280;
+  font-size: 12px;
+}
+.match-detail__ticket {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+.match-detail__price {
+  margin: 0;
+  color: #FF6B2C;
+  font-family: "Jost", "Noto Sans JP", sans-serif;
+  font-size: 28px;
+  font-weight: 600;
+  white-space: nowrap;
 }
 .match-detail__cta {
-  display: block;
-  padding: 16px;
-  border-radius: 8px;
-  background: #FF6B2C;
+  flex-shrink: 0;
+  padding: 12px 20px;
+  border-radius: 999px;
+  background: #0F172A;
   color: #FFFFFF;
   font-weight: 700;
-  text-align: center;
   text-decoration: none;
 }
 .match-detail__cta:hover {
-  opacity: 0.9;
+  background: #0847A6;
 }
-@media (min-width: 768px) {
-  .match-detail__cta {
-    display: inline-block;
-    padding: 16px 48px;
-  }
+.match-detail__cta.is-disabled {
+  background: #E5E7EB;
+  color: #6B7280;
+  font-size: 12px;
 }
-.match-detail__map {
-  height: 240px;
-  border: 1px solid #E5E7EB;
-  border-radius: 16px;
-  overflow: hidden;
+.match-detail__access {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+  margin: 0;
 }
-@media (min-width: 768px) {
-  .match-detail__map {
-    height: 320px;
-  }
+.match-detail__access-item {
+  min-width: 0;
+}
+.match-detail__access-item dt {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  font-weight: 700;
+}
+.match-detail__access-item dd {
+  margin: 4px 0 0;
+  color: #0F172A;
+  font-size: 18px;
+  font-weight: 700;
+  overflow-wrap: anywhere;
 }
 .match-detail__route {
-  display: block;
-  margin-top: 12px;
-  padding: 12px 16px;
-  border: 1px solid #0B63E5;
-  border-radius: 8px;
-  background: #FFFFFF;
+  display: inline-block;
+  margin-top: 16px;
   color: #0B63E5;
   font-weight: 700;
-  text-align: center;
+}
+.match-detail__hotel-search {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  margin-top: 16px;
+  padding: 16px 24px;
+  border-radius: 16px;
+  background: #FFFFFF;
+  box-shadow: 0 2px 12px rgba(15, 23, 42, 0.1);
+  color: #0F172A;
+  font-size: 16px;
+  font-weight: 700;
   text-decoration: none;
 }
-.match-detail__route:hover {
-  background: #E7F0FE;
-  color: #0847A6;
+.match-detail__hotel-search:hover {
+  box-shadow: 0 4px 16px rgba(15, 23, 42, 0.16);
 }
-@media (min-width: 768px) {
-  .match-detail__route {
-    display: inline-block;
-  }
+.match-detail__hotel-icon {
+  font-size: 32px;
+  line-height: 1;
+}
+.match-detail__features {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 24px 0 0;
+  padding: 0;
+  list-style: none;
+}
+.match-detail__feature {
+  padding: 4px 16px;
+  border: 1px solid #6B7280;
+  border-radius: 999px;
+  color: #6B7280;
+  font-size: 12px;
 }
 
 .match-search {
@@ -2135,6 +2224,12 @@ a.nearby-links__item:hover .nearby-links__image {
   max-width: 400px;
   z-index: 1000;
 }
+.menu-bar,
+.menu-bar *,
+.menu-bar *::before,
+.menu-bar *::after {
+  box-sizing: border-box;
+}
 .menu-bar__sub {
   position: fixed;
   bottom: 75px;
@@ -2169,6 +2264,13 @@ a.nearby-links__item:hover .nearby-links__image {
   list-style: none;
 }
 .menu-bar__toggle {
+  width: 100%;
+  margin: 0;
+  font: inherit;
+  line-height: inherit;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+       appearance: none;
   cursor: pointer;
   border: none;
   background: none;
@@ -2637,6 +2739,330 @@ img.team-logo {
   font-size: 18px;
   font-weight: 600;
   color: #0F172A;
+}
+
+.hotel-detail {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 24px 16px 160px;
+  color: #1F2937;
+  font-family: "Noto Sans JP", sans-serif;
+}
+@media (min-width: 768px) {
+  .hotel-detail {
+    padding: 32px 24px 160px;
+  }
+}
+.hotel-detail__back {
+  display: inline-block;
+  color: #0F172A;
+  font-weight: 700;
+  text-decoration: none;
+}
+.hotel-detail__back:hover {
+  text-decoration: underline;
+}
+.hotel-detail__mock {
+  margin: 16px 0 0;
+  padding: 8px 12px;
+  border-radius: 8px;
+  background: #E7F0FE;
+  color: #0847A6;
+  font-size: 12px;
+}
+.hotel-detail__empty {
+  margin: 24px 0 0;
+  color: #6B7280;
+}
+.hotel-detail__photo {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 740/400;
+  margin-top: 16px;
+  -o-object-fit: cover;
+     object-fit: cover;
+  border-radius: 16px;
+}
+.hotel-detail__photo--none {
+  display: grid;
+  place-items: center;
+  font-size: 64px;
+  background: linear-gradient(135deg, #E7F0FE, #0B63E5);
+}
+.hotel-detail__name {
+  margin: 24px 0 0;
+  color: #0F172A;
+  font-size: 24px;
+  font-weight: 700;
+  line-height: 1.4;
+}
+.hotel-detail__address {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 8px 0 0;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #0F172A;
+  font-weight: 500;
+}
+.hotel-detail__info {
+  padding: 16px 0 24px;
+  border-bottom: 1px solid #0F172A;
+}
+.hotel-detail__times {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 32px;
+  margin: 16px 0 0;
+}
+.hotel-detail__time {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.hotel-detail__time dt {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+}
+.hotel-detail__time dd {
+  margin: 0;
+  font-family: "Jost", "Noto Sans JP", sans-serif;
+  font-weight: 600;
+}
+.hotel-detail__heading {
+  margin: 32px 0 16px;
+  color: #0F172A;
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.hotel-amenities {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.hotel-amenities__item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  min-width: 48px;
+  padding: 8px 12px;
+  border-radius: 8px;
+  background: #FFFFFF;
+  box-shadow: 0 2px 12px rgba(15, 23, 42, 0.1);
+}
+.hotel-amenities__icon {
+  width: 24px;
+  height: 24px;
+}
+.hotel-amenities__label {
+  font-size: 11px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.hotel-card {
+  margin-top: 24px;
+  padding: 24px 16px;
+  border-radius: 16px;
+  background: #FFFFFF;
+  box-shadow: 0 2px 12px rgba(15, 23, 42, 0.1);
+}
+@media (min-width: 768px) {
+  .hotel-card {
+    padding: 24px;
+  }
+}
+.hotel-card--reserve {
+  margin-top: 0;
+}
+.hotel-card__title {
+  margin: 0;
+  color: #0F172A;
+  font-size: 18px;
+  font-weight: 700;
+}
+.hotel-card__sub, .hotel-card__note {
+  margin: 4px 0 0;
+  color: #6B7280;
+  font-size: 12px;
+}
+.hotel-card__note {
+  margin-top: 12px;
+}
+.hotel-card__button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 16px;
+  padding: 12px 16px;
+  border-radius: 999px;
+  background: #0F172A;
+  color: #FFFFFF;
+  font-weight: 700;
+  text-decoration: none;
+}
+.hotel-card__button:hover {
+  background: #0847A6;
+}
+.hotel-card__button img {
+  filter: invert(1);
+}
+.hotel-card__row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+.hotel-card__price {
+  display: grid;
+  margin: 0;
+  color: #0F172A;
+  font-family: "Jost", "Noto Sans JP", sans-serif;
+  font-size: 28px;
+  font-weight: 600;
+  line-height: 1.2;
+}
+.hotel-card__price-label {
+  color: #6B7280;
+  font-family: "Noto Sans JP", sans-serif;
+  font-size: 12px;
+  font-weight: 400;
+}
+.hotel-card__reserve {
+  flex-shrink: 0;
+  padding: 12px 24px;
+  border-radius: 999px;
+  background: #FF6B2C;
+  color: #FFFFFF;
+  font-weight: 700;
+  text-decoration: none;
+}
+.hotel-card__reserve.is-disabled {
+  background: #E5E7EB;
+  color: #6B7280;
+  font-size: 12px;
+}
+.hotel-card__plan {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 16px;
+  padding: 8px 16px;
+  border: 1px solid #0F172A;
+  border-radius: 999px;
+  color: #0F172A;
+  font-weight: 700;
+}
+.hotel-card__plan.is-disabled {
+  opacity: 0.4;
+}
+
+.hotel-access {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  margin: 16px 0 0;
+  padding: 0;
+  list-style: none;
+}
+.hotel-access__item {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  grid-template-rows: auto auto;
+  align-items: center;
+  -moz-column-gap: 8px;
+       column-gap: 8px;
+  padding: 0 8px;
+}
+.hotel-access__item + .hotel-access__item {
+  border-left: 1px solid #E5E7EB;
+}
+.hotel-access__item img {
+  grid-row: span 2;
+}
+.hotel-access__label {
+  font-size: 11px;
+  font-weight: 700;
+}
+.hotel-access__value {
+  font-family: "Jost", "Noto Sans JP", sans-serif;
+  font-size: 18px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.near-hotels {
+  display: grid;
+  gap: 12px;
+  margin: 12px 0 0;
+  padding: 0;
+  list-style: none;
+}
+@media (min-width: 768px) {
+  .near-hotels {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+.near-hotels__item {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 12px;
+  border-radius: 16px;
+  background: #FFFFFF;
+  box-shadow: 0 2px 12px rgba(15, 23, 42, 0.1);
+  color: #1F2937;
+  text-decoration: none;
+}
+.near-hotels__item:hover {
+  box-shadow: 0 4px 16px rgba(15, 23, 42, 0.16);
+}
+.near-hotels__photo {
+  display: grid;
+  flex-shrink: 0;
+  place-items: center;
+  width: 88px;
+  height: 88px;
+  border-radius: 8px;
+  background: linear-gradient(135deg, #E7F0FE, #0B63E5);
+  font-size: 32px;
+}
+.near-hotels__body {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+}
+.near-hotels__name {
+  color: #0F172A;
+  font-weight: 700;
+  line-height: 1.4;
+}
+.near-hotels__meta {
+  color: #6B7280;
+  font-size: 12px;
+}
+.near-hotels__price {
+  color: #FF6B2C;
+  font-family: "Jost", "Noto Sans JP", sans-serif;
+  font-size: 18px;
+  font-weight: 600;
+}
+.near-hotels__price small {
+  margin-left: 2px;
+  color: #1F2937;
+  font-family: "Noto Sans JP", sans-serif;
+  font-size: 11px;
+  font-weight: 400;
 }
 
 body {

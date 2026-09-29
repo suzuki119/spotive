@@ -4,5 +4,8 @@ config/db.local.php
 # Geoapify の API キー（各自で置く。コミットしない）
 config/geoapify.local.php
 
+# 楽天ウェブサービスのキー（各自で置く。コミットしない）
+config/rakuten.local.php
+
 # macOS
 .DS_Store

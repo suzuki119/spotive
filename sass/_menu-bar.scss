@@ -18,6 +18,16 @@ $breakpoints: (
 
   z-index: 1000;
 
+  // リセット CSS（the-new-css-reset）を読み込むページと読み込まないページがあるため、
+  // この中だけで大きさの計算方法をそろえる。これが無いと、読み込まないページでは
+  // padding と border の分だけバーが高くなる（60px → 78px）
+  &,
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
+
   // =========================
   // 追加メニュー
   // =========================
@@ -77,6 +87,14 @@ $breakpoints: (
   // メニュー開閉ボタン
   // =========================
   &__toggle {
+    // <button> にはブラウザの初期スタイル（フォント・余白・幅）が付くので、
+    // ほかの項目（<a>）と同じになるよう打ち消す
+    width: 100%;
+    margin: 0;
+    font: inherit;
+    line-height: inherit;
+    -webkit-appearance: none;
+    appearance: none;
     cursor: pointer;
     border: none;
     background: none;
