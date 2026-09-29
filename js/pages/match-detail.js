@@ -1,33 +1,62 @@
 /**
  * match-detail.js
  * 試合詳細画面（pages/match/match-detail.php）の処理。
- * 会場の位置を小さな地図に出す。周辺施設・ホテル・天気は後回し（主要機能 5・6）。
+ *   ・右上の ✕ で、来た画面に戻る
+ *   ・「現在地から」に会場までの距離を出す（位置情報がすでに許可されているときだけ）
  */
 
 document.addEventListener("DOMContentLoaded", () => {
-  const mapEl = document.getElementById("detail-map");
-  // 位置情報の無い大会では地図の枠が出ない。Leaflet が読めなかったときも何もしない
-  if (!mapEl || typeof L === "undefined") return;
+  // -----------------------------------------------------------------
+  // ✕（閉じる）
+  //   同じサイトの画面から来たときは、その画面に戻る（一覧のスクロール位置も戻る）。
+  //   URL を直接開いたときなどは、リンク先（地図）へそのまま移る
+  // -----------------------------------------------------------------
+  const close = document.querySelector("[data-back]");
+  if (close) {
+    close.addEventListener("click", (e) => {
+      let fromSameSite = false;
+      try {
+        fromSameSite = document.referrer !== "" && new URL(document.referrer).origin === location.origin;
+      } catch {
+        fromSameSite = false;
+      }
+      if (fromSameSite && history.length > 1) {
+        e.preventDefault();
+        history.back();
+      }
+    });
+  }
 
-  const lat = Number(mapEl.dataset.lat);
-  const lng = Number(mapEl.dataset.lng);
-  if (!Number.isFinite(lat) || !Number.isFinite(lng)) return;
+  // -----------------------------------------------------------------
+  // 現在地から会場まで
+  //   開いただけで位置情報の許可を求めると驚かせるので、すでに許可されているときだけ出す
+  // -----------------------------------------------------------------
+  const distance = document.querySelector("[data-distance][data-lat]");
+  if (!distance || !navigator.geolocation || !navigator.permissions) return;
 
-  const map = L.map(mapEl, {
-    center: [lat, lng],
-    zoom: 15,
-    // ページのスクロール中に地図が勝手に拡大縮小しないようにする
-    scrollWheelZoom: false,
-  });
+  const toRad = (deg) => (deg * Math.PI) / 180;
+  /** 2 点間の距離（km）。地球を球とみなした近似 */
+  function distanceKm(lat1, lng1, lat2, lng2) {
+    const a = Math.sin(toRad(lat2 - lat1) / 2) ** 2
+      + Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(toRad(lng2 - lng1) / 2) ** 2;
+    return 6371 * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  }
 
-  // 観戦マップと同じ地理院タイル。クレジット表記はライセンス上の義務
-  L.tileLayer("https://cyberjapandata.gsi.go.jp/xyz/pale/{z}/{x}/{y}.png", {
-    maxZoom: 18,
-    attribution: '<a href="https://maps.gsi.go.jp/development/ichiran.html" target="_blank" rel="noopener">地理院タイル</a>',
-  }).addTo(map);
-
-  // 会場名は data-name から textContent で入れる（HTML として解釈させない）
-  const label = document.createElement("span");
-  label.textContent = mapEl.dataset.name || "会場";
-  L.marker([lat, lng]).addTo(map).bindPopup(label).openPopup();
+  navigator.permissions
+    .query({ name: "geolocation" })
+    .then((status) => {
+      if (status.state !== "granted") return;
+      navigator.geolocation.getCurrentPosition((pos) => {
+        const km = distanceKm(
+          pos.coords.latitude, pos.coords.longitude,
+          Number(distance.dataset.lat), Number(distance.dataset.lng)
+        );
+        distance.textContent = km < 1
+          ? `約${Math.round(km * 100) * 10}m`
+          : `約${km < 10 ? km.toFixed(1) : Math.round(km)}km`;
+      });
+    })
+    .catch(() => {
+      // 問い合わせに失敗しても、距離を出さないだけでよい
+    });
 });

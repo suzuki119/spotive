@@ -1,126 +1,187 @@
 // 試合詳細画面（pages/match/match-detail.php）専用のスタイル。
 //
+// 上に試合の写真、その上に角の丸い白いシートを重ねて、中に試合の情報を並べる。
+// 写真はまだ無いので、競技の色のグラデーションとアイコンで代わりにしている。
+//
 // スマホを基準に書き、min-width で広い画面に広げる（AGENTS.md「対応デバイス」）。
 // 色・フォント・角丸・ブレイクポイントは _variables.scss の変数を使う。
-
+@use "sass:map";
 @use "variables" as *;
 
+// 区切り線（デザインの細い黒線）
+$detail-line: 1px solid $color-secondary;
+
 .match-detail {
+  --sport: #{map.get($sport-colors, other)};
+
   max-width: 720px;
   margin: 0 auto;
   // 画面下に固定のメニューバーに隠れないようにする
-  padding: 16px 16px $menu-bar-space;
+  padding-bottom: $menu-bar-space;
   color: $color-text;
   font-family: $font-body;
   font-size: 14px;
   line-height: 1.6;
 
-  @media (min-width: $bp-tablet) {
-    padding: 24px 24px $menu-bar-space;
-  }
-
-  &__back {
-    display: inline-block;
-    margin-bottom: 16px;
-    color: $color-primary;
-    text-decoration: none;
-
-    &:hover {
-      color: $color-primary-dark;
-      text-decoration: underline;
+  @each $sport, $color in $sport-colors {
+    &--#{$sport} {
+      --sport: #{$color};
     }
   }
 
-  &__card {
-    padding: 16px;
-    border: 1px solid $color-border;
-    border-radius: $radius-lg;
-    background: $color-bg;
+  // ---- 上の写真（の代わり）----
+  &__hero {
+    position: relative; // 写真（absolute）をこの枠いっぱいに広げる
+    overflow: hidden;
+    display: grid;
+    place-items: center;
+    height: 240px;
+    background: linear-gradient(160deg, color-mix(in srgb, var(--sport) 35%, white), var(--sport));
 
     @media (min-width: $bp-tablet) {
-      padding: 24px;
+      height: 320px;
+      border-radius: 0 0 $radius-lg $radius-lg;
     }
   }
 
-  &__tags {
+  &__hero-image {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  &__hero-icon {
+    font-size: 80px;
+  }
+
+  // ---- 写真に重ねる白いシート ----
+  &__sheet {
+    position: relative;
+    margin-top: -48px;
+    padding: 24px 16px;
+    border-radius: 32px 32px 0 0;
+    background: $color-bg-gray;
+
+    @media (min-width: $bp-tablet) {
+      padding: 32px 24px;
+    }
+  }
+
+  &__head {
     display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-  }
-
-  &__sport {
-    display: inline-flex;
     align-items: center;
-    gap: 4px;
-    padding: 4px 12px;
-    border-radius: $radius-full;
-    color: $color-bg;
-    font-size: 12px;
-    font-weight: 700;
-
-    @each $key, $color in $sport-colors {
-      &--#{$key} {
-        background: $color;
-      }
-    }
+    justify-content: space-between;
+    gap: 16px;
   }
 
-  &__badge {
-    padding: 4px 12px;
+  &__league {
+    margin: 0;
+    color: $color-secondary;
+    font-family: $font-heading;
+    font-weight: 600;
+  }
+
+  &__close {
+    display: grid;
+    flex-shrink: 0;
+    place-items: center;
+    width: 40px;
+    height: 40px;
     border-radius: $radius-full;
-    background: $color-primary-light;
-    color: $color-primary;
-    font-size: 12px;
-    font-weight: 700;
+
+    &:hover {
+      background: $color-border;
+    }
   }
 
   &__title {
-    margin-top: 12px;
+    margin: 16px 0 0;
     color: $color-secondary;
-    font-family: $font-heading;
-    font-size: 20px;
+    font-size: 22px;
     font-weight: 700;
     line-height: 1.4;
-
-    @media (min-width: $bp-tablet) {
-      font-size: 24px;
-    }
   }
 
+  &__text {
+    margin: 8px 0 0;
+  }
+
+  // 対戦チーム（ロゴと名前を縦に並べる）
   &__teams {
     display: grid;
-    grid-template-columns: 1fr auto 1fr;
-    align-items: center;
-    gap: 8px;
-    margin-top: 16px;
-    padding: 16px 8px;
-    border-radius: $radius-md;
-    background: $color-primary-light;
-    text-align: center;
+    gap: 16px;
+    margin: 16px 0 0;
+    font-size: inherit;
   }
 
   &__team {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+
+  &__logo {
+    width: 40px;
+    height: 40px;
+    object-fit: contain;
+  }
+
+  &__team-name {
     color: $color-secondary;
+    font-size: 20px;
     font-weight: 700;
   }
 
-  &__side {
-    display: block;
-    color: $color-text-sub;
-    font-family: $font-heading;
+  &__badge {
+    display: inline-block;
+    margin: 12px 0 0;
+    padding: 0 12px;
+    border-radius: $radius-full;
+    background: $color-primary-light;
+    color: $color-primary-dark;
     font-size: 12px;
+    font-weight: 700;
+  }
+
+  &__round {
+    margin: 16px 0 -12px; // すぐ下の日時と近づける
+  }
+
+  // 10/14 ｜ 13:00〜   📍 会場
+  &__when {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px 24px;
+    margin: 16px 0 0;
+    padding-bottom: 24px;
+    border-bottom: $detail-line;
+  }
+
+  &__date,
+  &__time {
+    color: $color-secondary;
+    font-family: $font-heading;
+    font-size: 24px;
     font-weight: 600;
   }
 
-  &__vs {
-    color: $color-primary;
-    font-family: $font-heading;
-    font-size: 16px;
-    font-weight: 600;
+  &__date {
+    margin-right: 12px;
+    padding-right: 12px;
+    border-right: 1px solid $color-secondary;
+  }
+
+  &__venue {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
   }
 
   &__over {
-    margin-top: 16px;
+    margin: 16px 0 0;
     padding: 8px 12px;
     border-radius: $radius-md;
     background: $color-border;
@@ -128,111 +189,139 @@
     font-weight: 700;
   }
 
-  &__info {
-    margin-top: 16px;
-  }
-
-  &__row {
-    display: grid;
-    grid-template-columns: 96px 1fr;
-    gap: 8px;
-    padding: 12px 0;
-    border-top: 1px solid $color-border;
-
-    @media (min-width: $bp-tablet) {
-      grid-template-columns: 160px 1fr;
-    }
-  }
-
-  &__label {
-    color: $color-text-sub;
-  }
-
-  &__value {
-    font-weight: 500;
-
-    // 料金・日時の数字は Jost で強調する（AGENTS.md「フォント」）
-    &--number {
-      font-family: $font-heading;
-      font-weight: 600;
-    }
-  }
-
-  &__sub {
-    display: block;
-    color: $color-text-sub;
-    font-family: $font-body;
-    font-size: 12px;
-    font-weight: 400;
-  }
-
+  // ---- 見出しの付いた区切り（チケット・アクセス・ホテル）----
   &__section {
-    margin-top: 32px;
+    padding: 24px 0;
+    border-bottom: $detail-line;
   }
 
   &__heading {
-    margin-bottom: 12px;
+    margin: 0 0 16px;
     color: $color-secondary;
-    font-size: 16px;
+    font-size: 18px;
     font-weight: 700;
   }
 
-  &__text {
-    margin-top: 8px;
+  &__note {
+    margin: 8px 0 0;
     color: $color-text-sub;
+    font-size: 12px;
   }
 
-  // CTA はアクセントのオレンジ（AGENTS.md「CTA と強調だけに使う」）
+  // ¥3,000〜  [チケット販売サイトへ]
+  &__ticket {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+  }
+
+  // 価格は強調なのでアクセントの色（赤はエラー専用：AGENTS.md「カラー」）
+  &__price {
+    margin: 0;
+    color: $color-accent;
+    font-family: $font-heading;
+    font-size: 28px;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+
   &__cta {
-    display: block;
-    padding: 16px;
-    border-radius: $radius-md;
-    background: $color-accent;
+    flex-shrink: 0;
+    padding: 12px 20px;
+    border-radius: $radius-full;
+    background: $color-secondary;
     color: $color-bg;
     font-weight: 700;
-    text-align: center;
     text-decoration: none;
 
     &:hover {
-      opacity: 0.9;
+      background: $color-primary-dark;
     }
 
-    @media (min-width: $bp-tablet) {
-      display: inline-block;
-      padding: 16px 48px;
+    &.is-disabled {
+      background: $color-border;
+      color: $color-text-sub;
+      font-size: 12px;
     }
   }
 
-  &__map {
-    height: 240px;
-    border: 1px solid $color-border;
-    border-radius: $radius-lg;
-    overflow: hidden;
+  // 現在地から ／ 所在地
+  &__access {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+    margin: 0;
+  }
 
-    @media (min-width: $bp-tablet) {
-      height: 320px;
+  &__access-item {
+    min-width: 0;
+
+    dt {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    dd {
+      margin: 4px 0 0;
+      color: $color-secondary;
+      font-size: 18px;
+      font-weight: 700;
+      overflow-wrap: anywhere;
     }
   }
 
   &__route {
-    display: block;
-    margin-top: 12px;
-    padding: 12px 16px;
-    border: 1px solid $color-primary;
-    border-radius: $radius-md;
-    background: $color-bg;
+    display: inline-block;
+    margin-top: 16px;
     color: $color-primary;
     font-weight: 700;
-    text-align: center;
+  }
+
+  // 会場周辺のホテルを探す（白い大きなボタン）
+  &__hotel-search {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    margin-top: 16px;
+    padding: 16px 24px;
+    border-radius: $radius-lg;
+    background: $color-bg;
+    box-shadow: 0 2px 12px rgba($color-secondary, 0.1);
+    color: $color-secondary;
+    font-size: 16px;
+    font-weight: 700;
     text-decoration: none;
 
     &:hover {
-      background: $color-primary-light;
-      color: $color-primary-dark;
+      box-shadow: 0 4px 16px rgba($color-secondary, 0.16);
     }
+  }
 
-    @media (min-width: $bp-tablet) {
-      display: inline-block;
-    }
+  &__hotel-icon {
+    font-size: 32px;
+    line-height: 1;
+  }
+
+  // 会場の特徴（屋内 など）
+  &__features {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 24px 0 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  &__feature {
+    padding: 4px 16px;
+    border: 1px solid $color-text-sub;
+    border-radius: $radius-full;
+    color: $color-text-sub;
+    font-size: 12px;
   }
 }

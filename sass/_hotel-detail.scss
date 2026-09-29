@@ -305,36 +305,76 @@ $hotel-shadow: 0 2px 12px rgba($color-secondary, 0.1);
 }
 
 // ---- 試合詳細（pages/match/match-detail.php）の「周辺のホテル」----
-// ホテルの部品なので、試合詳細のパーシャルではなくこちらに置く
+// ホテルの部品なので、試合詳細のパーシャルではなくこちらに置く。
+// 左に写真、右に名前と料金のカードを並べる
 .near-hotels {
   display: grid;
-  gap: 8px;
+  gap: 12px;
   margin: 12px 0 0;
   padding: 0;
   list-style: none;
 
+  @media (min-width: $bp-tablet) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
   &__item {
-    display: grid;
-    gap: 4px;
-    padding: 12px 16px;
-    border: 1px solid $color-border;
-    border-radius: $radius-md;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 12px;
+    border-radius: $radius-lg;
     background: $color-bg;
+    box-shadow: $hotel-shadow;
     color: $color-text;
     text-decoration: none;
 
     &:hover {
-      border-color: $color-primary;
+      box-shadow: 0 4px 16px rgba($color-secondary, 0.16);
     }
+  }
+
+  // 写真の代わり（仮データに写真が無いため）
+  &__photo {
+    display: grid;
+    flex-shrink: 0;
+    place-items: center;
+    width: 88px;
+    height: 88px;
+    border-radius: $radius-md;
+    background: linear-gradient(135deg, $color-primary-light, $color-primary);
+    font-size: 32px;
+  }
+
+  &__body {
+    display: grid;
+    gap: 4px;
+    min-width: 0;
   }
 
   &__name {
     color: $color-secondary;
     font-weight: 700;
+    line-height: 1.4;
   }
 
   &__meta {
     color: $color-text-sub;
     font-size: 12px;
+  }
+
+  &__price {
+    color: $color-accent;
+    font-family: $font-heading;
+    font-size: 18px;
+    font-weight: 600;
+
+    small {
+      margin-left: 2px;
+      color: $color-text;
+      font-family: $font-body;
+      font-size: 11px;
+      font-weight: 400;
+    }
   }
 }
