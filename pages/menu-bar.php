@@ -36,7 +36,7 @@ $menuItems = [
  * 上段の追加メニュー
  */
 $subMenuItems = [
-  ['href' => 'pages/settings/settings.php',         'icon' => 'setting.svg',      'label' => '設定'],
+  ['href' => 'pages/setting/notification-setting.php',         'icon' => 'setting.svg',      'label' => '設定'],
   ['href' => 'pages/plus/plus.php',                'icon' => 'crown.svg',           'label' => 'プラス'],
   ['href' => 'pages/notification/notification.php', 'icon' => 'mail.svg',  'label' => 'お知らせ'],
   ['href' => 'pages/travel/travel.php',            'icon' => 'travel.svg',        'label' => '遠征'],
