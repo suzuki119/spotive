@@ -18,9 +18,6 @@ require_once __DIR__ . '/../../lib/favorite.php';
 
 const HOME_NOW_LIMIT = 10;   // 「今から観戦できる試合」に出す数
 
-/** 仮のロゴ（ホーム側・アウェイ側）。チームごとのロゴができたら消す */
-const HOME_PLACEHOLDER_LOGOS = ['images/teams/team1.png', 'images/teams/team2.png'];
-
 /** 本日 13:00〜 / 明日 13:00〜 / 10/3(土) 13:00〜 */
 function home_when(array $match): string
 {
@@ -59,16 +56,10 @@ $decorate = static function (array $match) use ($teams, $coords): array {
       continue;
     }
     $name = (string) ($teams[$id]['name'] ?? '');
-    $logo = (string) ($teams[$id]['logo'] ?? '');
-    if ($logo === '' || !is_file(dirname(__DIR__, 2) . '/' . $logo)) {
-      // チームのロゴ画像がまだ無いので、仮で以前のロゴを置く（ホーム側 / アウェイ側）。
-      // 本物のロゴを teams.json の logo に置けば、そちらが出る
-      $logo = count($match['teams']) === 0 ? HOME_PLACEHOLDER_LOGOS[0] : HOME_PLACEHOLDER_LOGOS[1];
-    }
     $match['teams'][] = [
       'name'    => $name,
-      // 仮のロゴも無いときは、名前の頭文字の丸で代わりにする
-      'logo'    => is_file(dirname(__DIR__, 2) . '/' . $logo) ? $logo : '',
+      // ロゴ画像がまだ無いチームは仮のロゴ（lib/match.php）。それも無ければ頭文字の丸
+      'logo'    => match_team_logo($id, count($match['teams'])),
       'initial' => mb_substr($name, 0, 2),
     ];
   }
