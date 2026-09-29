@@ -1,0 +1,514 @@
+// マイページ（pages/setting/setting.php）専用のスタイル。
+// スマホを基準に書き、min-width で広い画面に広げる（AGENTS.md「対応デバイス」）。
+@use "sass:map";
+@use "variables" as *;
+
+$mypage-shadow: 0 2px 12px rgba($color-secondary, 0.1);
+
+.mypage {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 0 16px $menu-bar-space;
+  color: $color-text;
+  font-family: $font-body;
+
+  @media (min-width: $bp-tablet) {
+    padding: 0 24px $menu-bar-space;
+  }
+
+  &__section {
+    margin-top: 48px;
+  }
+
+  &__heading {
+    display: grid;
+    margin: 0 0 16px;
+    color: $color-secondary;
+    font-family: $font-heading;
+    font-size: 26px;
+    font-weight: 600;
+    line-height: 1.2;
+  }
+
+  &__heading-sub {
+    font-family: $font-body;
+    font-size: 12px;
+    font-weight: 700;
+  }
+
+  &__mock {
+    margin: -8px 0 16px;
+    color: $color-text-sub;
+    font-size: 12px;
+  }
+
+  &__empty {
+    margin: 0;
+    padding: 24px 16px;
+    border-radius: $radius-lg;
+    background: $color-bg;
+    color: $color-text-sub;
+    line-height: 1.8;
+    text-align: center;
+
+    a {
+      color: $color-primary;
+    }
+  }
+
+  &__more {
+    display: inline-block;
+    margin-top: 12px;
+    color: $color-primary;
+    font-size: 14px;
+    font-weight: 700;
+  }
+}
+
+// ---- プロフィール ----
+.mypage-profile {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 16px;
+  margin-top: 16px;
+
+  &__icon {
+    width: 88px;
+    height: 88px;
+    object-fit: cover;
+    border-radius: $radius-full;
+  }
+
+  &__body {
+    min-width: 0;
+  }
+
+  &__name {
+    margin: 0;
+    overflow: hidden;
+    color: $color-secondary;
+    font-family: $font-heading;
+    font-size: 22px;
+    font-weight: 600;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  &__level {
+    margin: 0;
+    overflow: hidden;
+    color: $color-text-sub;
+    font-size: 12px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  &__setting {
+    padding: 4px 12px;
+    border: 1px solid $color-secondary;
+    border-radius: $radius-full;
+    color: $color-secondary;
+    font-size: 12px;
+    font-weight: 700;
+    text-decoration: none;
+    white-space: nowrap;
+
+    &:hover {
+      background: $color-secondary;
+      color: $color-bg;
+    }
+  }
+}
+
+// ---- Favorite：左に白地のロゴ、右に競技の色の帯 ----
+.favorite-teams {
+  display: grid;
+  gap: 16px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+
+  &__item {
+    --team: #{map.get($sport-colors, other)};
+
+    display: grid;
+    grid-template-columns: 88px 1fr;
+    overflow: hidden;
+    border-radius: $radius-lg;
+    background: var(--team);
+    box-shadow: $mypage-shadow;
+
+    @each $sport, $color in $sport-colors {
+      &--#{$sport} {
+        --team: #{$color};
+      }
+    }
+  }
+
+  &__logo {
+    display: grid;
+    place-items: center;
+    background: $color-bg;
+
+    img {
+      width: 64px;
+      height: 64px;
+      object-fit: contain;
+    }
+  }
+
+  &__body {
+    display: grid;
+    gap: 4px;
+    min-width: 0;
+    padding: 16px 24px;
+    color: $color-bg;
+  }
+
+  &__sport,
+  &__league {
+    font-family: $font-heading;
+    font-size: 12px;
+    font-weight: 600;
+  }
+
+  &__name {
+    font-size: 18px;
+    font-weight: 700;
+    overflow-wrap: anywhere;
+  }
+}
+
+// ---- Away Travel ----
+.mypage-travel {
+  display: grid;
+  gap: 16px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+
+  &__head {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 16px;
+  }
+
+  &__dates {
+    margin: 0;
+    color: $color-secondary;
+    font-family: $font-heading;
+    font-size: 20px;
+    font-weight: 600;
+  }
+
+  &__check {
+    padding: 0 12px;
+    border: 1px solid $color-secondary;
+    border-radius: $radius-full;
+    color: $color-secondary;
+    font-size: 12px;
+    font-weight: 700;
+    text-decoration: none;
+  }
+
+  &__more {
+    margin: 16px 0 0;
+    font-size: 14px;
+    text-align: right;
+
+    a {
+      color: $color-primary;
+    }
+  }
+
+  // 購入済みは緑、未購入ありは赤の枠。状態を色だけに頼らず、文字でも出す
+  &__item {
+    --state: #{$color-primary};
+
+    border: 1px solid var(--state);
+    border-radius: $radius-lg;
+    background: $color-bg;
+
+    &.is-done {
+      --state: #{map.get($sport-colors, soccer)};
+    }
+
+    &.is-todo {
+      --state: #{$color-error};
+    }
+  }
+
+  &__link {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    align-items: center;
+    gap: 16px;
+    padding: 16px;
+    color: $color-text;
+    text-decoration: none;
+  }
+
+  &__logos {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+
+    img {
+      width: 48px;
+      height: 48px;
+      object-fit: contain;
+    }
+  }
+
+  &__vs {
+    align-self: flex-end;
+    font-family: $font-heading;
+    font-weight: 600;
+  }
+
+  &__body {
+    display: grid;
+    gap: 4px;
+    min-width: 0;
+  }
+
+  &__meta {
+    color: $color-text-sub;
+    font-size: 12px;
+  }
+
+  &__title {
+    color: $color-secondary;
+    font-weight: 700;
+    overflow-wrap: anywhere;
+  }
+
+  &__status {
+    justify-self: end;
+    padding: 0 12px;
+    border-radius: $radius-full;
+    background: var(--state);
+    color: $color-bg;
+    font-size: 12px;
+    font-weight: 700;
+  }
+}
+
+// ---- Records ----
+.mypage-tabs {
+  display: flex;
+  gap: 24px;
+  margin-bottom: 16px;
+  overflow-x: auto;
+
+  &__tab {
+    flex-shrink: 0;
+    padding: 4px 0;
+    border: 0;
+    border-bottom: 2px solid transparent;
+    background: none;
+    color: $color-text;
+    font: inherit;
+    font-weight: 700;
+    cursor: pointer;
+
+    &.is-active {
+      border-bottom-color: $color-secondary;
+      color: $color-secondary;
+    }
+
+    &:focus-visible {
+      outline: 2px solid $color-primary;
+      outline-offset: 2px;
+    }
+  }
+}
+
+.records {
+  display: grid;
+  gap: 24px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+
+  &__item {
+    border-radius: $radius-lg;
+    background: $color-bg;
+    box-shadow: $mypage-shadow;
+
+    &[hidden] {
+      display: none;
+    }
+  }
+
+  &__main {
+    display: grid;
+    grid-template-columns: 72px 1fr 72px;
+    align-items: center;
+    gap: 8px;
+    padding: 24px 16px;
+  }
+
+  &__logo {
+    width: 72px;
+    height: 72px;
+    object-fit: contain;
+  }
+
+  &__center {
+    text-align: center;
+  }
+
+  &__round {
+    margin: 0;
+    font-size: 12px;
+  }
+
+  &__score {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    margin: 4px 0 0;
+    color: $color-secondary;
+    font-family: $font-heading;
+    font-size: 28px;
+    font-weight: 600;
+  }
+
+  // 勝った側に「Win」の印（デザインの手書き風の文字の代わり）
+  &__point {
+    position: relative;
+
+    &.is-win::after {
+      content: "Win";
+      position: absolute;
+      bottom: -12px;
+      left: 50%;
+      color: $color-accent;
+      font-family: $font-heading;
+      font-size: 16px;
+      font-style: italic;
+      transform: translateX(-50%) rotate(-8deg);
+    }
+  }
+
+  &__foot {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 12px 16px;
+    border-top: 2px dashed $color-border;
+    font-size: 14px;
+  }
+
+  &__venue {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    min-width: 0;
+  }
+
+  &__date {
+    flex-shrink: 0;
+    font-family: $font-heading;
+  }
+}
+
+// ---- 主催者の大会 ----
+.mypage-events {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+
+  &__item {
+    display: grid;
+    gap: 4px;
+    padding: 12px 16px;
+    border-radius: $radius-md;
+    background: $color-bg;
+
+    a {
+      color: $color-secondary;
+      font-weight: 700;
+    }
+  }
+
+  &__meta {
+    color: $color-text-sub;
+    font-size: 12px;
+  }
+}
+
+// ---- SPOTIVE PLUS+ ----
+.mypage-plus {
+  margin-top: 48px;
+  padding: 24px;
+  border-radius: $radius-lg;
+  background: $color-secondary;
+  color: $color-bg;
+
+  &__title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0;
+    font-family: $font-heading;
+    font-size: 18px;
+    font-weight: 600;
+
+    img {
+      filter: invert(1); // 黒いアイコンを白く見せる
+    }
+  }
+
+  &__text {
+    margin: 12px 0 0;
+    font-weight: 700;
+    line-height: 1.6;
+  }
+
+  &__soon {
+    display: inline-block;
+    margin: 12px 0 0;
+    padding: 0 12px;
+    border: 1px solid $color-bg;
+    border-radius: $radius-full;
+    font-size: 12px;
+  }
+}
+
+// ---- 設定へのリンク ----
+.mypage-settings {
+  margin-top: 48px;
+
+  &__list {
+    display: grid;
+    margin: 0;
+    padding: 0;
+    border-radius: $radius-lg;
+    background: $color-bg;
+    list-style: none;
+  }
+
+  &__link {
+    display: block;
+    padding: 16px;
+    color: $color-secondary;
+    font-weight: 700;
+    text-decoration: none;
+
+    &:hover {
+      background: $color-bg-gray;
+    }
+  }
+
+  li + li &__link {
+    border-top: 1px solid $color-border;
+  }
+}

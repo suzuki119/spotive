@@ -139,8 +139,8 @@ function detail_price(?int $min, ?int $max): string
 // -------------------------------------------------------------------
 // 受け取った値
 // -------------------------------------------------------------------
-$type = (string) ($_GET['type'] ?? 'match');
-$rawId = trim((string) ($_GET['id'] ?? ''));
+$type = input_string($_GET, 'type', 'match');
+$rawId = input_string($_GET, 'id');
 
 $game    = null;
 $dbError = false;
