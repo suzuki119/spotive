@@ -159,7 +159,7 @@ function match_short_date(string $date): string
  * @return array{
  *   key:string, sport:string, title:string, date:string, time:string,
  *   venue:string, pref:string, price:?int, teamIds:list<string>, organizer:string,
- *   detailPath:string
+ *   detailPath:string, lat:?float, lng:?float
  * }
  */
 function match_row(
@@ -173,10 +173,13 @@ function match_row(
   ?int $price,
   array $teamIds = [],
   string $organizer = '',
-  string $detailPath = ''
+  string $detailPath = '',
+  ?float $lat = null,
+  ?float $lng = null
 ): array {
   return compact(
-    'key', 'sport', 'title', 'date', 'time', 'venue', 'pref', 'price', 'teamIds', 'organizer', 'detailPath'
+    'key', 'sport', 'title', 'date', 'time', 'venue', 'pref', 'price', 'teamIds', 'organizer', 'detailPath',
+    'lat', 'lng'
   );
 }
 
@@ -219,7 +222,9 @@ function load_json_matches(): array
       isset($m['priceMin']) ? (int) $m['priceMin'] : null,
       array_values(array_filter([(string) ($m['homeTeamId'] ?? ''), (string) ($m['awayTeamId'] ?? '')])),
       '',
-      match_detail_path('match', (string) ($m['id'] ?? ''))
+      match_detail_path('match', (string) ($m['id'] ?? '')),
+      isset($m['lat']) ? (float) $m['lat'] : null,
+      isset($m['lng']) ? (float) $m['lng'] : null
     );
   }
   return $rows;
@@ -231,7 +236,7 @@ function load_tournament_matches(): array
   try {
     $list = db_all(
       'SELECT id, title, sport, starts_at, venue_name, venue_prefecture,
-              entry_fee_yen, organizer_name
+              venue_lat, venue_lng, entry_fee_yen, organizer_name
        FROM v_public_tournaments
        WHERE starts_at >= CURDATE()
        ORDER BY starts_at ASC
@@ -259,7 +264,9 @@ function load_tournament_matches(): array
       $t['entry_fee_yen'] === null ? null : (int) $t['entry_fee_yen'],
       [],
       (string) $t['organizer_name'],
-      match_detail_path('tournament', (string) (int) $t['id'])
+      match_detail_path('tournament', (string) (int) $t['id']),
+      $t['venue_lat'] === null ? null : (float) $t['venue_lat'],
+      $t['venue_lng'] === null ? null : (float) $t['venue_lng']
     );
   }
   return $rows;

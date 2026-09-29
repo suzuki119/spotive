@@ -26,6 +26,25 @@ const MATCH_SEARCH_WHEN = [
 /** 料金の上限の選択肢（円）。0 は「無料のみ」 */
 const MATCH_SEARCH_PRICES = [0, 1000, 2000, 3000, 5000, 10000];
 
+/** 価格のスライダー。右端（10 万円）は「上限なし」として扱う */
+const MATCH_SEARCH_PRICE_MAX  = 100000;
+const MATCH_SEARCH_PRICE_STEP = 500;
+
+/** 「現在地から○km以内」の選択肢 */
+const MATCH_SEARCH_NEAR_KM = [1, 3, 5, 10, 30];
+
+/**
+ * 検索画面の上のタブ。キーは競技コード（空文字は ALL）。
+ * リーグ名で見せているが、絞り込みは競技で行う（リーグのデータはまだ無い）
+ */
+const MATCH_SEARCH_TABS = [
+  ''           => 'ALL',
+  'baseball'   => 'プロ野球',
+  'soccer'     => 'Jリーグ',
+  'basketball' => 'B.LEAGUE',
+  'volleyball' => 'SV LEAGUE',
+];
+
 /** 都道府県の並び順（JIS の番号順）。選択肢をこの順に出す */
 const MATCH_SEARCH_PREF_ORDER = [
   '北海道', '青森県', '岩手県', '宮城県', '秋田県', '山形県', '福島県',
@@ -68,31 +87,55 @@ function match_search_sport_key(string $sport): string
 /**
  * GET の値を、型の決まった検索条件にする。知らない値は「指定なし」に倒す。
  *
- * @return array{keyword:string, sport:string, pref:string, when:string, date:string, maxPrice:?int}
+ *   from / to … 日程の範囲（Y-m-d）。片方だけでもよい
+ *   near      … 現在地から○km以内。現在地はサーバーに送らないので、絞り込みはブラウザ側で行う
+ *   max_price … 料金の上限。0〜10 万円。10 万円（スライダーの右端）は「上限なし」
+ *   when / date は以前の画面（トップの「条件から探す」）からのリンク用に残している
+ *
+ * @return array{keyword:string, sport:string, pref:string, near:?int, from:string, to:string,
+ *               when:string, date:string, maxPrice:?int}
  */
 function match_search_conditions(array $get): array
 {
   $keyword = trim((string) ($get['keyword'] ?? ''));
   $sport   = trim((string) ($get['sport'] ?? ''));
   $pref    = trim((string) ($get['pref'] ?? ''));
+  $near    = filter_var($get['near'] ?? null, FILTER_VALIDATE_INT);
+  $from    = (string) ($get['from'] ?? '');
+  $to      = (string) ($get['to'] ?? '');
   $when    = (string) ($get['when'] ?? '');
   $date    = (string) ($get['date'] ?? '');
   $price   = filter_var($get['max_price'] ?? null, FILTER_VALIDATE_INT);
 
+  $from = Validator::isDate($from) ? $from : '';
+  $to   = Validator::isDate($to) ? $to : '';
+  if ($from !== '' && $to !== '' && $to < $from) {
+    [$from, $to] = [$to, $from];   // 逆に選ばれたら入れ替える
+  }
+
+  $near = is_int($near) && in_array($near, MATCH_SEARCH_NEAR_KM, true) ? $near : null;
+
   return [
     'keyword'  => mb_substr($keyword, 0, 50),
     'sport'    => $sport === 'other' || array_key_exists($sport, MATCH_SPORT_LABELS) ? $sport : '',
-    'pref'     => in_array($pref, MATCH_SEARCH_PREF_ORDER, true) ? $pref : '',
+    // 現在地から探すときは、都道府県は使わない
+    'pref'     => $near === null && in_array($pref, MATCH_SEARCH_PREF_ORDER, true) ? $pref : '',
+    'near'     => $near,
+    'from'     => $from,
+    'to'       => $to,
     'when'     => array_key_exists($when, MATCH_SEARCH_WHEN) ? $when : '',
     'date'     => Validator::isDate($date) ? $date : '',
-    'maxPrice' => is_int($price) && in_array($price, MATCH_SEARCH_PRICES, true) ? $price : null,
+    'maxPrice' => is_int($price) && $price >= 0 && $price < MATCH_SEARCH_PRICE_MAX
+      ? intdiv($price, MATCH_SEARCH_PRICE_STEP) * MATCH_SEARCH_PRICE_STEP
+      : null,
   ];
 }
 
 /** 何か 1 つでも条件が指定されているか */
 function match_search_is_active(array $cond): bool
 {
-  return $cond['keyword'] !== '' || $cond['sport'] !== '' || $cond['pref'] !== ''
+  return $cond['keyword'] !== '' || $cond['sport'] !== '' || $cond['pref'] !== '' || $cond['near'] !== null
+    || $cond['from'] !== '' || $cond['to'] !== ''
     || $cond['when'] !== '' || $cond['date'] !== '' || $cond['maxPrice'] !== null;
 }
 
@@ -137,7 +180,10 @@ function match_search_date_range(string $when, string $date): ?array
  */
 function match_search(array $matches, array $cond): array
 {
-  $range = match_search_date_range($cond['when'], $cond['date']);
+  // 日程の範囲を選んでいればそれを、無ければ以前の「いつ」「日付」を使う
+  $range = $cond['from'] !== '' || $cond['to'] !== ''
+    ? [$cond['from'] !== '' ? $cond['from'] : date('Y-m-d'), $cond['to'] !== '' ? $cond['to'] : '9999-12-31']
+    : match_search_date_range($cond['when'], $cond['date']);
 
   return array_values(array_filter($matches, static function (array $m) use ($cond, $range): bool {
     if ($cond['sport'] !== '' && match_search_sport_key((string) $m['sport']) !== $cond['sport']) {

@@ -81,13 +81,6 @@ $nowMatches = array_map($decorate, array_slice(array_values(array_filter(
   static fn(array $m): bool => $m['date'] > $today || $m['time'] === '' || $m['time'] >= $now
 )), 0, HOME_NOW_LIMIT));
 
-$user     = null;
-try {
-  $user = current_user();
-} catch (PDOException $e) {
-  error_log('[SPOTIVE] DB error: ' . $e->getMessage());
-}
-$accountHref = $user === null ? 'pages/account/signin.php' : 'pages/setting/setting.php';
 
 /**
  * 対戦カードのロゴ部分（チーム vs チーム）。チームが無い大会は競技名を出す。
@@ -132,15 +125,10 @@ $teamsVs = static function (array $match, string $block): void {
   </head>
 
   <body>
-    <header class="home-header">
-      <a class="home-header__icon" href="<?= h(url($accountHref)) ?>">
-        <img src="<?= h(url('images/icons/account.svg')) ?>" alt="アカウント" width="32" height="32" />
-      </a>
-      <h1 class="home-header__title">SPOTIVE</h1>
-      <a class="home-header__icon" href="<?= h(url('pages/notification/notification.php')) ?>">
-        <img src="<?= h(url('images/icons/notice.svg')) ?>" alt="お知らせ" width="32" height="32" />
-      </a>
-    </header>
+    <?php
+    $appHeader = ['title' => 'SPOTIVE'];
+    require __DIR__ . '/../app-header.php';
+    ?>
 
     <main class="home">
       <section class="home__section">

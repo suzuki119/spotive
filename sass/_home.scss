@@ -5,45 +5,7 @@
 
 $home-shadow: 0 2px 8px rgba($color-secondary, 0.08);
 
-// ---- ヘッダー（アカウント・ロゴ・お知らせ）----
-.home-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  max-width: $content-max;
-  margin: 0 auto;
-  padding: 16px;
-
-  @media (min-width: $bp-tablet) {
-    padding: 24px;
-  }
-
-  &__title {
-    margin: 0;
-    font-family: $font-heading;
-    font-size: 24px;
-    font-weight: 600;
-    letter-spacing: 0.04em;
-    color: $color-secondary;
-  }
-
-  &__icon {
-    display: grid;
-    place-items: center;
-    width: 48px;
-    height: 48px;
-    border-radius: $radius-full;
-
-    &:hover {
-      background: $color-bg-gray;
-    }
-
-    img {
-      width: 32px;
-      height: 32px;
-    }
-  }
-}
+// ヘッダーは共通パーツ（_app-header.scss）
 
 // ---- 本体 ----
 .home {
