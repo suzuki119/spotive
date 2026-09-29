@@ -4,7 +4,7 @@
  * lib/account.php
  * Lv.1 一般ユーザー。
  *   メールアドレスだけで登録を始め、届いたリンクから残りを入力して完成させる。
- *   氏名・本人確認書類はここでは一切求めない（Lv.2 の話）。
+ *   氏名・本人確認書類は求めない。
  */
 
 declare(strict_types=1);
@@ -441,22 +441,10 @@ function recalc_trust_level(int $userId): int
     $level = LEVEL_USER;
   }
 
-  // Lv.2: 承認済みかつ有効期限内の本人確認がある
-  if ($level >= LEVEL_USER) {
-    $identity = db_one(
-      'SELECT id FROM identity_verifications
-        WHERE user_id = :u AND status = "approved"
-          AND (expires_at IS NULL OR expires_at > NOW())
-        LIMIT 1',
-      ['u' => $userId]
-    );
-    if ($identity !== null) {
-      $level = LEVEL_IDENTIFIED;
-    }
-  }
+  // Lv.2（本人確認）はいったん外している。メール確認が済んでいれば Lv.3 の判定に進む
 
   // Lv.3: 有効な主催者資格がある
-  if ($level >= LEVEL_IDENTIFIED) {
+  if ($level >= LEVEL_USER) {
     $profile = db_one(
       'SELECT id FROM organizer_profiles
         WHERE user_id = :u AND status = "active"
@@ -489,11 +477,6 @@ function account_overview(int $userId): array
     throw new AppError('ユーザーが見つかりません。');
   }
 
-  $identity = db_one(
-    'SELECT id, status, reject_reason, submitted_at, expires_at FROM identity_verifications
-      WHERE user_id = :u ORDER BY id DESC LIMIT 1',
-    ['u' => $userId]
-  );
   $application = db_one(
     'SELECT id, applicant_type, status, review_note, submitted_at FROM organizer_applications
       WHERE user_id = :u ORDER BY id DESC LIMIT 1',
@@ -507,7 +490,6 @@ function account_overview(int $userId): array
   $level = (int) $u['trust_level'];
   $next  = match (true) {
     $u['email_verified_at'] === null => 'verify_email',
-    $level < LEVEL_IDENTIFIED        => 'identity',
     $level < LEVEL_ORGANIZER         => 'organizer',
     default                          => null,
   };
@@ -516,7 +498,6 @@ function account_overview(int $userId): array
     'user'        => $u,
     'level'       => $level,
     'level_label' => level_label($level),
-    'identity'    => $identity,
     'application' => $application,
     'profile'     => $profile,
     'next_step'   => $next,

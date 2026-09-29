@@ -207,7 +207,7 @@ $site-header-height: 48px;
   right: 0;
   bottom: 0;
   left: 0;
-  max-height: 70vh;
+  max-height: 55vh;
   padding-bottom: 16px;
   border-radius: 16px 16px 0 0;
   box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.2);
@@ -398,6 +398,9 @@ $site-header-height: 48px;
 }
 
 .card {
+  position: relative; // 背景のロゴ（.card-logos）の基準
+  isolation: isolate; // ロゴを z-index: -1 で、カードの背景より手前・文字より奥に置く
+  overflow: hidden;   // 大きく置いたロゴをカードの端で切る
   display: flex;
   align-items: center;
   gap: 12px;
@@ -417,6 +420,35 @@ $site-header-height: 48px;
 
 .card-icon {
   font-size: 20px;
+}
+
+// 背景に薄く置く両チームのロゴ（試合一覧の .match-card__logos と同じ見せ方）。
+// 一覧のカード（.card-logos）とピンの詳細（.pop-logos）で共通。大きさだけ場所に合わせる
+.card-logos,
+.pop-logos {
+  position: absolute;
+  top: 50%;
+  right: -12px;
+  z-index: -1;
+  display: flex;
+  transform: translateY(-50%);
+  opacity: 0.2;
+  pointer-events: none;
+
+  img {
+    width: 72px;
+    height: 72px;
+    object-fit: contain;
+  }
+}
+
+.pop-logos {
+  right: -8px;
+
+  img {
+    width: 56px;
+    height: 56px;
+  }
 }
 
 .card-body {
@@ -542,6 +574,25 @@ $site-header-height: 48px;
   border-radius: 999px;
 }
 
+// ---- 周辺施設のピン（Geoapify のデモ）----
+.nearby-icon {
+  background: none;
+  border: 0;
+}
+
+.nearby-pin {
+  width: 28px;
+  height: 28px;
+  display: grid;
+  place-items: center;
+  font-size: 14px;
+  line-height: 1;
+  background: $map-panel;
+  border: 2px solid $map-accent;
+  border-radius: 999px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
+}
+
 // ---- 詳細（PC はポップアップ、スマホはシートの中身）----
 .pop {
   padding-right: 12px;
@@ -578,6 +629,9 @@ $site-header-height: 48px;
   overflow-y: auto;
 
   li {
+    position: relative; // 背景のロゴ（.pop-logos）の基準
+    isolation: isolate; // ロゴを z-index: -1 で、背景より手前・文字より奥に置く
+    overflow: hidden;   // はみ出したロゴを切る
     display: flex;
     flex-direction: column;
     gap: 4px;
@@ -624,6 +678,55 @@ $site-header-height: 48px;
     background: #fff;
     border: 1px solid $map-line;
     border-radius: 8px;
+    font: inherit;
     cursor: pointer;
+
+    &[aria-expanded="true"] {
+      border-color: $map-accent;
+      color: $map-accent !important;
+    }
+  }
+}
+
+// 「周辺施設」を押すと出る、種類の選択。選んだ種類だけを検索する
+.pop-nearby {
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px solid $map-line;
+
+  &[hidden] {
+    display: none;
+  }
+
+  &__lead {
+    margin: 0 0 8px;
+    font-size: 12px;
+    color: $map-muted;
+  }
+
+  &__kinds {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  &__kind {
+    padding: 4px 12px;
+    background: #fff;
+    border: 1px solid $map-line;
+    border-radius: 999px;
+    color: $map-text;
+    font: inherit;
+    font-size: 12px;
+    cursor: pointer;
+
+    &:hover {
+      border-color: $map-accent;
+    }
+
+    &.is-active {
+      background: color-mix(in srgb, #{$map-accent} 10%, white);
+      border-color: $map-accent;
+    }
   }
 }

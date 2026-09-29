@@ -9,15 +9,17 @@ document.addEventListener("DOMContentLoaded", () => {
   if (!onlyToggle) return;   // 試合が 0 件のときは切り替えを出していない
 
   const empty = document.getElementById("favorite-empty");
-  const favorites = SpotiveFavorites.teamIds();
 
-  // お気に入りの試合に印を付ける（登録はお気に入り画面で行うので、ここでは変わらない）
-  document.querySelectorAll("[data-match]").forEach((item) => {
-    const card = item.querySelector(".match-card");
-    const isFavorite = SpotiveFavorites.isFavoriteMatch(card, favorites);
-    item.dataset.favorite = isFavorite ? "1" : "0";
-    card.querySelector(".match-card__favorite").classList.toggle("is-hidden", !isFavorite);
-  });
+  // お気に入りの試合に印を付ける（登録はお気に入り画面で行う）
+  function markFavorites() {
+    const favorites = SpotiveFavorites.teamIds();
+    document.querySelectorAll("[data-match]").forEach((item) => {
+      const card = item.querySelector(".match-card");
+      const isFavorite = SpotiveFavorites.isFavoriteMatch(card, favorites);
+      item.dataset.favorite = isFavorite ? "1" : "0";
+      card.querySelector(".match-card__favorite").classList.toggle("is-hidden", !isFavorite);
+    });
+  }
 
   function applyFilter() {
     const only = onlyToggle.checked;
@@ -39,5 +41,13 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   onlyToggle.addEventListener("change", applyFilter);
+
+  // ブラウザの登録をアカウントに移し終えたら、印と絞り込みを付け直す
+  SpotiveFavorites.onChange(() => {
+    markFavorites();
+    applyFilter();
+  });
+
+  markFavorites();
   applyFilter();
 });
