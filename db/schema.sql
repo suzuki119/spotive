@@ -415,6 +415,100 @@ CREATE TABLE favorite_teams (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- ---------------------------------------------------------------------
+-- お知らせ（運営からのお知らせ ＋ お気に入りチームのお知らせ）
+--   audience = 'all'  … 全員に出す（運営からのお知らせ）
+--   audience = 'team' … team_id をお気に入りにしている人に出す
+-- チームのテーブルがまだ無いので、team_id は favorite_teams と同じく
+-- data/teams.json の id（team-001）をそのまま持つ。
+-- 送り主の名前（「FE名古屋」「SPOTIVE 運営」）は、送った時点の表記を sender_name に残す。
+-- 画面は notifications を直接見ず、下の v_public_notifications から取ること。
+-- CHECK 制約は MySQL 8.0.16 以降 / MariaDB 10.2 以降で効く。
+-- ---------------------------------------------------------------------
+CREATE TABLE notifications (
+  id             BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+  audience       ENUM('all','team') NOT NULL DEFAULT 'all',
+  team_id        VARCHAR(32)  NULL,                 -- audience = 'team' のときだけ入れる
+  category       ENUM('info','change','cancel') NOT NULL DEFAULT 'info',
+                                                    -- info=お知らせ change=日時・会場の変更 cancel=中止
+  sender_name    VARCHAR(120) NOT NULL,             -- 一覧に出す送り主
+  title          VARCHAR(150) NOT NULL,             -- 一覧に出す 1 行
+  body           TEXT NULL,                         -- 開いたときの本文
+  match_ref      VARCHAR(32)  NULL,                 -- 関係する試合（data/matches.json の id。試合のテーブルができたら外部キーに）
+  tournament_id  BIGINT UNSIGNED NULL,              -- 関係する大会
+  status         ENUM('draft','published','withdrawn') NOT NULL DEFAULT 'draft',
+  published_at   DATETIME NULL,                     -- 公開日時。未来の日時にすると予約になる
+  expires_at     DATETIME NULL,                     -- 掲載終了。NULL なら出し続ける
+  created_by     BIGINT UNSIGNED NOT NULL,          -- 作成した運営のユーザー
+  created_at     DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at     DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (id),
+  KEY idx_notif_public (status, published_at),
+  KEY idx_notif_team (audience, team_id, published_at),
+  CONSTRAINT chk_notif_audience CHECK (
+    (audience = 'all'  AND team_id IS NULL) OR
+    (audience = 'team' AND team_id IS NOT NULL)
+  ),
+  CONSTRAINT chk_notif_period CHECK (expires_at IS NULL OR published_at IS NULL OR expires_at > published_at),
+  CONSTRAINT fk_notif_tour FOREIGN KEY (tournament_id) REFERENCES tournaments(id) ON DELETE SET NULL,
+  CONSTRAINT fk_notif_user FOREIGN KEY (created_by)    REFERENCES users(id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- 既読（ログイン中のユーザーだけ。未ログインのあいだはブラウザの localStorage）
+-- 行がある＝読んだ。未読の数は「見えるお知らせ − この表にある分」で出す。
+-- 登録より前のお知らせも未読として出る（テスト段階なのでそのままにしている）。
+CREATE TABLE notification_reads (
+  user_id          BIGINT UNSIGNED NOT NULL,
+  notification_id  BIGINT UNSIGNED NOT NULL,
+  read_at          DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (user_id, notification_id),
+  KEY idx_nread_notif (notification_id),
+  CONSTRAINT fk_nread_user  FOREIGN KEY (user_id)         REFERENCES users(id)         ON DELETE CASCADE,
+  CONSTRAINT fk_nread_notif FOREIGN KEY (notification_id) REFERENCES notifications(id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- ---------------------------------------------------------------------
+-- 遠征プラン（主要機能 5「遠征サポート」。設計は docs/away-travel.md）
+-- 試合・チーム・ホテルはまだ DB に無いので、favorite_teams と同じく
+-- data/*.json の id（team-001 / match-001 / hotel-001 / area-23）をそのまま持つ。
+-- JSON が変わっても表示が変わらないよう、名前・時刻・金額は作成時点の値を items に写す。
+-- 「到着」「会場へ」「チェックアウト」の行は保存せず、表示するときに items から作る。
+-- ---------------------------------------------------------------------
+CREATE TABLE travel_plans (
+  id                   BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+  user_id              BIGINT UNSIGNED NOT NULL,
+  team_id              VARCHAR(32)  NOT NULL,           -- 応援するチーム
+  title                VARCHAR(150) NOT NULL,
+  depart_area_id       VARCHAR(32)  NOT NULL,           -- 出発地
+  start_date           DATE         NOT NULL,
+  end_date             DATE         NOT NULL,
+  estimated_total_yen  INT UNSIGNED NOT NULL DEFAULT 0, -- 作成時点の費用の目安（1 人あたり）
+  created_at           DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at           DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (id),
+  KEY idx_travel_user (user_id, start_date),
+  CONSTRAINT fk_travel_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE travel_plan_items (
+  id              BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+  plan_id         BIGINT UNSIGNED NOT NULL,
+  item_type       ENUM('transport','match','hotel') NOT NULL,
+  ref_id          VARCHAR(32)  NULL,                    -- match-001 / tournament-5 / hotel-001。交通は NULL
+  title           VARCHAR(150) NOT NULL,
+  from_label      VARCHAR(50)  NULL,                    -- 交通の出発地。試合は会場名
+  to_label        VARCHAR(50)  NULL,                    -- 交通の到着地
+  starts_at       DATETIME     NOT NULL,                -- 交通は発、試合は開始、ホテルはチェックイン
+  ends_at         DATETIME     NULL,                    -- 交通は着、試合は終了予定、ホテルはチェックアウト
+  price_yen       INT UNSIGNED NULL,                    -- 交通は片道、試合はチケットの最低価格、ホテルは 1 泊
+  booking_status  ENUM('none','booked') NOT NULL DEFAULT 'none',  -- ユーザーが自分で付ける「購入済み」の印
+  url             VARCHAR(500) NULL,                    -- 予約・販売サイト
+  created_at      DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (id),
+  KEY idx_travel_item_plan (plan_id, starts_at),
+  CONSTRAINT fk_travel_item_plan FOREIGN KEY (plan_id) REFERENCES travel_plans(id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- ---------------------------------------------------------------------
 -- 公開用ビュー：一覧・地図に出す大会（確認済みバッジ付き）
 -- ---------------------------------------------------------------------
 CREATE OR REPLACE VIEW v_public_tournaments AS
@@ -429,3 +523,17 @@ FROM tournaments t
 JOIN users u ON u.id = t.organizer_user_id
 LEFT JOIN organizer_profiles op ON op.user_id = t.organizer_user_id AND op.status = 'active'
 WHERE t.status = 'published';
+
+-- ---------------------------------------------------------------------
+-- 公開用ビュー：いま画面に出してよいお知らせ
+--   下書き・取り消し・公開前（予約中）・掲載終了は出さない
+-- ---------------------------------------------------------------------
+CREATE OR REPLACE VIEW v_public_notifications AS
+SELECT
+  n.id, n.audience, n.team_id, n.category, n.sender_name,
+  n.title, n.body, n.match_ref, n.tournament_id, n.published_at
+FROM notifications n
+WHERE n.status = 'published'
+  AND n.published_at IS NOT NULL
+  AND n.published_at <= NOW()
+  AND (n.expires_at IS NULL OR n.expires_at > NOW());

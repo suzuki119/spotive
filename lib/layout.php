@@ -108,6 +108,9 @@ function page_header(string $title, string $heading = ''): void
           <?php if (in_array((string) $user['role'], ['reviewer', 'admin'], true)) : ?>
             <a class="site-header__link" href="<?= h($base) ?>/pages/admin/review.php">審査</a>
           <?php endif; ?>
+          <?php if ((string) $user['role'] === 'admin') : ?>
+            <a class="site-header__link" href="<?= h($base) ?>/pages/admin/notification.php">お知らせ管理</a>
+          <?php endif; ?>
           <form class="site-header__logout" action="<?= h($base) ?>/pages/account/logout.php" method="post">
             <?= csrf_field() ?>
             <button class="site-header__link" type="submit">ログアウト</button>

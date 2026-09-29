@@ -10,6 +10,9 @@
 @use "app-header";
 @use "home";
 @use "hotel-detail";
+@use "setting";
+@use "notification";
+@use "travel";
 
 body {
   font-family: "Inter", sans-serif;

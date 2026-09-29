@@ -1,0 +1,8 @@
+[
+  { "id": "record-001", "sport": "basketball", "round": "第1節 GAME2", "homeTeamId": "team-005", "awayTeamId": "team-006", "homeScore": 76, "awayScore": 85, "venue": "さっぽろアリーナ", "date": "2026-09-27" },
+  { "id": "record-002", "sport": "basketball", "round": "第1節 GAME1", "homeTeamId": "team-013", "awayTeamId": "team-014", "homeScore": 88, "awayScore": 79, "venue": "東京ベイアリーナ", "date": "2026-09-26" },
+  { "id": "record-003", "sport": "baseball", "round": "第24回戦", "homeTeamId": "team-003", "awayTeamId": "team-004", "homeScore": 3, "awayScore": 5, "venue": "なにわドーム", "date": "2026-09-21" },
+  { "id": "record-004", "sport": "baseball", "round": "第23回戦", "homeTeamId": "team-011", "awayTeamId": "team-012", "homeScore": 7, "awayScore": 2, "venue": "ちばベイパーク球場", "date": "2026-09-14" },
+  { "id": "record-005", "sport": "soccer", "round": "第30節", "homeTeamId": "team-001", "awayTeamId": "team-002", "homeScore": 2, "awayScore": 2, "venue": "みなとみらいスタジアム", "date": "2026-09-20" },
+  { "id": "record-006", "sport": "soccer", "round": "第29節", "homeTeamId": "team-009", "awayTeamId": "team-010", "homeScore": 1, "awayScore": 0, "venue": "さいたまパークスタジアム", "date": "2026-09-13" }
+]
