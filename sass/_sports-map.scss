@@ -398,19 +398,19 @@ $site-header-height: 48px;
 }
 
 .card {
-  position: relative; // 背景のロゴ（.card-logos）の基準
-  isolation: isolate; // ロゴを z-index: -1 で、カードの背景より手前・文字より奥に置く
-  overflow: hidden;   // 大きく置いたロゴをカードの端で切る
-  display: flex;
+  // 試合一覧のカード（_match-card.scss）と同じ形。左にロゴと競技名、右に中身
+  display: grid;
+  grid-template-columns: auto 1fr;
   align-items: center;
-  gap: 12px;
+  gap: 16px;
   width: 100%;
-  padding: 12px 16px;
+  padding: 16px;
   text-align: left;
+  color: $map-text;
+  font: inherit;
   background: none;
   border: 0;
   border-bottom: 1px solid $map-line;
-  border-left: 4px solid var(--c);
   cursor: pointer;
 
   &:hover {
@@ -418,17 +418,57 @@ $site-header-height: 48px;
   }
 }
 
-.card-icon {
-  font-size: 20px;
+// ---- 左：ロゴと競技名 ----
+.card-side {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
 }
 
-// 背景に薄く置く両チームのロゴ（試合一覧の .match-card__logos と同じ見せ方）。
-// 一覧のカード（.card-logos）とピンの詳細（.pop-logos）で共通。大きさだけ場所に合わせる
-.card-logos,
+.card-emblems {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.card-emblem {
+  width: 40px;
+  height: 40px;
+  object-fit: contain;
+
+  // ロゴが無いときは、競技の色の丸にアイコンを入れる
+  &--icon {
+    display: grid;
+    place-items: center;
+    font-size: 20px;
+    background: color-mix(in srgb, var(--c) 15%, white);
+    border-radius: 999px;
+  }
+}
+
+.card-emblem-vs {
+  align-self: flex-end;
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.card-sport {
+  padding: 0 8px;
+  font-size: 11px;
+  font-weight: bold;
+  line-height: 1.8;
+  white-space: nowrap;
+  color: #fff;
+  background: var(--c);
+  border-radius: 999px;
+}
+
+// ピンの詳細の各試合の背景に薄く置く両チームのロゴ（試合一覧の .match-card__logos と同じ見せ方）
 .pop-logos {
   position: absolute;
   top: 50%;
-  right: -12px;
+  right: -8px;
   z-index: -1;
   display: flex;
   transform: translateY(-50%);
@@ -436,52 +476,61 @@ $site-header-height: 48px;
   pointer-events: none;
 
   img {
-    width: 72px;
-    height: 72px;
+    width: 56px;
+    height: 56px;
     object-fit: contain;
   }
 }
 
-.pop-logos {
-  right: -8px;
-
-  img {
-    width: 56px;
-    height: 56px;
-  }
-}
-
+// ---- 右：会場・対戦カード・日付｜時間・料金 ----
 .card-body {
-  flex: 1;
-  min-width: 0;
+  min-width: 0; // 長い試合名でカードがはみ出さないようにする
   display: flex;
   flex-direction: column;
   gap: 4px;
 }
 
-.card-meta,
-.card-sub {
-  font-size: 12px;
-  color: $map-muted;
-}
-
-.card-title {
-  font-weight: bold;
-}
-
 .card-sub {
   overflow: hidden;
+  font-size: 12px;
+  color: $map-muted;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
+.card-title {
+  font-size: 15px;
+  font-weight: bold;
+  line-height: 1.4;
+  overflow-wrap: anywhere;
+}
+
+.card-vs {
+  margin: 0 4px;
+  font-size: 12px;
+}
+
+// 9/29 ｜ 18:00〜
+.card-when {
+  display: flex;
+  align-items: center;
+  font-size: 17px;
+  font-weight: bold;
+}
+
+.card-date {
+  margin-right: 12px;
+  padding-right: 12px;
+  border-right: 1px solid $map-line;
+}
+
 .card-price {
   font-weight: bold;
+  color: $map-accent;
   white-space: nowrap;
-  text-align: right;
 
   small {
-    display: block;
+    margin-left: 4px;
     font-size: 10px;
     font-weight: normal;
     color: $map-muted;
