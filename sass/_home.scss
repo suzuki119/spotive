@@ -57,7 +57,7 @@ $home-shadow: 0 2px 8px rgba($color-secondary, 0.08);
     padding: 0 24px $menu-bar-space;
   }
 
-  &__section + &__section {
+  &__section+&__section {
     margin-top: 32px;
   }
 

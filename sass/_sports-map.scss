@@ -175,8 +175,8 @@ $site-header-height: 48px;
     color: $map-muted;
   }
 
-  #filters > .grid2,
-  #filters > .link {
+  #filters>.grid2,
+  #filters>.link {
     margin-left: 16px;
     margin-right: 16px;
   }
@@ -258,13 +258,13 @@ $site-header-height: 48px;
     user-select: none;
   }
 
-  input:checked + span {
+  input:checked+span {
     opacity: 1;
     border-color: var(--c);
     background: color-mix(in srgb, var(--c) 12%, white);
   }
 
-  input:focus-visible + span {
+  input:focus-visible+span {
     outline: 2px solid $map-accent;
   }
 }
@@ -317,12 +317,12 @@ $site-header-height: 48px;
     border-right: 0;
   }
 
-  input:checked + span {
+  input:checked+span {
     background: $map-accent;
     color: #fff;
   }
 
-  input:focus-visible + span {
+  input:focus-visible+span {
     outline: 2px solid $map-accent;
   }
 }
@@ -400,7 +400,7 @@ $site-header-height: 48px;
 .card {
   position: relative; // 背景のロゴ（.card-logos）の基準
   isolation: isolate; // ロゴを z-index: -1 で、カードの背景より手前・文字より奥に置く
-  overflow: hidden;   // 大きく置いたロゴをカードの端で切る
+  overflow: hidden; // 大きく置いたロゴをカードの端で切る
   display: flex;
   align-items: center;
   gap: 12px;
@@ -631,7 +631,7 @@ $site-header-height: 48px;
   li {
     position: relative; // 背景のロゴ（.pop-logos）の基準
     isolation: isolate; // ロゴを z-index: -1 で、背景より手前・文字より奥に置く
-    overflow: hidden;   // はみ出したロゴを切る
+    overflow: hidden; // はみ出したロゴを切る
     display: flex;
     flex-direction: column;
     gap: 4px;
