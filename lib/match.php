@@ -101,8 +101,16 @@ function load_teams(): array
   return $teams;
 }
 
-/** 仮のロゴ（ホーム側・アウェイ側）。チームごとのロゴ画像ができたら消す */
-const MATCH_PLACEHOLDER_LOGOS = ['images/teams/team1.png', 'images/teams/team2.png'];
+/**
+ * 仮のロゴ。チームごとのロゴ画像ができたら消す。
+ * チームの番号（team-003 なら 3）で順に割り当てるので、同じチームはどの画面でも同じロゴになる
+ */
+const MATCH_PLACEHOLDER_LOGOS = [
+  'images/teams/team1.png',
+  'images/teams/team2.png',
+  'images/teams/team3.png',
+  'images/teams/team4.png',
+];
 
 /**
  * チームのロゴ画像のパス（アプリのルートから）。出すときは url() を通すこと。
@@ -122,8 +130,17 @@ function match_team_logo(string $teamId, int $side): string
     return $logo;
   }
 
-  $placeholder = MATCH_PLACEHOLDER_LOGOS[$side === 0 ? 0 : 1];
+  // 番号の無い ID は、ホーム側・アウェイ側で分ける
+  $number      = preg_match('/(\d+)\z/', $teamId, $m) === 1 ? (int) $m[1] - 1 : $side;
+  $placeholder = MATCH_PLACEHOLDER_LOGOS[max(0, $number) % count(MATCH_PLACEHOLDER_LOGOS)];
   return is_file($root . $placeholder) ? $placeholder : '';
+}
+
+/** 仮のロゴの次の 1 枚（同じ試合で両チームが同じロゴにならないようにするため） */
+function match_next_placeholder(string $logo): string
+{
+  $i = array_search($logo, MATCH_PLACEHOLDER_LOGOS, true);
+  return $i === false ? $logo : MATCH_PLACEHOLDER_LOGOS[($i + 1) % count(MATCH_PLACEHOLDER_LOGOS)];
 }
 
 /**
@@ -143,7 +160,14 @@ function match_teams(array $teamIds): array
     }
     $list[] = ['name' => (string) ($teams[$id]['name'] ?? ''), 'logo' => match_team_logo($id, $side)];
   }
-  return count($list) === 2 ? $list : [];
+  if (count($list) !== 2) {
+    return [];
+  }
+  // 仮のロゴがたまたま同じになったら、アウェイ側を次の 1 枚にする
+  if ($list[0]['logo'] !== '' && $list[0]['logo'] === $list[1]['logo']) {
+    $list[1]['logo'] = match_next_placeholder($list[1]['logo']);
+  }
+  return $list;
 }
 
 /** 2026-10-14 => 10/14 */
