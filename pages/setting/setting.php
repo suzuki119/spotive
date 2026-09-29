@@ -6,7 +6,7 @@
  *
  *   プロフィール   … ニックネームと信頼レベル。アイコンは仮の画像（images/sample/sample-icon.png）
  *   Favorite       … お気に入りのチーム（favorite_teams テーブル）
- *   Away Travel    … 遠征プラン。主要機能 5（後回し）なので、画面確認用の仮の表示
+ *   Away Travel    … 遠征プラン（travel_plans）。まだ終わっていないプランのうち一番近いものの試合を出す
  *   Records        … 観戦記録。記録のテーブルはまだ無いので、仮データ（data/records.json）
  *   SPOTIVE PLUS+  … サブスクリプション（未設計）の案内。まだ押せない
  * 主催者は「自分の大会」、全員に各設定へのリンクも出す。
@@ -17,6 +17,7 @@ declare(strict_types=1);
 require_once __DIR__ . '/../../lib/tournament.php';
 require_once __DIR__ . '/../../lib/favorite.php';
 require_once __DIR__ . '/../../lib/match-search.php';
+require_once __DIR__ . '/../../lib/travel.php';
 require_once __DIR__ . '/../../lib/layout.php';   // status_label() / format_datetime()
 
 /** 仮のプロフィール画像。プロフィール画像の設定ができたら差し替える */
@@ -49,19 +50,24 @@ foreach ($favoriteIds as $id) {
 }
 
 // -------------------------------------------------------------------
-// 遠征プラン（仮）：お気に入りのチームのこれからの試合を 2 つ。無ければ直近の 2 試合
+// 遠征プラン：まだ終わっていないプランのうち一番近いもの。カードはその試合ごとに出す
 // -------------------------------------------------------------------
-$upcoming   = load_upcoming_matches();
-$travelPick = array_values(array_filter(
-  $upcoming,
-  static fn(array $m): bool => array_intersect($m['teamIds'], $favoriteIds) !== []
-));
-if ($travelPick === []) {
-  $travelPick = array_values(array_filter($upcoming, static fn(array $m): bool => $m['teamIds'] !== []));
+$travelPlan   = null;
+$travelCount  = 0;
+$travelGames  = [];
+$travelError  = false;
+try {
+  ['plan' => $travelPlan, 'count' => $travelCount] = travel_upcoming_plan((int) $user['id']);
+} catch (PDOException $e) {
+  error_log('[SPOTIVE] DB error: ' . $e->getMessage());
+  $travelError = true;
 }
-$travelPick = array_slice($travelPick, 0, 2);
-$travelFrom = $travelPick === [] ? '' : $travelPick[0]['date'];
-$travelTo   = $travelPick === [] ? '' : $travelPick[count($travelPick) - 1]['date'];
+if ($travelPlan !== null) {
+  $travelGames = array_values(array_filter(
+    $travelPlan['items'],
+    static fn(array $item): bool => $item['item_type'] === 'match'
+  ));
+}
 
 // -------------------------------------------------------------------
 // 観戦記録（仮データ）。競技ごとのタブで切り替える
@@ -150,36 +156,58 @@ $fmtMd = static fn(string $date): string => $date === '' ? '' : date('m/d', (int
         <?php endif; ?>
       </section>
 
-      <!-- Away Travel（遠征サポートは主要機能 5：後回し。画面確認用の仮の表示） -->
+      <!-- Away Travel（遠征プラン。一番近いプランの試合ごとに、チケットを買ったかを出す） -->
       <section class="mypage__section">
         <h2 class="mypage__heading">Away Travel</h2>
-        <p class="mypage__mock">遠征プランは準備中です。下は画面確認用の仮の表示です。</p>
-        <?php if ($travelPick !== []) : ?>
+        <?php if ($travelError) : ?>
+          <p class="mypage__empty">遠征プランを読み込めませんでした。</p>
+        <?php elseif ($travelPlan === null) : ?>
+          <p class="mypage__empty">
+            これからの遠征プランはありません。
+            <a href="<?= h(url('pages/travel/travel.php')) ?>">遠征プランを作る</a>
+          </p>
+        <?php else : ?>
           <div class="mypage-travel__head">
-            <p class="mypage-travel__dates"><?= h($fmtMd($travelFrom)) ?>〜<?= h($fmtMd($travelTo)) ?></p>
-            <span class="mypage-travel__check" aria-disabled="true">プランを確認</span>
+            <p class="mypage-travel__dates">
+              <?= h($fmtMd((string) $travelPlan['start_date'])) ?>
+              <?php if ($travelPlan['end_date'] !== $travelPlan['start_date']) : ?>
+                〜<?= h($fmtMd((string) $travelPlan['end_date'])) ?>
+              <?php endif; ?>
+            </p>
+            <a class="mypage-travel__check" href="<?= h(url('pages/travel/travel-plan.php?id=' . (int) $travelPlan['id'])) ?>">プランを確認</a>
           </div>
           <ul class="mypage-travel">
-            <?php foreach ($travelPick as $i => $match) : ?>
-              <?php $vs = match_teams($match['teamIds']); ?>
-              <?php $bought = $i === 0; // 仮：1 つめは購入済み、2 つめは未購入 ?>
+            <?php foreach ($travelGames as $item) : ?>
+              <?php
+              $vs     = match_teams(travel_item_team_ids($item));   // 主催者の大会は空
+              $bought = $item['booking_status'] === 'booked';
+              $detail = travel_item_detail_path($item);
+              $start  = (string) $item['starts_at'];
+              ?>
               <li class="mypage-travel__item <?= $bought ? 'is-done' : 'is-todo' ?>">
-                <a class="mypage-travel__link" href="<?= h(url($match['detailPath'])) ?>">
+                <a class="mypage-travel__link" href="<?= h(url($detail !== '' ? $detail : 'pages/travel/travel-plan.php?id=' . (int) $travelPlan['id'])) ?>">
                   <span class="mypage-travel__logos">
                     <?php foreach ($vs as $j => $team) : ?>
                       <?php if ($j === 1) : ?><span class="mypage-travel__vs">vs</span><?php endif; ?>
-                      <img src="<?= h(url($team['logo'])) ?>" alt="<?= h($team['name']) ?>" width="48" height="48" />
+                      <?php if ($team['logo'] !== '') : ?>
+                        <img src="<?= h(url($team['logo'])) ?>" alt="<?= h($team['name']) ?>" width="48" height="48" />
+                      <?php endif; ?>
                     <?php endforeach; ?>
                   </span>
                   <span class="mypage-travel__body">
-                    <span class="mypage-travel__meta"><?= h($fmtMd($match['date'])) ?> ・ <?= h($match['venue']) ?></span>
-                    <span class="mypage-travel__title"><?= h($match['title']) ?></span>
-                    <span class="mypage-travel__status"><?= $bought ? '購入済み ✓' : '未購入あり' ?></span>
+                    <span class="mypage-travel__meta"><?= h($fmtMd($start)) ?> <?= h(date('H:i', (int) strtotime($start))) ?>〜 ・ <?= h((string) $item['from_label']) ?></span>
+                    <span class="mypage-travel__title"><?= h((string) $item['title']) ?></span>
+                    <span class="mypage-travel__status"><?= $bought ? 'チケット購入済み ✓' : 'チケット未購入' ?></span>
                   </span>
                 </a>
               </li>
             <?php endforeach; ?>
           </ul>
+          <?php if ($travelCount > 1) : ?>
+            <p class="mypage-travel__more">
+              <a href="<?= h(url('pages/travel/travel-plan.php')) ?>">ほかの遠征プラン（<?= (int) $travelCount - 1 ?>件）</a>
+            </p>
+          <?php endif; ?>
         <?php endif; ?>
       </section>
 

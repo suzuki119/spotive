@@ -467,6 +467,48 @@ CREATE TABLE notification_reads (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- ---------------------------------------------------------------------
+-- 遠征プラン（主要機能 5「遠征サポート」。設計は docs/away-travel.md）
+-- 試合・チーム・ホテルはまだ DB に無いので、favorite_teams と同じく
+-- data/*.json の id（team-001 / match-001 / hotel-001 / area-23）をそのまま持つ。
+-- JSON が変わっても表示が変わらないよう、名前・時刻・金額は作成時点の値を items に写す。
+-- 「到着」「会場へ」「チェックアウト」の行は保存せず、表示するときに items から作る。
+-- ---------------------------------------------------------------------
+CREATE TABLE travel_plans (
+  id                   BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+  user_id              BIGINT UNSIGNED NOT NULL,
+  team_id              VARCHAR(32)  NOT NULL,           -- 応援するチーム
+  title                VARCHAR(150) NOT NULL,
+  depart_area_id       VARCHAR(32)  NOT NULL,           -- 出発地
+  start_date           DATE         NOT NULL,
+  end_date             DATE         NOT NULL,
+  estimated_total_yen  INT UNSIGNED NOT NULL DEFAULT 0, -- 作成時点の費用の目安（1 人あたり）
+  created_at           DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at           DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (id),
+  KEY idx_travel_user (user_id, start_date),
+  CONSTRAINT fk_travel_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE travel_plan_items (
+  id              BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+  plan_id         BIGINT UNSIGNED NOT NULL,
+  item_type       ENUM('transport','match','hotel') NOT NULL,
+  ref_id          VARCHAR(32)  NULL,                    -- match-001 / tournament-5 / hotel-001。交通は NULL
+  title           VARCHAR(150) NOT NULL,
+  from_label      VARCHAR(50)  NULL,                    -- 交通の出発地。試合は会場名
+  to_label        VARCHAR(50)  NULL,                    -- 交通の到着地
+  starts_at       DATETIME     NOT NULL,                -- 交通は発、試合は開始、ホテルはチェックイン
+  ends_at         DATETIME     NULL,                    -- 交通は着、試合は終了予定、ホテルはチェックアウト
+  price_yen       INT UNSIGNED NULL,                    -- 交通は片道、試合はチケットの最低価格、ホテルは 1 泊
+  booking_status  ENUM('none','booked') NOT NULL DEFAULT 'none',  -- ユーザーが自分で付ける「購入済み」の印
+  url             VARCHAR(500) NULL,                    -- 予約・販売サイト
+  created_at      DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (id),
+  KEY idx_travel_item_plan (plan_id, starts_at),
+  CONSTRAINT fk_travel_item_plan FOREIGN KEY (plan_id) REFERENCES travel_plans(id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- ---------------------------------------------------------------------
 -- 公開用ビュー：一覧・地図に出す大会（確認済みバッジ付き）
 -- ---------------------------------------------------------------------
 CREATE OR REPLACE VIEW v_public_tournaments AS

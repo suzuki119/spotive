@@ -250,6 +250,7 @@ $hotel-shadow: 0 2px 12px rgba($color-secondary, 0.1);
   // 遠征プランに追加（枠線のボタン）
   &__plan {
     display: flex;
+    text-decoration: none; // 遠征サポートへのリンク（a）のときに下線を出さない
     align-items: center;
     justify-content: center;
     gap: 8px;

@@ -207,9 +207,20 @@ $mypage-shadow: 0 2px 12px rgba($color-secondary, 0.1);
     padding: 0 12px;
     border: 1px solid $color-secondary;
     border-radius: $radius-full;
+    color: $color-secondary;
     font-size: 12px;
     font-weight: 700;
-    opacity: 0.5; // 遠征サポートは準備中なので押せない
+    text-decoration: none;
+  }
+
+  &__more {
+    margin: 16px 0 0;
+    font-size: 14px;
+    text-align: right;
+
+    a {
+      color: $color-primary;
+    }
   }
 
   // 購入済みは緑、未購入ありは赤の枠。状態を色だけに頼らず、文字でも出す
