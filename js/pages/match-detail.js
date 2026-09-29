@@ -3,9 +3,37 @@
  * 試合詳細画面（pages/match/match-detail.php）の処理。
  *   ・右上の ✕ で、来た画面に戻る
  *   ・「現在地から」に会場までの距離を出す（位置情報がすでに許可されているときだけ）
+ *   ・対戦チームの ☆ でお気に入りに登録・解除する（js/common/favorite-store.js）
  */
 
 document.addEventListener("DOMContentLoaded", () => {
+  // -----------------------------------------------------------------
+  // お気に入り（☆）
+  //   保存先の切り替え（ログイン中は DB、未ログインはブラウザ）は SpotiveFavorites が行う
+  // -----------------------------------------------------------------
+  const favoriteButtons = document.querySelectorAll("[data-favorite-team]");
+  if (favoriteButtons.length > 0 && typeof SpotiveFavorites !== "undefined") {
+    const renderFavorites = () => {
+      const favorites = SpotiveFavorites.teamIds();
+      favoriteButtons.forEach((button) => {
+        const on = favorites.includes(button.dataset.favoriteTeam);
+        button.querySelector(".match-detail__favorite-icon").textContent = on ? "★" : "☆";
+        button.classList.toggle("is-active", on);
+        button.setAttribute("aria-pressed", on ? "true" : "false");
+      });
+    };
+
+    favoriteButtons.forEach((button) => {
+      button.addEventListener("click", () => {
+        SpotiveFavorites.toggle(button.dataset.favoriteTeam);
+        renderFavorites();
+      });
+    });
+    // 保存に失敗して元に戻したときや、ブラウザの登録をアカウントに移したときに描き直す
+    SpotiveFavorites.onChange(renderFavorites);
+    renderFavorites();
+  }
+
   // -----------------------------------------------------------------
   // ✕（閉じる）
   //   同じサイトの画面から来たときは、その画面に戻る（一覧のスクロール位置も戻る）。

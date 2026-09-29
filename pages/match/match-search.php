@@ -18,6 +18,7 @@
 declare(strict_types=1);
 
 require_once __DIR__ . '/../../lib/match-search.php';
+require_once __DIR__ . '/../../lib/favorite.php';
 
 /** 価格のスライダーの目盛り（円）。安い価格帯を細かく選べるよう、等間隔にしない */
 const SEARCH_PRICE_STEPS = [
@@ -34,6 +35,9 @@ $options  = match_search_options($upcoming);
 $results  = match_search($upcoming, $cond);
 $days     = group_matches_by_date($results);
 $isActive = match_search_is_active($cond);
+
+// お気に入りのチームの試合に印を付けるため（ログイン中なら DB、未ログインならブラウザ）
+$favoriteState = favorite_client_state();
 
 // タブ：決まったリーグのほかに、試合がある競技も後ろに足す
 $tabs = MATCH_SEARCH_TABS;
@@ -262,6 +266,8 @@ $priceValue = SEARCH_PRICE_STEPS[$priceIndex];
     <footer class="site-footer"></footer>
 
     <script src="<?= h(asset('js/main.js')) ?>"></script>
+    <script type="application/json" id="favorite-state"><?= favorite_state_json($favoriteState) ?></script>
+    <script src="<?= h(asset('js/common/favorite-store.js')) ?>"></script>
     <script src="<?= h(asset('js/pages/match-search.js')) ?>"></script>
     <?php require __DIR__ . '/../menu-bar.php'; ?>
   </body>

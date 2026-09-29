@@ -1671,6 +1671,38 @@ input[type=radio] {
   font-size: 20px;
   font-weight: 700;
 }
+.match-detail__favorites {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 16px 0 0;
+}
+.match-detail__favorite {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  min-height: 40px;
+  padding: 4px 12px;
+  border: 1px solid #E5E7EB;
+  border-radius: 999px;
+  background: #FFFFFF;
+  color: #1F2937;
+  font: inherit;
+  font-size: 14px;
+  cursor: pointer;
+}
+.match-detail__favorite:hover {
+  border-color: #FF6B2C;
+}
+.match-detail__favorite.is-active {
+  border-color: #FF6B2C;
+  background: #FF6B2C;
+  color: #FFFFFF;
+}
+.match-detail__favorite-icon {
+  font-size: 16px;
+  line-height: 1;
+}
 .match-detail__badge {
   display: inline-block;
   margin: 12px 0 0;

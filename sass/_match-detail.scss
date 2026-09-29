@@ -134,6 +134,44 @@ $detail-line: 1px solid $color-secondary;
     font-weight: 700;
   }
 
+  // 対戦チームの ☆。押すと ★ になり、アクセントのオレンジで塗る
+  &__favorites {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 16px 0 0;
+  }
+
+  &__favorite {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    min-height: 40px;
+    padding: 4px 12px;
+    border: 1px solid $color-border;
+    border-radius: $radius-full;
+    background: $color-bg;
+    color: $color-text;
+    font: inherit;
+    font-size: 14px;
+    cursor: pointer;
+
+    &:hover {
+      border-color: $color-accent;
+    }
+
+    &.is-active {
+      border-color: $color-accent;
+      background: $color-accent;
+      color: $color-bg;
+    }
+  }
+
+  &__favorite-icon {
+    font-size: 16px;
+    line-height: 1;
+  }
+
   &__badge {
     display: inline-block;
     margin: 12px 0 0;

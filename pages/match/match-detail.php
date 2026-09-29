@@ -19,6 +19,7 @@ declare(strict_types=1);
 
 require_once __DIR__ . '/../../lib/match.php';
 require_once __DIR__ . '/../../lib/hotel.php';
+require_once __DIR__ . '/../../lib/favorite.php';
 
 /** 試合の写真が無いときに上に出す写真 */
 const DETAIL_DEFAULT_IMAGE = 'images/sample/sample-match.png';
@@ -218,6 +219,9 @@ $shortDate = $startsAt === null ? '日程未定' : $startsAt->format('n/j');
 $timeText  = $startsAt === null || $game['time_tbd'] ? '時刻未定' : $startsAt->format('H:i') . '〜';
 $teamList  = $game === null ? [] : match_teams($game['team_ids']);
 
+// 対戦チームの ☆（お気に入り）。ログイン中なら DB、未ログインならブラウザに保存する
+$favoriteState = favorite_client_state();
+
 // 上の写真。試合の写真（matches.json の image）が置かれていればそれ、無ければサンプルの写真
 $heroImage = '';
 foreach ([$game['image'] ?? '', DETAIL_DEFAULT_IMAGE] as $candidate) {
@@ -297,6 +301,21 @@ $pageTitle = $game === null ? '試合が見つかりません' : $game['title'];
                 </span>
               <?php endforeach; ?>
             </h1>
+
+            <!-- 対戦チームをお気に入りに登録・解除する（js/pages/match-detail.js）。見出しの外に置く -->
+            <div class="match-detail__favorites">
+              <?php foreach ($teamList as $i => $team) : ?>
+                <button
+                  class="match-detail__favorite"
+                  type="button"
+                  data-favorite-team="<?= h((string) ($game['team_ids'][$i] ?? '')) ?>"
+                  aria-pressed="false"
+                >
+                  <span class="match-detail__favorite-icon" aria-hidden="true">☆</span>
+                  <span class="match-detail__favorite-name"><?= h($team['name']) ?></span>
+                </button>
+              <?php endforeach; ?>
+            </div>
           <?php else : ?>
             <h1 class="match-detail__title"><?= h($game['title']) ?></h1>
           <?php endif; ?>
@@ -415,6 +434,8 @@ $pageTitle = $game === null ? '試合が見つかりません' : $game['title'];
     </main>
 
     <script src="<?= h(asset('js/main.js')) ?>"></script>
+    <script type="application/json" id="favorite-state"><?= favorite_state_json($favoriteState) ?></script>
+    <script src="<?= h(asset('js/common/favorite-store.js')) ?>"></script>
     <script src="<?= h(asset('js/pages/match-detail.js')) ?>"></script>
     <?php require __DIR__ . '/../menu-bar.php'; ?>
   </body>
