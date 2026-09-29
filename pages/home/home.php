@@ -75,6 +75,78 @@
           <p class="home-now-bottom-price">￥3,000~</p>
         </section>
       </div><!-- home-now-content -->
+      <div class="home-now-content">
+        <section class="home-now-top">
+          <article class="home-now-group">
+            <span class="home-now-group-team">
+              <img src="../../images/teams/team1.png" alt="">
+              <p>VS</p>
+              <img src="../../images/teams/team2.png" alt="">
+            </span>
+          </article>
+          <article class="home-now-detall">
+            <p class="home-now-detall-title">B.PREMIER 第1節 GAME1</p>
+            <span class="home-now-detall-team">
+              <h3>A千葉</h3>
+              <p>VS</p>
+              <h3>千葉J</h3>
+            </span>
+            <span class="home-now-detall-aside">
+              <p class="home-now-detall-team-time">13:00~</p>
+              <aside>
+                <img src="../../images/icons/point.svg" alt="">
+                <p>3.0km</p>
+              </aside>
+            </span>
+          </article>
+        </section>
+        <!-- ↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑ -->
+        <hr>
+        <!-- ↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓ -->
+        <section class="home-now-bottom">
+          <span>
+            <img src="../../images/icons/point.svg" alt="">
+            <p>千葉ポートアリーナ</p>
+          </span>
+          <p class="home-now-bottom-price">￥3,000~</p>
+        </section>
+      </div><!-- home-now-content -->
+      <div class="home-now-content">
+        <section class="home-now-top">
+          <article class="home-now-group">
+            <span class="home-now-group-team">
+              <img src="../../images/teams/team1.png" alt="">
+              <p>VS</p>
+              <img src="../../images/teams/team2.png" alt="">
+            </span>
+          </article>
+          <article class="home-now-detall">
+            <p class="home-now-detall-title">B.PREMIER 第1節 GAME1</p>
+            <span class="home-now-detall-team">
+              <h3>A千葉</h3>
+              <p>VS</p>
+              <h3>千葉J</h3>
+            </span>
+            <span class="home-now-detall-aside">
+              <p class="home-now-detall-team-time">13:00~</p>
+              <aside>
+                <img src="../../images/icons/point.svg" alt="">
+                <p>3.0km</p>
+              </aside>
+            </span>
+          </article>
+        </section>
+        <!-- ↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑ -->
+        <hr>
+        <!-- ↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓ -->
+        <section class="home-now-bottom">
+          <span>
+            <img src="../../images/icons/point.svg" alt="">
+            <p>千葉ポートアリーナ</p>
+          </span>
+          <p class="home-now-bottom-price">￥3,000~</p>
+        </section>
+      </div><!-- home-now-content -->
     </div><!-- home-now -->
   </div> <!-- inner -->
   <?php include '../menu-bar.php'; ?>

@@ -11,39 +11,164 @@
  * 項目を増やす・並べ替えるときは、下の $menuItems を直せばよい。
  */
 
+
+/**
+ * pages/menu-bar.php
+ * 画面下に固定するメニューバー。
+ */
+
 declare(strict_types=1);
 
 require_once __DIR__ . '/../lib/support.php';
 
-/** icon はファイル名、label はアイコンの下に出す文字 */
+/**
+ * 下段のメニュー
+ */
 $menuItems = [
-  ['href' => 'index.php',               'icon' => 'home.svg',     'label' => 'ホーム'],
-  ['href' => 'pages/map/map.php',       'icon' => 'menu.svg',     'label' => 'メニュー'],
-  ['href' => 'pages/map/map.php',       'icon' => 'map.svg',      'label' => '地図'],
-  ['href' => 'pages/match/match-list.php', 'icon' => 'calendar.svg', 'label' => '一覧'],
-  ['href' => 'pages/match/match-search.php', 'icon' => 'search.svg',   'label' => '探す'],
+  ['href' => 'pages/home/home.php',              'icon' => 'home.svg',     'label' => 'ホーム'],
+  ['href' => 'pages/match/match-list.php',       'icon' => 'calendar.svg', 'label' => '日程'],
+  ['href' => 'pages/map/map.php',                'icon' => 'map.svg',      'label' => '地図'],
+  ['icon' => 'menu.svg',                         'label' => 'メニュー',    'type' => 'toggle'],
+  ['href' => 'pages/match/match-search.php',     'icon' => 'search.svg',   'label' => '探す'],
+];
+
+/**
+ * 上段の追加メニュー
+ */
+$subMenuItems = [
+  ['href' => 'pages/settings/settings.php',         'icon' => 'setting.svg',      'label' => '設定'],
+  ['href' => 'pages/plus/plus.php',                'icon' => 'crown.svg',           'label' => 'プラス'],
+  ['href' => 'pages/notification/notification.php', 'icon' => 'mail.svg',  'label' => 'お知らせ'],
+  ['href' => 'pages/travel/travel.php',            'icon' => 'travel.svg',        'label' => '遠征'],
+  ['href' => 'pages/account/account.php',          'icon' => 'account.svg',       'label' => 'アカウント'],
 ];
 
 ?>
+
 <!-- メニュー -->
 <section class="menu-bar">
-  <nav class="menu-bar__nav">
-    <ul class="menu-bar__list">
-      <?php foreach ($menuItems as $item) : ?>
+
+  <!-- 追加メニュー -->
+  <div class="menu-bar__sub">
+    <ul class="menu-bar__sub-list">
+
+      <?php foreach ($subMenuItems as $item) : ?>
+
         <li class="menu-bar__item">
-          <a class="menu-bar__link" href="<?= h(url($item['href'])) ?>">
-            <!-- 下に文字を出すので、画像は飾り扱い（alt は空）にする -->
+          <a
+            class="menu-bar__link"
+            href="<?= h(url($item['href'])) ?>">
+
             <img
               class="menu-bar__icon"
               src="<?= h(url('images/icons/' . $item['icon'])) ?>"
               alt=""
               width="24"
-              height="24"
-            />
-            <span class="menu-bar__label"><?= h($item['label']) ?></span>
+              height="24" />
+
+            <span class="menu-bar__label">
+              <?= h($item['label']) ?>
+            </span>
+
           </a>
         </li>
+
       <?php endforeach; ?>
+
     </ul>
+  </div>
+
+
+  <!-- 下段の通常メニュー -->
+  <nav class="menu-bar__nav">
+
+    <ul class="menu-bar__list">
+
+      <?php foreach ($menuItems as $item) : ?>
+
+        <li class="menu-bar__item">
+
+          <?php if (($item['type'] ?? '') === 'toggle') : ?>
+
+            <!-- メニュー開閉ボタン -->
+            <button
+              type="button"
+              class="menu-bar__link menu-bar__toggle"
+              aria-expanded="false">
+
+              <img
+                class="menu-bar__icon"
+                src="<?= h(url('images/icons/' . $item['icon'])) ?>"
+                alt=""
+                width="24"
+                height="24" />
+
+              <span class="menu-bar__label">
+                <?= h($item['label']) ?>
+              </span>
+
+            </button>
+
+          <?php else : ?>
+
+            <!-- 通常のリンク -->
+            <a
+              class="menu-bar__link"
+              href="<?= h(url($item['href'])) ?>">
+
+              <img
+                class="menu-bar__icon"
+                src="<?= h(url('images/icons/' . $item['icon'])) ?>"
+                alt=""
+                width="24"
+                height="24" />
+
+              <span class="menu-bar__label">
+                <?= h($item['label']) ?>
+              </span>
+
+            </a>
+
+          <?php endif; ?>
+
+        </li>
+
+      <?php endforeach; ?>
+
+    </ul>
+
   </nav>
+
 </section>
+
+
+<script>
+  const menuToggle = document.querySelector('.menu-bar__toggle');
+  const subMenu = document.querySelector('.menu-bar__sub');
+  const menuIcon = menuToggle.querySelector('.menu-bar__icon');
+
+  menuToggle.addEventListener('click', () => {
+
+    const isOpen = subMenu.classList.toggle('is-open');
+
+    menuToggle.setAttribute('aria-expanded', isOpen);
+
+    // SVGを一度消す
+    menuToggle.classList.add('is-changing');
+
+    // 消えてからSVGを変更
+    setTimeout(() => {
+
+      if (isOpen) {
+        menuIcon.src = "<?= h(url('images/icons/close.svg')) ?>";
+      } else {
+        menuIcon.src = "<?= h(url('images/icons/menu.svg')) ?>";
+      }
+
+      // 新しいSVGを表示
+      menuToggle.classList.remove('is-changing');
+
+    }, 200);
+
+  });
+</script>
