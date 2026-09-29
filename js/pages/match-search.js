@@ -5,9 +5,25 @@
  *   ・日程・エリア・価格の行に、いま選んでいる内容を出す
  *   ・価格のスライダー（目盛りは等間隔ではないので、送る値は隠し項目に入れる）
  *   ・「現在地から○km以内」の絞り込み（現在地をサーバーに送らないよう、ここで行う）
+ *   ・お気に入りのチームの試合に「お気に入り」の印を付ける（js/common/favorite-store.js）
  */
 
 document.addEventListener("DOMContentLoaded", () => {
+  // -----------------------------------------------------------------
+  // お気に入りの印（登録はお気に入り画面と試合詳細で行う）
+  // -----------------------------------------------------------------
+  function markFavorites() {
+    if (typeof SpotiveFavorites === "undefined") return;
+    const favorites = SpotiveFavorites.teamIds();
+    document.querySelectorAll("[data-match] .match-card").forEach((card) => {
+      const badge = card.querySelector(".match-card__favorite");
+      if (badge) badge.classList.toggle("is-hidden", !SpotiveFavorites.isFavoriteMatch(card, favorites));
+    });
+  }
+  markFavorites();
+  // ブラウザの登録をアカウントに移し終えたときなどに付け直す
+  if (typeof SpotiveFavorites !== "undefined") SpotiveFavorites.onChange(markFavorites);
+
   const form = document.getElementById("search-form");
   if (!form) return;
 
