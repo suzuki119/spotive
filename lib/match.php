@@ -30,7 +30,12 @@ const MATCH_SPORT_LABELS = [
 /** 競技コードを、CSS の modifier に使えるキーにする。知らない競技は other */
 function match_sport_key(string $sport): string
 {
-  return array_key_exists($sport, MATCH_SPORT_LABELS) ? $sport : 'other';
+  if (array_key_exists($sport, MATCH_SPORT_LABELS)) {
+    return $sport;
+  }
+  // 主催者の大会は「サッカー」のように日本語で入っていることがあるので、表示名からも引く
+  $key = array_search($sport, MATCH_SPORT_LABELS, true);
+  return is_string($key) ? $key : 'other';
 }
 
 /** 競技の表示名。tournaments.sport は自由入力なので、知らない値はそのまま出す */
@@ -119,6 +124,33 @@ function match_team_logo(string $teamId, int $side): string
 
   $placeholder = MATCH_PLACEHOLDER_LOGOS[$side === 0 ? 0 : 1];
   return is_file($root . $placeholder) ? $placeholder : '';
+}
+
+/**
+ * 対戦する 2 チームの名前とロゴ。2 チームそろわない試合（主催者の大会など）は空配列。
+ *
+ * @param list<string> $teamIds
+ * @return list<array{name:string,logo:string}>
+ */
+function match_teams(array $teamIds): array
+{
+  static $teams = null;
+  $teams ??= load_teams();   // カードの枚数だけ呼ばれるので、読み込みは 1 回にする
+  $list  = [];
+  foreach (array_slice($teamIds, 0, 2) as $side => $id) {
+    if (!isset($teams[$id])) {
+      return [];
+    }
+    $list[] = ['name' => (string) ($teams[$id]['name'] ?? ''), 'logo' => match_team_logo($id, $side)];
+  }
+  return count($list) === 2 ? $list : [];
+}
+
+/** 2026-10-14 => 10/14 */
+function match_short_date(string $date): string
+{
+  $time = strtotime($date);
+  return $time === false ? $date : date('n/j', $time);
 }
 
 /**
