@@ -1,124 +1,29 @@
-// 試合を探す画面（pages/match/match-search.php）専用のスタイル。
+// 検索画面（pages/match/match-search.php）専用のスタイル。
 // 結果のカードは共通パーツの match-card（_match-card.scss）を使う。
+// スマホを基準に書き、min-width で広い画面に広げる（AGENTS.md「対応デバイス」）。
 @use "variables" as *;
 
+// 条件の行の枠（ワイヤーフレームの細い黒枠）
+$search-line: 1px solid $color-secondary;
+
 .match-search {
-  max-width: $content-max;
+  max-width: 720px; // 入力欄が横に間延びしないよう、PC でも細めにする
   margin: 0 auto;
-  padding: 24px 16px $menu-bar-space;
+  padding: 0 16px $menu-bar-space;
   color: $color-text;
   font-family: $font-body;
 
   @media (min-width: $bp-tablet) {
-    padding: 32px 24px $menu-bar-space;
-  }
-
-  &__title {
-    color: $color-secondary;
-    font-family: $font-heading;
-    font-size: 24px;
-    font-weight: 700;
-  }
-
-  // スマホは 1 列。タブレット以上は 2 列、PC は 3 列に並べる
-  &__form {
-    display: grid;
-    gap: 16px;
-    margin-top: 16px;
-    padding: 16px;
-    border: 1px solid $color-border;
-    border-radius: $radius-lg;
-    background: $color-bg;
-
-    @media (min-width: $bp-tablet) {
-      grid-template-columns: repeat(2, 1fr);
-      padding: 24px;
-    }
-
-    @media (min-width: $bp-pc) {
-      grid-template-columns: repeat(3, 1fr);
-    }
-  }
-
-  &__field {
-    display: grid;
-    gap: 4px;
-
-    &--wide {
-      grid-column: 1 / -1;
-    }
-  }
-
-  &__label {
-    color: $color-text-sub;
-    font-size: 12px;
-    font-weight: 700;
-  }
-
-  &__input {
-    width: 100%;
-    height: 48px;
-    padding: 0 12px;
-    border: 1px solid $color-border;
-    border-radius: $radius-md;
-    background: $color-bg;
-    color: $color-text;
-    font: inherit;
-    font-size: 16px; // 16px 未満だと iPhone で入力時に画面が拡大される
-
-    &:focus {
-      outline: 2px solid $color-primary;
-      outline-offset: 0;
-      border-color: $color-primary;
-    }
-  }
-
-  &__hint {
-    grid-column: 1 / -1;
-    color: $color-text-sub;
-    font-size: 12px;
-    line-height: 1.6;
-  }
-
-  &__actions {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: 16px;
-    grid-column: 1 / -1;
-  }
-
-  &__submit {
-    flex: 1 1 auto;
-    height: 48px;
-    padding: 0 32px;
-    border: none;
-    border-radius: $radius-md;
-    background: $color-primary;
-    color: $color-bg;
-    font: inherit;
-    font-weight: 700;
-    cursor: pointer;
-
-    &:hover {
-      background: $color-primary-dark;
-    }
-
-    @media (min-width: $bp-tablet) {
-      flex: 0 0 auto;
-    }
-  }
-
-  &__clear {
-    color: $color-primary;
-    font-size: 14px;
+    padding: 0 24px $menu-bar-space;
   }
 
   &__results {
-    margin-top: 32px;
+    margin-top: 48px;
+    scroll-margin-top: 16px;
   }
 
   &__count {
+    margin: 0;
     color: $color-secondary;
     font-size: 16px;
     font-weight: 700;
@@ -133,8 +38,14 @@
     font-weight: 600;
   }
 
+  &__status {
+    margin: 8px 0 0;
+    font-size: 14px;
+    color: $color-text-sub;
+  }
+
   &__empty {
-    margin-top: 16px;
+    margin: 16px 0 0;
     padding: 24px 16px;
     border-radius: $radius-lg;
     background: $color-bg;
@@ -148,7 +59,7 @@
   }
 
   &__date {
-    margin-bottom: 12px;
+    margin: 0 0 12px;
     padding-bottom: 8px;
     border-bottom: 2px solid $color-primary;
     color: $color-secondary;
@@ -160,7 +71,338 @@
   &__items {
     display: grid;
     gap: 16px;
+    margin: 0;
     padding: 0;
     list-style: none;
+  }
+}
+
+// ---- 検索の入力 ----
+.search-form {
+  display: grid;
+  gap: 16px;
+
+  &__keyword {
+    width: 100%;
+    padding: 12px 24px;
+    border: $search-line;
+    border-radius: $radius-full;
+    background: $color-bg;
+    color: $color-text;
+    font: inherit;
+    font-weight: 700;
+
+    &::placeholder {
+      color: $color-secondary;
+    }
+
+    &:focus-visible {
+      outline: 2px solid $color-primary;
+      outline-offset: 2px;
+    }
+  }
+
+  &__heading {
+    margin: 16px 0 0;
+    color: $color-secondary;
+    font-size: 24px;
+    font-weight: 700;
+  }
+
+  // この条件で検索（黒の大きなボタン）
+  &__submit {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 16px;
+    padding: 16px 24px;
+    border: 0;
+    border-radius: $radius-full;
+    background: $color-secondary;
+    color: $color-bg;
+    font: inherit;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+
+    &:hover {
+      background: $color-primary-dark;
+    }
+
+    // 黒いアイコンを白く見せる
+    img {
+      filter: invert(1);
+    }
+  }
+
+  &__clear {
+    justify-self: center;
+    color: $color-primary;
+    font-size: 14px;
+  }
+}
+
+// ---- 競技のタブ（ALL / プロ野球 / …）。はみ出した分は横にスクロール ----
+.search-tabs {
+  position: relative; // 隠したラジオボタン（absolute）をこの中に収め、ページが横にはみ出さないようにする
+  display: flex;
+  gap: 24px;
+  margin: 0 -16px;
+  padding: 0 16px;
+  overflow-x: auto;
+  scrollbar-width: none;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+
+  @media (min-width: $bp-tablet) {
+    margin: 0 -24px;
+    padding: 0 24px;
+  }
+
+  &__tab {
+    flex-shrink: 0;
+    cursor: pointer;
+  }
+
+  &__input {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  &__label {
+    display: block;
+    padding: 4px 0;
+    border-bottom: 2px solid transparent;
+    color: $color-text;
+    font-family: $font-heading;
+    font-size: 18px;
+    white-space: nowrap;
+  }
+
+  &__input:checked + &__label {
+    border-bottom-color: $color-secondary;
+    color: $color-secondary;
+    font-weight: 600;
+  }
+
+  &__input:focus-visible + &__label {
+    outline: 2px solid $color-primary;
+    outline-offset: 2px;
+  }
+}
+
+// ---- 条件の行（日程・エリア・価格）。押すと中が開く ----
+.search-cond {
+  border: $search-line;
+  border-radius: $radius-full;
+  background: $color-bg;
+
+  // 開いているときと価格の枠は、角を少し丸めた四角にする
+  &[open],
+  &--box {
+    border-radius: $radius-lg;
+  }
+
+  &__head {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 24px;
+    cursor: pointer;
+    list-style: none;
+
+    &::-webkit-details-marker {
+      display: none;
+    }
+
+    // 右端の ▷。開いているときは ▽ にする
+    &::after {
+      content: "";
+      margin-left: auto;
+      border-top: 7px solid transparent;
+      border-bottom: 7px solid transparent;
+      border-left: 12px solid $color-secondary;
+      transition: transform 0.2s ease;
+    }
+  }
+
+  &[open] &__head::after {
+    transform: rotate(90deg);
+  }
+
+  &__icon {
+    width: 16px;
+    height: 16px;
+  }
+
+  &__name {
+    flex-shrink: 0;
+    margin-right: 16px;
+    color: $color-secondary;
+    font-weight: 700;
+  }
+
+  &__value {
+    overflow: hidden;
+    font-family: $font-heading;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  &__body {
+    display: grid;
+    gap: 12px;
+    padding: 0 24px 16px;
+
+    &--dates {
+      grid-template-columns: 1fr auto 1fr;
+      align-items: center;
+    }
+
+    // 0円 ━━━○┅┅┅ 10万円
+    &--price {
+      grid-template-columns: auto 1fr auto;
+      align-items: center;
+    }
+  }
+
+  &__field {
+    display: grid;
+    gap: 4px;
+  }
+
+  &__caption {
+    font-size: 12px;
+    color: $color-text-sub;
+  }
+
+  &__input {
+    width: 100%;
+    min-width: 0;
+    padding: 8px 12px;
+    border: 1px solid $color-border;
+    border-radius: $radius-md;
+    background: $color-bg;
+    color: $color-text;
+    font: inherit;
+  }
+
+  &__note {
+    margin: 0;
+    font-size: 12px;
+    color: $color-text-sub;
+  }
+
+  &__end {
+    font-family: $font-heading;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+
+  // スライダー。選んだところまでを実線、その先を点線で見せる（--fill は JS が入れる）
+  &__range {
+    --fill: 0%;
+    width: 100%;
+    height: 24px;
+    margin: 0;
+    background: none;
+    cursor: pointer;
+    appearance: none;
+
+    &::-webkit-slider-runnable-track {
+      height: 2px;
+      background:
+        linear-gradient($color-secondary, $color-secondary) 0 0 / var(--fill) 100% no-repeat,
+        repeating-linear-gradient(90deg, $color-secondary 0 4px, transparent 4px 8px);
+    }
+
+    &::-webkit-slider-thumb {
+      width: 16px;
+      height: 16px;
+      margin-top: -7px;
+      border: 2px solid $color-secondary;
+      border-radius: $radius-full;
+      background: $color-bg;
+      appearance: none;
+    }
+
+    &::-moz-range-track {
+      height: 2px;
+      background: repeating-linear-gradient(90deg, $color-secondary 0 4px, transparent 4px 8px);
+    }
+
+    &::-moz-range-progress {
+      height: 2px;
+      background: $color-secondary;
+    }
+
+    &::-moz-range-thumb {
+      width: 12px;
+      height: 12px;
+      border: 2px solid $color-secondary;
+      border-radius: $radius-full;
+      background: $color-bg;
+    }
+
+    &:focus-visible {
+      outline: 2px solid $color-primary;
+      outline-offset: 4px;
+    }
+  }
+}
+
+// ---- 周辺検索（写真の下に名前）----
+.nearby-links {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+
+  &__item {
+    display: grid;
+    gap: 8px;
+    color: $color-secondary;
+    text-decoration: none;
+
+    &--disabled {
+      cursor: default;
+      opacity: 0.5;
+    }
+  }
+
+  // 写真の代わり。写真（images/top/ など）ができたら background-image に差し替える
+  &__image {
+    display: grid;
+    place-items: center;
+    aspect-ratio: 16 / 10;
+    border-radius: $radius-lg;
+    font-size: 32px;
+
+    &--food {
+      background: linear-gradient(135deg, rgba($color-accent, 0.35), $color-accent);
+    }
+
+    &--hotel {
+      background: linear-gradient(135deg, $color-primary-light, $color-primary);
+    }
+
+    &--transit {
+      background: linear-gradient(135deg, $color-border, $color-text-sub);
+    }
+  }
+
+  a.nearby-links__item:hover &__image {
+    filter: brightness(1.05);
+    box-shadow: 0 4px 12px rgba($color-secondary, 0.16);
+  }
+
+  &__label {
+    font-size: 12px;
+    font-weight: 700;
   }
 }

@@ -30,7 +30,12 @@ const MATCH_SPORT_LABELS = [
 /** 競技コードを、CSS の modifier に使えるキーにする。知らない競技は other */
 function match_sport_key(string $sport): string
 {
-  return array_key_exists($sport, MATCH_SPORT_LABELS) ? $sport : 'other';
+  if (array_key_exists($sport, MATCH_SPORT_LABELS)) {
+    return $sport;
+  }
+  // 主催者の大会は「サッカー」のように日本語で入っていることがあるので、表示名からも引く
+  $key = array_search($sport, MATCH_SPORT_LABELS, true);
+  return is_string($key) ? $key : 'other';
 }
 
 /** 競技の表示名。tournaments.sport は自由入力なので、知らない値はそのまま出す */
@@ -122,12 +127,39 @@ function match_team_logo(string $teamId, int $side): string
 }
 
 /**
+ * 対戦する 2 チームの名前とロゴ。2 チームそろわない試合（主催者の大会など）は空配列。
+ *
+ * @param list<string> $teamIds
+ * @return list<array{name:string,logo:string}>
+ */
+function match_teams(array $teamIds): array
+{
+  static $teams = null;
+  $teams ??= load_teams();   // カードの枚数だけ呼ばれるので、読み込みは 1 回にする
+  $list  = [];
+  foreach (array_slice($teamIds, 0, 2) as $side => $id) {
+    if (!isset($teams[$id])) {
+      return [];
+    }
+    $list[] = ['name' => (string) ($teams[$id]['name'] ?? ''), 'logo' => match_team_logo($id, $side)];
+  }
+  return count($list) === 2 ? $list : [];
+}
+
+/** 2026-10-14 => 10/14 */
+function match_short_date(string $date): string
+{
+  $time = strtotime($date);
+  return $time === false ? $date : date('n/j', $time);
+}
+
+/**
  * 画面で使う 1 試合の形。
  *
  * @return array{
  *   key:string, sport:string, title:string, date:string, time:string,
  *   venue:string, pref:string, price:?int, teamIds:list<string>, organizer:string,
- *   detailPath:string
+ *   detailPath:string, lat:?float, lng:?float
  * }
  */
 function match_row(
@@ -141,10 +173,13 @@ function match_row(
   ?int $price,
   array $teamIds = [],
   string $organizer = '',
-  string $detailPath = ''
+  string $detailPath = '',
+  ?float $lat = null,
+  ?float $lng = null
 ): array {
   return compact(
-    'key', 'sport', 'title', 'date', 'time', 'venue', 'pref', 'price', 'teamIds', 'organizer', 'detailPath'
+    'key', 'sport', 'title', 'date', 'time', 'venue', 'pref', 'price', 'teamIds', 'organizer', 'detailPath',
+    'lat', 'lng'
   );
 }
 
@@ -187,7 +222,9 @@ function load_json_matches(): array
       isset($m['priceMin']) ? (int) $m['priceMin'] : null,
       array_values(array_filter([(string) ($m['homeTeamId'] ?? ''), (string) ($m['awayTeamId'] ?? '')])),
       '',
-      match_detail_path('match', (string) ($m['id'] ?? ''))
+      match_detail_path('match', (string) ($m['id'] ?? '')),
+      isset($m['lat']) ? (float) $m['lat'] : null,
+      isset($m['lng']) ? (float) $m['lng'] : null
     );
   }
   return $rows;
@@ -199,7 +236,7 @@ function load_tournament_matches(): array
   try {
     $list = db_all(
       'SELECT id, title, sport, starts_at, venue_name, venue_prefecture,
-              entry_fee_yen, organizer_name
+              venue_lat, venue_lng, entry_fee_yen, organizer_name
        FROM v_public_tournaments
        WHERE starts_at >= CURDATE()
        ORDER BY starts_at ASC
@@ -227,7 +264,9 @@ function load_tournament_matches(): array
       $t['entry_fee_yen'] === null ? null : (int) $t['entry_fee_yen'],
       [],
       (string) $t['organizer_name'],
-      match_detail_path('tournament', (string) (int) $t['id'])
+      match_detail_path('tournament', (string) (int) $t['id']),
+      $t['venue_lat'] === null ? null : (float) $t['venue_lat'],
+      $t['venue_lng'] === null ? null : (float) $t['venue_lng']
     );
   }
   return $rows;

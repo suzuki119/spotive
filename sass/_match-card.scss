@@ -1,5 +1,8 @@
 // 試合カード（pages/match/match-card.php）。試合一覧とお気に入りで共通。
 // 変えると両方のページに効くので、触るときはチームに共有すること。
+//
+//   左 … 両チームのロゴ（vs）と、その下に競技名
+//   右 … 会場、対戦カード、日付｜開始時間、料金
 @use "sass:map";
 @use "variables" as *;
 
@@ -8,61 +11,89 @@
   isolation: isolate; // 背景のロゴ（z-index: -1）を、カードの背景より手前・文字より奥に置く
   overflow: hidden; // 大きく置いたロゴをカードの角で切る
   display: grid;
-  grid-template-columns: 56px 1fr;
-  gap: 4px 12px;
+  grid-template-columns: auto 1fr;
+  align-items: center;
+  gap: 16px;
   padding: 16px;
   background: $color-bg;
-  border: 1px solid $color-border;
   border-radius: $radius-lg;
+  box-shadow: 0 2px 8px rgba($color-secondary, 0.08);
   color: $color-text;
   font-family: $font-body;
 
   @media (min-width: $bp-tablet) {
-    grid-template-columns: 64px 1fr auto;
-    align-items: center;
+    gap: 24px;
     padding: 24px;
   }
 
-  // 背景に薄く置く両チームのロゴ。右端に寄せ、はみ出した分はカードで切る
+  // 背景に薄く置く両チームのロゴ。右端に寄せ、はみ出した分はカードで切る。
+  // スマホは幅が狭く文字と重なるので出さない（左にロゴが出ているので分かる）
   &__logos {
     position: absolute;
     top: 50%;
     right: -16px;
     z-index: -1;
-    display: flex;
+    display: none;
     transform: translateY(-50%);
     opacity: 0.08;
     pointer-events: none;
-  }
-
-  &__logo {
-    width: 80px;
-    height: 80px;
-    object-fit: contain;
 
     @media (min-width: $bp-tablet) {
-      width: 96px;
-      height: 96px;
+      display: flex;
     }
   }
 
-  &__time {
-    margin: 0;
+  &__logo {
+    width: 96px;
+    height: 96px;
+    object-fit: contain;
+  }
+
+  // ---- 左：ロゴと競技名 ----
+  &__side {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+  }
+
+  &__emblems {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  // チームのロゴ（画像が無いときは頭文字の丸）
+  &__emblem {
+    display: grid;
+    flex-shrink: 0;
+    place-items: center;
+    width: 48px;
+    height: 48px;
+    object-fit: contain;
+    border-radius: $radius-full;
+    color: $color-bg;
+    font-size: 12px;
+    font-weight: 700;
+    background: map.get($sport-colors, other);
+
+    @each $sport, $color in $sport-colors {
+      &--#{$sport} {
+        background: $color;
+      }
+    }
+  }
+
+  img.match-card__emblem {
+    background: none;
+  }
+
+  &__emblem-vs {
+    align-self: flex-end;
     font-family: $font-heading;
     font-weight: 600;
-    font-size: 18px;
+    font-size: 16px;
     color: $color-secondary;
-  }
-
-  &__body {
-    min-width: 0; // 長い試合名でカードがはみ出さないようにする
-  }
-
-  &__tags {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 4px;
-    margin: 0 0 4px;
   }
 
   &__sport,
@@ -70,7 +101,9 @@
     padding: 0 8px;
     border-radius: $radius-full;
     font-size: 12px;
+    font-weight: 700;
     line-height: 1.8;
+    white-space: nowrap;
   }
 
   &__sport {
@@ -84,21 +117,40 @@
     }
   }
 
-  &__favorite {
-    color: $color-bg;
-    background: $color-accent;
+  // ---- 右：会場・対戦カード・日時・料金 ----
+  &__body {
+    display: grid;
+    gap: 4px;
+    min-width: 0; // 長い試合名でカードがはみ出さないようにする
+  }
 
-    &.is-hidden {
-      display: none;
-    }
+  &__sub {
+    margin: 0;
+    font-size: 12px;
+    color: $color-text-sub;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 
   &__title {
     margin: 0;
     font-size: 16px;
     font-weight: 700;
-    line-height: 1.5;
+    line-height: 1.4;
+    color: $color-secondary;
     overflow-wrap: anywhere;
+
+    @media (min-width: $bp-tablet) {
+      font-size: 18px;
+    }
+  }
+
+  &__vs {
+    margin: 0 4px;
+    font-family: $font-heading;
+    font-size: 14px;
+    font-weight: 600;
   }
 
   // 試合名のリンク。::after でカード全体を押せる範囲にする
@@ -124,34 +176,50 @@
   }
 
   &:has(&__link) {
-    transition: border-color 0.2s ease;
+    transition: box-shadow 0.2s ease;
 
     &:hover {
-      border-color: $color-primary;
+      box-shadow: 0 4px 16px rgba($color-secondary, 0.16);
     }
   }
 
-  &__venue,
-  &__organizer {
-    margin: 4px 0 0;
-    font-size: 14px;
-    color: $color-text-sub;
+  // 10/14 ｜ 13:00〜
+  &__when {
+    display: flex;
+    align-items: center;
+    margin: 0;
+    font-family: $font-heading;
+    font-size: 20px;
+    font-weight: 600;
+    color: $color-secondary;
   }
 
-  // スマホでは本文の下、時刻の列をあけて右寄せ
-  &__price {
-    grid-column: 2;
-    margin: 4px 0 0;
-    font-family: $font-heading;
-    font-weight: 600;
-    font-size: 16px;
-    color: $color-primary;
-    text-align: right;
+  &__date {
+    padding-right: 12px;
+    margin-right: 12px;
+    border-right: 1px solid $color-border;
+  }
 
-    @media (min-width: $bp-tablet) {
-      grid-column: 3;
-      margin: 0;
-      white-space: nowrap;
+  &__foot {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0;
+  }
+
+  &__price {
+    font-family: $font-heading;
+    font-size: 16px;
+    font-weight: 600;
+    color: $color-primary;
+  }
+
+  &__favorite {
+    color: $color-bg;
+    background: $color-accent;
+
+    &.is-hidden {
+      display: none;
     }
   }
 }

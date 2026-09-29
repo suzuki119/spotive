@@ -587,11 +587,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
   /**
    * 背景に薄く置く両チームのロゴ。2 チームそろっていないときは出さない。
-   * 一覧のカード（card-logos）と、ピンの詳細（pop-logos）で使う
+   * ピンの詳細（pop-logos）で使う。一覧のカードは左にロゴを出しているので使わない
    */
   function teamLogosHtml(g, className, size) {
-    const logos = (g.teamIds || []).slice(0, 2).map((id, side) => (teamLogos[id] || [])[side] || "");
-    if (logos.length < 2 || logos.some((src) => !src)) return "";
+    const logos = teamLogoSrcs(g);
+    if (!logos) return "";
     // 飾りなので読み上げない。チーム名は試合名に書いてある
     return `
       <span class="${className}" aria-hidden="true">
@@ -599,21 +599,63 @@ document.addEventListener("DOMContentLoaded", () => {
       </span>`;
   }
 
+  /** 両チームのロゴの画像（ホーム側・アウェイ側）。2 チームそろわなければ null */
+  function teamLogoSrcs(g) {
+    const logos = (g.teamIds || []).slice(0, 2).map((id, side) => (teamLogos[id] || [])[side] || "");
+    return logos.length === 2 && logos.every(Boolean) ? logos : null;
+  }
+
+  /** 対戦する 2 チームの名前。試合名「A vs B」から取る。対戦でない大会は null */
+  function teamNames(g) {
+    if ((g.teamIds || []).length < 2) return null;
+    const names = String(g.title).split(" vs ");
+    return names.length === 2 ? names : null;
+  }
+
+  /**
+   * 一覧のカード 1 枚（試合一覧の pages/match/match-card.php と同じ形）。
+   *   左 … 両チームのロゴ（vs）と、その下に競技名
+   *   右 … 会場、対戦カード、日付｜開始時間、料金
+   */
   function cardHtml(g) {
     const s = sportOf(g.sport);
     const km = distanceKm(g);
     const dist = km == null ? "" : ` ・ ${km < 10 ? km.toFixed(1) : Math.round(km)}km`;
+    const names = teamNames(g);
+    const logos = teamLogoSrcs(g);
+
+    // ロゴが無い（主催者の大会など）ときは、競技のアイコンを丸に入れて代わりにする
+    const emblems = names && logos
+      ? `<img class="card-emblem" src="${esc(logos[0])}" alt="${esc(names[0])}" width="40" height="40" loading="lazy">
+         <span class="card-emblem-vs" aria-hidden="true">vs</span>
+         <img class="card-emblem" src="${esc(logos[1])}" alt="${esc(names[1])}" width="40" height="40" loading="lazy">`
+      : `<span class="card-emblem card-emblem--icon" aria-hidden="true">${s.icon}</span>`;
+    const title = names
+      ? `${esc(names[0])}<span class="card-vs">vs</span>${esc(names[1])}`
+      : esc(g.title);
+    // ロゴの下に出す競技名。「その他」は、入力された競技名のほうが分かりやすい
+    const sportName = g.sport === "other" && g.sportName ? g.sportName : s.label;
+    // 主催者の大会は、誰の大会かを会場の後ろに添える
+    const organizer = !names && g.league !== s.label ? ` ・ ${esc(g.league)}` : "";
+    // 絞り込みで「今日」を選んでいるときは、日付を省いて時刻だけにする（fmtStart と同じ考え方）
+    const todayOnly = document.querySelector('input[name="period"]:checked')?.value === "today";
+    const d = g.start;
+    const date = todayOnly ? "" : `<span class="card-date">${d.getMonth() + 1}/${d.getDate()}</span>`;
+    const time = g.timeTBD ? "時刻未定" : `${d.toTimeString().slice(0, 5)}〜`;
+
     return `
       <li>
         <button class="card" type="button" data-id="${g.id}" style="--c:${s.color}">
-          ${teamLogosHtml(g, "card-logos", 72)}
-          <span class="card-icon">${s.icon}</span>
-          <span class="card-body">
-            <span class="card-meta">${fmtStart(g)} ・ ${esc(leagueText(g))}</span>
-            <span class="card-title">${esc(g.title)}</span>
-            <span class="card-sub">${esc(g.v.name)}${dist}</span>
+          <span class="card-side">
+            <span class="card-emblems">${emblems}</span>
+            <span class="card-sport">${esc(sportName)}</span>
           </span>
-          <span class="card-price">${g.price == null ? "価格未登録" : `${yen(g.price)}〜<small>目安</small>`}</span>
+          <span class="card-body">
+            <span class="card-sub">${esc(g.v.name)}${dist}${organizer}</span>
+            <span class="card-title">${title}</span>
+            <span class="card-when">${date}<span class="card-time">${time}</span></span>
+            <span class="card-price">${g.price == null ? "価格未登録" : `${yen(g.price)}〜<small>目安</small>`}</span>
+          </span>
         </button>
       </li>`;
   }
@@ -678,6 +720,7 @@ document.addEventListener("DOMContentLoaded", () => {
     matchSheet.classList.add("is-open");
     matchSheet.setAttribute("aria-hidden", "false");
     matchSheet.scrollTop = 0;
+    applyPresetNearby(matchBody);   // 検索画面の「周辺検索」から来たとき
   }
 
   function closeMatchSheet() {
@@ -753,6 +796,47 @@ document.addEventListener("DOMContentLoaded", () => {
     showStatus(data.places.length ? `${label}を${data.places.length}件表示しました` : `近くに${label}が見つかりませんでした`);
   }
 
+  /** 開いた種類の選択肢が見えるようにする */
+  function revealNearbyPanel(panel) {
+    // 吹き出しの update() は中身を作り直してしまうので呼ばない。
+    // 吹き出し（PC）は上に伸びるので、地図の上端からはみ出した分だけ地図をずらす
+    const popupEl = panel.closest(".leaflet-popup");
+    if (popupEl) {
+      const overflow = map.getContainer().getBoundingClientRect().top + 8 - popupEl.getBoundingClientRect().top;
+      if (overflow > 0) map.panBy([0, -overflow]);
+    } else {
+      // シート（スマホ）は下に伸びるので、選択肢が見える位置まで送る
+      panel.scrollIntoView({ behavior: "smooth", block: "nearest" });
+    }
+  }
+
+  // 検索画面の「周辺検索」から来たとき（map.php?nearby=food）は、
+  // 会場の詳細を開くたびに、その種類の周辺施設を自動で出す
+  const presetNearby = (() => {
+    const kind = new URLSearchParams(location.search).get("nearby") ?? "";
+    return Object.hasOwn(NEARBY, kind) ? kind : null;
+  })();
+
+  /** 詳細（吹き出し・シート）の「周辺施設」を開き、presetNearby の種類で検索する */
+  function applyPresetNearby(container) {
+    if (!presetNearby || !container) return;
+    const panel = container.querySelector(".pop-nearby");
+    const button = container.querySelector(`.pop-nearby__kind[data-kind="${presetNearby}"]`);
+    if (!panel || !button) return;
+    panel.hidden = false;
+    container.querySelector("[data-nearby-toggle]")?.setAttribute("aria-expanded", "true");
+    button.classList.add("is-active");
+    revealNearbyPanel(panel);
+    const [lat, lng] = button.dataset.nearby.split(",").map(Number);
+    showNearby(lat, lng, presetNearby);
+  }
+
+  if (presetNearby) {
+    map.on("popupopen", (e) => applyPresetNearby(e.popup.getElement()));
+    // showStatus が使う変数はこの下で用意されるので、初期化が終わってから出す
+    setTimeout(() => showStatus(`会場のピンを選ぶと、周辺の${NEARBY[presetNearby].label}を表示します`, 6000), 0);
+  }
+
   // ボタンはポップアップ（PC）とシート（スマホ）の中で作り直されるので、document で拾う
   document.addEventListener("click", (e) => {
     // 「周辺施設」… いきなり検索せず、まず種類を選んでもらう
@@ -761,18 +845,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const panel = toggle.closest(".pop").querySelector(".pop-nearby");
       panel.hidden = !panel.hidden;
       toggle.setAttribute("aria-expanded", panel.hidden ? "false" : "true");
-      if (panel.hidden) return;
-
-      // 吹き出しの update() は中身を作り直してしまうので呼ばない。
-      // 吹き出し（PC）は上に伸びるので、地図の上端からはみ出した分だけ地図をずらす
-      const popupEl = toggle.closest(".leaflet-popup");
-      if (popupEl) {
-        const overflow = map.getContainer().getBoundingClientRect().top + 8 - popupEl.getBoundingClientRect().top;
-        if (overflow > 0) map.panBy([0, -overflow]);
-      } else {
-        // シート（スマホ）は下に伸びるので、選択肢が見える位置まで送る
-        panel.scrollIntoView({ behavior: "smooth", block: "nearest" });
-      }
+      if (!panel.hidden) revealNearbyPanel(panel);
       return;
     }
 
@@ -904,12 +977,12 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   let statusTimer;
-  function showStatus(text) {
+  function showStatus(text, duration = 3000) {
     const el = $("#status");
     el.textContent = text;
     el.hidden = false;
     clearTimeout(statusTimer);
-    statusTimer = setTimeout(() => { el.hidden = true; }, 3000);
+    statusTimer = setTimeout(() => { el.hidden = true; }, duration);
   }
 
   // 最初の表示だけは、アニメーションなしでいきなり現在地にする
