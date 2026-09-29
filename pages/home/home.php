@@ -95,7 +95,7 @@ $accountHref = $user === null ? 'pages/account/signin.php' : 'pages/setting/sett
  */
 $teamsVs = static function (array $match, string $block): void {
   if (count($match['teams']) < 2) {
-    ?>
+?>
     <span class="<?= h($block) ?>__solo team-logo team-logo--<?= h(match_sport_key($match['sport'])) ?>">
       <?= h(match_sport_label($match['sport'])) ?>
     </span>
@@ -104,126 +104,127 @@ $teamsVs = static function (array $match, string $block): void {
   }
   foreach ($match['teams'] as $i => $team) :
     if ($i === 1) :
-      ?><span class="<?= h($block) ?>__vs">vs</span><?php
-    endif;
-    if ($team['logo'] !== '') :
-      ?><img class="team-logo" src="<?= h(url($team['logo'])) ?>" alt="<?= h($team['name']) ?>" width="48" height="48" /><?php
-    else :
-      ?><span class="team-logo team-logo--<?= h(match_sport_key($match['sport'])) ?>" role="img" aria-label="<?= h($team['name']) ?>"><?= h($team['initial']) ?></span><?php
-    endif;
-  endforeach;
-};
+    ?><span class="<?= h($block) ?>__vs">vs</span><?php
+                                                endif;
+                                                if ($team['logo'] !== '') :
+                                                  ?><img class="team-logo" src="<?= h(url($team['logo'])) ?>" alt="<?= h($team['name']) ?>" width="48" height="48" /><?php
+                                                                                                                                                                      else :
+                                                                                                                                                                        ?><span class="team-logo team-logo--<?= h(match_sport_key($match['sport'])) ?>" role="img" aria-label="<?= h($team['name']) ?>"><?= h($team['initial']) ?></span><?php
+                                                                                                                                                                                                                                                                                          endif;
+                                                                                                                                                                                                                                                                                        endforeach;
+                                                                                                                                                                                                                                                                                      };
 
-?>
+                                                                                                                                                                                                                                                                                            ?>
 <!DOCTYPE html>
 <html lang="ja">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>ホーム | SPOTIVE</title>
 
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Jost:wght@400;600&family=Noto+Sans+JP:wght@400;500;700&display=swap"
-      rel="stylesheet"
-    />
-    <link rel="stylesheet" href="<?= h(asset('css/style.css')) ?>" />
-  </head>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ホーム | SPOTIVE</title>
 
-  <body>
-    <header class="home-header">
-      <a class="home-header__icon" href="<?= h(url($accountHref)) ?>">
-        <img src="<?= h(url('images/icons/account.svg')) ?>" alt="アカウント" width="32" height="32" />
-      </a>
-      <h1 class="home-header__title">SPOTIVE</h1>
-      <a class="home-header__icon" href="<?= h(url('pages/notification/notification.php')) ?>">
-        <img src="<?= h(url('images/icons/notice.svg')) ?>" alt="お知らせ" width="32" height="32" />
-      </a>
-    </header>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Jost:wght@400;600&family=Noto+Sans+JP:wght@400;500;700&display=swap"
+    rel="stylesheet" />
+  <link rel="stylesheet" href="<?= h(asset('css/style.css')) ?>" />
+</head>
 
-    <main class="home">
-      <section class="home__section">
-        <div class="home__head">
-          <h2 class="home__heading">お気に入り</h2>
-          <a class="home__more" href="<?= h(url('pages/favorite/favorite.php')) ?>">編集</a>
-        </div>
+<body>
+  <header class="home-header">
+    <a class="home-header__icon" href="<?= h(url($accountHref)) ?>">
+      <img src="<?= h(url('images/icons/account.svg')) ?>" alt="アカウント" width="32" height="32" />
+    </a>
+    <h1 class="home-header__title">SPOTIVE</h1>
+    <a class="home-header__icon" href="<?= h(url('pages/notification/notification.php')) ?>">
+      <img src="<?= h(url('images/icons/notice.svg')) ?>" alt="お知らせ" width="32" height="32" />
+    </a>
+  </header>
 
-        <p class="home__empty" id="home-favorite-empty">
-          お気に入りのチームを登録すると、試合がここに並びます。<br />
-          <a href="<?= h(url('pages/favorite/favorite.php')) ?>">チームを登録する</a>
-        </p>
+  <main class="home">
+    <section class="home__section">
+      <div class="home__head">
+        <h2 class="home__heading">お気に入り</h2>
+        <a class="home__more" href="<?= h(url('pages/favorite/favorite.php')) ?>">編集</a>
+      </div>
 
-        <ul class="home__slider">
-          <?php foreach ($favoriteCandidates as $match) : ?>
-            <li class="home__slide is-hidden" data-favorite-slide>
+      <p class="home__empty" id="home-favorite-empty">
+        お気に入りのチームを登録すると、試合がここに並びます。<br />
+        <a href="<?= h(url('pages/favorite/favorite.php')) ?>">チームを登録する</a>
+      </p>
+
+      <ul class="home__slider">
+        <?php foreach ($favoriteCandidates as $match) : ?>
+          <li class="home__slide is-hidden" data-favorite-slide>
+            <a
+              class="fav-match"
+              href="<?= h($match['detailPath'] === '' ? url('pages/favorite/favorite.php') : url($match['detailPath'])) ?>"
+              data-team-ids="<?= h(implode(' ', $match['teamIds'])) ?>">
+              <span class="fav-match__round"><?= h(match_sport_label($match['sport'])) ?></span>
+              <span class="fav-match__teams"><?php $teamsVs($match, 'fav-match'); ?></span>
+              <span class="fav-match__when"><?= h(home_when($match)) ?></span>
+            </a>
+          </li>
+        <?php endforeach; ?>
+      </ul>
+    </section>
+
+    <section class="home__section">
+      <h2 class="home__heading">今から観戦できる試合</h2>
+
+      <?php if ($nowMatches === []) : ?>
+        <p class="home__empty">これから行われる試合はまだありません。</p>
+      <?php else : ?>
+        <ul class="home__list">
+          <?php foreach ($nowMatches as $match) : ?>
+            <li>
               <a
-                class="fav-match"
-                href="<?= h($match['detailPath'] === '' ? url('pages/favorite/favorite.php') : url($match['detailPath'])) ?>"
-                data-team-ids="<?= h(implode(' ', $match['teamIds'])) ?>"
-              >
-                <span class="fav-match__round"><?= h(match_sport_label($match['sport'])) ?></span>
-                <span class="fav-match__teams"><?php $teamsVs($match, 'fav-match'); ?></span>
-                <span class="fav-match__when"><?= h(home_when($match)) ?></span>
+                class="now-match"
+                href="<?= h($match['detailPath'] === '' ? url('pages/match/match-list.php') : url($match['detailPath'])) ?>"
+                <?php if ($match['coords'] !== null) : ?>
+                data-lat="<?= (float) $match['coords']['lat'] ?>"
+                data-lng="<?= (float) $match['coords']['lng'] ?>"
+                <?php endif; ?>>
+                <span class="now-match__main">
+                  <span class="now-match__teams"><?php $teamsVs($match, 'now-match'); ?></span>
+                  <span class="now-match__info">
+                    <span class="now-match__league">
+                      <?= h(match_sport_label($match['sport'])) ?>
+                      <?= $match['organizer'] !== '' ? '・' . h($match['organizer']) : '' ?>
+                    </span>
+                    <span class="now-match__title"><?= h($match['title']) ?></span>
+                    <span class="now-match__meta">
+                      <span class="now-match__time"><?= h(home_when($match)) ?></span>
+                      <span class="now-match__distance is-hidden" data-distance>
+                        <img src="<?= h(url('images/icons/point.svg')) ?>" alt="" width="11" height="14" />
+                        <span data-distance-text></span>
+                      </span>
+                    </span>
+                  </span>
+                </span>
+                <span class="now-match__ticket">
+                  <span class="now-match__venue">
+                    <img src="<?= h(url('images/icons/point.svg')) ?>" alt="" width="11" height="14" />
+                    <?= h($match['venue']) ?>
+                  </span>
+                  <span class="now-match__price"><?= h(match_price_label($match['price'])) ?></span>
+                </span>
               </a>
             </li>
           <?php endforeach; ?>
         </ul>
-      </section>
+      <?php endif; ?>
+    </section>
+  </main>
 
-      <section class="home__section">
-        <h2 class="home__heading">今から観戦できる試合</h2>
+  <script type="application/json" id="favorite-state">
+    <?= favorite_state_json($favoriteState) ?>
+  </script>
+  <script src="<?= h(asset('js/main.js')) ?>"></script>
+  <script src="<?= h(asset('js/common/favorite-store.js')) ?>"></script>
+  <script src="<?= h(asset('js/pages/home.js')) ?>"></script>
+  <?php require __DIR__ . '/../menu-bar.php'; ?>
+</body>
 
-        <?php if ($nowMatches === []) : ?>
-          <p class="home__empty">これから行われる試合はまだありません。</p>
-        <?php else : ?>
-          <ul class="home__list">
-            <?php foreach ($nowMatches as $match) : ?>
-              <li>
-                <a
-                  class="now-match"
-                  href="<?= h($match['detailPath'] === '' ? url('pages/match/match-list.php') : url($match['detailPath'])) ?>"
-                  <?php if ($match['coords'] !== null) : ?>
-                    data-lat="<?= (float) $match['coords']['lat'] ?>"
-                    data-lng="<?= (float) $match['coords']['lng'] ?>"
-                  <?php endif; ?>
-                >
-                  <span class="now-match__main">
-                    <span class="now-match__teams"><?php $teamsVs($match, 'now-match'); ?></span>
-                    <span class="now-match__info">
-                      <span class="now-match__league">
-                        <?= h(match_sport_label($match['sport'])) ?>
-                        <?= $match['organizer'] !== '' ? '・' . h($match['organizer']) : '' ?>
-                      </span>
-                      <span class="now-match__title"><?= h($match['title']) ?></span>
-                      <span class="now-match__meta">
-                        <span class="now-match__time"><?= h(home_when($match)) ?></span>
-                        <span class="now-match__distance is-hidden" data-distance>
-                          <img src="<?= h(url('images/icons/point.svg')) ?>" alt="" width="11" height="14" />
-                          <span data-distance-text></span>
-                        </span>
-                      </span>
-                    </span>
-                  </span>
-                  <span class="now-match__ticket">
-                    <span class="now-match__venue">
-                      <img src="<?= h(url('images/icons/point.svg')) ?>" alt="" width="11" height="14" />
-                      <?= h($match['venue']) ?>
-                    </span>
-                    <span class="now-match__price"><?= h(match_price_label($match['price'])) ?></span>
-                  </span>
-                </a>
-              </li>
-            <?php endforeach; ?>
-          </ul>
-        <?php endif; ?>
-      </section>
-    </main>
-
-    <script type="application/json" id="favorite-state"><?= favorite_state_json($favoriteState) ?></script>
-    <script src="<?= h(asset('js/main.js')) ?>"></script>
-    <script src="<?= h(asset('js/common/favorite-store.js')) ?>"></script>
-    <script src="<?= h(asset('js/pages/home.js')) ?>"></script>
-    <?php require __DIR__ . '/../menu-bar.php'; ?>
-  </body>
 </html>

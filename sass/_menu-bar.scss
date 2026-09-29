@@ -1,101 +1,265 @@
-// 画面下に固定するメニューバー（pages/menu-bar.php）。全ページ共通なので、
-// 変えるときはチームに共有すること。
-//
-// 下の段がいつも出ている項目、上の段が「メニュー」で開く項目。
-// 高さが変わってもページの中身が隠れないよう、各ページは下に $menu-bar-space の余白を取る。
-@use "variables" as *;
+// --- ブレークポイント ---
+$breakpoints: (
+  mobile: 375px,
+  tablet: 768px,
+  desktop: 1100px
+);
+
+@mixin mq($breakpoint: desktop) {
+  @media (max-width: map-get($breakpoints, $breakpoint)) {
+    @content;
+  }
+}
 
 .menu-bar {
-  // 画面下に貼り付ける。bottom / left / width は
-  // position: fixed を持つこの要素側に書かないと効かない
+  // 画面下に固定
   position: fixed;
-  right: 16px;
-  bottom: calc(16px + env(safe-area-inset-bottom));
-  left: 16px;
-  z-index: 1000;
-  max-width: 480px;
-  margin: 0 auto;
-  padding: 8px;
-  background: rgba($color-bg, 0.2);
-  border: 1px solid $color-border;
-  border-radius: 100px;
-  box-shadow: 0 4px 16px rgba($color-secondary, 0.12);
-  backdrop-filter: blur(8px);
-  font-family: $font-body;
+  bottom: 50px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  max-width: 400px;
 
-  &__list {
-    display: grid;
-    grid-template-columns: repeat(5, 1fr);
-    margin: 0;
-    padding: 0;
+  z-index: 1000;
+
+  // =========================
+  // 追加メニュー
+  // =========================
+  &__sub {
+    position: fixed;
+    bottom: 75px;
+    left: 50%;
+    transform: translateX(-50%);
+
+    width: 100%;
+    max-width: 370px;
+    height: 0;
+
+    opacity: 0;
+    overflow: hidden;
+    visibility: hidden;
+
+    // 背景は持たせない
+    background: transparent;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    border: none;
+    box-shadow: none;
+
+    transition:
+      height 0.4s ease,
+      opacity 0.3s ease,
+      visibility 0.4s;
+
+    z-index: 900;
+
+    &.is-open {
+      height: 60px;
+      opacity: 1;
+      visibility: visible;
+    }
+  }
+
+  // =========================
+  // 追加メニュー一覧
+  // =========================
+  &__sub-list {
+    display: flex;
+    justify-content: center;
+    gap: 32px;
+
+    max-width: 480px;
+    margin: 0 auto;
+    padding: 8px 0;
+
     list-style: none;
 
-    // 開いたときの上の段。下の段とは線で分ける
-    &--sub {
-      margin-bottom: 8px;
-      padding-bottom: 8px;
-      border-bottom: 1px solid $color-border;
+    @include mq(desktop) {
+      gap: 8px;
+    }
+  }
 
-      &[hidden] {
-        display: none;
+  // =========================
+  // メニュー開閉ボタン
+  // =========================
+  &__toggle {
+    cursor: pointer;
+    border: none;
+    background: none;
+
+    .menu-bar__icon {
+      transition: opacity 0.2s ease;
+    }
+
+    &.is-changing {
+      .menu-bar__icon {
+        opacity: 0;
       }
     }
   }
 
-  &__item {
-    min-width: 0;
+  // =========================
+  // 下のメニューバー
+  // =========================
+  &__nav {
+    position: relative;
+    display: flex;
+    align-items: flex-end;
+    background: rgba(181, 181, 181, 0.25);
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    border: 1px solid rgba(255, 255, 255, 0.35);
+    box-shadow:
+      0 4px 20px rgba(0, 0, 0, 0.08),
+      inset 0 1px 1px rgba(255, 255, 255, 0.4);
+    padding: 8px 0;
+    margin: auto;
+    height: 60px;
+    width: 100%;
+    max-width: 370px;
+    border-radius: 100px;
+    // これを追加
+    transform-origin: bottom center;
   }
 
-  // a・button・span のどれでも同じ見た目にする
+  // =========================
+  // 下のメニュー一覧
+  // =========================
+  &__list {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    align-self: flex-end;
+    width: 100%;
+    max-width: 480px;
+
+    margin: 0 auto;
+    padding: 0;
+
+    list-style: none;
+
+    @include mq(desktop) {
+      gap: 8px;
+    }
+  }
+
+  // =========================
+  // メニュー項目
+  // =========================
+  &__item {
+    width: 65px;
+  }
+
+  // =========================
+  // リンク
+  // =========================
   &__link {
     display: flex;
     flex-direction: column;
     align-items: center;
+
     gap: 4px;
-    width: 100%;
-    padding: 4px 0;
-    background: none;
-    border: 0;
-    border-radius: 100px;
-    color: $color-text;
-    font: inherit;
+    padding: 4px 8px;
+
+    color: #333;
     text-decoration: none;
-    cursor: pointer;
 
-    &:hover {
-      background: $color-bg-gray;
-    }
-
-    &:focus-visible {
-      outline: 2px solid $color-primary;
-      outline-offset: 2px;
-    }
-
-    &.is-active {
-      background: $color-primary-light;
-      color: $color-primary;
-    }
-
-    // まだ作っていない機能（プラス・遠征）
-    &--disabled {
-      cursor: default;
-      opacity: 0.4;
-
-      &:hover {
-        background: none;
-      }
+    &:hover .menu-bar__label {
+      text-decoration: underline;
     }
   }
 
+  // =========================
+  // アイコン
+  // =========================
   &__icon {
     width: 24px;
     height: 24px;
   }
 
+  // =========================
+  // ラベル
+  // =========================
   &__label {
     font-size: 12px;
-    font-weight: 700;
     line-height: 1.2;
     white-space: nowrap;
   }
+}
+
+
+// =========================
+// メニューアイコン表示
+// =========================
+
+@keyframes menu {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+
+// =========================
+// バーを開く
+// =========================
+
+@keyframes bar {
+  from {
+    height: 60px;
+    border-radius: 100px;
+  }
+
+  to {
+    height: 127px;
+    border-radius: 30px;
+  }
+}
+
+// =========================
+// バーを閉じる
+// =========================
+
+@keyframes bar-close {
+  from {
+    height: 127px;
+    border-radius: 30px;
+  }
+
+  to {
+    height: 60px;
+    border-radius: 100px;
+  }
+}
+
+
+// =========================
+// 追加メニューの表示
+// =========================
+
+.menu-bar__sub.is-open .menu-bar__item {
+  animation: menu 0.2s ease forwards;
+}
+
+
+// =========================
+// バーを開く
+// =========================
+
+.menu-bar:has(.menu-bar__sub.is-open) .menu-bar__nav {
+  animation: bar 0.45s ease forwards;
+}
+
+
+// =========================
+// バーを閉じる
+// =========================
+
+.menu-bar__nav.is-closing {
+  animation: bar-close 0.45s ease forwards;
 }
