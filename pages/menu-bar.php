@@ -16,38 +16,10 @@
  * href が null の項目は「準備中」として押せない表示にする（href="#" は置かない）。
  */
 
-
-/**
- * pages/menu-bar.php
- * 画面下に固定するメニューバー。
- */
-
 declare(strict_types=1);
 
 require_once __DIR__ . '/../lib/support.php';
 
-<<<<<<< HEAD
-/**
- * 下段のメニュー
- */
-$menuItems = [
-  ['href' => 'pages/home/home.php',              'icon' => 'home.svg',     'label' => 'ホーム'],
-  ['href' => 'pages/match/match-list.php',       'icon' => 'calendar.svg', 'label' => '日程'],
-  ['href' => 'pages/map/map.php',                'icon' => 'map.svg',      'label' => '地図'],
-  ['icon' => 'menu.svg',                         'label' => 'メニュー',    'type' => 'toggle'],
-  ['href' => 'pages/match/match-search.php',     'icon' => 'search.svg',   'label' => '探す'],
-];
-
-/**
- * 上段の追加メニュー
- */
-$subMenuItems = [
-  ['href' => 'pages/settings/settings.php',         'icon' => 'setting.svg',      'label' => '設定'],
-  ['href' => 'pages/plus/plus.php',                'icon' => 'crown.svg',           'label' => 'プラス'],
-  ['href' => 'pages/notification/notification.php', 'icon' => 'mail.svg',  'label' => 'お知らせ'],
-  ['href' => 'pages/travel/travel.php',            'icon' => 'travel.svg',        'label' => '遠征'],
-  ['href' => 'pages/account/account.php',          'icon' => 'account.svg',       'label' => 'アカウント'],
-=======
 /** icon はファイル名、label はアイコンの下に出す文字 */
 $menuMain = [
   ['href' => 'pages/home/home.php',          'icon' => 'home.svg',     'label' => 'ホーム'],
@@ -55,7 +27,6 @@ $menuMain = [
   ['href' => 'pages/map/map.php',            'icon' => 'map.svg',      'label' => 'マップ'],
   // 3 つめと 4 つめのあいだに「メニュー」の開閉ボタンが入る
   ['href' => 'pages/match/match-search.php', 'icon' => 'search.svg',   'label' => '検索'],
->>>>>>> 182d0296eb1d8489b700edfaa7b118a3a3674e48
 ];
 
 $menuSub = [
@@ -92,34 +63,7 @@ $menuItem = static function (array $item): void {
 };
 
 ?>
-
 <!-- メニュー -->
-<<<<<<< HEAD
-<section class="menu-bar">
-
-  <!-- 追加メニュー -->
-  <div class="menu-bar__sub">
-    <ul class="menu-bar__sub-list">
-
-      <?php foreach ($subMenuItems as $item) : ?>
-
-        <li class="menu-bar__item">
-          <a
-            class="menu-bar__link"
-            href="<?= h(url($item['href'])) ?>">
-
-            <img
-              class="menu-bar__icon"
-              src="<?= h(url('images/icons/' . $item['icon'])) ?>"
-              alt=""
-              width="24"
-              height="24" />
-
-            <span class="menu-bar__label">
-              <?= h($item['label']) ?>
-            </span>
-
-=======
 <nav class="menu-bar" aria-label="メインメニュー">
   <ul class="menu-bar__list menu-bar__list--sub" id="menu-bar-sub" hidden>
     <?php foreach ($menuSub as $item) : ?>
@@ -135,7 +79,6 @@ $menuItem = static function (array $item): void {
             <?= $menuIsCurrent($item['href']) ? 'aria-current="page"' : '' ?>
           >
             <?php $menuItem($item); ?>
->>>>>>> 182d0296eb1d8489b700edfaa7b118a3a3674e48
           </a>
         <?php endif; ?>
       </li>
@@ -157,108 +100,6 @@ $menuItem = static function (array $item): void {
             <?php $menuItem(['icon' => 'menu.svg', 'label' => 'メニュー']); ?>
           </button>
         </li>
-<<<<<<< HEAD
-
-      <?php endforeach; ?>
-
-    </ul>
-  </div>
-
-
-  <!-- 下段の通常メニュー -->
-  <nav class="menu-bar__nav">
-
-    <ul class="menu-bar__list">
-
-      <?php foreach ($menuItems as $item) : ?>
-
-        <li class="menu-bar__item">
-
-          <?php if (($item['type'] ?? '') === 'toggle') : ?>
-
-            <!-- メニュー開閉ボタン -->
-            <button
-              type="button"
-              class="menu-bar__link menu-bar__toggle"
-              aria-expanded="false">
-
-              <img
-                class="menu-bar__icon"
-                src="<?= h(url('images/icons/' . $item['icon'])) ?>"
-                alt=""
-                width="24"
-                height="24" />
-
-              <span class="menu-bar__label">
-                <?= h($item['label']) ?>
-              </span>
-
-            </button>
-
-          <?php else : ?>
-
-            <!-- 通常のリンク -->
-            <a
-              class="menu-bar__link"
-              href="<?= h(url($item['href'])) ?>">
-
-              <img
-                class="menu-bar__icon"
-                src="<?= h(url('images/icons/' . $item['icon'])) ?>"
-                alt=""
-                width="24"
-                height="24" />
-
-              <span class="menu-bar__label">
-                <?= h($item['label']) ?>
-              </span>
-
-            </a>
-
-          <?php endif; ?>
-
-        </li>
-
-      <?php endforeach; ?>
-
-    </ul>
-
-  </nav>
-
-</section>
-
-
-<script>
-  const menuToggle = document.querySelector('.menu-bar__toggle');
-  const subMenu = document.querySelector('.menu-bar__sub');
-  const menuIcon = menuToggle.querySelector('.menu-bar__icon');
-
-  menuToggle.addEventListener('click', () => {
-
-    const isOpen = subMenu.classList.toggle('is-open');
-
-    menuToggle.setAttribute('aria-expanded', isOpen);
-
-    // SVGを一度消す
-    menuToggle.classList.add('is-changing');
-
-    // 消えてからSVGを変更
-    setTimeout(() => {
-
-      if (isOpen) {
-        menuIcon.src = "<?= h(url('images/icons/close.svg')) ?>";
-      } else {
-        menuIcon.src = "<?= h(url('images/icons/menu.svg')) ?>";
-      }
-
-      // 新しいSVGを表示
-      menuToggle.classList.remove('is-changing');
-
-    }, 200);
-
-  });
-</script>
-=======
       <?php endif; ?>
       <li class="menu-bar__item">
         <a
@@ -273,4 +114,3 @@ $menuItem = static function (array $item): void {
   </ul>
 </nav>
 <script src="<?= h(asset('js/common/navigation.js')) ?>"></script>
->>>>>>> 182d0296eb1d8489b700edfaa7b118a3a3674e48
