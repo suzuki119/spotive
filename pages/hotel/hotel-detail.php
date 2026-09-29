@@ -20,8 +20,8 @@ require_once __DIR__ . '/../../lib/hotel.php';
 // -------------------------------------------------------------------
 // ホテルと、どの試合（会場）から来たかの取得
 // -------------------------------------------------------------------
-$hotelId = trim((string) ($_GET['id'] ?? ''));
-$matchId = trim((string) ($_GET['match'] ?? ''));
+$hotelId = input_string($_GET, 'id');
+$matchId = input_string($_GET, 'match');
 $hotel   = find_hotel($hotelId);
 
 if ($hotel === null) {

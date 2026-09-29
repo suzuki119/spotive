@@ -47,10 +47,10 @@ if (is_post()) {
 // -------------------------------------------------------------------
 $teams   = load_teams();
 $areas   = travel_areas();
-$teamId  = trim((string) ($input['team'] ?? ''));
-$gameRef = trim((string) ($input['game'] ?? ''));
-$fromId  = trim((string) ($input['from'] ?? ''));
-$hotelId = trim((string) ($input['hotel'] ?? ''));
+$teamId  = input_string($input, 'team');
+$gameRef = input_string($input, 'game');
+$fromId  = input_string($input, 'from');
+$hotelId = input_string($input, 'hotel');
 $picked  = array_filter((array) ($input['extras'] ?? []), 'is_string');
 
 $user        = null;

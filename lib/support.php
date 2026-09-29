@@ -51,6 +51,11 @@ function config(string $path, mixed $default = null): mixed
   return $value;
 }
 
+// PHP の date() / strtotime() を日本時間にそろえる。
+// php.ini の date.timezone は環境ごとに違う（UTC のこともある）ので、ここで決める。
+// DB 側（config/db.php の time_zone = '+09:00'）と合わせないと、公開日時や「今日」の判定が 9 時間ずれる
+date_default_timezone_set((string) config('app.timezone', 'Asia/Tokyo'));
+
 // ---------------------------------------------------------------------
 // 出力
 // ---------------------------------------------------------------------
@@ -59,6 +64,17 @@ function config(string $path, mixed $default = null): mixed
 function h(?string $value): string
 {
   return htmlspecialchars((string) $value, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+}
+
+/**
+ * $_GET / $_POST から文字列を 1 つ受け取る（前後の空白は取る）。
+ * ?sport[]=x のように配列で送られてきたときは、既定値にする
+ * （(string) で配列を文字列にすると Warning が画面に出て、ファイルのパスが見えるため）
+ */
+function input_string(array $in, string $key, string $default = ''): string
+{
+  $v = $in[$key] ?? $default;
+  return is_string($v) ? trim($v) : $default;
 }
 
 /** 任意入力。空文字は NULL として保存する */

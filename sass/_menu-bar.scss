@@ -178,6 +178,16 @@ $breakpoints: (
     &:hover .menu-bar__label {
       text-decoration: underline;
     }
+
+    // リンク先のページがまだ無い項目（準備中）
+    &--disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+
+      &:hover .menu-bar__label {
+        text-decoration: none;
+      }
+    }
   }
 
   // =========================

@@ -395,11 +395,11 @@ function travel_nearby_games(array $trip): array
  */
 function travel_create_plan(array $user, array $in): int
 {
-  $teamId  = (string) ($in['team'] ?? '');
+  $teamId  = input_string($in, 'team');
   $teams   = load_teams();
   $areas   = travel_areas();
-  $trip    = isset($teams[$teamId]) ? travel_find_trip($teamId, (string) ($in['game'] ?? '')) : null;
-  $area    = $areas[(string) ($in['from'] ?? '')] ?? null;
+  $trip    = isset($teams[$teamId]) ? travel_find_trip($teamId, input_string($in, 'game')) : null;
+  $area    = $areas[input_string($in, 'from')] ?? null;
 
   if ($trip === null) {
     throw new AppError('遠征する試合が見つかりません。もう一度選び直してください。');
@@ -424,7 +424,7 @@ function travel_create_plan(array $user, array $in): int
     $extras[] = $game;
   }
 
-  $plan     = travel_estimate([...$trip['games'], ...$extras], $area, (string) ($in['hotel'] ?? ''), $trip['games'][0]);
+  $plan     = travel_estimate([...$trip['games'], ...$extras], $area, input_string($in, 'hotel'), $trip['games'][0]);
   $opponent = (string) ($teams[$trip['games'][0]['home']]['name'] ?? $trip['venue']);
   $title    = mb_substr((string) $teams[$teamId]['name'] . 'vs' . $opponent . '観戦プラン', 0, 150);
 
