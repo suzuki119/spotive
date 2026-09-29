@@ -1,0 +1,340 @@
+// ホテル詳細画面（pages/hotel/hotel-detail.php）専用のスタイル。
+// スマホを基準に書き、min-width で広い画面に広げる（AGENTS.md「対応デバイス」）。
+@use "variables" as *;
+
+$hotel-shadow: 0 2px 12px rgba($color-secondary, 0.1);
+
+.hotel-detail {
+  max-width: 720px; // 写真と文字が横に間延びしないよう、PC でも細めにする
+  margin: 0 auto;
+  padding: 24px 16px $menu-bar-space;
+  color: $color-text;
+  font-family: $font-body;
+
+  @media (min-width: $bp-tablet) {
+    padding: 32px 24px $menu-bar-space;
+  }
+
+  &__back {
+    display: inline-block;
+    color: $color-secondary;
+    font-weight: 700;
+    text-decoration: none;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+
+  &__mock {
+    margin: 16px 0 0;
+    padding: 8px 12px;
+    border-radius: $radius-md;
+    background: $color-primary-light;
+    color: $color-primary-dark;
+    font-size: 12px;
+  }
+
+  &__empty {
+    margin: 24px 0 0;
+    color: $color-text-sub;
+  }
+
+  &__photo {
+    display: block;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 740 / 400;
+    margin-top: 16px;
+    object-fit: cover;
+    border-radius: $radius-lg;
+
+    // 写真が無いときの代わり
+    &--none {
+      display: grid;
+      place-items: center;
+      font-size: 64px;
+      background: linear-gradient(135deg, $color-primary-light, $color-primary);
+    }
+  }
+
+  &__name {
+    margin: 24px 0 0;
+    color: $color-secondary;
+    font-size: 24px;
+    font-weight: 700;
+    line-height: 1.4;
+  }
+
+  &__address {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 8px 0 0;
+    padding-bottom: 16px;
+    border-bottom: 1px solid $color-secondary;
+    font-weight: 500;
+  }
+
+  // 設備とチェックイン。下を線で区切る
+  &__info {
+    padding: 16px 0 24px;
+    border-bottom: 1px solid $color-secondary;
+  }
+
+  &__times {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 32px;
+    margin: 16px 0 0;
+  }
+
+  &__time {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    dt {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12px;
+    }
+
+    dd {
+      margin: 0;
+      font-family: $font-heading;
+      font-weight: 600;
+    }
+  }
+
+  &__heading {
+    margin: 32px 0 16px;
+    color: $color-secondary;
+    font-size: 20px;
+    font-weight: 700;
+  }
+}
+
+// ---- 設備（Wi-Fi・朝食など）----
+.hotel-amenities {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+
+  &__item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    min-width: 48px;
+    padding: 8px 12px;
+    border-radius: $radius-md;
+    background: $color-bg;
+    box-shadow: $hotel-shadow;
+  }
+
+  &__icon {
+    width: 24px;
+    height: 24px;
+  }
+
+  &__label {
+    font-size: 11px;
+    font-weight: 700;
+    white-space: nowrap;
+  }
+}
+
+// ---- 白いカード（アクセス情報・予約）----
+.hotel-card {
+  margin-top: 24px;
+  padding: 24px 16px;
+  border-radius: $radius-lg;
+  background: $color-bg;
+  box-shadow: $hotel-shadow;
+
+  @media (min-width: $bp-tablet) {
+    padding: 24px;
+  }
+
+  &--reserve {
+    margin-top: 0;
+  }
+
+  &__title {
+    margin: 0;
+    color: $color-secondary;
+    font-size: 18px;
+    font-weight: 700;
+  }
+
+  &__sub,
+  &__note {
+    margin: 4px 0 0;
+    color: $color-text-sub;
+    font-size: 12px;
+  }
+
+  &__note {
+    margin-top: 12px;
+  }
+
+  // 黒い大きなボタン（アクセスルートを検索）
+  &__button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 16px;
+    padding: 12px 16px;
+    border-radius: $radius-full;
+    background: $color-secondary;
+    color: $color-bg;
+    font-weight: 700;
+    text-decoration: none;
+
+    &:hover {
+      background: $color-primary-dark;
+    }
+
+    img {
+      filter: invert(1); // 黒いアイコンを白く見せる
+    }
+  }
+
+  &__row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+  }
+
+  &__price {
+    display: grid;
+    margin: 0;
+    color: $color-secondary;
+    font-family: $font-heading;
+    font-size: 28px;
+    font-weight: 600;
+    line-height: 1.2;
+  }
+
+  &__price-label {
+    color: $color-text-sub;
+    font-family: $font-body;
+    font-size: 12px;
+    font-weight: 400;
+  }
+
+  &__reserve {
+    flex-shrink: 0;
+    padding: 12px 24px;
+    border-radius: $radius-full;
+    background: $color-accent; // 予約は CTA なのでアクセントのオレンジ
+    color: $color-bg;
+    font-weight: 700;
+    text-decoration: none;
+
+    &.is-disabled {
+      background: $color-border;
+      color: $color-text-sub;
+      font-size: 12px;
+    }
+  }
+
+  // 遠征プランに追加（枠線のボタン）
+  &__plan {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 16px;
+    padding: 8px 16px;
+    border: 1px solid $color-secondary;
+    border-radius: $radius-full;
+    color: $color-secondary;
+    font-weight: 700;
+
+    &.is-disabled {
+      opacity: 0.4;
+    }
+  }
+}
+
+// ---- 徒歩 ｜ 電車 ｜ 会場まで ----
+.hotel-access {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  margin: 16px 0 0;
+  padding: 0;
+  list-style: none;
+
+  &__item {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    grid-template-rows: auto auto;
+    align-items: center;
+    column-gap: 8px;
+    padding: 0 8px;
+
+    & + & {
+      border-left: 1px solid $color-border;
+    }
+
+    img {
+      grid-row: span 2;
+    }
+  }
+
+  &__label {
+    font-size: 11px;
+    font-weight: 700;
+  }
+
+  &__value {
+    font-family: $font-heading;
+    font-size: 18px;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+}
+
+// ---- 試合詳細（pages/match/match-detail.php）の「周辺のホテル」----
+// ホテルの部品なので、試合詳細のパーシャルではなくこちらに置く
+.near-hotels {
+  display: grid;
+  gap: 8px;
+  margin: 12px 0 0;
+  padding: 0;
+  list-style: none;
+
+  &__item {
+    display: grid;
+    gap: 4px;
+    padding: 12px 16px;
+    border: 1px solid $color-border;
+    border-radius: $radius-md;
+    background: $color-bg;
+    color: $color-text;
+    text-decoration: none;
+
+    &:hover {
+      border-color: $color-primary;
+    }
+  }
+
+  &__name {
+    color: $color-secondary;
+    font-weight: 700;
+  }
+
+  &__meta {
+    color: $color-text-sub;
+    font-size: 12px;
+  }
+}

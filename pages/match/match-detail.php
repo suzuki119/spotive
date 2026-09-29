@@ -8,12 +8,14 @@
  *   type=match       … data/matches.json の仮データ（id は match-001 の形）
  *   type=tournament  … 主催者が掲載した大会。v_public_tournaments から取る（id は数字）
  *
- * 周辺施設・ホテル・天気は主要機能 5・6（後回し）なので、まだ出さない。
+ * 周辺施設・天気は主要機能 5・6（後回し）なので、まだ出さない。
+ * ホテルだけは、画面確認用の仮データ（lib/hotel.php）で「周辺のホテル」を出している。
  */
 
 declare(strict_types=1);
 
 require_once __DIR__ . '/../../lib/match.php';
+require_once __DIR__ . '/../../lib/hotel.php';
 
 /** 競技コード => アイコン。js/pages/map.js の SPORTS と揃える（表示名は lib/match.php） */
 const DETAIL_SPORT_ICONS = [
@@ -194,6 +196,13 @@ if ($game !== null) {
   }
 }
 
+// 会場の近くのホテル（仮データ）。仮データの試合から来たときだけ、戻り先として試合を渡す
+$nearHotels = [];
+if ($game !== null && $game['lat'] !== null && $game['lng'] !== null) {
+  $nearHotels = hotels_near((float) $game['lat'], (float) $game['lng']);
+}
+$fromMatchId = $type === 'match' ? $rawId : '';
+
 $pageTitle = $game === null ? '試合が見つかりません' : $game['title'];
 
 ?>
@@ -341,6 +350,26 @@ $pageTitle = $game === null ? '試合が見つかりません' : $game['title'];
             <p class="match-detail__text">会場の位置情報がまだ登録されていません。</p>
           <?php endif; ?>
         </section>
+
+        <?php if ($nearHotels !== []) : ?>
+          <section class="match-detail__section">
+            <h2 class="match-detail__heading">周辺のホテル</h2>
+            <p class="match-detail__text">画面確認用の仮データです（実在しません）。</p>
+            <ul class="near-hotels">
+              <?php foreach ($nearHotels as $nearHotel) : ?>
+                <li>
+                  <a class="near-hotels__item" href="<?= h(url(hotel_detail_path((string) $nearHotel['id'], $fromMatchId))) ?>">
+                    <span class="near-hotels__name"><?= h((string) $nearHotel['name']) ?></span>
+                    <span class="near-hotels__meta">
+                      会場から約<?= h(hotel_distance_label((float) $nearHotel['distance'])) ?>
+                      ・ ¥<?= h(number_format((int) $nearHotel['priceMin'])) ?>〜
+                    </span>
+                  </a>
+                </li>
+              <?php endforeach; ?>
+            </ul>
+          </section>
+        <?php endif; ?>
       <?php endif; ?>
     </div>
   </main>

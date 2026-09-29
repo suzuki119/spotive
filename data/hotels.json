@@ -1,0 +1,626 @@
+[
+  {
+    "id": "hotel-001",
+    "name": "スタジアムステイ なごやスタジアム前（仮）",
+    "venue": "なごやスタジアム",
+    "pref": "愛知県",
+    "address": "愛知県名古屋市（仮の住所）",
+    "lat": 35.18905,
+    "lng": 136.95246,
+    "image": "",
+    "amenities": [
+      "wifi",
+      "breakfast",
+      "laundry"
+    ],
+    "checkIn": "15:00",
+    "checkOut": "11:00",
+    "priceMin": 10300,
+    "trainMinutes": null,
+    "reserveUrl": ""
+  },
+  {
+    "id": "hotel-002",
+    "name": "ビジネスイン なごやスタジアム（仮）",
+    "venue": "なごやスタジアム",
+    "pref": "愛知県",
+    "address": "愛知県名古屋市（仮の住所）",
+    "lat": 35.17509,
+    "lng": 136.96514,
+    "image": "",
+    "amenities": [
+      "wifi",
+      "parking"
+    ],
+    "checkIn": "16:00",
+    "checkOut": "10:00",
+    "priceMin": 7500,
+    "trainMinutes": 12,
+    "reserveUrl": ""
+  },
+  {
+    "id": "hotel-003",
+    "name": "スタジアムステイ ちばベイパーク球場前（仮）",
+    "venue": "ちばベイパーク球場",
+    "pref": "千葉県",
+    "address": "千葉県千葉市（仮の住所）",
+    "lat": 35.64815,
+    "lng": 140.03599,
+    "image": "",
+    "amenities": [
+      "wifi",
+      "breakfast",
+      "laundry"
+    ],
+    "checkIn": "15:00",
+    "checkOut": "11:00",
+    "priceMin": 9800,
+    "trainMinutes": null,
+    "reserveUrl": ""
+  },
+  {
+    "id": "hotel-004",
+    "name": "ビジネスイン ちばベイパーク球場（仮）",
+    "venue": "ちばベイパーク球場",
+    "pref": "千葉県",
+    "address": "千葉県千葉市（仮の住所）",
+    "lat": 35.63419,
+    "lng": 140.04874,
+    "image": "",
+    "amenities": [
+      "wifi",
+      "parking"
+    ],
+    "checkIn": "16:00",
+    "checkOut": "10:00",
+    "priceMin": 7000,
+    "trainMinutes": 12,
+    "reserveUrl": ""
+  },
+  {
+    "id": "hotel-005",
+    "name": "スタジアムステイ なにわドーム前（仮）",
+    "venue": "なにわドーム",
+    "pref": "大阪府",
+    "address": "大阪府大阪市（仮の住所）",
+    "lat": 34.67545,
+    "lng": 135.49803,
+    "image": "",
+    "amenities": [
+      "wifi",
+      "breakfast",
+      "laundry"
+    ],
+    "checkIn": "15:00",
+    "checkOut": "11:00",
+    "priceMin": 10800,
+    "trainMinutes": null,
+    "reserveUrl": ""
+  },
+  {
+    "id": "hotel-006",
+    "name": "ビジネスイン なにわドーム（仮）",
+    "venue": "なにわドーム",
+    "pref": "大阪府",
+    "address": "大阪府大阪市（仮の住所）",
+    "lat": 34.66149,
+    "lng": 135.51063,
+    "image": "",
+    "amenities": [
+      "wifi",
+      "parking"
+    ],
+    "checkIn": "16:00",
+    "checkOut": "10:00",
+    "priceMin": 6500,
+    "trainMinutes": 12,
+    "reserveUrl": ""
+  },
+  {
+    "id": "hotel-007",
+    "name": "スタジアムステイ はかたベースボールパーク前（仮）",
+    "venue": "はかたベースボールパーク",
+    "pref": "福岡県",
+    "address": "福岡県福岡市（仮の住所）",
+    "lat": 33.59845,
+    "lng": 130.36707,
+    "image": "",
+    "amenities": [
+      "wifi",
+      "breakfast",
+      "laundry"
+    ],
+    "checkIn": "15:00",
+    "checkOut": "11:00",
+    "priceMin": 10300,
+    "trainMinutes": null,
+    "reserveUrl": ""
+  },
+  {
+    "id": "hotel-008",
+    "name": "ビジネスイン はかたベースボールパーク（仮）",
+    "venue": "はかたベースボールパーク",
+    "pref": "福岡県",
+    "address": "福岡県福岡市（仮の住所）",
+    "lat": 33.58449,
+    "lng": 130.3795,
+    "image": "",
+    "amenities": [
+      "wifi",
+      "parking"
+    ],
+    "checkIn": "16:00",
+    "checkOut": "10:00",
+    "priceMin": 7500,
+    "trainMinutes": 12,
+    "reserveUrl": ""
+  },
+  {
+    "id": "hotel-009",
+    "name": "スタジアムステイ 東京ベイアリーナ前（仮）",
+    "venue": "東京ベイアリーナ",
+    "pref": "東京都",
+    "address": "東京都江東区（仮の住所）",
+    "lat": 35.62815,
+    "lng": 139.78399,
+    "image": "",
+    "amenities": [
+      "wifi",
+      "breakfast",
+      "laundry"
+    ],
+    "checkIn": "15:00",
+    "checkOut": "11:00",
+    "priceMin": 9800,
+    "trainMinutes": null,
+    "reserveUrl": ""
+  },
+  {
+    "id": "hotel-010",
+    "name": "ビジネスイン 東京ベイアリーナ（仮）",
+    "venue": "東京ベイアリーナ",
+    "pref": "東京都",
+    "address": "東京都江東区（仮の住所）",
+    "lat": 35.61419,
+    "lng": 139.79673,
+    "image": "",
+    "amenities": [
+      "wifi",
+      "parking"
+    ],
+    "checkIn": "16:00",
+    "checkOut": "10:00",
+    "priceMin": 7000,
+    "trainMinutes": 12,
+    "reserveUrl": ""
+  },
+  {
+    "id": "hotel-011",
+    "name": "スタジアムステイ なにわ中央体育館前（仮）",
+    "venue": "なにわ中央体育館",
+    "pref": "大阪府",
+    "address": "大阪府大阪市（仮の住所）",
+    "lat": 34.66215,
+    "lng": 135.46293,
+    "image": "",
+    "amenities": [
+      "wifi",
+      "breakfast",
+      "laundry"
+    ],
+    "checkIn": "15:00",
+    "checkOut": "11:00",
+    "priceMin": 10800,
+    "trainMinutes": null,
+    "reserveUrl": ""
+  },
+  {
+    "id": "hotel-012",
+    "name": "ビジネスイン なにわ中央体育館（仮）",
+    "venue": "なにわ中央体育館",
+    "pref": "大阪府",
+    "address": "大阪府大阪市（仮の住所）",
+    "lat": 34.64819,
+    "lng": 135.47552,
+    "image": "",
+    "amenities": [
+      "wifi",
+      "parking"
+    ],
+    "checkIn": "16:00",
+    "checkOut": "10:00",
+    "priceMin": 6500,
+    "trainMinutes": 12,
+    "reserveUrl": ""
+  },
+  {
+    "id": "hotel-013",
+    "name": "スタジアムステイ はかた総合体育館前（仮）",
+    "venue": "はかた総合体育館",
+    "pref": "福岡県",
+    "address": "福岡県福岡市（仮の住所）",
+    "lat": 33.59335,
+    "lng": 130.42557,
+    "image": "",
+    "amenities": [
+      "wifi",
+      "breakfast",
+      "laundry"
+    ],
+    "checkIn": "15:00",
+    "checkOut": "11:00",
+    "priceMin": 10300,
+    "trainMinutes": null,
+    "reserveUrl": ""
+  },
+  {
+    "id": "hotel-014",
+    "name": "ビジネスイン はかた総合体育館（仮）",
+    "venue": "はかた総合体育館",
+    "pref": "福岡県",
+    "address": "福岡県福岡市（仮の住所）",
+    "lat": 33.57939,
+    "lng": 130.438,
+    "image": "",
+    "amenities": [
+      "wifi",
+      "parking"
+    ],
+    "checkIn": "16:00",
+    "checkOut": "10:00",
+    "priceMin": 7500,
+    "trainMinutes": 12,
+    "reserveUrl": ""
+  },
+  {
+    "id": "hotel-015",
+    "name": "スタジアムステイ さっぽろアリーナ前（仮）",
+    "venue": "さっぽろアリーナ",
+    "pref": "北海道",
+    "address": "北海道札幌市（仮の住所）",
+    "lat": 43.04485,
+    "lng": 141.36995,
+    "image": "",
+    "amenities": [
+      "wifi",
+      "breakfast",
+      "laundry"
+    ],
+    "checkIn": "15:00",
+    "checkOut": "11:00",
+    "priceMin": 9800,
+    "trainMinutes": null,
+    "reserveUrl": ""
+  },
+  {
+    "id": "hotel-016",
+    "name": "ビジネスイン さっぽろアリーナ（仮）",
+    "venue": "さっぽろアリーナ",
+    "pref": "北海道",
+    "address": "北海道札幌市（仮の住所）",
+    "lat": 43.03089,
+    "lng": 141.38412,
+    "image": "",
+    "amenities": [
+      "wifi",
+      "parking"
+    ],
+    "checkIn": "16:00",
+    "checkOut": "10:00",
+    "priceMin": 7000,
+    "trainMinutes": 12,
+    "reserveUrl": ""
+  },
+  {
+    "id": "hotel-017",
+    "name": "スタジアムステイ みなとみらいスタジアム前（仮）",
+    "venue": "みなとみらいスタジアム",
+    "pref": "神奈川県",
+    "address": "神奈川県横浜市（仮の住所）",
+    "lat": 35.45995,
+    "lng": 139.63668,
+    "image": "",
+    "amenities": [
+      "wifi",
+      "breakfast",
+      "laundry"
+    ],
+    "checkIn": "15:00",
+    "checkOut": "11:00",
+    "priceMin": 10800,
+    "trainMinutes": null,
+    "reserveUrl": ""
+  },
+  {
+    "id": "hotel-018",
+    "name": "ビジネスイン みなとみらいスタジアム（仮）",
+    "venue": "みなとみらいスタジアム",
+    "pref": "神奈川県",
+    "address": "神奈川県横浜市（仮の住所）",
+    "lat": 35.44599,
+    "lng": 139.6494,
+    "image": "",
+    "amenities": [
+      "wifi",
+      "parking"
+    ],
+    "checkIn": "16:00",
+    "checkOut": "10:00",
+    "priceMin": 6500,
+    "trainMinutes": 12,
+    "reserveUrl": ""
+  },
+  {
+    "id": "hotel-019",
+    "name": "スタジアムステイ なごや市民体育館前（仮）",
+    "venue": "なごや市民体育館",
+    "pref": "愛知県",
+    "address": "愛知県名古屋市（仮の住所）",
+    "lat": 35.12915,
+    "lng": 136.91596,
+    "image": "",
+    "amenities": [
+      "wifi",
+      "breakfast",
+      "laundry"
+    ],
+    "checkIn": "15:00",
+    "checkOut": "11:00",
+    "priceMin": 10300,
+    "trainMinutes": null,
+    "reserveUrl": ""
+  },
+  {
+    "id": "hotel-020",
+    "name": "ビジネスイン なごや市民体育館（仮）",
+    "venue": "なごや市民体育館",
+    "pref": "愛知県",
+    "address": "愛知県名古屋市（仮の住所）",
+    "lat": 35.11519,
+    "lng": 136.92862,
+    "image": "",
+    "amenities": [
+      "wifi",
+      "parking"
+    ],
+    "checkIn": "16:00",
+    "checkOut": "10:00",
+    "priceMin": 7500,
+    "trainMinutes": 12,
+    "reserveUrl": ""
+  },
+  {
+    "id": "hotel-021",
+    "name": "スタジアムステイ さいたまパークスタジアム前（仮）",
+    "venue": "さいたまパークスタジアム",
+    "pref": "埼玉県",
+    "address": "埼玉県さいたま市（仮の住所）",
+    "lat": 35.90615,
+    "lng": 139.7228,
+    "image": "",
+    "amenities": [
+      "wifi",
+      "breakfast",
+      "laundry"
+    ],
+    "checkIn": "15:00",
+    "checkOut": "11:00",
+    "priceMin": 9800,
+    "trainMinutes": null,
+    "reserveUrl": ""
+  },
+  {
+    "id": "hotel-022",
+    "name": "ビジネスイン さいたまパークスタジアム（仮）",
+    "venue": "さいたまパークスタジアム",
+    "pref": "埼玉県",
+    "address": "埼玉県さいたま市（仮の住所）",
+    "lat": 35.89219,
+    "lng": 139.7356,
+    "image": "",
+    "amenities": [
+      "wifi",
+      "parking"
+    ],
+    "checkIn": "16:00",
+    "checkOut": "10:00",
+    "priceMin": 7000,
+    "trainMinutes": 12,
+    "reserveUrl": ""
+  },
+  {
+    "id": "hotel-023",
+    "name": "スタジアムステイ 東京セントラルフィールド前（仮）",
+    "venue": "東京セントラルフィールド",
+    "pref": "東京都",
+    "address": "東京都新宿区（仮の住所）",
+    "lat": 35.68095,
+    "lng": 139.71949,
+    "image": "",
+    "amenities": [
+      "wifi",
+      "breakfast",
+      "laundry"
+    ],
+    "checkIn": "15:00",
+    "checkOut": "11:00",
+    "priceMin": 10800,
+    "trainMinutes": null,
+    "reserveUrl": ""
+  },
+  {
+    "id": "hotel-024",
+    "name": "ビジネスイン 東京セントラルフィールド（仮）",
+    "venue": "東京セントラルフィールド",
+    "pref": "東京都",
+    "address": "東京都新宿区（仮の住所）",
+    "lat": 35.66699,
+    "lng": 139.73224,
+    "image": "",
+    "amenities": [
+      "wifi",
+      "parking"
+    ],
+    "checkIn": "16:00",
+    "checkOut": "10:00",
+    "priceMin": 6500,
+    "trainMinutes": 12,
+    "reserveUrl": ""
+  },
+  {
+    "id": "hotel-025",
+    "name": "スタジアムステイ 京都みやこアリーナ前（仮）",
+    "venue": "京都みやこアリーナ",
+    "pref": "京都府",
+    "address": "京都府京都市（仮の住所）",
+    "lat": 35.01615,
+    "lng": 135.78795,
+    "image": "",
+    "amenities": [
+      "wifi",
+      "breakfast",
+      "laundry"
+    ],
+    "checkIn": "15:00",
+    "checkOut": "11:00",
+    "priceMin": 10300,
+    "trainMinutes": null,
+    "reserveUrl": ""
+  },
+  {
+    "id": "hotel-026",
+    "name": "ビジネスイン 京都みやこアリーナ（仮）",
+    "venue": "京都みやこアリーナ",
+    "pref": "京都府",
+    "address": "京都府京都市（仮の住所）",
+    "lat": 35.00219,
+    "lng": 135.8006,
+    "image": "",
+    "amenities": [
+      "wifi",
+      "parking"
+    ],
+    "checkIn": "16:00",
+    "checkOut": "10:00",
+    "priceMin": 7500,
+    "trainMinutes": 12,
+    "reserveUrl": ""
+  },
+  {
+    "id": "hotel-027",
+    "name": "スタジアムステイ ひろしま体育館前（仮）",
+    "venue": "ひろしま体育館",
+    "pref": "広島県",
+    "address": "広島県広島市（仮の住所）",
+    "lat": 34.40165,
+    "lng": 132.46091,
+    "image": "",
+    "amenities": [
+      "wifi",
+      "breakfast",
+      "laundry"
+    ],
+    "checkIn": "15:00",
+    "checkOut": "11:00",
+    "priceMin": 9800,
+    "trainMinutes": null,
+    "reserveUrl": ""
+  },
+  {
+    "id": "hotel-028",
+    "name": "ビジネスイン ひろしま体育館（仮）",
+    "venue": "ひろしま体育館",
+    "pref": "広島県",
+    "address": "広島県広島市（仮の住所）",
+    "lat": 34.38769,
+    "lng": 132.47347,
+    "image": "",
+    "amenities": [
+      "wifi",
+      "parking"
+    ],
+    "checkIn": "16:00",
+    "checkOut": "10:00",
+    "priceMin": 7000,
+    "trainMinutes": 12,
+    "reserveUrl": ""
+  },
+  {
+    "id": "hotel-029",
+    "name": "スタジアムステイ しずおか海浜スタジアム前（仮）",
+    "venue": "しずおか海浜スタジアム",
+    "pref": "静岡県",
+    "address": "静岡県静岡市（仮の住所）",
+    "lat": 35.01875,
+    "lng": 138.49445,
+    "image": "",
+    "amenities": [
+      "wifi",
+      "breakfast",
+      "laundry"
+    ],
+    "checkIn": "15:00",
+    "checkOut": "11:00",
+    "priceMin": 10800,
+    "trainMinutes": null,
+    "reserveUrl": ""
+  },
+  {
+    "id": "hotel-030",
+    "name": "ビジネスイン しずおか海浜スタジアム（仮）",
+    "venue": "しずおか海浜スタジアム",
+    "pref": "静岡県",
+    "address": "静岡県静岡市（仮の住所）",
+    "lat": 35.00479,
+    "lng": 138.5071,
+    "image": "",
+    "amenities": [
+      "wifi",
+      "parking"
+    ],
+    "checkIn": "16:00",
+    "checkOut": "10:00",
+    "priceMin": 6500,
+    "trainMinutes": 12,
+    "reserveUrl": ""
+  },
+  {
+    "id": "hotel-031",
+    "name": "スタジアムステイ せんだいアリーナ前（仮）",
+    "venue": "せんだいアリーナ",
+    "pref": "宮城県",
+    "address": "宮城県仙台市（仮の住所）",
+    "lat": 38.25915,
+    "lng": 140.90816,
+    "image": "",
+    "amenities": [
+      "wifi",
+      "breakfast",
+      "laundry"
+    ],
+    "checkIn": "15:00",
+    "checkOut": "11:00",
+    "priceMin": 10300,
+    "trainMinutes": null,
+    "reserveUrl": ""
+  },
+  {
+    "id": "hotel-032",
+    "name": "ビジネスイン せんだいアリーナ（仮）",
+    "venue": "せんだいアリーナ",
+    "pref": "宮城県",
+    "address": "宮城県仙台市（仮の住所）",
+    "lat": 38.24519,
+    "lng": 140.92136,
+    "image": "",
+    "amenities": [
+      "wifi",
+      "parking"
+    ],
+    "checkIn": "16:00",
+    "checkOut": "10:00",
+    "priceMin": 7500,
+    "trainMinutes": 12,
+    "reserveUrl": ""
+  }
+]
