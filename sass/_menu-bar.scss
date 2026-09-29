@@ -33,7 +33,7 @@ $breakpoints: (
   // =========================
   &__sub {
     position: fixed;
-    bottom: 75px;
+    bottom: 65px;
     left: 50%;
     transform: translateX(-50%);
 
@@ -124,7 +124,7 @@ $breakpoints: (
     box-shadow:
       0 4px 20px rgba(0, 0, 0, 0.08),
       inset 0 1px 1px rgba(255, 255, 255, 0.4);
-    padding: 8px 0;
+
     margin: auto;
     height: 60px;
     width: 100%;
@@ -145,7 +145,7 @@ $breakpoints: (
     width: 100%;
     max-width: 480px;
 
-    margin: 0 auto;
+    margin: 0 auto 3px;
     padding: 0;
 
     list-style: none;
