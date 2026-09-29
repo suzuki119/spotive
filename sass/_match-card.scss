@@ -9,7 +9,7 @@
 .match-card {
   position: relative; // 試合名のリンクをカード全体に広げるため
   isolation: isolate; // 背景のロゴ（z-index: -1）を、カードの背景より手前・文字より奥に置く
-  overflow: hidden;   // 大きく置いたロゴをカードの角で切る
+  overflow: hidden; // 大きく置いたロゴをカードの角で切る
   display: grid;
   grid-template-columns: auto 1fr;
   align-items: center;
