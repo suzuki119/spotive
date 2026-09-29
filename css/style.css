@@ -1,3 +1,4 @@
+@charset "UTF-8";
 .site-header {
   display: flex;
   align-items: center;
@@ -100,9 +101,7 @@
 
 input[type=checkbox],
 input[type=radio] {
-  -webkit-appearance: auto;
-     -moz-appearance: auto;
-          appearance: auto;
+  appearance: auto;
   width: 16px;
   height: 16px;
   margin: 0;
@@ -513,7 +512,6 @@ input[type=radio] {
 }
 
 .sheet__head {
-  position: -webkit-sticky;
   position: sticky;
   top: 0;
   z-index: 2;
@@ -648,9 +646,7 @@ input[type=radio] {
   border-radius: 999px;
   cursor: pointer;
   opacity: 0.55;
-  -webkit-user-select: none;
-     -moz-user-select: none;
-          user-select: none;
+  user-select: none;
 }
 .chip input:checked + span {
   opacity: 1;
@@ -759,7 +755,6 @@ input[type=radio] {
 }
 @media (min-width: 768px) {
   .list-head {
-    position: -webkit-sticky;
     position: sticky;
     top: 0;
     z-index: 1;
@@ -816,8 +811,7 @@ input[type=radio] {
 .pop-logos img {
   width: 72px;
   height: 72px;
-  -o-object-fit: contain;
-     object-fit: contain;
+  object-fit: contain;
 }
 
 .pop-logos {
@@ -1119,8 +1113,7 @@ input[type=radio] {
 .match-card__logo {
   width: 80px;
   height: 80px;
-  -o-object-fit: contain;
-     object-fit: contain;
+  object-fit: contain;
 }
 @media (min-width: 768px) {
   .match-card__logo {
@@ -1811,27 +1804,6 @@ input[type=radio] {
   bottom: calc(16px + env(safe-area-inset-bottom));
   left: 16px;
   z-index: 1000;
-}
-.menu-bar__nav {
-  background: rgba(181, 181, 181, 0.25);
-  backdrop-filter: blur(20px) saturate(180%);
-  -webkit-backdrop-filter: blur(20px) saturate(180%);
-  border: 1px solid rgba(255, 255, 255, 0.35);
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08), inset 0 1px 1px rgba(255, 255, 255, 0.4);
-  padding: 8px 0;
-  margin: auto;
-  width: 80%;
-  border-radius: 100px;
-}
-@media (max-width: 1100px) {
-  .menu-bar__nav {
-    width: 90%;
-  }
-}
-.menu-bar__list {
-  display: flex;
-  justify-content: center;
-  gap: 32px;
   max-width: 480px;
   margin: 0 auto;
   padding: 8px;
@@ -1839,8 +1811,7 @@ input[type=radio] {
   border: 1px solid #E5E7EB;
   border-radius: 100px;
   box-shadow: 0 4px 16px rgba(15, 23, 42, 0.12);
-  -webkit-backdrop-filter: blur(8px);
-          backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
   font-family: "Noto Sans JP", sans-serif;
 }
 .menu-bar__list {
@@ -2036,8 +2007,7 @@ input[type=radio] {
   place-items: center;
   width: 48px;
   height: 48px;
-  -o-object-fit: contain;
-     object-fit: contain;
+  object-fit: contain;
   border-radius: 999px;
   color: #FFFFFF;
   font-size: 12px;
@@ -2260,9 +2230,6 @@ body {
   box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.2);
   padding-left: 20px;
 }
-.input::-moz-placeholder {
-  color: rgba(0, 0, 0, 0.2);
-}
 .input::placeholder {
   color: rgba(0, 0, 0, 0.2);
 }
@@ -2327,15 +2294,6 @@ body {
 }
 .account-type-signin-btn:hover {
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
-}
-
-.leaflet-touch .leaflet-bar {
-  margin-bottom: 5px;
-}
-@media (max-width: 1100px) {
-  .leaflet-touch .leaflet-bar {
-    margin-bottom: 125px;
-  }
 }
 
 .register-title {
@@ -2419,9 +2377,7 @@ body {
   cursor: pointer;
 }
 .organizer input {
-  -webkit-appearance: none;
-     -moz-appearance: none;
-          appearance: none;
+  appearance: none;
   width: 20px;
   height: 20px;
   border: 2px solid #000;
@@ -2439,17 +2395,7 @@ body {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  -webkit-animation: potti 0.3s ease;
-          animation: potti 0.3s ease;
-}
-
-@-webkit-keyframes potti {
-  0% {
-    transform: translate(-50%, -50%) scale(0);
-  }
-  100% {
-    transform: translate(-50%, -50%) scale(1);
-  }
+  animation: potti 0.3s ease;
 }
 
 @keyframes potti {
@@ -2488,7 +2434,6 @@ body {
   width: 40px;
   height: 40px;
 }
-/*# sourceMappingURL=style.css.map */
 
 .home-favorite {
   padding-top: 100px;
@@ -2663,4 +2608,3 @@ body {
   align-self: center;
   font-weight: normal;
 }
-/*# sourceMappingURL=style.css.map */
