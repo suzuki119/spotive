@@ -147,37 +147,108 @@ $breakpoints: (
 }
 
 //メニューのscss
-
 .menu-bar {
-  // 画面下に貼り付ける。bottom / left / width は
-  // position: fixed を持つこの要素側に書かないと効かない
+  // 画面下に貼り付ける
   position: fixed;
   bottom: 50px;
   left: 0;
   width: 100%;
   z-index: 1000;
 
+  // =========================
+  // 追加メニュー
+  // =========================
+  &__sub {
+    position: fixed;
+    bottom: 100px;
+    left: 50%;
+    transform: translateX(-50%);
+    height: 0;
+    width: 100%;
+    max-width: 370px;
+    opacity: 0;
+    overflow: hidden;
+    visibility: hidden;
+    margin: auto;
+    border-radius: 100px;
+    transition:
+      height 0.4s ease,
+      opacity 0.3s ease,
+      visibility 0.4s;
+    z-index: 900;
+
+    &.is-open {
+      height: 70px;
+      opacity: 1;
+      visibility: visible;
+    }
+  }
+
+  &__sub-list {
+    display: flex;
+    justify-content: center;
+    gap: 32px;
+    max-width: 480px;
+    margin: 0 auto;
+    padding: 8px 0;
+    list-style: none;
+
+    @include mq(desktop) {
+      gap: 8px;
+    }
+  }
+
+  // =========================
+  // メニュー開閉ボタン
+  // =========================
+  &__toggle {
+    cursor: pointer;
+    border: none;
+    background: none;
+
+    .menu-bar__icon {
+      transition: opacity 0.1s ease;
+    }
+
+    &.is-changing {
+      .menu-bar__icon {
+        opacity: 0;
+      }
+    }
+  }
+
+  // =========================
+  // 下のメニューバー
+  // =========================
   &__nav {
+    position: relative;
+
+    // 追加
+    display: flex;
+    align-items: flex-end;
+
     background: rgba(181, 181, 181, 0.25);
     backdrop-filter: blur(20px) saturate(180%);
     -webkit-backdrop-filter: blur(20px) saturate(180%);
 
     border: 1px solid rgba(255, 255, 255, 0.35);
+
     box-shadow:
       0 4px 20px rgba(0, 0, 0, 0.08),
       inset 0 1px 1px rgba(255, 255, 255, 0.4);
+
     padding: 8px 0;
     margin: auto;
-    width: 80%;
+    height: 70px;
+    width: 100%;
+    max-width: 370px;
     border-radius: 100px;
 
-    @include mq(desktop) {
-      width: 90%;
-    }
   }
 
-  // 項目は画面の中央にまとめる。
-  // 広い画面でも間延びしないよう、最大幅を決めて中央寄せにする
+  // =========================
+  // 下のメニュー一覧
+  // =========================
   &__list {
     display: flex;
     justify-content: center;
@@ -186,6 +257,7 @@ $breakpoints: (
     margin: 0 auto;
     padding: 0;
     list-style: none;
+    z-index: 901;
 
     @include mq(desktop) {
       gap: 8px;
@@ -222,12 +294,56 @@ $breakpoints: (
   }
 }
 
-.leaflet-touch .leaflet-bar {
-  margin-bottom: 5px;
+// =========================
+// メニュー展開アニメーション
+// =========================
 
-  @include mq(desktop) {
-    margin-bottom: 125px;
+@keyframes menu {
+  from {
+    opacity: 0;
+    transform: translateY(0);
   }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes bar {
+  from {
+    height: 70px;
+    border-radius: 100px;
+  }
+
+  to {
+    height: 127px;
+    border-radius: 30px;
+  }
+}
+
+@keyframes bar-close {
+  from {
+    height: 127px;
+    border-radius: 30px;
+  }
+
+  to {
+    height: 70px;
+    border-radius: 100px;
+  }
+}
+
+.menu-bar__sub.is-open .menu-bar__item {
+  animation: menu 0.2s ease forwards;
+}
+
+.menu-bar:has(.menu-bar__sub.is-open) .menu-bar__nav {
+  animation: bar 0.45s ease forwards;
+}
+
+.menu-bar__nav.is-closing {
+  animation: bar-close 0.45s ease forwards;
 }
 
 // ____________________________アカウント登録　個人＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿
