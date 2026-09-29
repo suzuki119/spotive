@@ -813,7 +813,8 @@ input[type=radio] {
 .card-emblem {
   width: 40px;
   height: 40px;
-  object-fit: contain;
+  -o-object-fit: contain;
+     object-fit: contain;
 }
 .card-emblem--icon {
   display: grid;
@@ -853,7 +854,8 @@ input[type=radio] {
 .pop-logos img {
   width: 56px;
   height: 56px;
-  object-fit: contain;
+  -o-object-fit: contain;
+     object-fit: contain;
 }
 
 .card-body {
@@ -1168,7 +1170,8 @@ input[type=radio] {
 .match-card__logo {
   width: 96px;
   height: 96px;
-  object-fit: contain;
+  -o-object-fit: contain;
+     object-fit: contain;
 }
 .match-card__side {
   display: flex;
@@ -1187,7 +1190,8 @@ input[type=radio] {
   place-items: center;
   width: 48px;
   height: 48px;
-  object-fit: contain;
+  -o-object-fit: contain;
+     object-fit: contain;
   border-radius: 999px;
   color: #FFFFFF;
   font-size: 12px;
@@ -1606,7 +1610,8 @@ input[type=radio] {
   inset: 0;
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  -o-object-fit: cover;
+     object-fit: cover;
 }
 .match-detail__hero-icon {
   font-size: 80px;
@@ -1670,7 +1675,8 @@ input[type=radio] {
 .match-detail__logo {
   width: 40px;
   height: 40px;
-  object-fit: contain;
+  -o-object-fit: contain;
+     object-fit: contain;
 }
 .match-detail__team-name {
   color: #0F172A;
@@ -1945,6 +1951,9 @@ input[type=radio] {
   font: inherit;
   font-weight: 700;
 }
+.search-form__keyword::-moz-placeholder {
+  color: #0F172A;
+}
 .search-form__keyword::placeholder {
   color: #0F172A;
 }
@@ -2125,7 +2134,9 @@ input[type=radio] {
   margin: 0;
   background: none;
   cursor: pointer;
-  appearance: none;
+  -webkit-appearance: none;
+     -moz-appearance: none;
+          appearance: none;
 }
 .search-cond__range::-webkit-slider-runnable-track {
   height: 2px;
@@ -2138,7 +2149,8 @@ input[type=radio] {
   border: 2px solid #0F172A;
   border-radius: 999px;
   background: #FFFFFF;
-  appearance: none;
+  -webkit-appearance: none;
+          appearance: none;
 }
 .search-cond__range::-moz-range-track {
   height: 2px;
@@ -2212,6 +2224,12 @@ a.nearby-links__item:hover .nearby-links__image {
   max-width: 400px;
   z-index: 1000;
 }
+.menu-bar,
+.menu-bar *,
+.menu-bar *::before,
+.menu-bar *::after {
+  box-sizing: border-box;
+}
 .menu-bar__sub {
   position: fixed;
   bottom: 75px;
@@ -2251,6 +2269,13 @@ a.nearby-links__item:hover .nearby-links__image {
   }
 }
 .menu-bar__toggle {
+  width: 100%;
+  margin: 0;
+  font: inherit;
+  line-height: inherit;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+       appearance: none;
   cursor: pointer;
   border: none;
   background: none;
@@ -2317,14 +2342,6 @@ a.nearby-links__item:hover .nearby-links__image {
   font-size: 12px;
   line-height: 1.2;
   white-space: nowrap;
-}
-.app-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 16px;
 }
 
 @-webkit-keyframes menu {
@@ -2403,7 +2420,7 @@ a.nearby-links__item:hover .nearby-links__image {
           animation: bar-close 0.45s ease forwards;
 }
 
-.home-header {
+.app-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -2773,7 +2790,8 @@ img.team-logo {
   height: auto;
   aspect-ratio: 740/400;
   margin-top: 16px;
-  object-fit: cover;
+  -o-object-fit: cover;
+     object-fit: cover;
   border-radius: 16px;
 }
 .hotel-detail__photo--none {
@@ -2972,7 +2990,8 @@ img.team-logo {
   grid-template-columns: auto 1fr;
   grid-template-rows: auto auto;
   align-items: center;
-  column-gap: 8px;
+  -moz-column-gap: 8px;
+       column-gap: 8px;
   padding: 0 8px;
 }
 .hotel-access__item + .hotel-access__item {
