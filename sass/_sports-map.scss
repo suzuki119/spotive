@@ -19,8 +19,7 @@ $map-accent: #0b6bcb;
 $map-sea: #bed2ff; // 淡色地図の海と同じ色。タイルが出ていないところに出る
 $bp-tablet: 768px;
 
-// サイトヘッダーの高さぶん。ヘッダーの中身が決まったら、ここだけ直せばよい
-$site-header-height: 48px;
+
 
 // 画面下からせり上がるパネルの共通の振る舞い
 @mixin slide-up-panel {

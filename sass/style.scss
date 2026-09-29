@@ -315,6 +315,9 @@ $breakpoints: (
   display: flex;
   justify-content: space-between;
   position: fixed;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
   width: 100%;
   max-width: 400px;
   padding: 20px 0;
@@ -556,7 +559,17 @@ $breakpoints: (
 
 
 //___________________________________ setting画面_________________________
-.settin {
+.setting {
+  display: grid;
+  row-gap: 25px;
+  padding-top: 100px;
+
+  h2 {
+    margin-bottom: 12px;
+    font-size: 18px;
+    font-weight: bold;
+  }
+
   &-account {
 
     &-img {
@@ -576,14 +589,14 @@ $breakpoints: (
     }
 
     &-content {
-      width: 330px;
+      width: 100%;
       height: 40px;
       display: flex;
       justify-content: space-between;
     }
 
     article {
-      width: 370px;
+      width: 100%;
       height: 170px;
       padding: 15px;
       background-color: #fff;
@@ -608,9 +621,7 @@ $breakpoints: (
       }
     }
   }
-}
 
-.setting {
   &-account {
 
     &-img {
@@ -630,14 +641,14 @@ $breakpoints: (
     }
 
     &-content {
-      width: 330px;
+      width: 100%;
       height: 40px;
       display: flex;
       justify-content: space-between;
     }
 
     article {
-      width: 370px;
+      width: 100%;
       height: 170px;
       padding: 15px;
       background-color: #fff;
@@ -682,14 +693,14 @@ $breakpoints: (
     }
 
     &-content {
-      width: 330px;
+      width: 100%;
       height: 40px;
       display: flex;
       justify-content: space-between;
     }
 
     article {
-      width: 370px;
+      width: 100%;
       height: 170px;
       padding: 15px;
       background-color: #fff;
@@ -709,6 +720,322 @@ $breakpoints: (
 
         p {
           align-self: center;
+        }
+
+      }
+    }
+  }
+
+  &-game {
+
+    &-img {
+      width: 40px;
+      height: 40px;
+      background-color: #fafafa;
+      border-radius: 5px;
+      display: flex;
+      justify-content: center; // 左右中央
+      align-items: center; // 上下中央
+    }
+
+    &-next {
+      width: 11px;
+      height: 18px;
+      align-self: center;
+    }
+
+    &-content {
+      width: 100%;
+      height: 40px;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    article {
+      width: 100%;
+      height: 120px;
+      padding: 15px;
+      background-color: #fff;
+      border-radius: 20px;
+
+      display: grid;
+      row-gap: 10px;
+
+      span {
+        display: flex;
+        gap: 8px;
+
+        img {
+          width: 25px;
+          height: 25px;
+        }
+
+        p {
+          align-self: center;
+        }
+
+      }
+    }
+  }
+
+
+  &-expedition {
+
+    &-img {
+      width: 40px;
+      height: 40px;
+      background-color: #fafafa;
+      border-radius: 5px;
+      display: flex;
+      justify-content: center; // 左右中央
+      align-items: center; // 上下中央
+    }
+
+    &-next {
+      width: 11px;
+      height: 18px;
+      align-self: center;
+    }
+
+    &-content {
+      width: 100%;
+      height: 40px;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    article {
+      width: 100%;
+      height: 220px;
+      padding: 15px;
+      background-color: #fff;
+      border-radius: 20px;
+
+      display: grid;
+      row-gap: 10px;
+
+      span {
+        display: flex;
+        gap: 8px;
+
+        img {
+          width: 25px;
+          height: 25px;
+        }
+
+        p {
+          align-self: center;
+        }
+
+      }
+    }
+  }
+
+  &-display {
+
+    &-img {
+      width: 40px;
+      height: 40px;
+      background-color: #fafafa;
+      border-radius: 5px;
+      display: flex;
+      justify-content: center; // 左右中央
+      align-items: center; // 上下中央
+    }
+
+    &-next {
+      width: 11px;
+      height: 18px;
+      align-self: center;
+    }
+
+    &-content {
+      width: 100%;
+      height: 40px;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    article {
+      width: 100%;
+      height: 70px;
+      padding: 15px;
+      background-color: #fff;
+      border-radius: 20px;
+
+      display: grid;
+      row-gap: 10px;
+
+      span {
+        display: flex;
+        gap: 8px;
+
+        img {
+          width: 25px;
+          height: 25px;
+        }
+
+        p {
+          align-self: center;
+        }
+
+      }
+    }
+  }
+
+  &-privacy {
+
+    &-img {
+      width: 40px;
+      height: 40px;
+      background-color: #fafafa;
+      border-radius: 5px;
+      display: flex;
+      justify-content: center; // 左右中央
+      align-items: center; // 上下中央
+    }
+
+    &-next {
+      width: 11px;
+      height: 18px;
+      align-self: center;
+    }
+
+    &-content {
+      width: 100%;
+      height: 40px;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    article {
+      width: 100%;
+      height: 220px;
+      padding: 15px;
+      background-color: #fff;
+      border-radius: 20px;
+
+      display: grid;
+      row-gap: 10px;
+
+      span {
+        display: flex;
+        gap: 8px;
+
+        img {
+          width: 25px;
+          height: 25px;
+        }
+
+        p {
+          align-self: center;
+        }
+
+      }
+    }
+  }
+
+
+  &-support {
+
+    &-img {
+      width: 40px;
+      height: 40px;
+      background-color: #fafafa;
+      border-radius: 5px;
+      display: flex;
+      justify-content: center; // 左右中央
+      align-items: center; // 上下中央
+    }
+
+    &-next {
+      width: 11px;
+      height: 18px;
+      align-self: center;
+    }
+
+    &-content {
+      width: 100%;
+      height: 40px;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    article {
+      width: 100%;
+      height: 120px;
+      padding: 15px;
+      background-color: #fff;
+      border-radius: 20px;
+
+      display: grid;
+      row-gap: 10px;
+
+      span {
+        display: flex;
+        gap: 8px;
+
+        img {
+          width: 25px;
+          height: 25px;
+        }
+
+        p {
+          align-self: center;
+        }
+
+      }
+    }
+  }
+
+  &-logout {
+
+    &-img {
+      width: 40px;
+      height: 40px;
+      background-color: #fafafa;
+      border-radius: 5px;
+      display: flex;
+      justify-content: center; // 左右中央
+      align-items: center; // 上下中央
+    }
+
+    &-next {
+      width: 11px;
+      height: 18px;
+      align-self: center;
+    }
+
+    &-content {
+      width: 100%;
+      height: 40px;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    article {
+      width: 100%;
+      height: 70px;
+      padding: 15px;
+      background-color: #fff;
+      border-radius: 20px;
+      border: solid 0.5px red;
+
+      display: grid;
+      row-gap: 10px;
+
+      span {
+        display: flex;
+        gap: 8px;
+
+        img {
+          width: 25px;
+          height: 25px;
+        }
+
+        p {
+          align-self: center;
+          color: red;
         }
 
       }

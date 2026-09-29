@@ -30,7 +30,21 @@ require_once __DIR__ . '/../../config/db.php';
 </head>
 
 <body>
-  <header class="site-header"></header>
+  <header class="headerr">
+    <div class="inner">
+      <section class="header">
+        <span class="header-account">
+          <a href="javascript:history.back();" class="setting-back">
+            <img src="/SPOTIVE/images/icons/setting-back.svg" alt="">
+          </a>
+        </span>
+        <h1 class="header-title">SPOTIVE</h1>
+        <span class="header-notice">
+          <img src="/SPOTIVE/images/icons/notice.svg" alt="">
+        </span>
+      </section>
+    </div>
+  </header>
 
   <main class="l-main">
     <div class="inner">
@@ -65,15 +79,15 @@ require_once __DIR__ . '/../../config/db.php';
         <!-- __________________________________________________________________ -->
 
         <section class="setting-notification">
-          <h2>通知</h2>
+          <h2>通知設定</h2>
 
           <article>
             <a href="" class="setting-notification-content">
               <span>
                 <div class="setting-notification-img">
-                  <img src="../../images/icons/notification.svg" alt="">
+                  <img src="../../images/icons/setting-game.svg" alt="">
                 </div>
-                <p>通知設定</p>
+                <p>試合開始前の通知</p>
               </span>
               <img src="../../images/icons/setting-next.svg" alt="" class="setting-notification-next">
             </a>
@@ -81,9 +95,9 @@ require_once __DIR__ . '/../../config/db.php';
             <a href="" class="setting-notification-content">
               <span>
                 <div class="setting-notification-img">
-                  <img src="../../images/icons/setting-mail.svg" alt="">
+                  <img src="../../images/icons/setting-heart.svg" alt="">
                 </div>
-                <p>メール通知</p>
+                <p>お気に入りチーム</p>
               </span>
               <img src="../../images/icons/setting-next.svg" alt="" class="setting-notification-next">
             </a>
@@ -91,11 +105,181 @@ require_once __DIR__ . '/../../config/db.php';
             <a href="" class="setting-notification-content">
               <span>
                 <div class="setting-notification-img">
-                  <img src="../../images/icons/setting-event.svg" alt="">
+                  <img src="../../images/icons/notice.svg" alt="">
                 </div>
-                <p>イベント通知</p>
+                <p>アプリからのお知らせ</p>
               </span>
               <img src="../../images/icons/setting-next.svg" alt="" class="setting-notification-next">
+            </a>
+          </article>
+        </section>
+        <!-- __________________________________________________________________ -->
+        <section class="setting-game">
+          <h2>観戦</h2>
+
+          <article>
+            <a href="" class="setting-game-content">
+              <span>
+                <div class="setting-game-img">
+                  <img src="../../images/icons/setting-heart.svg" alt="">
+                </div>
+                <p>お気に入りチーム</p>
+              </span>
+              <img src="../../images/icons/setting-next.svg" alt="" class="setting-game-next">
+            </a>
+
+            <a href="" class="setting-game-content">
+              <span>
+                <div class="setting-game-img">
+                  <img src="../../images/icons/setting-place.svg" alt="">
+                </div>
+                <p>よく行く会場</p>
+              </span>
+              <img src="../../images/icons/setting-next.svg" alt="" class="setting-game-next">
+            </a>
+          </article>
+        </section>
+
+        <!-- __________________________________________________________________ -->
+
+        <section class="setting-expedition">
+          <h2>遠征サポート設定</h2>
+
+          <article>
+            <a href="" class="setting-expedition-content">
+              <span>
+                <div class="setting-expedition-img">
+                  <img src="../../images/icons/setting-departure.svg" alt="">
+                </div>
+                <p>出発地</p>
+              </span>
+              <img src="../../images/icons/setting-next.svg" alt="" class="setting-expedition-next">
+            </a>
+
+            <a href="" class="setting-expedition-content">
+              <span>
+                <div class="setting-expedition-img">
+                  <img src="../../images/icons/setting-train.svg" alt="">
+                </div>
+                <p>交通手段</p>
+              </span>
+              <img src="../../images/icons/setting-next.svg" alt="" class="setting-expedition-next">
+            </a>
+
+            <a href="" class="setting-expedition-content">
+              <span>
+                <div class="setting-expedition-img">
+                  <img src="../../images/icons/setting-hotel.svg" alt="">
+                </div>
+                <p>宿泊条件</p>
+              </span>
+              <img src="../../images/icons/setting-next.svg" alt="" class="setting-expedition-next">
+            </a>
+
+            <a href="" class="setting-expedition-content">
+              <span>
+                <div class="setting-expedition-img">
+                  <img src="../../images/icons/setting-money.svg" alt="">
+                </div>
+                <p>予算</p>
+              </span>
+              <img src="../../images/icons/setting-next.svg" alt="" class="setting-expedition-next">
+            </a>
+          </article>
+        </section>
+
+
+        <!-- __________________________________________________________________ -->
+
+
+        <section class="setting-display">
+          <h2>表示設定</h2>
+
+          <article>
+            <a href="" class="setting-display-content">
+              <span>
+                <div class="setting-display-img">
+                  <img src="../../images/icons/setting-display.svg" alt="">
+                </div>
+                <p>テーマ</p>
+              </span>
+              <img src="../../images/icons/setting-next.svg" alt="" class="setting-display-next">
+            </a>
+          </article>
+        </section>
+        <!-- __________________________________________________________________ -->
+
+        <section class="setting-privacy">
+          <h2>プライバシー・安全</h2>
+
+          <article>
+            <a href="" class="setting-privacy-content">
+              <span>
+                <div class="setting-privacy-img">
+                  <img src="../../images/icons/map.svg" alt="">
+                </div>
+                <p>位置情報</p>
+              </span>
+              <img src="../../images/icons/setting-link.svg" alt="" class="setting-privacy-next">
+            </a>
+
+            <a href="" class="setting-privacy-content">
+              <span>
+                <div class="setting-privacy-img">
+                  <img src="../../images/icons/setting-privacy.svg" alt="">
+                </div>
+                <p>プライバシーポリシー</p>
+              </span>
+              <img src="../../images/icons/setting-link.svg" alt="" class="setting-privacy-next">
+            </a>
+
+            <a href="" class="setting-privacy-content">
+              <span>
+                <div class="setting-privacy-img">
+                  <img src="../../images/icons/setting-term.svg" alt="">
+                </div>
+                <p>利用規約</p>
+              </span>
+              <img src="../../images/icons/setting-link.svg" alt="" class="setting-privacy-next">
+            </a>
+          </article>
+        </section>
+
+        <!-- __________________________________________________________________ -->
+
+        <section class="setting-support">
+          <h2>サポート</h2>
+
+          <article>
+            <a href="" class="setting-support-content">
+              <span>
+                <div class="setting-support-img">
+                  <img src="../../images/icons/setting-question.svg" alt="">
+                </div>
+                <p>よくある質問</p>
+              </span>
+              <img src="../../images/icons/setting-link.svg" alt="" class="setting-support-next">
+            </a>
+
+            <a href="" class="setting-support-content">
+              <span>
+                <div class="setting-support-img">
+                  <img src="../../images/icons/mail.svg" alt="">
+                </div>
+                <p>お問い合わせ</p>
+              </span>
+              <img src="../../images/icons/setting-link.svg" alt="" class="setting-support-next">
+            </a>
+          </article>
+        </section>
+
+        <section class="setting-logout">
+          <article>
+            <a href="" class="setting-logout-content">
+              <span>
+                <p>ログアウト</p>
+              </span>
+              <img src="../../images/icons/setting-logout.svg" alt="" class="setting-logout-next">
             </a>
           </article>
         </section>

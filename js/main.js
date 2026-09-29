@@ -18,3 +18,10 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 });
+
+const settingBack = document.querySelector('.setting-back');
+
+settingBack.addEventListener('click', (e) => {
+  e.preventDefault();
+  history.back();
+});
