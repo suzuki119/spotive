@@ -3,7 +3,7 @@
 /**
  * lib/review.php
  * 運営（reviewer / admin）向けの審査キュー。
- * 本人確認・主催者申請・大会確認の 3 つを一覧し、詳細を開く。
+ * 主催者申請・大会確認の 2 つを一覧し、詳細を開く。
  */
 
 declare(strict_types=1);
@@ -15,7 +15,7 @@ require_once __DIR__ . '/storage.php';
 
 /**
  * 審査待ちの一覧。
- * @param string $type identity | organizer | tournament
+ * @param string $type organizer | tournament
  */
 function review_queue(string $type, int $limit = 50): array
 {
@@ -23,15 +23,6 @@ function review_queue(string $type, int $limit = 50): array
   $limit = max(1, min($limit, 200));
 
   return match ($type) {
-    'identity' => db_all(
-      'SELECT iv.id, iv.user_id, u.nickname, iv.provider, iv.document_type,
-              iv.status, iv.submitted_at
-         FROM identity_verifications iv
-         JOIN users u ON u.id = iv.user_id
-        WHERE iv.status IN ("submitted","in_review")
-        ORDER BY iv.submitted_at ASC
-        LIMIT ' . $limit
-    ),
     'organizer' => db_all(
       'SELECT a.id, a.user_id, u.nickname, a.applicant_type, o.name AS organization_name,
               a.planned_title, a.planned_date, a.status, a.submitted_at
@@ -58,34 +49,13 @@ function review_queue(string $type, int $limit = 50): array
   };
 }
 
-/** 本人確認の詳細。申告どおりか照合できるよう、本人申告の生年月日も並べて返す */
-function review_identity_detail(int $identityId): array
-{
-  $iv = db_one(
-    'SELECT iv.*, u.nickname, u.email, u.trust_level, u.birthdate AS self_reported_birthdate
-       FROM identity_verifications iv
-       JOIN users u ON u.id = iv.user_id
-      WHERE iv.id = :id',
-    ['id' => $identityId]
-  );
-  if ($iv === null) {
-    throw new AppError('申請が見つかりません。');
-  }
-
-  $iv['documents'] = storage_list('identity', $identityId);
-  return $iv;
-}
-
 /** 主催者申請の詳細（団体情報・実績・添付をまとめて返す） */
 function review_organizer_detail(int $appId): array
 {
   $app = db_one(
-    'SELECT a.*, u.nickname, u.email, u.trust_level,
-            iv.legal_name, iv.birthdate AS verified_birthdate, iv.status AS identity_status
+    'SELECT a.*, u.nickname, u.email, u.trust_level
        FROM organizer_applications a
        JOIN users u ON u.id = a.user_id
-  LEFT JOIN identity_verifications iv
-         ON iv.user_id = a.user_id AND iv.status = "approved"
       WHERE a.id = :id',
     ['id' => $appId]
   );
@@ -131,9 +101,6 @@ function review_stream_attachment(array $reviewer, int $attachmentId): never
 function review_counts(): array
 {
   return [
-    'identity' => (int) db_one(
-      'SELECT COUNT(*) AS c FROM identity_verifications WHERE status IN ("submitted","in_review")'
-    )['c'],
     'organizer' => (int) db_one(
       'SELECT COUNT(*) AS c FROM organizer_applications WHERE status IN ("submitted","in_review")'
     )['c'],

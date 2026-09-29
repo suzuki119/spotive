@@ -102,7 +102,7 @@ function page_header(string $title, string $heading = ''): void
           <a class="site-header__link" href="<?= h($base) ?>/pages/setting/setting.php">
             <?= h((string) $user['nickname']) ?> さん
           </a>
-          <?php if ((int) $user['trust_level'] >= LEVEL_ORGANIZER) : ?>
+          <?php if ((int) $user['trust_level'] >= (int) config('verification.require_level.create_tournament', LEVEL_ORGANIZER)) : ?>
             <a class="site-header__link" href="<?= h($base) ?>/pages/organizer/dashboard.php">主催者ページ</a>
           <?php endif; ?>
           <?php if (in_array((string) $user['role'], ['reviewer', 'admin'], true)) : ?>

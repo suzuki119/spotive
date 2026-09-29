@@ -401,6 +401,20 @@ CREATE TABLE audit_logs (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- ---------------------------------------------------------------------
+-- お気に入りのチーム（企画書の機能 4）
+-- ログイン中のユーザーだけがここに保存する。未ログインのあいだはブラウザ（localStorage）。
+-- チームのテーブルがまだ無いので、team_id は data/teams.json の id（team-001）をそのまま持つ。
+-- チームのテーブルができたら、外部キーに置き換える。
+-- ---------------------------------------------------------------------
+CREATE TABLE favorite_teams (
+  user_id     BIGINT UNSIGNED NOT NULL,
+  team_id     VARCHAR(32) NOT NULL,
+  created_at  DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (user_id, team_id),
+  CONSTRAINT fk_fav_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- ---------------------------------------------------------------------
 -- 公開用ビュー：一覧・地図に出す大会（確認済みバッジ付き）
 -- ---------------------------------------------------------------------
 CREATE OR REPLACE VIEW v_public_tournaments AS

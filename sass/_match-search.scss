@@ -1,0 +1,166 @@
+// 試合を探す画面（pages/match/match-search.php）専用のスタイル。
+// 結果のカードは共通パーツの match-card（_match-card.scss）を使う。
+@use "variables" as *;
+
+.match-search {
+  max-width: $content-max;
+  margin: 0 auto;
+  padding: 24px 16px $menu-bar-space;
+  color: $color-text;
+  font-family: $font-body;
+
+  @media (min-width: $bp-tablet) {
+    padding: 32px 24px $menu-bar-space;
+  }
+
+  &__title {
+    color: $color-secondary;
+    font-family: $font-heading;
+    font-size: 24px;
+    font-weight: 700;
+  }
+
+  // スマホは 1 列。タブレット以上は 2 列、PC は 3 列に並べる
+  &__form {
+    display: grid;
+    gap: 16px;
+    margin-top: 16px;
+    padding: 16px;
+    border: 1px solid $color-border;
+    border-radius: $radius-lg;
+    background: $color-bg;
+
+    @media (min-width: $bp-tablet) {
+      grid-template-columns: repeat(2, 1fr);
+      padding: 24px;
+    }
+
+    @media (min-width: $bp-pc) {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  &__field {
+    display: grid;
+    gap: 4px;
+
+    &--wide {
+      grid-column: 1 / -1;
+    }
+  }
+
+  &__label {
+    color: $color-text-sub;
+    font-size: 12px;
+    font-weight: 700;
+  }
+
+  &__input {
+    width: 100%;
+    height: 48px;
+    padding: 0 12px;
+    border: 1px solid $color-border;
+    border-radius: $radius-md;
+    background: $color-bg;
+    color: $color-text;
+    font: inherit;
+    font-size: 16px; // 16px 未満だと iPhone で入力時に画面が拡大される
+
+    &:focus {
+      outline: 2px solid $color-primary;
+      outline-offset: 0;
+      border-color: $color-primary;
+    }
+  }
+
+  &__hint {
+    grid-column: 1 / -1;
+    color: $color-text-sub;
+    font-size: 12px;
+    line-height: 1.6;
+  }
+
+  &__actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 16px;
+    grid-column: 1 / -1;
+  }
+
+  &__submit {
+    flex: 1 1 auto;
+    height: 48px;
+    padding: 0 32px;
+    border: none;
+    border-radius: $radius-md;
+    background: $color-primary;
+    color: $color-bg;
+    font: inherit;
+    font-weight: 700;
+    cursor: pointer;
+
+    &:hover {
+      background: $color-primary-dark;
+    }
+
+    @media (min-width: $bp-tablet) {
+      flex: 0 0 auto;
+    }
+  }
+
+  &__clear {
+    color: $color-primary;
+    font-size: 14px;
+  }
+
+  &__results {
+    margin-top: 32px;
+  }
+
+  &__count {
+    color: $color-secondary;
+    font-size: 16px;
+    font-weight: 700;
+  }
+
+  // 件数は数字の強調なので Jost（AGENTS.md「フォント」）
+  &__number {
+    margin: 0 4px;
+    color: $color-primary;
+    font-family: $font-heading;
+    font-size: 24px;
+    font-weight: 600;
+  }
+
+  &__empty {
+    margin-top: 16px;
+    padding: 24px 16px;
+    border-radius: $radius-lg;
+    background: $color-bg;
+    color: $color-text-sub;
+    line-height: 1.8;
+    text-align: center;
+  }
+
+  &__day {
+    margin-top: 24px;
+  }
+
+  &__date {
+    margin-bottom: 12px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid $color-primary;
+    color: $color-secondary;
+    font-family: $font-heading;
+    font-size: 18px;
+    font-weight: 700;
+  }
+
+  &__items {
+    display: grid;
+    gap: 16px;
+    padding: 0;
+    list-style: none;
+  }
+}

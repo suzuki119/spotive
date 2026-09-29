@@ -1,0 +1,101 @@
+// 画面下に固定するメニューバー（pages/menu-bar.php）。全ページ共通なので、
+// 変えるときはチームに共有すること。
+//
+// 下の段がいつも出ている項目、上の段が「メニュー」で開く項目。
+// 高さが変わってもページの中身が隠れないよう、各ページは下に $menu-bar-space の余白を取る。
+@use "variables" as *;
+
+.menu-bar {
+  // 画面下に貼り付ける。bottom / left / width は
+  // position: fixed を持つこの要素側に書かないと効かない
+  position: fixed;
+  right: 16px;
+  bottom: calc(16px + env(safe-area-inset-bottom));
+  left: 16px;
+  z-index: 1000;
+  max-width: 480px;
+  margin: 0 auto;
+  padding: 8px;
+  background: rgba($color-bg, 0.92);
+  border: 1px solid $color-border;
+  border-radius: $radius-lg;
+  box-shadow: 0 4px 16px rgba($color-secondary, 0.12);
+  backdrop-filter: blur(8px);
+  font-family: $font-body;
+
+  &__list {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+
+    // 開いたときの上の段。下の段とは線で分ける
+    &--sub {
+      margin-bottom: 8px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid $color-border;
+
+      &[hidden] {
+        display: none;
+      }
+    }
+  }
+
+  &__item {
+    min-width: 0;
+  }
+
+  // a・button・span のどれでも同じ見た目にする
+  &__link {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    width: 100%;
+    padding: 4px 0;
+    background: none;
+    border: 0;
+    border-radius: $radius-md;
+    color: $color-text;
+    font: inherit;
+    text-decoration: none;
+    cursor: pointer;
+
+    &:hover {
+      background: $color-bg-gray;
+    }
+
+    &:focus-visible {
+      outline: 2px solid $color-primary;
+      outline-offset: 2px;
+    }
+
+    &.is-active {
+      background: $color-primary-light;
+      color: $color-primary;
+    }
+
+    // まだ作っていない機能（プラス・遠征）
+    &--disabled {
+      cursor: default;
+      opacity: 0.4;
+
+      &:hover {
+        background: none;
+      }
+    }
+  }
+
+  &__icon {
+    width: 24px;
+    height: 24px;
+  }
+
+  &__label {
+    font-size: 12px;
+    font-weight: 700;
+    line-height: 1.2;
+    white-space: nowrap;
+  }
+}

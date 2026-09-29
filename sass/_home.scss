@@ -1,0 +1,338 @@
+// ホーム画面（pages/home/home.php）専用のスタイル。
+// スマホを基準に書き、min-width で広い画面に広げる（AGENTS.md「対応デバイス」）。
+@use "sass:map";
+@use "variables" as *;
+
+$home-shadow: 0 2px 8px rgba($color-secondary, 0.08);
+
+// ---- ヘッダー（アカウント・ロゴ・お知らせ）----
+.home-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  max-width: $content-max;
+  margin: 0 auto;
+  padding: 16px;
+
+  @media (min-width: $bp-tablet) {
+    padding: 24px;
+  }
+
+  &__title {
+    margin: 0;
+    font-family: $font-heading;
+    font-size: 24px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    color: $color-secondary;
+  }
+
+  &__icon {
+    display: grid;
+    place-items: center;
+    width: 48px;
+    height: 48px;
+    border-radius: $radius-full;
+
+    &:hover {
+      background: $color-bg-gray;
+    }
+
+    img {
+      width: 32px;
+      height: 32px;
+    }
+  }
+}
+
+// ---- 本体 ----
+.home {
+  max-width: $content-max;
+  margin: 0 auto;
+  padding: 0 16px $menu-bar-space;
+  font-family: $font-body;
+  color: $color-text;
+
+  @media (min-width: $bp-tablet) {
+    padding: 0 24px $menu-bar-space;
+  }
+
+  &__section + &__section {
+    margin-top: 32px;
+  }
+
+  &__head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+  }
+
+  &__heading {
+    margin: 0 0 16px;
+    font-size: 24px;
+    font-weight: 700;
+    color: $color-secondary;
+  }
+
+  &__more {
+    font-size: 14px;
+    color: $color-primary;
+  }
+
+  &__empty {
+    margin: 0;
+    padding: 24px 16px;
+    background: $color-bg;
+    border-radius: $radius-lg;
+    color: $color-text-sub;
+    text-align: center;
+    line-height: 1.8;
+
+    a {
+      color: $color-primary;
+    }
+
+    &.is-hidden {
+      display: none;
+    }
+  }
+
+  // お気に入りは横にスクロールする
+  &__slider {
+    display: flex;
+    gap: 16px;
+    margin: 0 -16px;
+    padding: 4px 16px 16px;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+    list-style: none;
+
+    &::-webkit-scrollbar {
+      display: none;
+    }
+
+    @media (min-width: $bp-tablet) {
+      margin: 0 -24px;
+      padding: 4px 24px 16px;
+    }
+  }
+
+  // スマホは 2 枚が見えて、3 枚目が少しのぞく幅
+  &__slide {
+    flex: 0 0 44%;
+    scroll-snap-align: start;
+
+    @media (min-width: $bp-tablet) {
+      flex-basis: 240px;
+    }
+
+    &.is-hidden {
+      display: none;
+    }
+  }
+
+  &__list {
+    display: grid;
+    gap: 24px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+
+    @media (min-width: $bp-pc) {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+}
+
+// ---- チームのロゴ（画像が無いときは頭文字の丸）----
+.team-logo {
+  display: grid;
+  flex-shrink: 0;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  object-fit: contain;
+  border-radius: $radius-full;
+  color: $color-bg;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1.2;
+  text-align: center;
+  background: map.get($sport-colors, other);
+
+  @each $sport, $color in $sport-colors {
+    &--#{$sport} {
+      background: $color;
+    }
+  }
+}
+
+img.team-logo {
+  background: none;
+}
+
+// ---- お気に入りのカード ----
+.fav-match {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  height: 100%;
+  padding: 12px 16px;
+  background: $color-bg;
+  border-radius: $radius-lg;
+  box-shadow: $home-shadow;
+  color: $color-text;
+  text-decoration: none;
+
+  &:hover {
+    box-shadow: 0 4px 16px rgba($color-secondary, 0.16);
+  }
+
+  &__round {
+    font-size: 12px;
+    color: $color-text-sub;
+  }
+
+  &__teams {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+
+  &__vs {
+    align-self: flex-end;
+    font-family: $font-heading;
+    font-weight: 600;
+  }
+
+  &__solo {
+    width: auto;
+    padding: 0 12px;
+  }
+
+  &__when {
+    font-family: $font-heading;
+    font-size: 16px;
+    font-weight: 600;
+    text-align: center;
+  }
+}
+
+// ---- 今から観戦できる試合（チケットの形）----
+.now-match {
+  display: block;
+  color: $color-text;
+  text-decoration: none;
+  filter: drop-shadow(0 2px 4px rgba($color-secondary, 0.08));
+
+  &:hover {
+    filter: drop-shadow(0 4px 8px rgba($color-secondary, 0.16));
+  }
+
+  &__main {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    align-items: center;
+    gap: 16px;
+    padding: 24px 16px;
+    background: $color-bg;
+    border-radius: $radius-lg $radius-lg 0 0;
+  }
+
+  &__teams {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  &__vs {
+    align-self: flex-end;
+    font-family: $font-heading;
+    font-weight: 600;
+  }
+
+  &__solo {
+    width: auto;
+    min-width: 48px;
+    padding: 0 12px;
+  }
+
+  &__info {
+    display: grid;
+    gap: 4px;
+    min-width: 0;
+  }
+
+  &__league {
+    font-size: 12px;
+    color: $color-text-sub;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  &__title {
+    font-size: 16px;
+    font-weight: 700;
+    line-height: 1.4;
+    overflow-wrap: anywhere;
+  }
+
+  &__meta {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  &__time {
+    font-family: $font-heading;
+    font-size: 18px;
+    font-weight: 600;
+  }
+
+  &__distance {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding-left: 12px;
+    border-left: 1px solid $color-border;
+    font-size: 14px;
+
+    &.is-hidden {
+      display: none;
+    }
+  }
+
+  // 半券。点線で切り離したように見せる
+  &__ticket {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 12px 16px;
+    background: $color-bg;
+    border-top: 2px dashed $color-border;
+    border-radius: 0 0 $radius-lg $radius-lg;
+  }
+
+  &__venue {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-width: 0;
+    font-size: 14px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  &__price {
+    flex-shrink: 0;
+    font-family: $font-heading;
+    font-size: 18px;
+    font-weight: 600;
+    color: $color-secondary;
+  }
+}

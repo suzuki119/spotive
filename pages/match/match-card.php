@@ -31,7 +31,13 @@ $place = $match['pref'] === '' ? $match['venue'] : $match['venue'] . '（' . $ma
       </span>
       <span class="match-card__favorite is-hidden">お気に入り</span>
     </p>
-    <h3 class="match-card__title"><?= h($match['title']) ?></h3>
+    <h3 class="match-card__title">
+      <?php if ($match['detailPath'] !== '') : ?>
+        <a class="match-card__link" href="<?= h(url($match['detailPath'])) ?>"><?= h($match['title']) ?></a>
+      <?php else : ?>
+        <?= h($match['title']) ?>
+      <?php endif; ?>
+    </h3>
     <p class="match-card__venue"><?= h($place) ?></p>
     <?php if ($match['organizer'] !== '') : ?>
       <p class="match-card__organizer">主催：<?= h($match['organizer']) ?></p>
