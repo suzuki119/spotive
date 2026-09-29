@@ -96,38 +96,12 @@ function load_teams(): array
   return $teams;
 }
 
-/** 仮のロゴ（ホーム側・アウェイ側）。チームごとのロゴ画像ができたら消す */
-const MATCH_PLACEHOLDER_LOGOS = ['images/teams/team1.png', 'images/teams/team2.png'];
-
-/**
- * チームのロゴ画像のパス（アプリのルートから）。出すときは url() を通すこと。
- * teams.json の logo の画像がまだ置かれていなければ、仮のロゴを返す。
- * 仮のロゴも無ければ空文字。
- *
- * @param int $side 0 = ホーム側、1 = アウェイ側（仮のロゴをどちらにするか）
- */
-function match_team_logo(string $teamId, int $side): string
-{
-  static $teams = null;
-  $teams ??= load_teams();
-
-  $root = dirname(__DIR__) . '/';
-  $logo = (string) ($teams[$teamId]['logo'] ?? '');
-  if ($logo !== '' && is_file($root . $logo)) {
-    return $logo;
-  }
-
-  $placeholder = MATCH_PLACEHOLDER_LOGOS[$side === 0 ? 0 : 1];
-  return is_file($root . $placeholder) ? $placeholder : '';
-}
-
 /**
  * 画面で使う 1 試合の形。
  *
  * @return array{
  *   key:string, sport:string, title:string, date:string, time:string,
- *   venue:string, pref:string, price:?int, teamIds:list<string>, organizer:string,
- *   detailPath:string
+ *   venue:string, pref:string, price:?int, teamIds:list<string>, organizer:string
  * }
  */
 function match_row(
@@ -140,26 +114,9 @@ function match_row(
   string $pref,
   ?int $price,
   array $teamIds = [],
-  string $organizer = '',
-  string $detailPath = ''
+  string $organizer = ''
 ): array {
-  return compact(
-    'key', 'sport', 'title', 'date', 'time', 'venue', 'pref', 'price', 'teamIds', 'organizer', 'detailPath'
-  );
-}
-
-/**
- * 試合詳細（pages/match/match-detail.php）へのパス。アプリのルートからの形で返すので、
- * 出すときは url() を通すこと。
- *   type=match      … data/matches.json の仮データ（id は match-001 の形）
- *   type=tournament … v_public_tournaments の大会（id は数字）
- */
-function match_detail_path(string $type, string $id): string
-{
-  if ($id === '') {
-    return '';
-  }
-  return 'pages/match/match-detail.php?' . http_build_query(['type' => $type, 'id' => $id]);
+  return compact('key', 'sport', 'title', 'date', 'time', 'venue', 'pref', 'price', 'teamIds', 'organizer');
 }
 
 /** @return list<array<string,mixed>> data/matches.json の試合（仮データ） */
@@ -185,9 +142,7 @@ function load_json_matches(): array
       (string) ($m['venue'] ?? ''),
       $prefByArea[(string) ($m['areaId'] ?? '')] ?? '',
       isset($m['priceMin']) ? (int) $m['priceMin'] : null,
-      array_values(array_filter([(string) ($m['homeTeamId'] ?? ''), (string) ($m['awayTeamId'] ?? '')])),
-      '',
-      match_detail_path('match', (string) ($m['id'] ?? ''))
+      array_values(array_filter([(string) ($m['homeTeamId'] ?? ''), (string) ($m['awayTeamId'] ?? '')]))
     );
   }
   return $rows;
@@ -226,8 +181,7 @@ function load_tournament_matches(): array
       (string) $t['venue_prefecture'],
       $t['entry_fee_yen'] === null ? null : (int) $t['entry_fee_yen'],
       [],
-      (string) $t['organizer_name'],
-      match_detail_path('tournament', (string) (int) $t['id'])
+      (string) $t['organizer_name']
     );
   }
   return $rows;

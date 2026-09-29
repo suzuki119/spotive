@@ -12,16 +12,12 @@
 declare(strict_types=1);
 
 require_once __DIR__ . '/../../lib/match.php';
-require_once __DIR__ . '/../../lib/favorite.php';
 
 // -------------------------------------------------------------------
 // 試合の取得
 // -------------------------------------------------------------------
 $matches = load_upcoming_matches();
 $days    = group_matches_by_date($matches);
-
-// お気に入りの保存先（ログイン中なら DB）と、今の登録内容
-$favoriteState = favorite_client_state();
 
 ?>
 <!DOCTYPE html>
@@ -44,32 +40,32 @@ $favoriteState = favorite_client_state();
     <header class="site-header"></header>
 
     <main class="l-main">
-      <div class="schedule-list">
-        <div class="schedule-list__head">
-          <h1 class="schedule-list__title">試合一覧</h1>
-          <p class="schedule-list__count"><?= count($matches) ?>件の試合</p>
+      <div class="match-list">
+        <div class="match-list__head">
+          <h1 class="match-list__title">試合一覧</h1>
+          <p class="match-list__count"><?= count($matches) ?>件の試合</p>
         </div>
 
         <?php if ($matches !== []) : ?>
-          <label class="schedule-list__filter">
-            <input class="schedule-list__filter-input" type="checkbox" id="favorite-only" />
+          <label class="match-list__filter">
+            <input class="match-list__filter-input" type="checkbox" id="favorite-only" />
             お気に入りのチームの試合だけ見る
           </label>
-          <p class="schedule-list__empty is-hidden" id="favorite-empty">
+          <p class="match-list__empty is-hidden" id="favorite-empty">
             お気に入りのチームの試合はありません。<br />
             <a href="<?= h(url('pages/favorite/favorite.php')) ?>">お気に入りのチームを登録する</a>
           </p>
         <?php endif; ?>
 
         <?php if ($matches === []) : ?>
-          <p class="schedule-list__empty">これから行われる試合はまだありません。</p>
+          <p class="match-list__empty">これから行われる試合はまだありません。</p>
         <?php else : ?>
           <?php foreach ($days as $date => $dayMatches) : ?>
-            <section class="schedule-list__day" data-day>
-              <h2 class="schedule-list__date"><?= h(match_date_label($date)) ?></h2>
-              <ul class="schedule-list__items">
+            <section class="match-list__day" data-day>
+              <h2 class="match-list__date"><?= h(match_date_label($date)) ?></h2>
+              <ul class="match-list__items">
                 <?php foreach ($dayMatches as $match) : ?>
-                  <li class="schedule-list__item" data-match>
+                  <li class="match-list__item" data-match>
                     <?php require __DIR__ . '/match-card.php'; ?>
                   </li>
                 <?php endforeach; ?>
@@ -83,7 +79,6 @@ $favoriteState = favorite_client_state();
     <footer class="site-footer"></footer>
 
     <script src="<?= h(asset('js/main.js')) ?>"></script>
-    <script type="application/json" id="favorite-state"><?= favorite_state_json($favoriteState) ?></script>
     <script src="<?= h(asset('js/common/favorite-store.js')) ?>"></script>
     <script src="<?= h(asset('js/pages/match-list.js')) ?>"></script>
     <?php require __DIR__ . '/../menu-bar.php'; ?>

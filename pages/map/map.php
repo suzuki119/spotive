@@ -13,7 +13,6 @@ declare(strict_types=1);
 
 require_once __DIR__ . '/../../config/db.php';
 require_once __DIR__ . '/../../lib/support.php';
-require_once __DIR__ . '/../../lib/match.php';
 
 // -------------------------------------------------------------------
 // 地図に載せる大会の取得
@@ -58,21 +57,6 @@ try {
 // <script> の中に置くので、タグやクォートは実体参照に逃がしておく
 $mapTournamentsJson = json_encode(
   $mapTournaments,
-  JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES
-    | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT
-);
-
-// 一覧のカードの背景に薄く置くチームのロゴ。
-// チーム ID => [ホーム側で出すとき, アウェイ側で出すとき]（まだロゴが無いチームは仮のロゴになる）
-$mapTeamLogos = [];
-foreach (array_keys(load_teams()) as $teamId) {
-  $mapTeamLogos[$teamId] = array_map(
-    static fn(string $logo): string => $logo === '' ? '' : url($logo),
-    [match_team_logo($teamId, 0), match_team_logo($teamId, 1)]
-  );
-}
-$mapTeamLogosJson = json_encode(
-  $mapTeamLogos,
   JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES
     | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT
 );
@@ -235,11 +219,6 @@ $mapTeamLogosJson = json_encode(
   <!-- 掲載中の大会。js/pages/map.js が読んで仮データと合流させる -->
   <script type="application/json" id="map-tournaments">
     <?= $mapTournamentsJson ?>
-  </script>
-
-  <!-- チームのロゴ。js/pages/map.js が一覧のカードの背景に使う -->
-  <script type="application/json" id="map-team-logos">
-    <?= $mapTeamLogosJson ?>
   </script>
 
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>

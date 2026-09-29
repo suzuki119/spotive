@@ -70,10 +70,13 @@ page_header('主催者登録', '主催者認証（Lv.3）');
   </p>
 <?php endif; ?>
 
-<?php if ((int) $user['trust_level'] < LEVEL_USER) : ?>
+<?php if ((int) $user['trust_level'] < LEVEL_IDENTIFIED) : ?>
 
   <p class="notice notice--info">
-    主催者認証にはメールアドレスの確認が必要です。届いたメールのリンクを開いてください。
+    主催者認証には本人確認（Lv.2）の完了が必要です。
+  </p>
+  <p class="form-page__note">
+    <a class="button button--primary" href="<?= h($base) ?>/pages/account/identity.php">本人確認へ進む</a>
   </p>
 
 <?php elseif ($application !== null && !$needNew) : ?>

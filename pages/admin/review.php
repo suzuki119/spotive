@@ -2,26 +2,27 @@
 
 /**
  * pages/admin/review.php
- * 運営の審査画面。主催者申請・大会確認の 2 つのキューを扱う。
+ * 運営の審査画面。本人確認・主催者申請・大会確認の 3 つのキューを扱う。
  * 開けるのは users.role が reviewer / admin の人だけ。
  *
- *   ?queue=organizer|tournament … 一覧
+ *   ?queue=identity|organizer|tournament … 一覧
  *   ?queue=...&id=...                    … 1 件の詳細
  */
 
 declare(strict_types=1);
 
 require_once __DIR__ . '/../../lib/review.php';
+require_once __DIR__ . '/../../lib/identity.php';
 require_once __DIR__ . '/../../lib/organizer.php';
 require_once __DIR__ . '/../../lib/tournament.php';
 require_once __DIR__ . '/../../lib/layout.php';
 
 $reviewer = require_role('reviewer', 'admin');
 
-$queues = ['organizer' => '主催者申請', 'tournament' => '大会確認'];
-$queue  = (string) ($_GET['queue'] ?? $_POST['queue'] ?? 'organizer');
+$queues = ['identity' => '本人確認', 'organizer' => '主催者申請', 'tournament' => '大会確認'];
+$queue  = (string) ($_GET['queue'] ?? $_POST['queue'] ?? 'identity');
 if (!array_key_exists($queue, $queues)) {
-  $queue = 'organizer';
+  $queue = 'identity';
 }
 $id     = (int) ($_GET['id'] ?? 0);
 $errors = [];
@@ -41,6 +42,10 @@ if (is_post()) {
     }
 
     match ([$queue, $action]) {
+      ['identity', 'approve']   => identity_approve($targetId, (int) $reviewer['id']),
+      ['identity', 'reject']    => identity_reject($targetId, (int) $reviewer['id'], $note),
+      ['identity', 'more_info'] => identity_reject($targetId, (int) $reviewer['id'], $note, true),
+
       ['organizer', 'approve']   => organizer_approve($targetId, (int) $reviewer['id'], $note ?: null),
       ['organizer', 'reject']    => organizer_reject($targetId, (int) $reviewer['id'], $note),
       ['organizer', 'more_info'] => organizer_reject($targetId, (int) $reviewer['id'], $note, true),
@@ -81,6 +86,7 @@ $list   = [];
 try {
   if ($id > 0) {
     $detail = match ($queue) {
+      'identity'   => review_identity_detail($id),
       'organizer'  => review_organizer_detail($id),
       'tournament' => tournament_verification_detail($id),
     };
@@ -122,7 +128,9 @@ page_header('審査', '審査キュー');
     <table class="table">
       <thead>
         <tr>
-          <?php if ($queue === 'organizer') : ?>
+          <?php if ($queue === 'identity') : ?>
+            <th>申請者</th><th>方式</th><th>書類</th><th>状態</th><th>提出</th><th></th>
+          <?php elseif ($queue === 'organizer') : ?>
             <th>申請者</th><th>区分</th><th>団体</th><th>状態</th><th>提出</th><th></th>
           <?php else : ?>
             <th>大会名</th><th>主催者</th><th>開催日時</th><th>状態</th><th>提出</th><th></th>
@@ -132,7 +140,14 @@ page_header('審査', '審査キュー');
       <tbody>
         <?php foreach ($list as $row) : ?>
           <tr>
-            <?php if ($queue === 'organizer') : ?>
+            <?php if ($queue === 'identity') : ?>
+              <td><?= h((string) $row['nickname']) ?></td>
+              <td><?= h((string) $row['provider']) ?></td>
+              <td><?= h(IDENTITY_DOCUMENT_TYPES[(string) $row['document_type']] ?? '') ?></td>
+              <td><?= h(status_label((string) $row['status'])) ?></td>
+              <td><?= h(format_datetime((string) $row['submitted_at'])) ?></td>
+              <td><a href="review.php?queue=identity&id=<?= (int) $row['id'] ?>">審査する</a></td>
+            <?php elseif ($queue === 'organizer') : ?>
               <td><?= h((string) $row['nickname']) ?></td>
               <td><?= h(ORGANIZER_APPLICANT_TYPES[(string) $row['applicant_type']] ?? '') ?></td>
               <td><?= h((string) ($row['organization_name'] ?? '—')) ?></td>
@@ -157,12 +172,50 @@ page_header('審査', '審査キュー');
 
   <p class="form-page__note"><a href="review.php?queue=<?= h($queue) ?>">← 一覧へ戻る</a></p>
 
-  <?php if ($queue === 'organizer') : ?>
+  <?php if ($queue === 'identity') : ?>
+
+    <h2 class="form-page__subtitle">本人確認 #<?= (int) $detail['id'] ?></h2>
+    <dl class="detail">
+      <dt class="detail__label">申請者</dt>
+      <dd class="detail__value"><?= h((string) $detail['nickname']) ?>（<?= h((string) $detail['email']) ?>）</dd>
+
+      <dt class="detail__label">氏名（申告）</dt>
+      <dd class="detail__value"><?= h((string) $detail['legal_name']) ?> <?= h((string) $detail['legal_name_kana']) ?></dd>
+
+      <dt class="detail__label">生年月日</dt>
+      <dd class="detail__value">
+        書類 <?= h((string) $detail['birthdate']) ?>
+        ／ 登録時の自己申告 <?= h((string) $detail['self_reported_birthdate']) ?>
+      </dd>
+
+      <dt class="detail__label">書類</dt>
+      <dd class="detail__value"><?= h(IDENTITY_DOCUMENT_TYPES[(string) $detail['document_type']] ?? '') ?></dd>
+
+      <dt class="detail__label">提出書類</dt>
+      <dd class="detail__value">
+        <?php foreach ($detail['documents'] as $doc) : ?>
+          <a href="attachment.php?id=<?= (int) $doc['id'] ?>" target="_blank" rel="noopener">
+            <?= h(IDENTITY_DOC_SLOTS[(string) $doc['doc_type']] ?? (string) $doc['doc_type']) ?>
+          </a>
+        <?php endforeach; ?>
+        <?php if ($detail['documents'] === []) : ?>—<?php endif; ?>
+      </dd>
+    </dl>
+
+  <?php elseif ($queue === 'organizer') : ?>
 
     <h2 class="form-page__subtitle">主催者申請 #<?= (int) $detail['id'] ?></h2>
     <dl class="detail">
       <dt class="detail__label">申請者</dt>
       <dd class="detail__value"><?= h((string) $detail['nickname']) ?>（<?= h((string) $detail['email']) ?>）</dd>
+
+      <dt class="detail__label">本人確認</dt>
+      <dd class="detail__value">
+        <?= h(status_label((string) $detail['identity_status'])) ?>
+        <?php if ($detail['legal_name'] !== null) : ?>
+          ／ <?= h((string) $detail['legal_name']) ?>
+        <?php endif; ?>
+      </dd>
 
       <dt class="detail__label">区分</dt>
       <dd class="detail__value"><?= h(ORGANIZER_APPLICANT_TYPES[(string) $detail['applicant_type']] ?? '') ?></dd>

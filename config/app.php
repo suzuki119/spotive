@@ -32,22 +32,24 @@ return [
     'encrypt_key'  => '',                 // base64 の 32 バイト。空なら暗号化しない（開発時のみ）
     'max_bytes'    => 8 * 1024 * 1024,
     'allowed_mime' => ['image/jpeg', 'image/png', 'image/heic', 'application/pdf'],
+    // 本人確認書類の原本を持っておく日数
+    'identity_retention_days' => 30,
   ],
 
   'verification' => [
-    // 本人確認（Lv.2）はいったん外している。主催者申請はメール確認（Lv.1）だけで出せる
+    // Lv.2 の確認方法。'external_ekyc'（画像を持たない） / 'manual'（自前で目視審査）
+    'identity_provider'    => 'manual',
+    'identity_valid_days'  => 730,        // 本人確認の有効期間
     'organizer_valid_days' => 365,        // 主催者認証の有効期間
 
     // 機能ごとの必要レベル。運用しながら上げ下げするための入口
     'require_level' => [
-      'organizer_apply'   => 1,           // 主催者申請にはメール確認（Lv.1）が必要
-      'create_tournament' => 1,           // 大会登録・編集はメール確認（Lv.1）で可。主催者認証の必須化は後で
+      'organizer_apply'   => 2,           // 主催者申請には本人確認（Lv.2）が必要
+      'create_tournament' => 3,           // 大会登録には主催者認証（Lv.3）が必要
     ],
 
-    // true にすると、承認されるまで大会は公開されない。
-    // デモ中は false：登録した時点で公開し、安全・許認可の入力欄、書類の添付、
-    // 大会確認（Lv.4）の申請を画面から隠す（AGENTS.md「デモ版の扱い」参照）
-    'tournament_review_required' => false,
+    // true にすると、承認されるまで大会は公開されない
+    'tournament_review_required' => true,
   ],
 
   'notify' => [

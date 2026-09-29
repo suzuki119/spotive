@@ -3,7 +3,7 @@
 /**
  * lib/organizer.php
  * Lv.3 主催者認証。
- *   前提: Lv.1 メール確認済み（本人確認 Lv.2 はいったん外している）。
+ *   前提: Lv.2 本人確認済み（個人申請でも団体申請でも、申請者本人の本人確認は必須）。
  *   個人 → 連絡先 ＋ 主催予定の大会内容（任意）＋ 実績（任意）
  *   団体 → 上記 ＋ 団体情報（代表者・所在地・連絡先・Web/SNS・活動内容）
  *   法人 → 上記 ＋ 法人番号（チェックディジット検証あり）
@@ -47,10 +47,10 @@ const ORGANIZER_DOC_SLOTS = [
 /** 申請の作成（下書き）。@return int organizer_applications.id */
 function organizer_apply(array $user, array $in): int
 {
-  // 主催者になるにはメール確認が先。ここが Lv.1 → Lv.3 のゲート
-  $needed = (int) (config('verification.require_level.organizer_apply') ?? LEVEL_USER);
+  // 主催者になるには本人確認が先。ここが Lv.2 → Lv.3 のゲート
+  $needed = (int) (config('verification.require_level.organizer_apply') ?? LEVEL_IDENTIFIED);
   if ((int) $user['trust_level'] < $needed) {
-    throw new AppError('主催者認証にはメールアドレスの確認が必要です。');
+    throw new AppError('主催者認証には本人確認（Lv.2）の完了が必要です。');
   }
 
   $open = db_one(
@@ -213,8 +213,8 @@ function organizer_submit(array $user, int $appId): void
   if (!in_array($app['status'], ['draft', 'more_info_required'], true)) {
     throw new AppError('この申請は提出できません。');
   }
-  if ((int) $user['trust_level'] < LEVEL_USER) {
-    throw new AppError('メールアドレスの確認が完了していません。');
+  if ((int) $user['trust_level'] < LEVEL_IDENTIFIED) {
+    throw new AppError('本人確認（Lv.2）が完了していません。');
   }
 
   rate_limit_hit('organizer_submit:user:' . $user['id'], 5, 86400);
@@ -240,6 +240,17 @@ function organizer_approve(int $appId, int $reviewerId, ?string $note = null): v
     }
     if (!in_array($app['status'], ['submitted', 'in_review', 'more_info_required'], true)) {
       throw new AppError('この申請は承認できません。');
+    }
+
+    // 申請中に失効していることがあるので、承認時点でも本人確認を見直す
+    $identity = db_one(
+      'SELECT id FROM identity_verifications
+        WHERE user_id = :u AND status = "approved"
+          AND (expires_at IS NULL OR expires_at > NOW()) LIMIT 1',
+      ['u' => $app['user_id']]
+    );
+    if ($identity === null) {
+      throw new AppError('申請者の本人確認が有効ではありません。');
     }
 
     db_update('organizer_applications', [

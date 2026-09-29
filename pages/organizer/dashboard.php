@@ -12,7 +12,7 @@ require_once __DIR__ . '/../../lib/tournament.php';
 require_once __DIR__ . '/../../lib/organizer.php';
 require_once __DIR__ . '/../../lib/layout.php';
 
-$user   = require_action_level('create_tournament', LEVEL_USER);
+$user   = require_login();
 $errors = [];
 $error  = null;
 
@@ -36,9 +36,6 @@ if (is_post()) {
 $status  = organizer_status((int) $user['id']);
 $profile = $status['profile'];
 $events  = tournament_list_mine((int) $user['id']);
-
-// 審査を挟まない（デモ）あいだは、確認状態と確認申請を出さない
-$reviewRequired = (bool) config('verification.tournament_review_required', true);
 $base    = base_path();
 
 page_header('主催者ページ', '主催者ページ');
@@ -51,16 +48,20 @@ page_header('主催者ページ', '主催者ページ');
   <?php endforeach; ?>
 <?php endif; ?>
 
-<?php if ($profile !== null && $profile['status'] === 'active') : ?>
+<?php if ($profile === null || $profile['status'] !== 'active') : ?>
+  <p class="notice notice--info">
+    主催者認証（Lv.3）が有効ではありません。
+    <a href="register.php">主催者認証の申請へ</a>
+  </p>
+<?php else : ?>
   <p class="form-page__lead">
     <strong><?= h((string) $profile['display_name']) ?></strong> として掲載できます
     （有効期限 <?= h(format_datetime((string) $profile['verified_until'])) ?>）。
   </p>
+  <p class="form-page__note">
+    <a class="button button--primary" href="tournament-new.php">大会を登録する</a>
+  </p>
 <?php endif; ?>
-
-<p class="form-page__note">
-  <a class="button button--primary" href="tournament-new.php">大会を登録する</a>
-</p>
 
 <h2 class="form-page__subtitle">登録した大会（<?= count($events) ?>件）</h2>
 
@@ -74,10 +75,8 @@ page_header('主催者ページ', '主催者ページ');
         <th>開催日時</th>
         <th>会場</th>
         <th>公開状態</th>
-        <?php if ($reviewRequired) : ?>
-          <th>確認状態</th>
-          <th></th>
-        <?php endif; ?>
+        <th>確認状態</th>
+        <th></th>
       </tr>
     </thead>
     <tbody>
@@ -91,19 +90,17 @@ page_header('主催者ページ', '主催者ページ');
           <td><?= h(format_datetime((string) $event['starts_at'])) ?></td>
           <td><?= h((string) $event['venue_prefecture']) ?> <?= h((string) $event['venue_name']) ?></td>
           <td><?= h(status_label((string) $event['status'])) ?></td>
-          <?php if ($reviewRequired) : ?>
-            <td><?= h(status_label((string) $event['verification_status'])) ?></td>
-            <td>
-              <?php if (in_array((string) $event['verification_status'], ['unverified', 'rejected', 'more_info_required'], true)) : ?>
-                <form action="dashboard.php" method="post">
-                  <?= csrf_field() ?>
-                  <input type="hidden" name="action" value="submit_verification" />
-                  <input type="hidden" name="tournament_id" value="<?= (int) $event['id'] ?>" />
-                  <button class="button button--small" type="submit">確認を申請</button>
-                </form>
-              <?php endif; ?>
-            </td>
-          <?php endif; ?>
+          <td><?= h(status_label((string) $event['verification_status'])) ?></td>
+          <td>
+            <?php if (in_array((string) $event['verification_status'], ['unverified', 'rejected', 'more_info_required'], true)) : ?>
+              <form action="dashboard.php" method="post">
+                <?= csrf_field() ?>
+                <input type="hidden" name="action" value="submit_verification" />
+                <input type="hidden" name="tournament_id" value="<?= (int) $event['id'] ?>" />
+                <button class="button button--small" type="submit">確認を申請</button>
+              </form>
+            <?php endif; ?>
+          </td>
         </tr>
       <?php endforeach; ?>
     </tbody>

@@ -91,6 +91,7 @@ function require_level(int $level): array
 
   flash(level_message($level), 'error');
   redirect(match ($level) {
+    LEVEL_IDENTIFIED => url('pages/account/identity.php'),
     LEVEL_ORGANIZER  => url('pages/organizer/register.php'),
     default          => url('pages/setting/setting.php'),
   });

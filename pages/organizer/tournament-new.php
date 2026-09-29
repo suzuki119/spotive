@@ -12,12 +12,9 @@ declare(strict_types=1);
 require_once __DIR__ . '/../../lib/tournament.php';
 require_once __DIR__ . '/../../lib/layout.php';
 
-$user = require_action_level('create_tournament', LEVEL_USER);
+$user = require_action_level('create_tournament', LEVEL_ORGANIZER);
 
 $id     = (int) ($_GET['id'] ?? $_POST['id'] ?? 0);
-
-// 審査を挟まない（デモ）あいだは、許認可・書類・確認申請を画面に出さない
-$reviewRequired = (bool) config('verification.tournament_review_required', true);
 $errors = [];
 $error  = null;
 
@@ -32,9 +29,7 @@ if (is_post()) {
           flash('大会の内容を更新しました。', 'success');
         } else {
           $id = tournament_create($user, $_POST);
-          flash($reviewRequired
-            ? '大会を登録しました。確認申請に必要な書類を添付してください。'
-            : '大会を登録しました。地図と一覧に掲載されます。', 'success');
+          flash('大会を登録しました。確認申請に必要な書類を添付してください。', 'success');
         }
         redirect('tournament-new.php?id=' . $id);
         // no break
@@ -147,9 +142,7 @@ page_header($id > 0 ? '大会の編集' : '大会の登録', $id > 0 ? '大会�
     <label class="form__label" for="entry_closes_at">募集終了日時</label>
     <input class="form__input" type="datetime-local" id="entry_closes_at" name="entry_closes_at"
            value="<?= h($dtVal('entry_closes_at')) ?>" />
-    <?php if ($reviewRequired) : ?>
-      <p class="form__hint">確認申請（Lv.4）には募集期間の入力が必要です。</p>
-    <?php endif; ?>
+    <p class="form__hint">確認申請（Lv.4）には募集期間の入力が必要です。</p>
     <?php field_error($errors, 'entry_closes_at'); ?>
     <?php field_error($errors, 'entry_period'); ?>
   </div>
@@ -229,7 +222,6 @@ page_header($id > 0 ? '大会の編集' : '大会の登録', $id > 0 ? '大会�
     <?php field_error($errors, 'rules'); ?>
   </div>
 
-  <?php if ($reviewRequired) : ?>
   <h2 class="form-page__subtitle">安全・許認可（Lv.4 の確認対象）</h2>
 
   <div class="form__field">
@@ -282,7 +274,6 @@ page_header($id > 0 ? '大会の編集' : '大会の登録', $id > 0 ? '大会�
            value="<?= h($val('insurance_provider')) ?>" maxlength="120" />
     <?php field_error($errors, 'insurance_provider'); ?>
   </div>
-  <?php endif; ?>
 
   <div class="form__field">
     <label class="form__label" for="emergency_contact_name">緊急時の連絡先（氏名）</label>
@@ -305,7 +296,7 @@ page_header($id > 0 ? '大会の編集' : '大会の登録', $id > 0 ? '大会�
   <?php endif; ?>
 </form>
 
-<?php if ($id > 0 && $reviewRequired) : ?>
+<?php if ($id > 0) : ?>
   <h2 class="form-page__subtitle">書類の添付</h2>
 
   <ul class="doc-list">

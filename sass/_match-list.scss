@@ -1,8 +1,8 @@
 // 試合一覧画面（pages/match/match-list.php）専用のスタイル。
-// 日付ごとの見出し（schedule-list__day / __date / __items）はお気に入り画面でも使う。
+// 日付ごとの見出し（match-list__day / __date / __items）はお気に入り画面でも使う。
 @use "variables" as *;
 
-.schedule-list {
+.match-list {
   max-width: $content-max;
   margin: 0 auto;
   padding: 24px 16px $menu-bar-space;

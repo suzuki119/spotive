@@ -118,6 +118,7 @@ $saved = $_SESSION['register'] ?? [];
               <p class="field-error"><?= h($errors['birthdate']) ?></p>
             <?php endif; ?>
           </article>
+          <button type="button" class="verification btn">本人確認</button>
           <button type="submit" class="next btn">次へ</button>
           <button type="button" class="back btn">戻る</button>
         </form>
