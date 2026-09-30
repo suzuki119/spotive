@@ -712,7 +712,13 @@ $sheet-peek: 168px; // 閉じているときに見える高さ（帯の分と、
 }
 
 // ---- 地図の上に重ねる UI ----
-// 上にキーワード検索と絞り込みの丸いボタン。その下の右に、現在地・結果全体の小さなボタン
+// 上にキーワード検索と絞り込みの丸いボタン。現在地・結果全体の小さなボタンは地図の右端に置き、
+// その下に Leaflet の地図の切り替え、右下に拡大縮小が来る（右端の丸いボタンを、どの幅でも 1 列にそろえる）
+//   スマホ    … [検索欄        ][絞り込み]
+//                               [現在地  ]
+//                               [全体    ]
+//   タブレット〜 … [検索欄(最大480px)][絞り込み]    …    [現在地]
+//                                                       [全体  ]
 .map-tools {
   position: absolute;
   top: 16px;
@@ -729,9 +735,10 @@ $sheet-peek: 168px; // 閉じているときに見える高さ（帯の分と、
     pointer-events: auto;
   }
 
+  // 広い画面：検索欄は読みやすい幅（最大 480px）で左に止め、残りのすき間を挟んで右端に小さなボタンを置く
   @media (min-width: $bp-tablet) {
-    right: auto;
-    width: min(480px, calc(100% - 32px));
+    grid-template-columns: minmax(0, 480px) auto 1fr;
+    align-items: start;
   }
 }
 
@@ -827,11 +834,17 @@ $sheet-peek: 168px; // 閉じているときに見える高さ（帯の分と、
   }
 }
 
-// 現在地・結果全体（検索欄の下、右端に縦に並べる）
+// 現在地・結果全体（右端に縦に並べる。スマホは絞り込みボタンの下、広い画面は地図の右上）
 .map-tools__sub {
   grid-column: 2;
   display: grid;
   gap: 8px;
+
+  @media (min-width: $bp-tablet) {
+    grid-row: 1;
+    grid-column: 3;
+    justify-self: end;
+  }
 
   .map-tools__round {
     width: 40px;
@@ -872,8 +885,13 @@ $sheet-peek: 168px; // 閉じているときに見える高さ（帯の分と、
     top: 168px; // 検索欄と、現在地・結果全体のボタンの下
 
     @media (min-width: $bp-tablet) {
-      top: 0;
+      top: 104px; // 右上の現在地・結果全体（上の余白 16px ＋ ボタン 2 つ 88px）の下
     }
+  }
+
+  // 地図の切り替え・拡大縮小の右端を、現在地・結果全体（右から 16px）にそろえる。Leaflet の既定は 10px
+  .leaflet-right .leaflet-control {
+    margin-right: 16px;
   }
 
   .leaflet-bottom {

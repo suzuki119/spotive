@@ -216,6 +216,10 @@ $breakpoints: (
   }
 }
 
+.map-tools__sub,.leaflet-control-layers-toggle{
+  display:none;
+}
+
 .account-type-signin {
   margin-top: 50px;
 
