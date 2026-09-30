@@ -34,8 +34,10 @@ const MATCH_SEARCH_PRICE_STEP = 500;
 const MATCH_SEARCH_NEAR_KM = [1, 3, 5, 10, 30];
 
 /**
- * 検索画面の上のタブ。キーは競技コード（空文字は ALL）。
- * リーグ名で見せているが、絞り込みは競技で行う（リーグのデータはまだ無い）
+ * 競技 => リーグ名。キーは競技コード（空文字は ALL）。
+ *   ・マイページ（pages/setting/setting.php の mypage_league()）が、見出しのリーグ名に使う
+ *   ・試合一覧・試合を探すの競技タブは、この「並び順」だけを使う。
+ *     タブの文字は競技名（バスケットボールなど）にそろえる（match_search_tabs()）
  */
 const MATCH_SEARCH_TABS = [
   ''           => 'ALL',
@@ -47,13 +49,53 @@ const MATCH_SEARCH_TABS = [
 
 /** 都道府県の並び順（JIS の番号順）。選択肢をこの順に出す */
 const MATCH_SEARCH_PREF_ORDER = [
-  '北海道', '青森県', '岩手県', '宮城県', '秋田県', '山形県', '福島県',
-  '茨城県', '栃木県', '群馬県', '埼玉県', '千葉県', '東京都', '神奈川県',
-  '新潟県', '富山県', '石川県', '福井県', '山梨県', '長野県', '岐阜県', '静岡県', '愛知県',
-  '三重県', '滋賀県', '京都府', '大阪府', '兵庫県', '奈良県', '和歌山県',
-  '鳥取県', '島根県', '岡山県', '広島県', '山口県',
-  '徳島県', '香川県', '愛媛県', '高知県',
-  '福岡県', '佐賀県', '長崎県', '熊本県', '大分県', '宮崎県', '鹿児島県', '沖縄県',
+  '北海道',
+  '青森県',
+  '岩手県',
+  '宮城県',
+  '秋田県',
+  '山形県',
+  '福島県',
+  '茨城県',
+  '栃木県',
+  '群馬県',
+  '埼玉県',
+  '千葉県',
+  '東京都',
+  '神奈川県',
+  '新潟県',
+  '富山県',
+  '石川県',
+  '福井県',
+  '山梨県',
+  '長野県',
+  '岐阜県',
+  '静岡県',
+  '愛知県',
+  '三重県',
+  '滋賀県',
+  '京都府',
+  '大阪府',
+  '兵庫県',
+  '奈良県',
+  '和歌山県',
+  '鳥取県',
+  '島根県',
+  '岡山県',
+  '広島県',
+  '山口県',
+  '徳島県',
+  '香川県',
+  '愛媛県',
+  '高知県',
+  '福岡県',
+  '佐賀県',
+  '長崎県',
+  '熊本県',
+  '大分県',
+  '宮崎県',
+  '鹿児島県',
+  '沖縄県',
 ];
 
 /**
@@ -207,6 +249,30 @@ function match_search(array $matches, array $cond): array
     }
     return true;
   }));
+}
+
+/**
+ * 競技のタブ（試合一覧・試合を探すで共通）。競技コード => 表示名（空文字は ALL）。
+ *   ・並びは MATCH_SEARCH_TABS の順（ALL / 野球 / サッカー / バスケットボール / バレーボール）
+ *   ・そのあとに、試合がある競技を足す（フットサルなど）
+ *   ・$selected に試合の無い競技が来たときも足す（タブを選んだ状態にし、「○○の試合はありません」に名前を出すため）
+ *
+ * @param list<array<string,mixed>> $matches load_upcoming_matches() の結果
+ * @return array<string,string>
+ */
+function match_search_tabs(array $matches, string $selected = ''): array
+{
+  $tabs = [];
+  foreach (array_keys(MATCH_SEARCH_TABS) as $key) {
+    $tabs[$key] = $key === '' ? 'ALL' : match_sport_label($key);
+  }
+  foreach (match_search_options($matches)['sports'] as $key => $label) {
+    $tabs[$key] ??= $label;
+  }
+  if ($selected !== '') {
+    $tabs[$selected] ??= MATCH_SPORT_LABELS[$selected] ?? 'その他';
+  }
+  return $tabs;
 }
 
 /**

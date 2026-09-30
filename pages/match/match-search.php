@@ -4,7 +4,7 @@
  * pages/match/match-search.php
  * 検索画面（企画書の機能 3「条件検索・フィルター」）。メニューバーの「検索」から来る。
  *
- *   タブ         … ALL / プロ野球 / Jリーグ / B.LEAGUE / SV LEAGUE（中身は競技での絞り込み）
+ *   タブ         … ALL / 野球 / サッカー / バスケットボール / バレーボール …（競技での絞り込み）
  *   キーワード   … チーム名・会場名など
  *   条件検索     … 日程（開始日〜終了日）、エリア（現在地から○km以内 or 都道府県）、価格の上限
  *   周辺検索     … 地図へ移り、会場を選ぶと周辺の施設を出す（企画書の機能 6 のデモ）
@@ -39,11 +39,8 @@ $isActive = match_search_is_active($cond);
 // お気に入りのチームの試合に印を付けるため（ログイン中なら DB、未ログインならブラウザ）
 $favoriteState = favorite_client_state();
 
-// タブ：決まったリーグのほかに、試合がある競技も後ろに足す
-$tabs = MATCH_SEARCH_TABS;
-foreach ($options['sports'] as $key => $label) {
-  $tabs[$key] ??= $label;
-}
+// 競技のタブ（試合一覧と共通）
+$tabs = match_search_tabs($upcoming, $cond['sport']);
 
 // 条件の行に出す、いま選んでいる内容
 $fmtDate   = static fn(string $d, string $format): string => date($format, (int) strtotime($d));
