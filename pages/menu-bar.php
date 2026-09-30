@@ -37,19 +37,11 @@ $menuItems = [
  * href が null の項目は、ページがまだ無いので押せない表示（準備中）にする
  */
 $subMenuItems = [
-<<<<<<< HEAD
-  ['href' => 'pages/setting/setting.php',          'icon' => 'setting.svg',  'label' => '設定'],
-  ['href' => null,                                 'icon' => 'crown.svg',    'label' => 'プラス'],   // SPOTIVE PLUS+ は未設計
-  ['href' => 'pages/notification/notification.php', 'icon' => 'mail.svg',    'label' => 'お知らせ'],
-  ['href' => 'pages/travel/travel.php',            'icon' => 'travel.svg',   'label' => '遠征'],
-  ['href' => 'pages/setting/account-setting.php',  'icon' => 'account.svg',  'label' => 'アカウント'],
-=======
   ['href' => 'pages/setting/notification-setting.php',         'icon' => 'setting.svg',      'label' => '設定'],
   ['href' => 'pages/plus/plus.php',                'icon' => 'crown.svg',           'label' => 'プラス'],
   ['href' => 'pages/notification/notification.php', 'icon' => 'mail.svg',  'label' => 'お知らせ'],
   ['href' => 'pages/travel/travel.php',            'icon' => 'travel.svg',        'label' => '遠征'],
   ['href' => 'pages/account/account.php',          'icon' => 'account.svg',       'label' => 'アカウント'],
->>>>>>> origin/main
 ];
 
 ?>
