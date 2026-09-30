@@ -75,6 +75,11 @@ function detail_from_match(string $id): ?array
     'price_max'   => isset($match['priceMax']) ? (int) $match['priceMax'] : null,
     'ticket_url'  => (string) ($match['ticketUrl'] ?? ''),
     'image'       => (string) ($match['image'] ?? ''),
+    // 「B.PREMIER 2026-27 第1節 GAME2」の各部分（仮データ）
+    'league'      => (string) ($match['league'] ?? ''),
+    'season'      => (string) ($match['season'] ?? ''),
+    'round'       => (string) ($match['round'] ?? ''),
+    'game'        => (string) ($match['game'] ?? ''),
     'organizer'   => null,
     'is_verified' => false,
   ];
@@ -115,6 +120,10 @@ function detail_from_tournament(int $id): ?array
     'price_max'   => null,
     'ticket_url'  => '',
     'image'       => '',
+    'league'      => '',
+    'season'      => '',
+    'round'       => '',
+    'game'        => '',
     'organizer'   => (string) $t['organizer_name'],
     'is_verified' => (bool) $t['is_verified'],
   ];
@@ -268,7 +277,11 @@ $pageTitle = $game === null ? '試合が見つかりません' : $game['title'];
             <?php if ($game === null) : ?>
               SPOTIVE
             <?php else : ?>
-              <?= h($game['organizer'] !== null ? '主催：' . $game['organizer'] : $sportInfo['label']) ?>
+              <?php if ($game['league'] !== '') : ?>
+                <?= h(match_league_label($game, true)) ?><?= $game['season'] !== '' ? ' Season' : '' ?>
+              <?php else : ?>
+                <?= h($game['organizer'] !== null ? '主催：' . $game['organizer'] : $sportInfo['label']) ?>
+              <?php endif; ?>
             <?php endif; ?>
           </p>
           <!-- 閉じる：来た画面に戻る（js/pages/match-detail.js）。JS が無ければ地図へ -->
@@ -324,8 +337,11 @@ $pageTitle = $game === null ? '試合が見つかりません' : $game['title'];
             <p class="match-detail__badge">確認済みの大会</p>
           <?php endif; ?>
 
-          <?php if ($game['organizer'] !== null) : ?>
-            <!-- 大会は見出しが主催者名なので、競技名はここに出す（試合は見出しが競技名） -->
+          <?php if (match_round_label($game) !== '') : ?>
+            <!-- 第1節 GAME2（見出しはリーグとシーズン） -->
+            <p class="match-detail__round"><?= h(match_round_label($game)) ?></p>
+          <?php elseif ($game['organizer'] !== null) : ?>
+            <!-- 大会は見出しが主催者名なので、競技名はここに出す -->
             <p class="match-detail__round"><?= h($sportInfo['label']) ?></p>
           <?php endif; ?>
 

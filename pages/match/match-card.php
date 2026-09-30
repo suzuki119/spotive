@@ -5,7 +5,7 @@
  * 試合カード 1 枚。試合一覧・お気に入りの両方から require して使う。
  *
  *   左 … 両チームのロゴ（vs）と、その下に競技名
- *   右 … 会場、対戦カード、日付｜開始時間、料金
+ *   右 … リーグと節（B.PREMIER 第1節 GAME2）、対戦カード、日付｜開始時間、会場、料金
  *
  * 読み込む前に $match（lib/match.php の match_row() の形）を用意しておくこと。
  * data-team-ids は js/common/favorite-store.js がお気に入りの判定に使う。
@@ -61,8 +61,13 @@ $sport = match_sport_key($match['sport']);
   </div>
 
   <div class="match-card__body">
+    <!-- 「B.PREMIER 第1節 GAME2」。リーグの情報が無い大会は主催者名 -->
     <p class="match-card__sub">
-      <?= h($place) ?><?= $match['organizer'] !== '' ? ' ・ 主催：' . h($match['organizer']) : '' ?>
+      <?php if ($match['league'] === '' && $match['organizer'] !== '') : ?>
+        主催：<?= h($match['organizer']) ?>
+      <?php else : ?>
+        <?= h(match_league_label($match)) ?>
+      <?php endif; ?>
     </p>
 
     <h3 class="match-card__title">
@@ -82,6 +87,11 @@ $sport = match_sport_key($match['sport']);
     <p class="match-card__when">
       <span class="match-card__date"><?= h(match_short_date($match['date'])) ?></span>
       <span class="match-card__time"><?= $match['time'] === '' ? '時間未定' : h($match['time']) . '〜' ?></span>
+    </p>
+
+    <p class="match-card__place">
+      <img src="<?= h(url('images/icons/point.svg')) ?>" alt="" width="11" height="14" />
+      <?= h($place) ?>
     </p>
 
     <p class="match-card__foot">

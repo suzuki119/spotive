@@ -183,8 +183,12 @@ function match_short_date(string $date): string
  * @return array{
  *   key:string, sport:string, title:string, date:string, time:string,
  *   venue:string, pref:string, price:?int, teamIds:list<string>, organizer:string,
- *   detailPath:string, lat:?float, lng:?float
+ *   detailPath:string, lat:?float, lng:?float,
+ *   league:string, season:string, round:string, game:string
  * }
+ *
+ * league / season / round / game は「B.PREMIER 2026-27 第1節 GAME2」の各部分。
+ * いまは仮データ（data/matches.json）にだけあり、主催者の大会には無い（空文字）。
  */
 function match_row(
   string $key,
@@ -199,12 +203,41 @@ function match_row(
   string $organizer = '',
   string $detailPath = '',
   ?float $lat = null,
-  ?float $lng = null
+  ?float $lng = null,
+  array $league = []
 ): array {
   return compact(
     'key', 'sport', 'title', 'date', 'time', 'venue', 'pref', 'price', 'teamIds', 'organizer', 'detailPath',
     'lat', 'lng'
-  );
+  ) + [
+    'league' => (string) ($league['league'] ?? ''),
+    'season' => (string) ($league['season'] ?? ''),
+    'round'  => (string) ($league['round'] ?? ''),
+    'game'   => (string) ($league['game'] ?? ''),
+  ];
+}
+
+/**
+ * 「B.PREMIER 第1節 GAME2」の形。リーグの情報が無い試合（主催者の大会など）は競技名。
+ * $withSeason を true にすると「B.PREMIER 2026-27」のようにシーズンを添える（節とゲームは付けない）
+ */
+function match_league_label(array $match, bool $withSeason = false): string
+{
+  $league = (string) ($match['league'] ?? '');
+  if ($league === '') {
+    return match_sport_label((string) ($match['sport'] ?? ''));
+  }
+  $parts = $withSeason
+    ? [$league, (string) ($match['season'] ?? '')]
+    : [$league, (string) ($match['round'] ?? ''), (string) ($match['game'] ?? '')];
+  return implode(' ', array_filter($parts, static fn(string $p): bool => $p !== ''));
+}
+
+/** 「第1節 GAME2」の部分だけ。無ければ空文字 */
+function match_round_label(array $match): string
+{
+  $parts = [(string) ($match['round'] ?? ''), (string) ($match['game'] ?? '')];
+  return implode(' ', array_filter($parts, static fn(string $p): bool => $p !== ''));
 }
 
 /**
@@ -248,7 +281,8 @@ function load_json_matches(): array
       '',
       match_detail_path('match', (string) ($m['id'] ?? '')),
       isset($m['lat']) ? (float) $m['lat'] : null,
-      isset($m['lng']) ? (float) $m['lng'] : null
+      isset($m['lng']) ? (float) $m['lng'] : null,
+      $m   // league / season / round / game（仮データ）
     );
   }
   return $rows;

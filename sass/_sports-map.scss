@@ -490,6 +490,12 @@ $site-header-height: 48px;
   gap: 4px;
 }
 
+.card-league {
+  color: $map-text;
+  font-size: 12px;
+  font-weight: bold;
+}
+
 .card-sub {
   overflow: hidden;
   font-size: 12px;
