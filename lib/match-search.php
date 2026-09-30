@@ -97,14 +97,14 @@ function match_search_sport_key(string $sport): string
  */
 function match_search_conditions(array $get): array
 {
-  $keyword = trim((string) ($get['keyword'] ?? ''));
-  $sport   = trim((string) ($get['sport'] ?? ''));
-  $pref    = trim((string) ($get['pref'] ?? ''));
+  $keyword = input_string($get, 'keyword');
+  $sport   = input_string($get, 'sport');
+  $pref    = input_string($get, 'pref');
   $near    = filter_var($get['near'] ?? null, FILTER_VALIDATE_INT);
-  $from    = (string) ($get['from'] ?? '');
-  $to      = (string) ($get['to'] ?? '');
-  $when    = (string) ($get['when'] ?? '');
-  $date    = (string) ($get['date'] ?? '');
+  $from    = input_string($get, 'from');
+  $to      = input_string($get, 'to');
+  $when    = input_string($get, 'when');
+  $date    = input_string($get, 'date');
   $price   = filter_var($get['max_price'] ?? null, FILTER_VALIDATE_INT);
 
   $from = Validator::isDate($from) ? $from : '';

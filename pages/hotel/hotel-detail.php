@@ -9,7 +9,8 @@
  *
  * いまは画面確認用の仮データ（lib/hotel.php）。名前・住所・料金などはすべて架空。
  * 「予約サイトへ」はまだどこにもつながない（楽天トラベル API の利用規約を確認中）。
- * 「遠征プランに追加」は主要機能 5（後回し）なので、押せない表示にしている。
+ * 「遠征プランに追加」は、来た試合で遠征サポート（pages/travel/travel.php）を開き、このホテルを選んだ状態にする。
+ * 試合から来ていないときは、どの遠征か決められないので押せない表示にしている。
  */
 
 declare(strict_types=1);
@@ -19,8 +20,8 @@ require_once __DIR__ . '/../../lib/hotel.php';
 // -------------------------------------------------------------------
 // ホテルと、どの試合（会場）から来たかの取得
 // -------------------------------------------------------------------
-$hotelId = trim((string) ($_GET['id'] ?? ''));
-$matchId = trim((string) ($_GET['match'] ?? ''));
+$hotelId = input_string($_GET, 'id');
+$matchId = input_string($_GET, 'match');
 $hotel   = find_hotel($hotelId);
 
 if ($hotel === null) {
@@ -174,11 +175,18 @@ $pageTitle = $hotel === null ? 'ホテルが見つかりません' : (string) $h
               <span class="hotel-card__reserve is-disabled" aria-disabled="true">予約サイト（準備中）</span>
             <?php endif; ?>
           </div>
-          <!-- 遠征サポート（主要機能 5）は後回しなので、まだ押せない -->
-          <span class="hotel-card__plan is-disabled" aria-disabled="true">
-            <img src="<?= h(url('images/icons/add.svg')) ?>" alt="" width="20" height="20" />
-            遠征プランに追加（準備中）
-          </span>
+          <?php if ($matchId !== '' && $venue !== null) : ?>
+            <a class="hotel-card__plan" href="<?= h(url('pages/travel/travel.php?' . http_build_query(['game' => $matchId, 'hotel' => $hotelId]))) ?>">
+              <img src="<?= h(url('images/icons/add.svg')) ?>" alt="" width="20" height="20" />
+              遠征プランに追加
+            </a>
+          <?php else : ?>
+            <!-- 試合から来ていないと、どの遠征か決められない -->
+            <span class="hotel-card__plan is-disabled" aria-disabled="true">
+              <img src="<?= h(url('images/icons/add.svg')) ?>" alt="" width="20" height="20" />
+              遠征プランに追加（試合から開いたときに使えます）
+            </span>
+          <?php endif; ?>
         </section>
       <?php endif; ?>
     </main>

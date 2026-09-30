@@ -15,13 +15,14 @@
 
 declare(strict_types=1);
 
+require_once __DIR__ . '/../../lib/support.php';   // input_string()
 require_once __DIR__ . '/../../lib/geoapify.php';
 
 header('Content-Type: application/json; charset=UTF-8');
 
 $lat = filter_var($_GET['lat'] ?? null, FILTER_VALIDATE_FLOAT);
 $lng = filter_var($_GET['lng'] ?? null, FILTER_VALIDATE_FLOAT);
-$kind = trim((string) ($_GET['kind'] ?? ''));
+$kind = input_string($_GET, 'kind');
 
 // 会場は日本国内だけ。それ以外の座標でクレジットを使われないようにする
 $inJapan = is_float($lat) && is_float($lng)

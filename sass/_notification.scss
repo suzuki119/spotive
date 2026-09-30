@@ -1,0 +1,183 @@
+// お知らせ画面（pages/notification/notification.php）専用のスタイル。
+// スマホを基準に書き、min-width で広い画面に広げる（AGENTS.md「対応デバイス」）。
+@use "variables" as *;
+
+.notice-page {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 0 16px $menu-bar-space;
+  color: $color-text;
+  font-family: $font-body;
+
+  @media (min-width: $bp-tablet) {
+    padding: 0 24px $menu-bar-space;
+  }
+
+  &__list {
+    display: grid;
+    gap: 24px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  &__item[hidden] {
+    display: none;
+  }
+
+  &__empty {
+    padding: 24px 16px;
+    border-radius: $radius-lg;
+    background: $color-bg;
+    color: $color-text-sub;
+    line-height: 1.8;
+    text-align: center;
+
+    &[hidden] {
+      display: none;
+    }
+  }
+
+  &__note {
+    margin: 0 0 16px;
+    color: $color-text-sub;
+    font-size: 12px;
+
+    a {
+      color: $color-primary;
+    }
+  }
+}
+
+// お知らせ 1 件。<details> なので、押すと本文が開く
+.notice-card {
+  border-radius: $radius-lg;
+  background: $color-bg;
+  box-shadow: 0 2px 8px rgba($color-secondary, 0.12);
+
+  &__summary {
+    display: grid;
+    gap: 8px;
+    padding: 16px;
+    cursor: pointer;
+    list-style: none; // 開閉の三角を出さない
+
+    &::-webkit-details-marker {
+      display: none;
+    }
+
+    &:focus-visible {
+      outline: 2px solid $color-primary;
+      outline-offset: 2px;
+      border-radius: $radius-lg;
+    }
+
+    @media (min-width: $bp-tablet) {
+      padding: 24px;
+    }
+  }
+
+  &__meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+  }
+
+  // 未読の印（丸）。未読のときだけ出す
+  &__unread {
+    display: none;
+    width: 8px;
+    height: 8px;
+    border-radius: $radius-full;
+    background: $color-primary;
+  }
+
+  &.is-unread &__unread {
+    display: inline-block;
+  }
+
+  // 日付は数字の強調なので Jost（AGENTS.md「フォント」）
+  &__date {
+    font-family: $font-heading;
+    font-size: 14px;
+    font-weight: 600;
+    color: $color-secondary;
+  }
+
+  &__category {
+    padding: 0 8px;
+    border-radius: $radius-full;
+    background: $color-primary-light;
+    color: $color-primary-dark;
+    font-size: 12px;
+    font-weight: 700;
+    line-height: 1.8;
+  }
+
+  // 中止はエラーの赤（AGENTS.md「アクセントのオレンジとは区別する」）
+  &--cancel &__category {
+    background: $color-error;
+    color: $color-bg;
+  }
+
+  // 「未読」の文字は読み上げ用。見た目は丸で示す
+  &__status {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+  }
+
+  &__title {
+    display: block;
+    font-size: 16px;
+    line-height: 1.6;
+  }
+
+  &.is-unread &__title {
+    font-weight: 700;
+  }
+
+  &__sender {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+    font-weight: 700;
+  }
+
+  &__sender-icon {
+    width: 20px;
+    height: 16px;
+  }
+
+  &__detail {
+    padding: 0 16px 16px;
+    border-top: 1px solid $color-border;
+
+    @media (min-width: $bp-tablet) {
+      padding: 0 24px 24px;
+    }
+  }
+
+  &__body {
+    margin: 16px 0 0;
+    font-size: 14px;
+    line-height: 1.8;
+  }
+
+  &__link {
+    display: inline-block;
+    margin-top: 16px;
+    color: $color-primary;
+    font-size: 14px;
+    font-weight: 700;
+
+    &:hover {
+      color: $color-primary-dark;
+    }
+  }
+}
