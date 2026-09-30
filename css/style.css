@@ -4213,6 +4213,11 @@ body {
   margin-top: 50px;
   color: gray;
 }
+.account-type h1 {
+  font-size: 25px;
+  text-align: center;
+  color: black;
+}
 .account-type-title {
   color: #000;
   text-align: center;
