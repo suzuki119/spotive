@@ -88,6 +88,12 @@ $breakpoints: (
   margin-top: 50px;
   color: gray;
 
+  h1 {
+    font-size: 25px;
+    text-align: center;
+    color: black;
+  }
+
   &-title {
     color: #000;
     text-align: center;
@@ -318,6 +324,7 @@ $breakpoints: (
   width: 100%;
   max-width: 400px;
   padding: 20px 0;
+
 
   &-title {
     font-size: 25px;

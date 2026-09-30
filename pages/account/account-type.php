@@ -30,17 +30,14 @@ require_once __DIR__ . '/../../config/db.php';
 </head>
 
 <body>
-  <header class="site-header"> <?php
-                                // header.phpを読み込む
-                                include_once __DIR__ . '/../header.php';
-                                ?></header>
+  </header>
 
   <main class="l-main">
 
     <div class="inner">
-
       <div class="account-type">
-        <h1 class=account-type-title>ようこそ！</h1>
+        <h1>SPOTIVE</h1>
+        <h2 class=account-type-title>ようこそ</h2>
         <p>
           メールアドレスを入力し
           <br>
