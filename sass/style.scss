@@ -128,7 +128,8 @@ $breakpoints: (
         rgba(17, 53, 107, ) 0%,
         rgba(255, 255, 255, 0) 100%);
 
-    a {
+    // 「はじめる」のボタン（すぐ下の「ログイン」のリンクには効かせない）
+    > a {
       width: 200px;
       height: 60px;
       padding: 0 64px;
@@ -143,6 +144,24 @@ $breakpoints: (
       text-align: center;
       align-self: center;
 
+    }
+  }
+
+  // アカウントをお持ちの方はログイン（「はじめる」の下に小さく）
+  &-signin {
+    position: absolute;
+    bottom: 16px;
+    left: 50%;
+    width: max-content;
+    font-size: 14px;
+    line-height: 1.6;
+    transform: translateX(-50%);
+
+    a {
+      margin-left: 4px;
+      color: white;
+      font-weight: bold;
+      text-decoration: underline;
     }
   }
 }

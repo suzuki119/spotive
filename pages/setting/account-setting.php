@@ -36,8 +36,12 @@ page_header('アカウント設定', 'アカウント設定');
 
   <dt class="detail__label">電話番号</dt>
   <dd class="detail__value">
-    <?= h((string) $user['phone_e164']) ?>
-    <?= $user['phone_verified_at'] !== null ? '（確認済み）' : '（未確認）' ?>
+    <?php if ($user['phone_e164'] === null) : ?>
+      未登録<?php // ゲストアカウント（テスト用）は電話番号を持たない ?>
+    <?php else : ?>
+      <?= h((string) $user['phone_e164']) ?>
+      <?= $user['phone_verified_at'] !== null ? '（確認済み）' : '（未確認）' ?>
+    <?php endif; ?>
   </dd>
 
   <dt class="detail__label">信頼レベル</dt>

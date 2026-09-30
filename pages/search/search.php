@@ -1,10 +1,23 @@
- <!DOCTYPE html>
+<?php
+
+/**
+ * pages/search/search.php
+ * 検索画面（作成中）。いまはどこからもリンクされていない。
+ * メニューバーの「検索」は pages/match/match-search.php を開く。
+ */
+
+declare(strict_types=1);
+
+require_once __DIR__ . '/../../lib/support.php';   // h() / asset() のため
+
+?>
+<!DOCTYPE html>
  <html lang="ja">
 
  <head>
    <meta charset="UTF-8" />
    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-   <title>ホーム | SPOTIVE</title>
+   <title>検索 | SPOTIVE</title>
 
    <link rel="preconnect" href="https://fonts.googleapis.com" />
    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -19,4 +32,7 @@
     $appHeader = ['title' => 'SEARCH'];
     require __DIR__ . '/../app-header.php';
     ?>
+   <?php require __DIR__ . '/../menu-bar.php'; ?>
  </body>
+
+ </html>

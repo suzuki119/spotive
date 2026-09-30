@@ -1,3 +1,4 @@
+<?php require_once __DIR__ . '/../lib/support.php';   // url() のため ?>
 <!DOCTYPE html>
 <html lang="ja">
 
@@ -17,11 +18,11 @@
     <div class="inner">
       <section class="header">
         <span class="header-account">
-          <img src="/SPOTIVE/images/icons/account.svg" alt="">
+          <img src="<?= h(url('images/icons/account.svg')) ?>" alt="">
         </span>
         <h1 class="header-title">SPOTIVE</h1>
         <span class="header-notice">
-          <img src="/SPOTIVE/images/icons/notice.svg" alt="">
+          <img src="<?= h(url('images/icons/notice.svg')) ?>" alt="">
         </span>
       </section>
     </div>
