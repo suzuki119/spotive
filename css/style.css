@@ -4379,6 +4379,11 @@ body {
   margin-top: 50px;
   color: gray;
 }
+.account-type h1 {
+  font-size: 25px;
+  text-align: center;
+  color: black;
+}
 .account-type-title {
   color: #000;
   text-align: center;
@@ -4551,6 +4556,9 @@ body {
   display: flex;
   justify-content: space-between;
   position: fixed;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
   width: 100%;
   max-width: 400px;
   padding: 20px 0;
@@ -4752,39 +4760,38 @@ body {
   justify-content: center;
   align-items: center;
 }
-.settin-account-next {
+.setting-game-next {
   width: 11px;
   height: 18px;
   align-self: center;
 }
-.settin-account-content {
-  width: 330px;
+.setting-game-content {
+  width: 100%;
   height: 40px;
   display: flex;
   justify-content: space-between;
 }
-.settin-account article {
-  width: 370px;
-  height: 170px;
+.setting-game article {
+  width: 100%;
+  height: 120px;
   padding: 15px;
   background-color: #fff;
   border-radius: 20px;
   display: grid;
   row-gap: 10px;
 }
-.settin-account article span {
+.setting-game article span {
   display: flex;
   gap: 8px;
 }
-.settin-account article span img {
+.setting-game article span img {
   width: 25px;
   height: 25px;
 }
-.settin-account article span p {
+.setting-game article span p {
   align-self: center;
 }
-
-.setting-account-img {
+.setting-expedition-img {
   width: 40px;
   height: 40px;
   background-color: #fafafa;
@@ -4793,38 +4800,38 @@ body {
   justify-content: center;
   align-items: center;
 }
-.setting-account-next {
+.setting-expedition-next {
   width: 11px;
   height: 18px;
   align-self: center;
 }
-.setting-account-content {
-  width: 330px;
+.setting-expedition-content {
+  width: 100%;
   height: 40px;
   display: flex;
   justify-content: space-between;
 }
-.setting-account article {
-  width: 370px;
-  height: 170px;
+.setting-expedition article {
+  width: 100%;
+  height: 220px;
   padding: 15px;
   background-color: #fff;
   border-radius: 20px;
   display: grid;
   row-gap: 10px;
 }
-.setting-account article span {
+.setting-expedition article span {
   display: flex;
   gap: 8px;
 }
-.setting-account article span img {
+.setting-expedition article span img {
   width: 25px;
   height: 25px;
 }
-.setting-account article span p {
+.setting-expedition article span p {
   align-self: center;
 }
-.setting-notification-img {
+.setting-display-img {
   width: 40px;
   height: 40px;
   background-color: #fafafa;
@@ -4833,34 +4840,156 @@ body {
   justify-content: center;
   align-items: center;
 }
-.setting-notification-next {
+.setting-display-next {
   width: 11px;
   height: 18px;
   align-self: center;
 }
-.setting-notification-content {
-  width: 330px;
+.setting-display-content {
+  width: 100%;
   height: 40px;
   display: flex;
   justify-content: space-between;
 }
-.setting-notification article {
-  width: 370px;
-  height: 170px;
+.setting-display article {
+  width: 100%;
+  height: 70px;
   padding: 15px;
   background-color: #fff;
   border-radius: 20px;
   display: grid;
   row-gap: 10px;
 }
-.setting-notification article span {
+.setting-display article span {
   display: flex;
   gap: 8px;
 }
-.setting-notification article span img {
+.setting-display article span img {
   width: 25px;
   height: 25px;
 }
-.setting-notification article span p {
+.setting-display article span p {
   align-self: center;
+}
+.setting-privacy-img {
+  width: 40px;
+  height: 40px;
+  background-color: #fafafa;
+  border-radius: 5px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.setting-privacy-next {
+  width: 11px;
+  height: 18px;
+  align-self: center;
+}
+.setting-privacy-content {
+  width: 100%;
+  height: 40px;
+  display: flex;
+  justify-content: space-between;
+}
+.setting-privacy article {
+  width: 100%;
+  height: 220px;
+  padding: 15px;
+  background-color: #fff;
+  border-radius: 20px;
+  display: grid;
+  row-gap: 10px;
+}
+.setting-privacy article span {
+  display: flex;
+  gap: 8px;
+}
+.setting-privacy article span img {
+  width: 25px;
+  height: 25px;
+}
+.setting-privacy article span p {
+  align-self: center;
+}
+.setting-support-img {
+  width: 40px;
+  height: 40px;
+  background-color: #fafafa;
+  border-radius: 5px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.setting-support-next {
+  width: 11px;
+  height: 18px;
+  align-self: center;
+}
+.setting-support-content {
+  width: 100%;
+  height: 40px;
+  display: flex;
+  justify-content: space-between;
+}
+.setting-support article {
+  width: 100%;
+  height: 120px;
+  padding: 15px;
+  background-color: #fff;
+  border-radius: 20px;
+  display: grid;
+  row-gap: 10px;
+}
+.setting-support article span {
+  display: flex;
+  gap: 8px;
+}
+.setting-support article span img {
+  width: 25px;
+  height: 25px;
+}
+.setting-support article span p {
+  align-self: center;
+}
+.setting-logout-img {
+  width: 40px;
+  height: 40px;
+  background-color: #fafafa;
+  border-radius: 5px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.setting-logout-next {
+  width: 11px;
+  height: 18px;
+  align-self: center;
+}
+.setting-logout-content {
+  width: 100%;
+  height: 40px;
+  display: flex;
+  justify-content: space-between;
+}
+.setting-logout article {
+  width: 100%;
+  height: 70px;
+  padding: 15px;
+  background-color: #fff;
+  border-radius: 20px;
+  border: solid 0.5px red;
+  display: grid;
+  row-gap: 10px;
+}
+.setting-logout article span {
+  display: flex;
+  gap: 8px;
+}
+.setting-logout article span img {
+  width: 25px;
+  height: 25px;
+}
+.setting-logout article span p {
+  align-self: center;
+  color: red;
 }
