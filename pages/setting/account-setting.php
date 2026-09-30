@@ -5,7 +5,7 @@
  * アカウント情報・退会
  *
  * 表示しているのは users の中身と、いま有効なセッションの数。
- * 退会（status = 'deleted'）は、大会や申請の扱いを決めてから作る。
+ * 退会（アカウントの削除）は account-delete.php で行う。
  */
 
 declare(strict_types=1);
@@ -51,8 +51,14 @@ page_header('アカウント設定', 'アカウント設定');
 </dl>
 
 <p class="form-page__note">
-  ニックネームやメールアドレスの変更、退会はまだ作っていません。<br />
+  メールアドレスの変更はまだ作っていません。<br />
   <a href="setting.php">マイページへ戻る</a>
+</p>
+
+<h2 class="form-page__subtitle">アカウントの削除</h2>
+<p class="form-page__note">
+  アカウントを削除すると、登録内容は元に戻せません。<br />
+  <a href="account-delete.php">アカウントを削除する</a>
 </p>
 
 <?php page_footer();

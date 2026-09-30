@@ -19,9 +19,12 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 });
 
+// 設定画面の「戻る」。ほかのページには無いので、あるときだけ動かす（無いと全ページでエラーになる）
 const settingBack = document.querySelector('.setting-back');
 
-settingBack.addEventListener('click', (e) => {
-  e.preventDefault();
-  history.back();
-});
+if (settingBack) {
+  settingBack.addEventListener('click', (e) => {
+    e.preventDefault();
+    history.back();
+  });
+}

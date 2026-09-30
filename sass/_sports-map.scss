@@ -10,6 +10,8 @@
 //            詳細はピンのポップアップ。
 //
 // 色は暫定値。_variables.scss ができたらそちらの変数に置き換えること。
+// 共通の変数は v.$ で使う（このファイルに同じ名前の $bp-tablet があるため）
+@use "variables" as v;
 
 $map-panel: #ffffff;
 $map-text: #1c2024;
@@ -57,34 +59,66 @@ $bp-tablet: 768px;
   }
 }
 
-// スマホでは、この中身（絞り込み → 結果一覧）がまるごと全画面で出る。
-// PC では左の固定サイドバーに戻る。
+// スマホ：普段は、メニューバーの上に「試合一覧を開く」の帯（.sheet-handle）だけが見える。
+//         帯を押すと一覧が開き（.is-expanded）、もう一度押す・地図を触る・試合を選ぶと閉じる。
+//         絞り込みを開くと（.is-open）全画面になり、絞り込み → 一覧の順に出る。
+// PC    ：左の固定サイドバーに戻る。
+$sheet-peek: 168px; // 閉じているときに見える高さ（帯の分と、上に重なるメニューバーの分）
+
 .sports-map__side {
-  @include slide-up-panel;
-  top: 0;
+  position: fixed;
   right: 0;
   bottom: 0;
   left: 0;
-  padding-bottom: 32px;
+  z-index: 999; // 画面下のメニューバー（1000）がこの上に重なる（デザインどおり）
+  height: 75vh;
+  height: 75dvh;
+  padding-bottom: v.$menu-bar-space; // 画面下のメニューバーに最後のカードが隠れないようにする
+  overflow-y: hidden;
+  overscroll-behavior: contain;
+  background: v.$color-bg-gray;
+  border-radius: 32px 32px 0 0;
+  box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.15);
+  transform: translateY(calc(100% - #{$sheet-peek}));
+  transition: transform 0.25s ease;
 
+  // 広げたとき：一覧をスクロールできる
+  &.is-expanded {
+    overflow-y: auto;
+    transform: translateY(0);
+  }
+
+  // 絞り込みを開いたとき：全画面
   &.is-open {
-    @include slide-up-open;
+    z-index: 1150;
+    height: 100vh;
+    height: 100dvh;
+    overflow-y: auto;
+    border-radius: 0;
+    background: $map-panel;
+    transform: translateY(0);
   }
 
   .logo {
-    display: none; // スマホではサイトヘッダーがあるので出さない
+    display: none; // スマホではロゴを出さない
   }
 
   @media (min-width: $bp-tablet) {
     position: static;
     z-index: auto;
+    height: auto;
     padding-bottom: 0;
     overflow-y: auto;
     border-right: 1px solid $map-line;
+    border-radius: 0;
     box-shadow: none;
     transform: none;
-    visibility: visible;
     transition: none;
+
+    &.is-open {
+      height: auto;
+      background: v.$color-bg-gray;
+    }
 
     .logo {
       display: inline-block;
@@ -95,6 +129,99 @@ $bp-tablet: 768px;
       text-decoration: none;
     }
   }
+}
+
+// スマホで一覧を閉じているときは、帯より下の中身を見せない
+// （メニューバーのすき間から、下に隠れたカードがのぞかないように）
+.sports-map__side:not(.is-expanded):not(.is-open) > :not(.sheet-handle) {
+  visibility: hidden;
+
+  @media (min-width: $bp-tablet) {
+    visibility: visible;
+  }
+}
+
+// スマホの絞り込みは、全画面を開いたときだけ出す（普段のシートには一覧だけ）
+.sports-map__side:not(.is-open) .sports-map__filters {
+  display: none;
+
+  @media (min-width: $bp-tablet) {
+    display: block;
+  }
+}
+
+// 一覧を開く・閉じる帯（スマホだけ）。帯全体が押せる
+.sheet-handle {
+  display: block;
+  width: 100%;
+  padding: 8px 16px 12px;
+  background: none;
+  border: 0;
+  cursor: pointer;
+
+  // 開いているときは、スクロールしても「閉じる」に手が届くよう上に貼り付ける
+  .is-expanded > & {
+    position: sticky;
+    top: 0;
+    z-index: 3;
+    background: v.$color-bg-gray;
+  }
+
+  &:focus-visible {
+    outline: 2px solid $map-accent;
+    outline-offset: -2px;
+  }
+
+  .is-open > & {
+    display: none;
+  }
+
+  @media (min-width: $bp-tablet) {
+    display: none;
+  }
+}
+
+.sheet-handle__bar {
+  display: block;
+  width: 64px;
+  height: 5px;
+  margin: 0 auto;
+  background: $map-line;
+  border-radius: 999px;
+}
+
+.sheet-handle__row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-top: 8px;
+}
+
+.sheet-handle__label {
+  font-size: 15px;
+  font-weight: bold;
+  color: $map-text;
+}
+
+.sheet-handle__count {
+  font-size: 13px;
+  color: $map-muted;
+
+  // 開いているときは、すぐ下の一覧の見出しに件数が出るので隠す
+  .is-expanded & {
+    display: none;
+  }
+}
+
+// 読み上げ用。見た目には出さない
+.map-search__label {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
 }
 
 // スマホは地図で画面を埋める
@@ -385,36 +512,56 @@ $bp-tablet: 768px;
 }
 
 .list {
-  list-style: none;
+  display: grid;
+  gap: 16px;
   margin: 0;
-  padding: 0;
+  padding: 0 16px 16px;
+  list-style: none;
 
   .empty {
     padding: 32px 16px;
     text-align: center;
     color: $map-muted;
   }
+
+  @media (min-width: $bp-tablet) {
+    padding-top: 16px;
+  }
 }
 
+// ---- 一覧のカード（チケットの形）----
+// 上：ロゴ vs ロゴと競技名｜リーグと節・対戦・日時｜距離。下：点線で切り離して会場と料金
 .card {
-  // 試合一覧のカード（_match-card.scss）と同じ形。左にロゴと競技名、右に中身
-  display: grid;
-  grid-template-columns: auto 1fr;
-  align-items: center;
-  gap: 16px;
+  display: block;
   width: 100%;
-  padding: 16px;
+  padding: 0;
   text-align: left;
   color: $map-text;
   font: inherit;
   background: none;
   border: 0;
-  border-bottom: 1px solid $map-line;
   cursor: pointer;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.08));
 
   &:hover {
-    background: #f7f8fa;
+    filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.16));
   }
+
+  &:focus-visible {
+    outline: 2px solid $map-accent;
+    outline-offset: 2px;
+    border-radius: 16px;
+  }
+}
+
+.card-main {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: center;
+  gap: 16px;
+  padding: 16px;
+  background: $map-panel;
+  border-radius: 16px 16px 0 0;
 }
 
 // ---- 左：ロゴと競技名 ----
@@ -432,15 +579,15 @@ $bp-tablet: 768px;
 }
 
 .card-emblem {
-  width: 40px;
-  height: 40px;
+  width: 44px;
+  height: 44px;
   object-fit: contain;
 
   // ロゴが無いときは、競技の色の丸にアイコンを入れる
   &--icon {
     display: grid;
     place-items: center;
-    font-size: 20px;
+    font-size: 22px;
     background: color-mix(in srgb, var(--c) 15%, white);
     border-radius: 999px;
   }
@@ -448,7 +595,7 @@ $bp-tablet: 768px;
 
 .card-emblem-vs {
   align-self: flex-end;
-  font-size: 12px;
+  font-size: 13px;
   font-weight: bold;
 }
 
@@ -481,30 +628,23 @@ $bp-tablet: 768px;
   }
 }
 
-// ---- 右：会場・対戦カード・日付｜時間・料金 ----
+// ---- 右：リーグと節・対戦・日時｜距離 ----
 .card-body {
-  min-width: 0; // 長い試合名でカードがはみ出さないようにする
   display: flex;
   flex-direction: column;
   gap: 4px;
+  min-width: 0; // 長い試合名でカードがはみ出さないようにする
 }
 
 .card-league {
-  color: $map-text;
-  font-size: 12px;
-  font-weight: bold;
-}
-
-.card-sub {
   overflow: hidden;
   font-size: 12px;
-  color: $map-muted;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
 .card-title {
-  font-size: 15px;
+  font-size: 16px;
   font-weight: bold;
   line-height: 1.4;
   overflow-wrap: anywhere;
@@ -515,27 +655,56 @@ $bp-tablet: 768px;
   font-size: 12px;
 }
 
-// 9/29 ｜ 18:00〜
+// 13:00〜 ｜ 📍3.0km
 .card-when {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
-  font-size: 17px;
-  font-weight: bold;
+  gap: 4px 12px;
 }
 
-.card-date {
-  margin-right: 12px;
-  padding-right: 12px;
-  border-right: 1px solid $map-line;
+.card-time {
+  font-family: Jost, sans-serif;
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.card-dist {
+  padding-left: 12px;
+  font-size: 13px;
+  border-left: 1px solid $map-line;
+}
+
+// ---- 下：会場と料金（半券）----
+.card-ticket {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 12px 16px;
+  background: $map-panel;
+  border-top: 2px dashed $map-line;
+  border-radius: 0 0 16px 16px;
+}
+
+.card-venue {
+  min-width: 0;
+  overflow: hidden;
+  font-size: 13px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .card-price {
-  font-weight: bold;
-  color: $map-accent;
+  flex-shrink: 0;
+  font-family: Jost, sans-serif;
+  font-size: 18px;
+  font-weight: 600;
   white-space: nowrap;
 
   small {
     margin-left: 4px;
+    font-family: sans-serif;
     font-size: 10px;
     font-weight: normal;
     color: $map-muted;
@@ -543,48 +712,177 @@ $bp-tablet: 768px;
 }
 
 // ---- 地図の上に重ねる UI ----
-// スマホでは「絞り込み・現在地・結果全体」の 3 つが画面の左上に並ぶ
+// 上にキーワード検索と絞り込みの丸いボタン。その下の右に、現在地・結果全体の小さなボタン
 .map-tools {
   position: absolute;
-  top: 8px;
-  left: 8px;
+  top: 16px;
+  right: 16px;
+  left: 16px;
   z-index: 1000;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  gap: 8px 12px;
+  pointer-events: none; // すき間は地図を触れるようにする
 
-  button {
-    padding: 8px 12px;
-    background: #fff;
-    border: 1px solid rgba(0, 0, 0, 0.2);
-    border-radius: 8px;
-    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.15);
-    cursor: pointer;
+  > * {
+    pointer-events: auto;
+  }
+
+  @media (min-width: $bp-tablet) {
+    right: auto;
+    width: min(480px, calc(100% - 32px));
   }
 }
 
-// 絞り込みの開閉ボタン。画面幅にかかわらず、地図の左上に置く
-.map-tools__filter {
-  font-weight: bold;
+.map-search {
+  position: relative;
+  display: block;
+}
 
-  &[aria-expanded="true"] {
-    color: #fff;
-    background: $map-accent;
-    border-color: $map-accent;
+.map-search__input {
+  width: 100%;
+  height: 48px;
+  padding: 0 48px 0 20px;
+  font-weight: bold;
+  background: #fff;
+  border: 0;
+  border-radius: 999px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+
+  &::placeholder {
+    color: $map-text;
+  }
+
+  &:focus-visible {
+    outline: 2px solid $map-accent;
+  }
+}
+
+.map-search__icon {
+  position: absolute;
+  top: 50%;
+  right: 16px;
+  width: 20px;
+  height: 20px;
+  transform: translateY(-50%);
+  pointer-events: none;
+}
+
+.map-tools__round {
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  padding: 0;
+  font-size: 18px;
+  background: #fff;
+  border: 0;
+  border-radius: 999px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  cursor: pointer;
+
+  &:focus-visible {
+    outline: 2px solid $map-accent;
+  }
+}
+
+// 絞り込みのボタン：長さの違う 3 本線（デザインのアイコン）
+.map-tools__lines {
+  position: relative;
+  display: block;
+  width: 22px;
+  height: 2px;
+  background: $map-text;
+  border-radius: 2px;
+
+  &::before,
+  &::after {
+    content: "";
+    position: absolute;
+    right: 0;
+    height: 2px;
+    background: $map-text;
+    border-radius: 2px;
+  }
+
+  &::before {
+    top: -7px;
+    width: 26px;
+  }
+
+  &::after {
+    top: 7px;
+    width: 14px;
+  }
+}
+
+.map-tools__filter[aria-expanded="true"] {
+  background: $map-accent;
+
+  .map-tools__lines,
+  .map-tools__lines::before,
+  .map-tools__lines::after {
+    background: #fff;
+  }
+}
+
+// 現在地・結果全体（検索欄の下、右端に縦に並べる）
+.map-tools__sub {
+  grid-column: 2;
+  display: grid;
+  gap: 8px;
+
+  .map-tools__round {
+    width: 40px;
+    height: 40px;
+    justify-self: center;
+    font-size: 16px;
   }
 }
 
 .status {
   position: absolute;
-  bottom: 24px;
+  top: 80px; // スマホは下に一覧のシートがあるので、検索欄のすぐ下に出す
   left: 50%;
   transform: translateX(-50%);
   z-index: 1000;
+  max-width: calc(100% - 32px);
   padding: 8px 16px;
   color: #fff;
   background: rgba(28, 32, 36, 0.85);
   border-radius: 999px;
   white-space: nowrap;
+
+  @media (min-width: $bp-tablet) {
+    top: auto;
+    bottom: 24px;
+  }
+}
+
+// Leaflet のボタン（地図の種類・拡大縮小）が、上の検索欄や下の一覧のシートに隠れないようにずらす。
+// 一覧を開いたときは、シート（999）の下に隠れるよう重なり順も下げる（Leaflet の既定は 1000）
+.sports-map__canvas {
+  .leaflet-top,
+  .leaflet-bottom {
+    z-index: 998;
+  }
+
+  .leaflet-top {
+    top: 168px; // 検索欄と、現在地・結果全体のボタンの下
+
+    @media (min-width: $bp-tablet) {
+      top: 0;
+    }
+  }
+
+  .leaflet-bottom {
+    bottom: $sheet-peek; // たたんだ一覧のシートの上
+
+    @media (min-width: $bp-tablet) {
+      bottom: 0;
+    }
+  }
 }
 
 // ---- ピン型マーカー ----
