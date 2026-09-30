@@ -895,3 +895,102 @@ $breakpoints: (
     }
   }
 }
+
+
+
+
+.plus {
+  &-title {
+    text-align: center;
+    font-size: 30px;
+    font-weight: bold;
+    margin-top: 110px;
+    margin-bottom: 45px;
+  }
+
+  &-letter {
+    text-align: center;
+    font-size: 18px;
+    font-weight: bold;
+    line-height: 3rem;
+
+
+    span {
+      font-size: 25px;
+    }
+  }
+
+  &-menu {
+    width: 100%;
+    max-width: 370px;
+    height: 100%;
+    padding: 25px;
+    border: solid 1px black;
+    border-radius: 30px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    margin: 50px auto;
+
+    display: grid;
+    gap: 15px;
+
+    &-text {
+      font-size: 18px;
+      margin-bottom: 5px;
+    }
+
+    article {
+      display: flex;
+      gap: 10px;
+    }
+  }
+
+  &-select {
+    &-title {
+      font-size: 18px;
+      margin-bottom: 25px;
+    }
+
+    &-plan {
+      position: relative;
+      width: 100%;
+      max-width: 370px;
+      min-height: 90px;
+      height: 100%;
+      padding: 10px;
+      border: solid 1px black;
+      border-radius: 20px;
+      margin: 0 auto 25px;
+
+      &::after {
+        content: "";
+        display: block;
+        width: 20px;
+        height: 20px;
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        background-color: url(../images/icons/check.svg);
+      }
+
+      &-title {
+        font-size: 18px;
+      }
+
+      &-place {
+        font-size: 17px;
+        margin-top: 22px;
+        text-align: right;
+      }
+    }
+  }
+
+  &-btn {
+    width: 370px;
+    height: 55px;
+    background-color: #000;
+    color: white;
+    border-radius: 50px;
+    text-align: center;
+    margin: 45px auto 110px;
+  }
+}
