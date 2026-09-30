@@ -1389,6 +1389,20 @@ input[type=radio] {
   font-size: 14px;
   color: #6B7280;
 }
+.schedule-list__form {
+  margin-top: 16px;
+}
+.schedule-list__submit {
+  display: block;
+  margin-top: 16px;
+  padding: 8px 16px;
+  border: 0;
+  border-radius: 8px;
+  background: #0B63E5;
+  color: #FFFFFF;
+  font-size: 14px;
+  cursor: pointer;
+}
 .schedule-list__filter {
   display: inline-flex;
   align-items: center;
