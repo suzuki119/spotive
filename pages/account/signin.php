@@ -17,7 +17,11 @@ require_once __DIR__ . '/../../lib/account.php';
 
 session_boot();
 
-$next  = safe_next($_GET['next'] ?? $_POST['next'] ?? null, url('pages/map/map.php'));
+// ログイン後の戻り先。フォームの hidden には、GET / POST で渡された「/ から始まるパス」だけを入れる。
+// 既定の戻り先（url() が返す ../../pages/map/map.php）を hidden に入れて送ると、
+// ロリポップの WAF が ../ をディレクトリトラバーサルと判定して、ログインが 403 になるため
+$requestedNext = safe_next(input_string($_GET, 'next') ?: input_string($_POST, 'next'), '');
+$next  = $requestedNext !== '' ? $requestedNext : url('pages/map/map.php');
 $error = null;
 
 if (is_logged_in()) {
@@ -86,7 +90,7 @@ if (is_post()) {
 
         <form action="signin.php" method="post">
           <?= csrf_field() ?>
-          <input type="hidden" name="next" value="<?= h($next) ?>">
+          <input type="hidden" name="next" value="<?= h($requestedNext) ?>">
 
           <article class="signin-form">
             <p>メールアドレス</p>

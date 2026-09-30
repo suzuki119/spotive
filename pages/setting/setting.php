@@ -23,7 +23,7 @@ require_once __DIR__ . '/../../lib/layout.php';   // status_label() / format_dat
 /** 仮のプロフィール画像。プロフィール画像の設定ができたら差し替える */
 const MYPAGE_DEFAULT_ICON = 'images/sample/sample-icon.png';
 
-/** 競技 => 見出しに出すリーグ名（lib/match-search.php の検索画面のタブと揃える） */
+/** 競技 => 見出しに出すリーグ名（lib/match-search.php の MATCH_SEARCH_TABS。競技のタブは競技名で出すので、ここだけリーグ名） */
 function mypage_league(string $sport): string
 {
   $key = match_sport_key($sport);

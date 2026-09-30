@@ -2,7 +2,7 @@
 // 変えると両方のページに効くので、触るときはチームに共有すること。
 //
 //   左 … 両チームのロゴ（vs）と、その下に競技名
-//   右 … 会場、対戦カード、日付｜開始時間、料金
+//   右 … リーグと節、対戦カード、日付｜開始時間、会場、料金
 @use "sass:map";
 @use "variables" as *;
 
@@ -198,6 +198,18 @@
     padding-right: 12px;
     margin-right: 12px;
     border-right: 1px solid $color-border;
+  }
+
+  &__place {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    margin: 0;
+    overflow: hidden;
+    color: $color-text-sub;
+    font-size: 12px;
+    white-space: nowrap;
+    text-overflow: ellipsis;
   }
 
   &__foot {

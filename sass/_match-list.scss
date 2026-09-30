@@ -1,5 +1,6 @@
 // 試合一覧画面（pages/match/match-list.php）専用のスタイル。
 // 日付ごとの見出し（schedule-list__day / __date / __items）はお気に入り画面でも使う。
+// 競技のタブは、試合を探す画面と同じ search-tabs（_match-search.scss）を使っている。
 @use "variables" as *;
 
 .schedule-list {
@@ -32,6 +33,24 @@
     margin: 0;
     font-size: 14px;
     color: $color-text-sub;
+  }
+
+  // 競技のタブと「だけ見る」
+  &__form {
+    margin-top: 16px;
+  }
+
+  // JS が無いときだけ出す（noscript の中）
+  &__submit {
+    display: block;
+    margin-top: 16px;
+    padding: 8px 16px;
+    border: 0;
+    border-radius: $radius-md;
+    background: $color-primary;
+    color: $color-bg;
+    font-size: 14px;
+    cursor: pointer;
   }
 
   &__filter {
