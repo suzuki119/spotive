@@ -1,10 +1,18 @@
 /**
  * match-list.js
  * 試合一覧画面（pages/match/match-list.php）の処理。
- * お気に入りのチームの試合に印を付け、「だけ見る」で絞り込む。
+ * 競技のタブを選んだら表示し直し、お気に入りのチームの試合に印を付け、「だけ見る」で絞り込む。
  */
 
 document.addEventListener("DOMContentLoaded", () => {
+  // 競技のタブ。選んだらすぐに表示し直す（「だけ見る」の状態も一緒に送る）
+  const form = document.getElementById("schedule-form");
+  if (form) {
+    form.querySelectorAll(".search-tabs__input").forEach((tab) => {
+      tab.addEventListener("change", () => form.requestSubmit());
+    });
+  }
+
   const onlyToggle = document.getElementById("favorite-only");
   if (!onlyToggle) return;   // 試合が 0 件のときは切り替えを出していない
 
@@ -40,7 +48,17 @@ document.addEventListener("DOMContentLoaded", () => {
     empty.classList.toggle("is-hidden", shown > 0);
   }
 
-  onlyToggle.addEventListener("change", applyFilter);
+  // 「だけ見る」はその場で絞り込む。再読み込みしても残るよう、URL の favorite=1 も書き換えておく
+  onlyToggle.addEventListener("change", () => {
+    applyFilter();
+    const url = new URL(window.location.href);
+    if (onlyToggle.checked) {
+      url.searchParams.set("favorite", "1");
+    } else {
+      url.searchParams.delete("favorite");
+    }
+    history.replaceState(null, "", url);
+  });
 
   // ブラウザの登録をアカウントに移し終えたら、印と絞り込みを付け直す
   SpotiveFavorites.onChange(() => {

@@ -299,6 +299,8 @@ document.addEventListener("DOMContentLoaded", () => {
       sport: sportKey(m.sport),
       sportName: m.sport,
       league: sportOf(sportKey(m.sport)).label,
+      // 「B.PREMIER 第1節 GAME2」（仮データ。lib/match.php の match_league_label() と同じ形）
+      roundText: [m.league, m.round, m.game].filter(Boolean).join(" "),
       title: m.title,
       teamIds: [m.homeTeamId, m.awayTeamId].filter(Boolean),
       start,
@@ -437,7 +439,7 @@ document.addEventListener("DOMContentLoaded", () => {
             return `
               <li class="${g.id === focusId ? "is-focus" : ""}">
                 ${teamLogosHtml(g, "pop-logos", 56)}
-                <span class="tag" style="--c:${s.color}">${s.icon} ${esc(leagueText(g))}</span>
+                <span class="tag" style="--c:${s.color}">${s.icon} ${esc(g.roundText || leagueText(g))}</span>
                 <strong>${esc(g.title)}</strong>
                 <span class="pop-meta">${fmtStart(g)} ・ ${priceText(g)}${detail}</span>
               </li>`;
@@ -651,6 +653,7 @@ document.addEventListener("DOMContentLoaded", () => {
             <span class="card-sport">${esc(sportName)}</span>
           </span>
           <span class="card-body">
+            ${g.roundText ? `<span class="card-league">${esc(g.roundText)}</span>` : ""}
             <span class="card-sub">${esc(g.v.name)}${dist}${organizer}</span>
             <span class="card-title">${title}</span>
             <span class="card-when">${date}<span class="card-time">${time}</span></span>
