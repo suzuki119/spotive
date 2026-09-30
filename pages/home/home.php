@@ -90,7 +90,7 @@ $teamNamesJson = (string) json_encode(
  */
 $teamsVs = static function (array $match, string $block): void {
   if (count($match['teams']) < 2) {
-    ?>
+?>
     <span class="<?= h($block) ?>__solo team-logo team-logo--<?= h(match_sport_key($match['sport'])) ?>">
       <?= h(match_sport_label($match['sport'])) ?>
     </span>
@@ -99,17 +99,17 @@ $teamsVs = static function (array $match, string $block): void {
   }
   foreach ($match['teams'] as $i => $team) :
     if ($i === 1) :
-      ?><span class="<?= h($block) ?>__vs">vs</span><?php
-    endif;
-    if ($team['logo'] !== '') :
-      ?><img class="team-logo" src="<?= h(url($team['logo'])) ?>" alt="<?= h($team['name']) ?>" width="48" height="48" /><?php
-    else :
-      ?><span class="team-logo team-logo--<?= h(match_sport_key($match['sport'])) ?>" role="img" aria-label="<?= h($team['name']) ?>"><?= h($team['initial']) ?></span><?php
-    endif;
-  endforeach;
-};
+    ?><span class="<?= h($block) ?>__vs">vs</span><?php
+                                                endif;
+                                                if ($team['logo'] !== '') :
+                                                  ?><img class="team-logo" src="<?= h(url($team['logo'])) ?>" alt="<?= h($team['name']) ?>" width="48" height="48" /><?php
+                                                                                                                                                                    else :
+                                                                                                                                                                      ?><span class="team-logo team-logo--<?= h(match_sport_key($match['sport'])) ?>" role="img" aria-label="<?= h($team['name']) ?>"><?= h($team['initial']) ?></span><?php
+                                                                                                                                                                                                                                                                                                                                        endif;
+                                                                                                                                                                                                                                                                                                                                      endforeach;
+                                                                                                                                                                                                                                                                                                                                    };
 
-?>
+                                                                                                                                                                                                                                                                                                                                          ?>
 <!DOCTYPE html>
 <html lang="ja">
   <head>
@@ -249,12 +249,11 @@ $teamsVs = static function (array $match, string $block): void {
                       </span>
                     </span>
                   </span>
-                  <span class="now-match__ticket">
-                    <span class="now-match__venue">
-                      <img src="<?= h(url('images/icons/point.svg')) ?>" alt="" width="11" height="14" />
-                      <?= h($match['venue']) ?>
-                    </span>
-                    <span class="now-match__price"><?= h(match_price_label($match['price'])) ?></span>
+                </span>
+                <span class="now-match__ticket">
+                  <span class="now-match__venue">
+                    <img src="<?= h(url('images/icons/point.svg')) ?>" alt="" width="11" height="14" />
+                    <?= h($match['venue']) ?>
                   </span>
                 </a>
               </li>
