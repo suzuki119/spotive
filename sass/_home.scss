@@ -148,10 +148,9 @@ $home-shadow: 0 2px 8px rgba($color-secondary, 0.08);
   display: grid;
   flex-shrink: 0;
   place-items: center;
-  width: 48px;
-  height: 48px;
+  width: 85px;
+  height: 85px;
   object-fit: contain;
-  border-radius: $radius-full;
   color: $color-bg;
   font-size: 12px;
   font-weight: 700;
@@ -315,6 +314,7 @@ img.team-logo {
   background: $color-bg;
   border-radius: $radius-lg;
   box-shadow: $home-shadow;
+
   color: $color-text;
   text-decoration: none;
 
