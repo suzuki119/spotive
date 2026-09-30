@@ -112,10 +112,9 @@ $home-shadow: 0 2px 8px rgba($color-secondary, 0.08);
   display: grid;
   flex-shrink: 0;
   place-items: center;
-  width: 48px;
-  height: 48px;
+  width: 85px;
+  height: 85px;
   object-fit: contain;
-  border-radius: $radius-full;
   color: $color-bg;
   font-size: 12px;
   font-weight: 700;
@@ -136,14 +135,21 @@ img.team-logo {
 
 // ---- お気に入りのカード ----
 .fav-match {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: 16px;
+
+  width: 80%;
+  max-width: 400px;
   height: 100%;
-  padding: 12px 16px;
+  max-height: 140px;
+  padding: 24px 32px;
+
   background: $color-bg;
   border-radius: $radius-lg;
   box-shadow: $home-shadow;
+
   color: $color-text;
   text-decoration: none;
 
@@ -151,34 +157,59 @@ img.team-logo {
     box-shadow: 0 4px 16px rgba($color-secondary, 0.16);
   }
 
-  &__round {
-    font-size: 12px;
-    color: $color-text-sub;
-  }
-
-  &__teams {
+  // 左右のチーム
+  &__team {
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 8px;
+
+    img {
+      width: 85px;
+      height: 85px;
+      object-fit: contain;
+    }
   }
 
-  &__vs {
-    align-self: flex-end;
-    font-family: $font-heading;
-    font-weight: 600;
-  }
+  // 中央の詳細
+  &__details {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 35px;
 
-  &__solo {
-    width: auto;
-    padding: 0 12px;
-  }
-
-  &__when {
-    font-family: $font-heading;
-    font-size: 16px;
-    font-weight: 600;
+    min-width: 180px;
     text-align: center;
+  }
+
+  // 大会名・GAME番号
+  &__title {
+    font-size: 12px;
+    font-weight: 300;
+    white-space: nowrap;
+  }
+
+  // 試合時間
+  &__time {
+    font-family: $font-heading;
+    font-size: 24px;
+    font-weight: 700;
+    line-height: 1.1;
+  }
+
+  // 会場
+  &__venue {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+
+    font-size: 17px;
+    white-space: nowrap;
+
+    img {
+      width: 22px;
+      height: 22px;
+    }
   }
 }
 
