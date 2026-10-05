@@ -242,6 +242,9 @@ foreach ([$game['image'] ?? '', DETAIL_DEFAULT_IMAGE] as $candidate) {
 
 $pageTitle = $game === null ? '試合が見つかりません' : $game['title'];
 
+// 地図の詳細シート（pages/map/map.php）の中に出すとき。リンクはシートの中ではなく画面全体で開く
+$embed = ($_GET['embed'] ?? '') === '1';
+
 ?>
 <!DOCTYPE html>
 <html lang="ja">
@@ -249,6 +252,9 @@ $pageTitle = $game === null ? '試合が見つかりません' : $game['title'];
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title><?= h($pageTitle) ?> | SPOTIVE</title>
+    <?php if ($embed) : ?>
+      <base target="_top" />
+    <?php endif; ?>
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -453,6 +459,8 @@ $pageTitle = $game === null ? '試合が見つかりません' : $game['title'];
     <script type="application/json" id="favorite-state"><?= favorite_state_json($favoriteState) ?></script>
     <script src="<?= h(asset('js/common/favorite-store.js')) ?>"></script>
     <script src="<?= h(asset('js/pages/match-detail.js')) ?>"></script>
-    <?php require __DIR__ . '/../menu-bar.php'; ?>
+    <?php if (!$embed) : ?>
+      <?php require __DIR__ . '/../menu-bar.php'; ?>
+    <?php endif; ?>
   </body>
 </html>

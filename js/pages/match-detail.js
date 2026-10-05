@@ -42,6 +42,13 @@ document.addEventListener("DOMContentLoaded", () => {
   const close = document.querySelector("[data-back]");
   if (close) {
     close.addEventListener("click", (e) => {
+      // 地図の詳細シートの中にいるときは、シートを閉じてもらう（js/pages/map.js）
+      if (window.parent !== window) {
+        e.preventDefault();
+        window.parent.postMessage({ type: "spotive:detail-close" }, location.origin);
+        return;
+      }
+
       let fromSameSite = false;
       try {
         fromSameSite = document.referrer !== "" && new URL(document.referrer).origin === location.origin;

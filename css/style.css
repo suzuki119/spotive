@@ -717,6 +717,12 @@ input[type=radio] {
   transform: translateY(0);
   visibility: visible;
 }
+.match-sheet.has-detail {
+  bottom: 50vh;
+  max-height: 40vh;
+  border-radius: 16px;
+  transition: transform 0.2s ease, visibility 0.2s ease, bottom 0.2s ease;
+}
 @media (min-width: 768px) {
   .match-sheet {
     display: none;
@@ -728,6 +734,67 @@ input[type=radio] {
 }
 .match-sheet__body .pop-games {
   max-height: none;
+}
+
+.detail-sheet {
+  position: fixed;
+  z-index: 1100;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  background: #ffffff;
+  transform: translateY(100%);
+  visibility: hidden;
+  transition: transform 0.2s ease, visibility 0.2s ease;
+  z-index: 1200;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  height: 90vh;
+  overflow: hidden;
+  border-radius: 16px 16px 0 0;
+  box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.2);
+}
+.detail-sheet.is-open {
+  transform: translateY(0);
+  visibility: visible;
+}
+@media (min-width: 768px) {
+  .detail-sheet {
+    height: 88vh;
+    right: auto;
+    left: 50%;
+    width: 480px;
+    margin-left: -240px;
+  }
+}
+@media (min-width: 1024px) {
+  .detail-sheet {
+    position: static;
+    display: none;
+    width: auto;
+    height: auto;
+    margin-left: 0;
+    border-left: 1px solid #e0e1e6;
+    border-radius: 0;
+    box-shadow: none;
+    transform: none;
+    transition: none;
+  }
+  .detail-sheet.is-open {
+    display: block;
+  }
+}
+
+@media (min-width: 1024px) {
+  .sports-map.has-detail {
+    grid-template-columns: 360px 1fr 360px;
+  }
+}
+.detail-sheet__frame {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border: 0;
 }
 
 .chips {
@@ -1074,12 +1141,6 @@ input[type=radio] {
 .map-tools > * {
   pointer-events: auto;
 }
-@media (min-width: 768px) {
-  .map-tools {
-    grid-template-columns: minmax(0, 480px) auto 1fr;
-    align-items: start;
-  }
-}
 
 .map-search {
   position: relative;
@@ -1213,14 +1274,6 @@ input[type=radio] {
 .sports-map__canvas .leaflet-top {
   top: 168px;
 }
-@media (min-width: 768px) {
-  .sports-map__canvas .leaflet-top {
-    top: 104px;
-  }
-}
-.sports-map__canvas .leaflet-right .leaflet-control {
-  margin-right: 16px;
-}
 .sports-map__canvas .leaflet-bottom {
   bottom: 168px;
 }
@@ -1332,6 +1385,17 @@ input[type=radio] {
 .pop-games li.is-focus {
   background: color-mix(in srgb, #0b6bcb 10%, white);
   border-radius: 8px;
+}
+
+.pop-games .pop-game {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  color: inherit;
+  text-decoration: none;
+}
+.pop-games .pop-game[aria-expanded=true] strong {
+  color: #0b6bcb;
 }
 
 .pop-meta {

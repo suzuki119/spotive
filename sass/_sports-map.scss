@@ -342,6 +342,14 @@ $sheet-peek: 168px; // 閉じているときに見える高さ（帯の分と、
     @include slide-up-open;
   }
 
+  // 詳細ページ（.detail-sheet）が下半分に出ているあいだは、その上に持ち上げて試合を押せるようにする
+  &.has-detail {
+    bottom: 50vh;
+    max-height: 40vh;
+    border-radius: 16px;
+    transition: transform 0.2s ease, visibility 0.2s ease, bottom 0.2s ease;
+  }
+
   @media (min-width: $bp-tablet) {
     display: none;
   }
@@ -353,6 +361,74 @@ $sheet-peek: 168px; // 閉じているときに見える高さ（帯の分と、
   .pop-games {
     max-height: none; // シートの中は縦に余裕があるので切らない
   }
+}
+
+// ---- 試合の詳細ページ ----
+$detail-width: 360px; // PC で地図の右に出すときの幅
+// 試合を押すと画面下から出る。スマホは試合の詳細シートの上に重ね、タブレットは中央に寄せる。
+// PC は地図の右に列として出し、地図はそのぶん左に詰める（.sports-map.has-detail）
+.detail-sheet {
+  @include slide-up-panel;
+  z-index: 1200; // 試合の詳細シート（1100）より前に出す
+  right: 0;
+  bottom: 0;
+  left: 0;
+  height: 90vh; // スマホは下半分だけ。上に試合の詳細シートを残し、同じ試合をもう一度押して閉じられるようにする
+  overflow: hidden; // スクロールは中の詳細ページに任せる
+  border-radius: 16px 16px 0 0;
+  box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.2);
+
+  &.is-open {
+    @include slide-up-open;
+  }
+
+  @media (min-width: $bp-tablet) {
+    height: 88vh;
+    right: auto;
+    left: 50%;
+    width: 480px;
+    margin-left: -240px;
+  }
+
+  // PC：地図の右の列。列の幅が 0 → $detail-width に広がるので、右から出てくるように見える
+  @media (min-width: v.$bp-pc) {
+    position: static;
+    width: auto;
+    height: auto;
+    margin-left: 0;
+    border-radius: 0;
+    box-shadow: -1px 0 0 $map-line; // 区切り線。border だと閉じた（幅 0 の）ときも 1px 残るので影で描く
+    transform: none;
+    transition: visibility 0.25s ease; // 閉じるときは、列がたたみ終わってから隠す
+
+    &.is-open {
+      transform: none;
+    }
+
+    .detail-sheet__frame {
+      width: $detail-width; // 列が広がる途中でも中身は縮めず、そのまま右から出す
+    }
+  }
+}
+
+// PC：詳細を開いているあいだは、一覧・地図・詳細の 3 列にする。
+// 閉じているときも 3 列目（幅 0）を置いておき、幅の変化をアニメーションさせる
+@media (min-width: v.$bp-pc) {
+  .sports-map {
+    grid-template-columns: 360px 1fr 0;
+    transition: grid-template-columns 0.25s ease;
+
+    &.has-detail {
+      grid-template-columns: 360px 1fr $detail-width;
+    }
+  }
+}
+
+.detail-sheet__frame {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border: 0;
 }
 
 .chips {
@@ -610,24 +686,6 @@ $sheet-peek: 168px; // 閉じているときに見える高さ（帯の分と、
   border-radius: 999px;
 }
 
-// ピンの詳細の各試合の背景に薄く置く両チームのロゴ（試合一覧の .match-card__logos と同じ見せ方）
-.pop-logos {
-  position: absolute;
-  top: 50%;
-  right: -8px;
-  z-index: -1;
-  display: flex;
-  transform: translateY(-50%);
-  opacity: 0.2;
-  pointer-events: none;
-
-  img {
-    width: 56px;
-    height: 56px;
-    object-fit: contain;
-  }
-}
-
 // ---- 右：リーグと節・対戦・日時｜距離 ----
 .card-body {
   display: flex;
@@ -735,11 +793,6 @@ $sheet-peek: 168px; // 閉じているときに見える高さ（帯の分と、
     pointer-events: auto;
   }
 
-  // 広い画面：検索欄は読みやすい幅（最大 480px）で左に止め、残りのすき間を挟んで右端に小さなボタンを置く
-  @media (min-width: $bp-tablet) {
-    grid-template-columns: minmax(0, 480px) auto 1fr;
-    align-items: start;
-  }
 }
 
 .map-search {
@@ -882,11 +935,7 @@ $sheet-peek: 168px; // 閉じているときに見える高さ（帯の分と、
   }
 
   .leaflet-top {
-    top: 168px; // 検索欄と、現在地・結果全体のボタンの下
-
-    @media (min-width: $bp-tablet) {
-      top: 104px; // 右上の現在地・結果全体（上の余白 16px ＋ ボタン 2 つ 88px）の下
-    }
+    top: 168px; // 検索欄と、現在地・結果全体のボタンの下（PC も検索欄が右端まであるので同じ）
   }
 
   // 地図の切り替え・拡大縮小の右端を、現在地・結果全体（右から 16px）にそろえる。Leaflet の既定は 10px
@@ -999,9 +1048,6 @@ $sheet-peek: 168px; // 閉じているときに見える高さ（帯の分と、
   overflow-y: auto;
 
   li {
-    position: relative; // 背景のロゴ（.pop-logos）の基準
-    isolation: isolate; // ロゴを z-index: -1 で、背景より手前・文字より奥に置く
-    overflow: hidden; // はみ出したロゴを切る
     display: flex;
     flex-direction: column;
     gap: 4px;
@@ -1012,6 +1058,20 @@ $sheet-peek: 168px; // 閉じているときに見える高さ（帯の分と、
       background: color-mix(in srgb, #{$map-accent} 10%, white);
       border-radius: 8px;
     }
+  }
+}
+
+// 押すと詳細ページが下から出る、試合 1 件ぶんの範囲。
+// Leaflet のリンク色（.leaflet-container a）に負けないよう .pop-games から書く
+.pop-games .pop-game {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  color: inherit;
+  text-decoration: none;
+
+  &[aria-expanded="true"] strong {
+    color: $map-accent;
   }
 }
 
