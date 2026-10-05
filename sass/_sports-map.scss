@@ -770,7 +770,13 @@ $detail-width: 360px; // PC で地図の右に出すときの幅
 }
 
 // ---- 地図の上に重ねる UI ----
-// 上にキーワード検索と絞り込みの丸いボタン。その下の右に、現在地・結果全体の小さなボタン
+// 上にキーワード検索と絞り込みの丸いボタン。現在地・結果全体の小さなボタンは地図の右端に置き、
+// その下に Leaflet の地図の切り替え、右下に拡大縮小が来る（右端の丸いボタンを、どの幅でも 1 列にそろえる）
+//   スマホ    … [検索欄        ][絞り込み]
+//                               [現在地  ]
+//                               [全体    ]
+//   タブレット〜 … [検索欄(最大480px)][絞り込み]    …    [現在地]
+//                                                       [全体  ]
 .map-tools {
   position: absolute;
   top: 16px;
@@ -881,11 +887,17 @@ $detail-width: 360px; // PC で地図の右に出すときの幅
   }
 }
 
-// 現在地・結果全体（検索欄の下、右端に縦に並べる）
+// 現在地・結果全体（右端に縦に並べる。スマホは絞り込みボタンの下、広い画面は地図の右上）
 .map-tools__sub {
   grid-column: 2;
   display: grid;
   gap: 8px;
+
+  @media (min-width: $bp-tablet) {
+    grid-row: 1;
+    grid-column: 3;
+    justify-self: end;
+  }
 
   .map-tools__round {
     width: 40px;
@@ -924,6 +936,11 @@ $detail-width: 360px; // PC で地図の右に出すときの幅
 
   .leaflet-top {
     top: 168px; // 検索欄と、現在地・結果全体のボタンの下（PC も検索欄が右端まであるので同じ）
+  }
+
+  // 地図の切り替え・拡大縮小の右端を、現在地・結果全体（右から 16px）にそろえる。Leaflet の既定は 10px
+  .leaflet-right .leaflet-control {
+    margin-right: 16px;
   }
 
   .leaflet-bottom {

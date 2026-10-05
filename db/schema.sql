@@ -40,7 +40,7 @@ CREATE TABLE users (
   email              VARCHAR(255) NOT NULL,
   email_normalized   VARCHAR(255) NOT NULL,     -- 小文字化＋trim。重複判定用
   email_verified_at  DATETIME     NULL,
-  phone_e164         VARCHAR(20)  NOT NULL,     -- +819012345678 形式で保存
+  phone_e164         VARCHAR(20)  NULL,         -- +819012345678 形式で保存。ゲストアカウント（テスト用）は NULL
   phone_verified_at  DATETIME     NULL,
   password_hash      VARCHAR(255) NOT NULL,     -- password_hash(PASSWORD_DEFAULT)
   nickname           VARCHAR(50)  NOT NULL,
@@ -56,7 +56,7 @@ CREATE TABLE users (
   deleted_at         DATETIME     NULL,
   PRIMARY KEY (id),
   UNIQUE KEY uq_users_email (email_normalized),
-  UNIQUE KEY uq_users_phone (phone_e164),
+  UNIQUE KEY uq_users_phone (phone_e164),        -- NULL は重複扱いにならないので、ゲストは何件あってもよい
   KEY idx_users_level (trust_level, status)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 

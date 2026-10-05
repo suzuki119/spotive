@@ -92,6 +92,7 @@ function page_header(string $title, string $heading = ''): void
       <a class="site-header__logo" href="<?= h($base) ?>/index.php">SPOTIVE</a>
 
       <nav class="site-header__nav">
+        <a class="site-header__link" href="<?= h($base) ?>/pages/home/home.php">ホーム</a>
         <a class="site-header__link" href="<?= h($base) ?>/pages/map/map.php">マップ</a>
         <a class="site-header__link" href="<?= h($base) ?>/pages/match/match-list.php">試合一覧</a>
 
