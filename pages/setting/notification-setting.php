@@ -8,6 +8,7 @@
 declare(strict_types=1);
 
 require_once __DIR__ . '/../../config/db.php';
+require_once __DIR__ . '/../../lib/support.php';   // h() / url() と、下のメニューバーのため
 
 // ここでデータを取得する（HTML は書かない）
 
@@ -34,13 +35,14 @@ require_once __DIR__ . '/../../config/db.php';
     <div class="inner">
       <section class="header">
         <span class="header-account">
-          <a href="javascript:history.back();" class="setting-back">
-            <img src="/SPOTIVE/images/icons/setting-back.svg" alt="">
+          <!-- 戻る：来た画面があればそこへ（js/main.js）、URL を直接開いたときはマイページへ -->
+          <a href="setting.php" class="setting-back">
+            <img src="<?= h(url('images/icons/setting-back.svg')) ?>" alt="戻る">
           </a>
         </span>
         <h1 class="header-title">SPOTIVE</h1>
         <span class="header-notice">
-          <img src="/SPOTIVE/images/icons/notice.svg" alt="">
+          <img src="<?= h(url('images/icons/notice.svg')) ?>" alt="">
         </span>
       </section>
     </div>
@@ -291,6 +293,7 @@ require_once __DIR__ . '/../../config/db.php';
   <footer class="site-footer"></footer>
 
   <script src="../../js/main.js"></script>
+  <?php require __DIR__ . '/../menu-bar.php'; ?>
 </body>
 
 </html>

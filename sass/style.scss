@@ -128,7 +128,8 @@ $breakpoints: (
         rgba(17, 53, 107, ) 0%,
         rgba(255, 255, 255, 0) 100%);
 
-    a {
+    // 「はじめる」のボタン（すぐ下の「ログイン」のリンクには効かせない）
+    > a {
       width: 200px;
       height: 60px;
       padding: 0 64px;
@@ -143,6 +144,24 @@ $breakpoints: (
       text-align: center;
       align-self: center;
 
+    }
+  }
+
+  // アカウントをお持ちの方はログイン（「はじめる」の下に小さく）
+  &-signin {
+    position: absolute;
+    bottom: 16px;
+    left: 50%;
+    width: max-content;
+    font-size: 14px;
+    line-height: 1.6;
+    transform: translateX(-50%);
+
+    a {
+      margin-left: 4px;
+      color: white;
+      font-weight: bold;
+      text-decoration: underline;
     }
   }
 }
@@ -278,6 +297,30 @@ $breakpoints: (
     margin: 48px auto 0;
     text-align: center;
     font-size: 14px;
+  }
+
+  // ゲストとしてログイン（お試し用）
+  &-guest {
+    width: 100%;
+    max-width: 400px;
+    margin: 32px auto 0;
+    text-align: center;
+    font-size: 14px;
+  }
+
+  &-guest-text {
+    color: rgba(0, 0, 0, 0.6);
+  }
+
+  &-guest-btn {
+    width: auto;
+    padding: 0 24px;
+    margin-top: 12px;
+    border: 0;
+    background: #fff;
+    font: inherit;
+    font-weight: bold;
+    cursor: pointer;
   }
 }
 
@@ -896,9 +939,6 @@ $breakpoints: (
   }
 }
 
-
-
-
 .plus {
   &-title {
     text-align: center;
@@ -996,7 +1036,7 @@ $breakpoints: (
 
 
       &-title {
-        font-size: 18px;
+        font-size: 19px;
       }
 
       &-place {
