@@ -14,6 +14,7 @@
 declare(strict_types=1);
 
 require_once __DIR__ . '/../../lib/account.php';
+require_once __DIR__ . '/../../lib/guest.php';
 
 session_boot();
 
@@ -85,6 +86,11 @@ if (is_post()) {
         <p class="error"><?= h($error) ?></p>
       <?php endif; ?>
 
+      <!-- ほかの画面から戻ってきたときのお知らせ（ゲストとしてログインできなかったときなど） -->
+      <?php foreach (take_flash() as $message) : ?>
+        <p class="error"><?= h($message['message']) ?></p>
+      <?php endforeach; ?>
+
       <div class="signin">
         <h1 class="signin-title">ログイン</h1>
 
@@ -119,6 +125,15 @@ if (is_post()) {
 
           <button type="submit" class="next btn">ログイン</button>
         </form>
+
+        <?php if (guest_enabled()) : ?>
+          <!-- ゲスト（お試し用の共通アカウント）。パスワードは使わず、サーバー側でログインさせる -->
+          <form class="signin-guest" action="guest-login.php" method="post">
+            <?= csrf_field() ?>
+            <p class="signin-guest-text">アカウントを作らずに試したい方</p>
+            <button type="submit" class="btn signin-guest-btn">ゲストとしてログイン</button>
+          </form>
+        <?php endif; ?>
 
         <div class="signin-register">
           <p>アカウントをお持ちでない方</p>
