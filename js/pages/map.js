@@ -439,7 +439,6 @@ document.addEventListener("DOMContentLoaded", () => {
             // JS が動かないときは、ふつうに詳細ページへ移る
             return `
               <li class="${g.id === focusId ? "is-focus" : ""}">
-                ${teamLogosHtml(g, "pop-logos", 56)}
                 <a class="pop-game" href="${esc(g.detailUrl)}" data-detail="${esc(g.detailUrl)}" aria-expanded="false">
                   <span class="tag" style="--c:${s.color}">${s.icon} ${esc(g.roundText || leagueText(g))}</span>
                   <strong>${esc(g.title)}</strong>
@@ -600,20 +599,6 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  /**
-   * 背景に薄く置く両チームのロゴ。2 チームそろっていないときは出さない。
-   * ピンの詳細（pop-logos）で使う。一覧のカードは左にロゴを出しているので使わない
-   */
-  function teamLogosHtml(g, className, size) {
-    const logos = teamLogoSrcs(g);
-    if (!logos) return "";
-    // 飾りなので読み上げない。チーム名は試合名に書いてある
-    return `
-      <span class="${className}" aria-hidden="true">
-        ${logos.map((src) => `<img src="${esc(src)}" alt="" width="${size}" height="${size}" loading="lazy">`).join("")}
-      </span>`;
-  }
-
   /** 両チームのロゴの画像（ホーム側・アウェイ側）。2 チームそろわなければ null */
   function teamLogoSrcs(g) {
     const ids = (g.teamIds || []).slice(0, 2);
@@ -769,6 +754,7 @@ document.addEventListener("DOMContentLoaded", () => {
   // 試合の詳細ページ（pages/match/match-detail.php）を、画面下から出すシート。
   // 同じ試合をもう一度押すと閉じる。中身は iframe で詳細ページそのものを出す
   // -----------------------------------------------------------------
+  const mapRoot     = $(".sports-map");
   const detailSheet = $("#detail-sheet");
   const detailFrame = $("#detail-sheet-frame");
   let detailUrl = null;   // いま開いている詳細ページ
@@ -789,6 +775,7 @@ document.addEventListener("DOMContentLoaded", () => {
     detailSheet.classList.add("is-open");
     detailSheet.setAttribute("aria-hidden", "false");
     matchSheet.classList.add("has-detail");   // スマホは試合の詳細シートを上に持ち上げる
+    mapRoot.classList.add("has-detail");      // PC は地図の右に列として出す
     syncDetailToggles();
   }
 
@@ -798,6 +785,7 @@ document.addEventListener("DOMContentLoaded", () => {
     detailSheet.classList.remove("is-open");
     detailSheet.setAttribute("aria-hidden", "true");
     matchSheet.classList.remove("has-detail");
+    mapRoot.classList.remove("has-detail");
     syncDetailToggles();
   }
 
@@ -1223,6 +1211,56 @@ document.addEventListener("DOMContentLoaded", () => {
     showStatus("現在地を取得できませんでした（位置情報の許可を確認してください）");
     $("#sort").value = "date";
     render();
+  });
+
+  // 地図の枠の大きさが変わったら（PC で詳細の列が出入りしたときなど）、Leaflet に測り直してもらう。
+  // これをしないと、狭くなった地図の右側にタイルが出なかったり、ピンの位置がずれたりする
+  // 開いているポップアップは、狭くなった地図からはみ出さないよう、収まる位置まで地図を動かす
+  let openPopup = null;
+  map.on("popupopen", (e) => { openPopup = e.popup; });
+  map.on("popupclose", (e) => { if (openPopup === e.popup) openPopup = null; });
+
+  const POPUP_FIT_ZOOM = 7;   // 地方が見えるくらい。日本全体の倍率では表示範囲の制限で地図を動かせないため
+
+  function keepPopupInView() {
+    const el = openPopup?.getElement();
+    if (!el) return;
+    const half = el.offsetWidth / 2 + 16;   // ポップアップはピンの真上に、左右対称に出る
+    // 上は、地図に重なっている検索欄とボタン（.map-tools）の下から
+    const frameTop = map.getContainer().getBoundingClientRect().top;
+    const toolsBottom = $(".map-tools").getBoundingClientRect().bottom - frameTop;
+    const panToPopup = () => map.panInside(openPopup.getLatLng(), {
+      paddingTopLeft: [half, toolsBottom + el.offsetHeight + 48],
+      paddingBottomRight: [half, 16],
+      animate: false,
+    });
+    const fits = () => {
+      const box = el.getBoundingClientRect();
+      const frame = map.getContainer().getBoundingClientRect();
+      return box.left >= frame.left && box.right <= frame.right && box.top >= frame.top + toolsBottom;
+    };
+
+    panToPopup();
+    // 日本全体の倍率では、表示範囲の制限（maxBounds）で地図がそれ以上動かないことがある。
+    // そのときは地方が見えるくらいまで寄せてから、もう一度合わせる
+    if (!fits() && map.getZoom() < POPUP_FIT_ZOOM) {
+      map.setView(openPopup.getLatLng(), POPUP_FIT_ZOOM, { animate: false });
+      panToPopup();
+    }
+  }
+
+  new ResizeObserver(() => {
+    // pan: false … 既定だと中心を保つためにアニメーションで動き、あとの位置合わせを上書きしてしまう
+    map.invalidateSize({ pan: false });
+  }).observe(map.getContainer());
+
+  // PC で詳細の列が右から出入りし終わったら、ポップアップが地図に収まるよう合わせる。
+  // 列が広がっている途中に毎回合わせると、地図ががたがた動くので、終わってから 1 回だけ
+  mapRoot.addEventListener("transitionend", (e) => {
+    if (e.target !== mapRoot || e.propertyName !== "grid-template-columns") return;
+    // ResizeObserver の通知はこのイベントより後に来るので、ここで先に地図の大きさを測り直しておく
+    map.invalidateSize({ pan: false });
+    keepPopupInView();
   });
 
   // 画面サイズが変わったら、地図のサイズとピンの出し方をそろえ直す

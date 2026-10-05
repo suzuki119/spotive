@@ -364,14 +364,16 @@ $sheet-peek: 168px; // 閉じているときに見える高さ（帯の分と、
 }
 
 // ---- 試合の詳細ページ ----
-// 試合を押すと画面下から出る。スマホは試合の詳細シートの上に重ね、PC は中央に寄せる
+$detail-width: 360px; // PC で地図の右に出すときの幅
+// 試合を押すと画面下から出る。スマホは試合の詳細シートの上に重ね、タブレットは中央に寄せる。
+// PC は地図の右に列として出し、地図はそのぶん左に詰める（.sports-map.has-detail）
 .detail-sheet {
   @include slide-up-panel;
   z-index: 1200; // 試合の詳細シート（1100）より前に出す
   right: 0;
   bottom: 0;
   left: 0;
-  height: 50vh; // スマホは下半分だけ。上に試合の詳細シートを残し、同じ試合をもう一度押して閉じられるようにする
+  height: 90vh; // スマホは下半分だけ。上に試合の詳細シートを残し、同じ試合をもう一度押して閉じられるようにする
   overflow: hidden; // スクロールは中の詳細ページに任せる
   border-radius: 16px 16px 0 0;
   box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.2);
@@ -386,6 +388,39 @@ $sheet-peek: 168px; // 閉じているときに見える高さ（帯の分と、
     left: 50%;
     width: 480px;
     margin-left: -240px;
+  }
+
+  // PC：地図の右の列。列の幅が 0 → $detail-width に広がるので、右から出てくるように見える
+  @media (min-width: v.$bp-pc) {
+    position: static;
+    width: auto;
+    height: auto;
+    margin-left: 0;
+    border-radius: 0;
+    box-shadow: -1px 0 0 $map-line; // 区切り線。border だと閉じた（幅 0 の）ときも 1px 残るので影で描く
+    transform: none;
+    transition: visibility 0.25s ease; // 閉じるときは、列がたたみ終わってから隠す
+
+    &.is-open {
+      transform: none;
+    }
+
+    .detail-sheet__frame {
+      width: $detail-width; // 列が広がる途中でも中身は縮めず、そのまま右から出す
+    }
+  }
+}
+
+// PC：詳細を開いているあいだは、一覧・地図・詳細の 3 列にする。
+// 閉じているときも 3 列目（幅 0）を置いておき、幅の変化をアニメーションさせる
+@media (min-width: v.$bp-pc) {
+  .sports-map {
+    grid-template-columns: 360px 1fr 0;
+    transition: grid-template-columns 0.25s ease;
+
+    &.has-detail {
+      grid-template-columns: 360px 1fr $detail-width;
+    }
   }
 }
 
@@ -651,24 +686,6 @@ $sheet-peek: 168px; // 閉じているときに見える高さ（帯の分と、
   border-radius: 999px;
 }
 
-// ピンの詳細の各試合の背景に薄く置く両チームのロゴ（試合一覧の .match-card__logos と同じ見せ方）
-.pop-logos {
-  position: absolute;
-  top: 50%;
-  right: -8px;
-  z-index: -1;
-  display: flex;
-  transform: translateY(-50%);
-  opacity: 0.2;
-  pointer-events: none;
-
-  img {
-    width: 56px;
-    height: 56px;
-    object-fit: contain;
-  }
-}
-
 // ---- 右：リーグと節・対戦・日時｜距離 ----
 .card-body {
   display: flex;
@@ -770,10 +787,6 @@ $sheet-peek: 168px; // 閉じているときに見える高さ（帯の分と、
     pointer-events: auto;
   }
 
-  @media (min-width: $bp-tablet) {
-    right: auto;
-    width: min(480px, calc(100% - 32px));
-  }
 }
 
 .map-search {
@@ -910,11 +923,7 @@ $sheet-peek: 168px; // 閉じているときに見える高さ（帯の分と、
   }
 
   .leaflet-top {
-    top: 168px; // 検索欄と、現在地・結果全体のボタンの下
-
-    @media (min-width: $bp-tablet) {
-      top: 0;
-    }
+    top: 168px; // 検索欄と、現在地・結果全体のボタンの下（PC も検索欄が右端まであるので同じ）
   }
 
   .leaflet-bottom {
@@ -1022,9 +1031,6 @@ $sheet-peek: 168px; // 閉じているときに見える高さ（帯の分と、
   overflow-y: auto;
 
   li {
-    position: relative; // 背景のロゴ（.pop-logos）の基準
-    isolation: isolate; // ロゴを z-index: -1 で、背景より手前・文字より奥に置く
-    overflow: hidden; // はみ出したロゴを切る
     display: flex;
     flex-direction: column;
     gap: 4px;
