@@ -25,18 +25,22 @@
           すべての機能が使い放題！
         </h2>
         <article>
+          <img src="../../images/icons/check.svg" alt="">
           <p>遠征サポート機能</p>
         </article>
 
         <article>
+          <img src="../../images/icons/check.svg" alt="">
           <p>高度な検索フィルター</p>
         </article>
 
         <article>
+          <img src="../../images/icons/check.svg" alt="">
           <p>推しチーム登録上限解除</p>
         </article>
 
         <article>
+          <img src="../../images/icons/check.svg" alt="">
           <p>広告完全非表示</p>
         </article>
 
