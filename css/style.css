@@ -1,3 +1,4 @@
+@charset "UTF-8";
 .site-header {
   display: flex;
   align-items: center;
@@ -5141,6 +5142,25 @@ body {
   border-radius: 20px;
   margin: 0 auto 25px;
 }
+.plus-select-plan.is-selected {
+  border: 2px solid #11356B;
+  background-color: black;
+  color: white;
+}
+.plus-select-plan.is-selected::before {
+  content: "✓";
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  color: #11356B;
+  font-weight: bold;
+  text-align: center;
+  display: block;
+  width: 20px;
+  height: 20px;
+  background-color: white;
+  border-radius: 100px;
+}
 .plus-select-plan::after {
   content: "";
   display: block;
@@ -5166,6 +5186,7 @@ body {
   color: white;
   border-radius: 50px;
   text-align: center;
+  display: block;
   margin: 45px auto 110px;
 }
 /*# sourceMappingURL=style.css.map */

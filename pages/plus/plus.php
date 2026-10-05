@@ -60,6 +60,7 @@
     </div>
   </div>
   <?php require __DIR__ . '/../menu-bar.php'; ?>
+  <script src="../../js/pages/plus.js"></script>
 </body>
 
 </html>
