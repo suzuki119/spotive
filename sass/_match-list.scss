@@ -6,12 +6,12 @@
 .schedule-list {
   max-width: $content-max;
   margin: 0 auto;
-  padding: 24px 16px $menu-bar-space;
+  padding: 0 16px $menu-bar-space; // 上は共通ヘッダー（app-header）があるので詰める
   font-family: $font-body;
   color: $color-text;
 
   @media (min-width: $bp-tablet) {
-    padding: 32px 24px $menu-bar-space;
+    padding: 0 24px $menu-bar-space;
   }
 
   &__head {
@@ -30,9 +30,36 @@
   }
 
   &__count {
-    margin: 0;
+    margin: 8px 0 0;
     font-size: 14px;
     color: $color-text-sub;
+    text-align: center;
+  }
+
+  // 選んだ日に試合が無いとき
+  &__none {
+    display: grid;
+    justify-items: center;
+    gap: 12px;
+
+    &[hidden] {
+      display: none;
+    }
+  }
+
+  &__next {
+    padding: 8px 16px;
+    border: 1px solid $color-secondary;
+    border-radius: $radius-full;
+    background: $color-bg;
+    color: $color-secondary;
+    font: inherit;
+    font-weight: 700;
+    cursor: pointer;
+
+    &[hidden] {
+      display: none;
+    }
   }
 
   // 競技のタブと「だけ見る」
@@ -115,4 +142,279 @@
   &__item.is-hidden {
     display: none;
   }
+}
+
+// ---- ‹ 今日 › ［カレンダー］ ----
+.schedule-days {
+  display: grid;
+  grid-template-columns: 1fr auto auto auto 1fr;
+  align-items: center;
+  gap: 16px;
+
+  // 左右の余白で「‹ 今日 ›」を真ん中に置き、カレンダーのボタンは右端に寄せる
+  &::before {
+    content: "";
+  }
+
+  &__label {
+    min-width: 96px;
+    margin: 0;
+    color: $color-secondary;
+    font-size: 22px;
+    font-weight: 700;
+    text-align: center;
+  }
+
+  &__step {
+    width: 36px;
+    height: 36px;
+    border: 0;
+    border-radius: $radius-full;
+    background: none;
+    color: $color-secondary;
+    font-size: 28px;
+    line-height: 1;
+    cursor: pointer;
+
+    &:hover:not(:disabled) {
+      background: $color-border;
+    }
+
+    &:disabled {
+      cursor: default;
+      opacity: 0.3;
+    }
+  }
+
+  &__calendar {
+    justify-self: end;
+    padding: 4px 12px;
+    border: 1px solid $color-secondary;
+    border-radius: $radius-full;
+    background: $color-bg;
+    color: $color-secondary;
+    font: inherit;
+    font-size: 14px;
+    font-weight: 700;
+    white-space: nowrap;
+    cursor: pointer;
+
+    &:hover {
+      background: $color-secondary;
+      color: $color-bg;
+    }
+  }
+}
+
+// ---- 下から出るカレンダー ----
+.calendar-sheet {
+  position: fixed;
+  inset: 0;
+  z-index: 1100; // メニューバー（1000）より前に出す
+
+  &[hidden] {
+    display: none;
+  }
+
+  &__backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba($color-secondary, 0.4);
+  }
+
+  &__panel {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    max-width: 480px;
+    max-height: 90vh;
+    margin: 0 auto;
+    padding: 12px 16px calc(24px + env(safe-area-inset-bottom));
+    overflow-y: auto;
+    border-radius: 32px 32px 0 0;
+    background: $color-bg;
+    box-shadow: 0 -4px 16px rgba($color-secondary, 0.2);
+    animation: calendar-sheet-in 0.2s ease;
+  }
+
+  &__handle {
+    display: block;
+    width: 48px;
+    height: 4px;
+    margin: 0 auto 12px;
+    border-radius: $radius-full;
+    background: $color-border;
+  }
+
+  &__head {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 24px;
+  }
+
+  &__title {
+    min-width: 120px;
+    margin: 0;
+    color: $color-secondary;
+    font-size: 18px;
+    font-weight: 700;
+    text-align: center;
+  }
+
+  &__step {
+    width: 36px;
+    height: 36px;
+    border: 0;
+    border-radius: $radius-full;
+    background: none;
+    color: $color-secondary;
+    font-size: 24px;
+    cursor: pointer;
+
+    &:hover:not(:disabled) {
+      background: $color-bg-gray;
+    }
+
+    &:disabled {
+      cursor: default;
+      opacity: 0.3;
+    }
+  }
+
+  // 曜日と日付は 7 列
+  &__week,
+  &__grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    text-align: center;
+  }
+
+  &__week {
+    margin-top: 16px;
+    font-size: 12px;
+    font-weight: 700;
+
+    li:first-child {
+      color: $color-accent;
+    }
+
+    li:last-child {
+      color: $color-primary;
+    }
+  }
+
+  &__grid {
+    row-gap: 8px;
+    margin-top: 8px;
+  }
+
+  &__day {
+    position: relative;
+    justify-self: center;
+    width: 40px;
+    height: 40px;
+    border: 0;
+    border-radius: $radius-full;
+    background: none;
+    color: $color-secondary;
+    font-family: $font-heading;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+
+    &:hover:not(:disabled) {
+      background: $color-bg-gray;
+    }
+
+    &:focus-visible {
+      outline: 2px solid $color-primary;
+      outline-offset: 2px;
+    }
+
+    &:disabled {
+      cursor: default;
+      opacity: 0.3;
+    }
+
+    // 日曜・祝日と土曜（カレンダーの慣習）。赤はエラー専用なので、日曜はアクセントの色
+    &.is-sunday {
+      color: $color-accent;
+    }
+
+    &.is-saturday {
+      color: $color-primary;
+    }
+
+    // 今日は枠、選んでいる日は塗りつぶし
+    &.is-today {
+      box-shadow: inset 0 0 0 2px $color-primary-dark;
+    }
+
+    &.is-selected {
+      background: $color-primary-dark;
+      color: $color-bg;
+
+      &:hover {
+        background: $color-primary-dark;
+      }
+    }
+
+    // 試合のある日は、数字の下に点
+    &.has-match::after {
+      content: "";
+      position: absolute;
+      bottom: 3px;
+      left: 50%;
+      width: 5px;
+      height: 5px;
+      border-radius: $radius-full;
+      background: $color-accent;
+      transform: translateX(-50%);
+    }
+
+    &.is-selected.has-match::after {
+      background: $color-bg;
+    }
+  }
+
+  &__note {
+    margin: 16px 0 0;
+    color: $color-text-sub;
+    font-size: 12px;
+    text-align: center;
+  }
+
+  &__close {
+    display: block;
+    width: 100%;
+    margin-top: 12px;
+    padding: 12px;
+    border: 1px solid $color-secondary;
+    border-radius: $radius-full;
+    background: $color-bg;
+    color: $color-secondary;
+    font: inherit;
+    font-weight: 700;
+    cursor: pointer;
+  }
+}
+
+@keyframes calendar-sheet-in {
+  from {
+    transform: translateY(100%);
+  }
+
+  to {
+    transform: translateY(0);
+  }
+}
+
+// カレンダーを開いている間は、後ろのページがスクロールしないようにする
+body.is-sheet-open {
+  overflow: hidden;
 }

@@ -62,13 +62,15 @@ $mapTournamentsJson = json_encode(
     | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT
 );
 
-// 一覧のカードの背景に薄く置くチームのロゴ。
-// チーム ID => [ホーム側で出すとき, アウェイ側で出すとき]（まだロゴが無いチームは仮のロゴになる）
+// 一覧のカードとピンの詳細に出すチームのロゴ。
+// チーム ID => [ホーム側で出すとき, アウェイ側で出すとき, 相手と同じロゴになったときの代わり]
+// （まだロゴが無いチームは仮のロゴ。仮のロゴは両チームで同じになることがあるので、代わりも渡す）
 $mapTeamLogos = [];
 foreach (array_keys(load_teams()) as $teamId) {
+  $away = match_team_logo($teamId, 1);
   $mapTeamLogos[$teamId] = array_map(
     static fn(string $logo): string => $logo === '' ? '' : url($logo),
-    [match_team_logo($teamId, 0), match_team_logo($teamId, 1)]
+    [match_team_logo($teamId, 0), $away, match_next_placeholder($away)]
   );
 }
 $mapTeamLogosJson = json_encode(
@@ -110,8 +112,20 @@ $mapTeamLogosJson = json_encode(
 
   <main class="l-main">
     <div class="sports-map">
-      <!-- スマホではこの中身がまるごと全画面で出る（絞り込み → 結果一覧の順）-->
+      <!--
+        スマホ：普段は、メニューバーの上に「試合一覧を開く」の帯だけが見える。押すと一覧が開く。
+                 絞り込みボタンを押すと、全画面になって絞り込み → 一覧の順に出る
+        PC    ：左の固定サイドバー
+      -->
       <aside class="sports-map__side" id="filter-panel">
+        <!-- スマホ：普段は、メニューバーの上にこの帯だけが見える。押すと一覧が開く -->
+        <button class="sheet-handle" type="button" id="list-handle" aria-controls="filter-panel" aria-expanded="false">
+          <span class="sheet-handle__bar" aria-hidden="true"></span>
+          <span class="sheet-handle__row">
+            <span class="sheet-handle__label">▲ 試合一覧を開く</span>
+            <span class="sheet-handle__count" id="handle-count"></span>
+          </span>
+        </button>
         <a href="../../index.php" class="logo">SPOTIVE</a>
         <!-- 普段は隠れている。地図左上の「絞り込み」ボタンで開閉する -->
         <div class="sports-map__filters">
@@ -202,18 +216,35 @@ $mapTeamLogosJson = json_encode(
       <section class="sports-map__canvas">
         <div id="map"></div>
 
-        <!-- スマホではこの 3 つが画面の左上に並ぶ -->
+        <!-- 地図の上：キーワード検索と絞り込み。その下に現在地・結果全体の小さなボタン -->
         <div class="map-tools">
+          <label class="map-search">
+            <span class="map-search__label">キーワード検索</span>
+            <!-- 絞り込みのフォーム（#filters）の一部として扱う。リセットで一緒に消える -->
+            <input
+              class="map-search__input"
+              type="search"
+              name="keyword"
+              id="keyword"
+              form="filters"
+              placeholder="キーワード検索"
+              maxlength="50"
+              autocomplete="off" />
+            <img class="map-search__icon" src="<?= h(url('images/icons/search.svg')) ?>" alt="" width="20" height="20" />
+          </label>
           <button
-            class="map-tools__filter"
+            class="map-tools__round map-tools__filter"
             id="filter-toggle"
             type="button"
             aria-controls="filter-panel"
-            aria-expanded="false">
-            <span aria-hidden="true">☰</span> 絞り込み
+            aria-expanded="false"
+            aria-label="絞り込み">
+            <span class="map-tools__lines" aria-hidden="true"></span>
           </button>
-          <button id="locate" type="button"><span aria-hidden="true">📍</span> 現在地</button>
-          <button id="fit" type="button">結果全体</button>
+          <div class="map-tools__sub">
+            <button class="map-tools__round" id="locate" type="button" aria-label="現在地"><span aria-hidden="true">📍</span></button>
+            <button class="map-tools__round" id="fit" type="button" aria-label="結果全体を表示"><span aria-hidden="true">⤢</span></button>
+          </div>
         </div>
 
         <!-- ピンを押したときに、絞り込みと入れ替わりで下から出る詳細 -->

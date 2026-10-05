@@ -19,9 +19,21 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 });
 
+// 設定画面の「戻る」。ほかのページには無いので、あるときだけ動かす（無いと全ページでエラーになる）。
+// 同じサイトの画面から来たときはその画面に戻り、URL を直接開いたときなどはリンク先（マイページ）へ移る
 const settingBack = document.querySelector('.setting-back');
 
-settingBack.addEventListener('click', (e) => {
-  e.preventDefault();
-  history.back();
-});
+if (settingBack) {
+  settingBack.addEventListener('click', (e) => {
+    let fromSameSite = false;
+    try {
+      fromSameSite = document.referrer !== '' && new URL(document.referrer).origin === location.origin;
+    } catch {
+      fromSameSite = false;
+    }
+    if (fromSameSite && history.length > 1) {
+      e.preventDefault();
+      history.back();
+    }
+  });
+}
