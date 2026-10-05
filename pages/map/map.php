@@ -256,6 +256,11 @@ $mapTeamLogosJson = json_encode(
           <div class="match-sheet__body" id="match-sheet-body"></div>
         </section>
 
+        <!-- 試合を押したときに下から出る詳細ページ（match-detail.php を中に表示する） -->
+        <section class="detail-sheet" id="detail-sheet" aria-label="試合の詳細ページ" aria-hidden="true">
+          <iframe class="detail-sheet__frame" id="detail-sheet-frame" title="試合の詳細ページ"></iframe>
+        </section>
+
         <div id="status" class="status" hidden></div>
       </section>
     </div>

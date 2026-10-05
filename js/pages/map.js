@@ -432,16 +432,20 @@ document.addEventListener("DOMContentLoaded", () => {
         <ul class="pop-games">
           ${shown.map((g) => {
             const s = sportOf(g.sport);
-            const detail = [
-              g.ticketUrl && `<a href="${esc(g.ticketUrl)}" target="_blank" rel="noopener">公式チケット</a>`,
-              g.detailUrl && `<a href="${esc(g.detailUrl)}">試合詳細</a>`,
-            ].filter(Boolean).map((link) => ` ・ ${link}`).join("");
+            const ticket = g.ticketUrl
+              ? `<span class="pop-meta"><a href="${esc(g.ticketUrl)}" target="_blank" rel="noopener">公式チケット</a></span>`
+              : "";
+            // 試合を押すと、詳細ページが画面下から出る（もう一度押すと閉じる）。
+            // JS が動かないときは、ふつうに詳細ページへ移る
             return `
               <li class="${g.id === focusId ? "is-focus" : ""}">
                 ${teamLogosHtml(g, "pop-logos", 56)}
-                <span class="tag" style="--c:${s.color}">${s.icon} ${esc(g.roundText || leagueText(g))}</span>
-                <strong>${esc(g.title)}</strong>
-                <span class="pop-meta">${fmtStart(g)} ・ ${priceText(g)}${detail}</span>
+                <a class="pop-game" href="${esc(g.detailUrl)}" data-detail="${esc(g.detailUrl)}" aria-expanded="false">
+                  <span class="tag" style="--c:${s.color}">${s.icon} ${esc(g.roundText || leagueText(g))}</span>
+                  <strong>${esc(g.title)}</strong>
+                  <span class="pop-meta">${fmtStart(g)} ・ ${priceText(g)}</span>
+                </a>
+                ${ticket}
               </li>`;
           }).join("")}
         </ul>
@@ -750,6 +754,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function closeMatchSheet() {
+    closeDetailSheet();   // 詳細ページだけが残らないようにする
     matchSheet.classList.remove("is-open");
     matchSheet.setAttribute("aria-hidden", "true");
   }
@@ -757,7 +762,58 @@ document.addEventListener("DOMContentLoaded", () => {
   function closeSheets() {
     closeFilterSheet();
     closeMatchSheet();
+    closeDetailSheet();
   }
+
+  // -----------------------------------------------------------------
+  // 試合の詳細ページ（pages/match/match-detail.php）を、画面下から出すシート。
+  // 同じ試合をもう一度押すと閉じる。中身は iframe で詳細ページそのものを出す
+  // -----------------------------------------------------------------
+  const detailSheet = $("#detail-sheet");
+  const detailFrame = $("#detail-sheet-frame");
+  let detailUrl = null;   // いま開いている詳細ページ
+
+  function syncDetailToggles() {
+    document.querySelectorAll("[data-detail]").forEach((a) => {
+      a.setAttribute("aria-expanded", a.dataset.detail === detailUrl ? "true" : "false");
+    });
+  }
+
+  function openDetailSheet(url) {
+    if (detailUrl !== url) {
+      const src = new URL(url, location.href);
+      src.searchParams.set("embed", "1");   // 詳細ページ側で「シートの中」用の表示にする
+      detailFrame.src = src.href;
+    }
+    detailUrl = url;
+    detailSheet.classList.add("is-open");
+    detailSheet.setAttribute("aria-hidden", "false");
+    matchSheet.classList.add("has-detail");   // スマホは試合の詳細シートを上に持ち上げる
+    syncDetailToggles();
+  }
+
+  function closeDetailSheet() {
+    if (detailUrl === null) return;
+    detailUrl = null;
+    detailSheet.classList.remove("is-open");
+    detailSheet.setAttribute("aria-hidden", "true");
+    matchSheet.classList.remove("has-detail");
+    syncDetailToggles();
+  }
+
+  function toggleDetailSheet(url) {
+    if (detailUrl === url) {
+      closeDetailSheet();
+    } else {
+      openDetailSheet(url);
+    }
+  }
+
+  // 詳細ページの ✕ は、シートの中では「シートを閉じる」にする（js/pages/match-detail.js）
+  window.addEventListener("message", (e) => {
+    if (e.origin !== location.origin) return;
+    if (e.data && e.data.type === "spotive:detail-close") closeDetailSheet();
+  });
 
   // -----------------------------------------------------------------
   // 周辺施設（Geoapify のデモ。企画書の機能 6）
@@ -865,6 +921,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // ボタンはポップアップ（PC）とシート（スマホ）の中で作り直されるので、document で拾う
   document.addEventListener("click", (e) => {
+    // 試合 … 詳細ページを下から出す。同じ試合をもう一度押すと閉じる
+    const game = e.target.closest("[data-detail]");
+    if (game) {
+      e.preventDefault();
+      toggleDetailSheet(game.dataset.detail);
+      return;
+    }
+
     // 「周辺施設」… いきなり検索せず、まず種類を選んでもらう
     const toggle = e.target.closest("[data-nearby-toggle]");
     if (toggle) {
@@ -1116,7 +1180,9 @@ document.addEventListener("DOMContentLoaded", () => {
   // ピンや Leaflet のボタン（ズーム・地図の種類）は map の click まで
   // イベントを通さないので、地図コンテナでキャプチャして拾う。
   // ピンの場合はこのあとマーカー側の処理が走り、詳細シートが開く
-  map.getContainer().addEventListener("click", () => {
+  map.getContainer().addEventListener("click", (e) => {
+    // ポップアップの試合を押したときは、詳細シートの開け閉めに任せる
+    if (e.target.closest("[data-detail]")) return;
     closeSheets();
     if (MOBILE.matches) setListExpanded(false);
   }, true);

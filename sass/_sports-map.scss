@@ -342,6 +342,14 @@ $sheet-peek: 168px; // 閉じているときに見える高さ（帯の分と、
     @include slide-up-open;
   }
 
+  // 詳細ページ（.detail-sheet）が下半分に出ているあいだは、その上に持ち上げて試合を押せるようにする
+  &.has-detail {
+    bottom: 50vh;
+    max-height: 40vh;
+    border-radius: 16px;
+    transition: transform 0.2s ease, visibility 0.2s ease, bottom 0.2s ease;
+  }
+
   @media (min-width: $bp-tablet) {
     display: none;
   }
@@ -353,6 +361,39 @@ $sheet-peek: 168px; // 閉じているときに見える高さ（帯の分と、
   .pop-games {
     max-height: none; // シートの中は縦に余裕があるので切らない
   }
+}
+
+// ---- 試合の詳細ページ ----
+// 試合を押すと画面下から出る。スマホは試合の詳細シートの上に重ね、PC は中央に寄せる
+.detail-sheet {
+  @include slide-up-panel;
+  z-index: 1200; // 試合の詳細シート（1100）より前に出す
+  right: 0;
+  bottom: 0;
+  left: 0;
+  height: 50vh; // スマホは下半分だけ。上に試合の詳細シートを残し、同じ試合をもう一度押して閉じられるようにする
+  overflow: hidden; // スクロールは中の詳細ページに任せる
+  border-radius: 16px 16px 0 0;
+  box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.2);
+
+  &.is-open {
+    @include slide-up-open;
+  }
+
+  @media (min-width: $bp-tablet) {
+    height: 88vh;
+    right: auto;
+    left: 50%;
+    width: 480px;
+    margin-left: -240px;
+  }
+}
+
+.detail-sheet__frame {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border: 0;
 }
 
 .chips {
@@ -994,6 +1035,20 @@ $sheet-peek: 168px; // 閉じているときに見える高さ（帯の分と、
       background: color-mix(in srgb, #{$map-accent} 10%, white);
       border-radius: 8px;
     }
+  }
+}
+
+// 押すと詳細ページが下から出る、試合 1 件ぶんの範囲。
+// Leaflet のリンク色（.leaflet-container a）に負けないよう .pop-games から書く
+.pop-games .pop-game {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  color: inherit;
+  text-decoration: none;
+
+  &[aria-expanded="true"] strong {
+    color: $map-accent;
   }
 }
 
