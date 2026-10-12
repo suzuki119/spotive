@@ -92,6 +92,16 @@ $estimate = $trip === null || $area === false
   ? null
   : travel_estimate([...$trip['games'], ...$extras], $area, $hotelId, $trip['games'][0]);
 $nearby   = $trip === null ? [] : travel_nearby_games($trip);
+
+// ホテルから会場へのルート。泊まるときだけ、仮データのホテル（id のあるもの）から遠征の本来の試合の会場へ
+$routeHotel = ($estimate['hotel']['id'] ?? '') !== '' ? $estimate['hotel'] : null;
+$routeGame  = $trip['games'][0] ?? null;
+$routeUrl   = $routeHotel === null || $routeGame === null ? '' : 'https://www.google.com/maps/dir/?' . http_build_query([
+  'api'         => 1,
+  'origin'      => $routeHotel['lat'] . ',' . $routeHotel['lng'],
+  'destination' => $routeGame['lat'] . ',' . $routeGame['lng'],
+  'travelmode'  => 'walking',
+]);
 $teamName = (string) ($teams[$teamId]['name'] ?? '');
 
 /** 今の条件を引き継いだ、この画面へのリンク */
@@ -126,6 +136,7 @@ $teamGroups = [
       href="https://fonts.googleapis.com/css2?family=Jost:wght@400;600&family=Noto+Sans+JP:wght@400;500;700&display=swap"
       rel="stylesheet"
     />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <link rel="stylesheet" href="<?= h(asset('css/style.css')) ?>" />
   </head>
 
@@ -280,6 +291,35 @@ $teamGroups = [
               <?php endif; ?>
             </article>
           </div>
+
+          <!-- ホテルから会場へ。地図にホテルと会場の 2 点を出す（js/pages/travel.js）。道順は Google マップに任せる -->
+          <?php if ($routeUrl !== '') : ?>
+            <div
+              class="travel-route"
+              data-travel-live="route"
+              data-from-lat="<?= (float) $routeHotel['lat'] ?>"
+              data-from-lng="<?= (float) $routeHotel['lng'] ?>"
+              data-to-lat="<?= (float) $routeGame['lat'] ?>"
+              data-to-lng="<?= (float) $routeGame['lng'] ?>"
+            >
+              <p class="travel-route__head">
+                <img class="travel-card__icon" src="<?= h(url('images/icons/point.svg')) ?>" alt="" width="11" height="14" />
+                ホテルから会場へ
+              </p>
+              <p class="travel-route__places">
+                <span class="travel-route__place travel-route__place--hotel"><?= h($routeHotel['name']) ?></span>
+                <span class="travel-route__place travel-route__place--venue"><?= h($routeGame['venue']) ?></span>
+              </p>
+              <p class="travel-route__summary" data-route-summary>
+                徒歩 約<?= (int) $routeHotel['walk'] ?>分（直線距離からの目安）
+              </p>
+              <div class="travel-route__map" data-route-map></div>
+              <a class="travel-route__link" href="<?= h($routeUrl) ?>" target="_blank" rel="noopener">Google マップで道順を見る</a>
+            </div>
+          <?php else : ?>
+            <!-- 日帰りのときは出さない。試合を追加して泊まりになったら、JS がここを差し替える -->
+            <div data-travel-live="route" hidden></div>
+          <?php endif; ?>
         </section>
 
         <form class="travel__create" action="travel.php" method="post">
@@ -367,6 +407,7 @@ $teamGroups = [
     </main>
 
     <script src="<?= h(asset('js/main.js')) ?>"></script>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script src="<?= h(asset('js/pages/travel.js')) ?>"></script>
     <?php require __DIR__ . '/../menu-bar.php'; ?>
   </body>

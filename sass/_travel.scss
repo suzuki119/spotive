@@ -598,6 +598,103 @@ $travel-done: map.get($sport-colors, soccer); // 購入済み・予約済み（�
   }
 }
 
+// ホテルから会場へ（TRAVEL PLAN の下。ホテルと会場の 2 点の地図は js/pages/travel.js が描く）
+.travel-route {
+  margin: 16px 0 0;
+  padding: 16px;
+  border-radius: $radius-lg;
+  background: $color-bg;
+  box-shadow: $travel-shadow;
+
+  @media (min-width: $bp-tablet) {
+    padding: 24px;
+  }
+
+  &__head {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0 0 12px;
+    color: $color-secondary;
+    font-size: 14px;
+    font-weight: 700;
+  }
+
+  // ● ホテル → ● 会場
+  &__places {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 4px 8px;
+    margin: 0;
+    font-size: 14px;
+    font-weight: 700;
+  }
+
+  &__place {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+
+    &::before {
+      content: "";
+      width: 12px;
+      height: 12px;
+      border-radius: $radius-full;
+      background: $color-secondary;
+    }
+
+    &--venue::before {
+      background: $color-primary;
+    }
+
+    &--hotel::after {
+      content: "→";
+      color: $color-text-sub;
+    }
+  }
+
+  &__summary {
+    margin: 8px 0 0;
+    color: $color-secondary;
+    font-family: $font-heading;
+    font-size: 16px;
+    font-weight: 600;
+  }
+
+  &__map {
+    height: 200px;
+    margin: 12px 0 0;
+    border-radius: $radius-md;
+    background: $color-bg-gray;
+    overflow: hidden;
+
+    @media (min-width: $bp-tablet) {
+      height: 280px;
+    }
+  }
+
+  &__link {
+    display: inline-block;
+    margin: 12px 0 0;
+    color: $color-primary;
+    font-size: 14px;
+    font-weight: 700;
+    text-decoration: underline;
+  }
+
+  // 地図のピン（L.divIcon）。ホテルは紺、会場はメインの青
+  &__pin {
+    border: 2px solid $color-bg;
+    border-radius: $radius-full;
+    background: $color-secondary;
+
+    &--venue {
+      background: $color-primary;
+    }
+  }
+}
+
 // 試合のチェックを変えて、費用の目安を読み直している間（js/pages/travel.js）
 .travel__create.is-loading .travel-cost {
   opacity: 0.6;

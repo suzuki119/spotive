@@ -7,9 +7,42 @@
  * 「この遠征中に観られる試合」のチェックを変えたら、同じ条件を GET で読み直し、
  * 交通・ホテル・費用の目安（data-travel-live の部分）だけを差し替える。
  * 計算はサーバー（lib/travel.php）だけで行い、JS では金額を計算しない。
+ *
+ * 「ホテルから会場へ」は、小さな地図にホテルと会場の 2 点のピンを立てる。
+ * 道順は描かない（実際の道順は「Google マップで道順を見る」のリンクに任せる）。
  */
 
 document.addEventListener("DOMContentLoaded", () => {
+  /** 「ホテルから会場へ」の地図を描く。el は data-travel-live="route" の要素 */
+  const initRoute = (el) => {
+    const mapEl = el.querySelector("[data-route-map]");
+    if (!mapEl || typeof L === "undefined") return;
+
+    const from = [Number(el.dataset.fromLat), Number(el.dataset.fromLng)];
+    const to = [Number(el.dataset.toLat), Number(el.dataset.toLng)];
+
+    // スクロールの邪魔をしないよう、ホイールでの拡大縮小は切る
+    const map = L.map(mapEl, { scrollWheelZoom: false });
+    L.tileLayer("https://cyberjapandata.gsi.go.jp/xyz/pale/{z}/{x}/{y}.png", {
+      maxZoom: 18,
+      attribution: '<a href="https://maps.gsi.go.jp/development/ichiran.html" target="_blank" rel="noopener">地理院タイル</a>',
+    }).addTo(map);
+
+    // ピンの色は SCSS（_travel.scss の .travel-route__pin）で付ける
+    const pin = (latlng, modifier, label) =>
+      L.marker(latlng, {
+        icon: L.divIcon({ className: `travel-route__pin travel-route__pin--${modifier}`, iconSize: [16, 16] }),
+        title: label,
+        alt: label,
+      }).addTo(map);
+    pin(from, "hotel", "ホテル");
+    pin(to, "venue", "会場");
+    // 2 点が近すぎて拡大しすぎないよう、上限を決める
+    map.fitBounds([from, to], { padding: [32, 32], maxZoom: 16 });
+  };
+
+  document.querySelectorAll('[data-travel-live="route"]').forEach(initRoute);
+
   document.querySelectorAll("[data-auto-submit]").forEach((form) => {
     const button = form.querySelector("[data-auto-submit-button]");
     if (button) button.classList.add("is-hidden");
@@ -41,7 +74,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
         document.querySelectorAll("[data-travel-live]").forEach((el) => {
           const next = doc.querySelector(`[data-travel-live="${el.dataset.travelLive}"]`);
-          if (next) el.replaceWith(next);
+          if (!next) return;
+          el.replaceWith(next);
+          if (next.dataset.travelLive === "route") initRoute(next);
         });
         // 重なって追加できなかった試合は、チェックを外す
         createForm.querySelectorAll("[data-travel-extra]").forEach((input) => {

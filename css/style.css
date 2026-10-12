@@ -770,22 +770,27 @@ input[type=radio] {
 @media (min-width: 1024px) {
   .detail-sheet {
     position: static;
-    display: none;
     width: auto;
     height: auto;
     margin-left: 0;
-    border-left: 1px solid #e0e1e6;
     border-radius: 0;
-    box-shadow: none;
+    box-shadow: -1px 0 0 #e0e1e6;
     transform: none;
-    transition: none;
+    transition: visibility 0.25s ease;
   }
   .detail-sheet.is-open {
-    display: block;
+    transform: none;
+  }
+  .detail-sheet .detail-sheet__frame {
+    width: 360px;
   }
 }
 
 @media (min-width: 1024px) {
+  .sports-map {
+    grid-template-columns: 360px 1fr 0;
+    transition: grid-template-columns 0.25s ease;
+  }
   .sports-map.has-detail {
     grid-template-columns: 360px 1fr 360px;
   }
@@ -1030,23 +1035,6 @@ input[type=radio] {
   border-radius: 999px;
 }
 
-.pop-logos {
-  position: absolute;
-  top: 50%;
-  right: -8px;
-  z-index: -1;
-  display: flex;
-  transform: translateY(-50%);
-  opacity: 0.2;
-  pointer-events: none;
-}
-.pop-logos img {
-  width: 56px;
-  height: 56px;
-  -o-object-fit: contain;
-     object-fit: contain;
-}
-
 .card-body {
   display: flex;
   flex-direction: column;
@@ -1274,6 +1262,9 @@ input[type=radio] {
 .sports-map__canvas .leaflet-top {
   top: 168px;
 }
+.sports-map__canvas .leaflet-right .leaflet-control {
+  margin-right: 16px;
+}
 .sports-map__canvas .leaflet-bottom {
   bottom: 168px;
 }
@@ -1373,9 +1364,6 @@ input[type=radio] {
   overflow-y: auto;
 }
 .pop-games li {
-  position: relative;
-  isolation: isolate;
-  overflow: hidden;
   display: flex;
   flex-direction: column;
   gap: 4px;
@@ -2488,6 +2476,39 @@ body.is-sheet-open {
 .match-detail__hotel-icon {
   font-size: 32px;
   line-height: 1;
+}
+.match-detail__travel {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px 24px;
+  border-radius: 16px;
+  background: #FFFFFF;
+  box-shadow: 0 2px 12px rgba(15, 23, 42, 0.1);
+  color: #0F172A;
+  text-decoration: none;
+}
+.match-detail__travel:hover {
+  box-shadow: 0 4px 16px rgba(15, 23, 42, 0.16);
+}
+.match-detail__travel-icon {
+  font-size: 32px;
+  line-height: 1;
+}
+.match-detail__travel-body {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+.match-detail__travel-title {
+  color: #0B63E5;
+  font-size: 16px;
+  font-weight: 700;
+}
+.match-detail__travel-text {
+  color: #6B7280;
+  font-size: 12px;
 }
 .match-detail__features {
   display: flex;
@@ -4986,6 +5007,96 @@ li + li .mypage-settings__link {
   color: #6B7280;
   font-family: "Jost", "Noto Sans JP", sans-serif;
   font-size: 14px;
+}
+
+.travel-route {
+  margin: 16px 0 0;
+  padding: 16px;
+  border-radius: 16px;
+  background: #FFFFFF;
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.08);
+}
+@media (min-width: 768px) {
+  .travel-route {
+    padding: 24px;
+  }
+}
+.travel-route__head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 12px;
+  color: #0F172A;
+  font-size: 14px;
+  font-weight: 700;
+}
+.travel-route__places {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 8px;
+  margin: 0;
+  font-size: 14px;
+  font-weight: 700;
+}
+.travel-route__place {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+.travel-route__place::before {
+  content: "";
+  width: 12px;
+  height: 12px;
+  border-radius: 999px;
+  background: #0F172A;
+}
+.travel-route__place--venue::before {
+  background: #0B63E5;
+}
+.travel-route__place--hotel::after {
+  content: "→";
+  color: #6B7280;
+}
+.travel-route__summary {
+  margin: 8px 0 0;
+  color: #0F172A;
+  font-family: "Jost", "Noto Sans JP", sans-serif;
+  font-size: 16px;
+  font-weight: 600;
+}
+.travel-route__map {
+  height: 200px;
+  margin: 12px 0 0;
+  border-radius: 8px;
+  background: #F5F7FA;
+  overflow: hidden;
+}
+@media (min-width: 768px) {
+  .travel-route__map {
+    height: 280px;
+  }
+}
+.travel-route__link {
+  display: inline-block;
+  margin: 12px 0 0;
+  color: #0B63E5;
+  font-size: 14px;
+  font-weight: 700;
+  text-decoration: underline;
+}
+.travel-route__pin {
+  border: 2px solid #FFFFFF;
+  border-radius: 999px;
+  background: #0F172A;
+}
+.travel-route__pin--venue {
+  background: #0B63E5;
+}
+
+.travel__create.is-loading .travel-cost {
+  opacity: 0.6;
+  transition: opacity 0.2s;
 }
 
 .administrators_search {

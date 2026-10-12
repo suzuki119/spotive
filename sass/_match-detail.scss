@@ -345,6 +345,46 @@ $detail-line: 1px solid $color-secondary;
     line-height: 1;
   }
 
+  // この試合で遠征プランを作る（会場周辺のホテルを探すと同じ白い大きなボタン）
+  &__travel {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 16px 24px;
+    border-radius: $radius-lg;
+    background: $color-bg;
+    box-shadow: 0 2px 12px rgba($color-secondary, 0.1);
+    color: $color-secondary;
+    text-decoration: none;
+
+    &:hover {
+      box-shadow: 0 4px 16px rgba($color-secondary, 0.16);
+    }
+  }
+
+  &__travel-icon {
+    font-size: 32px;
+    line-height: 1;
+  }
+
+  &__travel-body {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    min-width: 0;
+  }
+
+  &__travel-title {
+    color: $color-primary;
+    font-size: 16px;
+    font-weight: 700;
+  }
+
+  &__travel-text {
+    color: $color-text-sub;
+    font-size: 12px;
+  }
+
   // 会場の特徴（屋内 など）
   &__features {
     display: flex;

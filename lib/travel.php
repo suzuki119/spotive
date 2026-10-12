@@ -235,6 +235,8 @@ function travel_hotel_options(float $lat, float $lng): array
     $list[] = [
       'id'       => (string) $hotel['id'],
       'name'     => (string) $hotel['name'],
+      'lat'      => (float) $hotel['lat'],   // 「ホテルから会場へ」の地図に使う
+      'lng'      => (float) $hotel['lng'],
       'price'    => (int) ($hotel['priceMin'] ?? TRAVEL_HOTEL_FALLBACK_YEN),
       'walk'     => hotel_walk_minutes((float) $hotel['distance']),
       'checkIn'  => (string) ($hotel['checkIn'] ?? '15:00'),
