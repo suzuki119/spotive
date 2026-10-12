@@ -281,6 +281,7 @@ $font-body: "Noto Sans JP", sans-serif;
 | サービス | 使っている場所 | 状態 | キーを置く場所 |
 | --- | --- | --- | --- |
 | **Geoapify Places API** | 周辺施設の検索（機能 6）。`lib/geoapify.php`、`pages/map/nearby.php` | 使用中（無料プラン：1 日 3,000 クレジット、1 回の検索で 1 クレジット） | `config/geoapify.local.php`（見本は `config/geoapify.example.php`） |
+| **Open-Meteo（天気予報 API）** | 試合詳細の「試合の日の天気」（試作）。`lib/weather.php`、`pages/match/match-detail.php` | 試作中（無料は**非商用のみ**。予報は今日から 15 日後まで。データは CC BY 4.0 なので画面に「Open-Meteo」のクレジットを出す） | 不要（キーなし） |
 | **楽天ウェブサービス（楽天トラベル API）** | 会場周辺のホテル（機能 6）。つなぐときは `lib/hotel.php` の `load_hotels()` を差し替える | **未接続**（利用規約の確認中。今は `data/hotels.json` の仮データ） | `config/rakuten.local.php`（見本は `config/rakuten.example.php`） |
 
 守ること：
@@ -359,7 +360,8 @@ sass/
 ├── _notification.scss       ← ページ固有（pages/notification/notification.php）
 ├── _setting.scss            ← ページ固有（pages/setting/setting.php のマイページ）
 ├── _notification-setting.scss ← ページ固有（pages/setting/notification-setting.php）
-└── _plus.scss               ← ページ固有（pages/plus/plus.php のサブスク）
+├── _plus.scss               ← ページ固有（pages/plus/plus.php のサブスク）
+└── _administrators.scss     ← ページ固有（pages/administrators/administrators.php の開発者画面）
 ```
 
 「未作成」のパーシャルは、作るときにこの名前を使ってください。新しいページのパーシャルを作ったら、この一覧と下の `style.scss` に追記してください。
@@ -390,6 +392,7 @@ sass/
 @use "start";
 @use "account";
 @use "plus";
+@use "administrators";
 ```
 
 - `_variables.scss` は `style.scss` では読み込みません。**変数を使うパーシャルの先頭で、それぞれ `@use "variables" as *;` を書きます**（`@use` は読み込んだファイルの中でしか変数が使えないため）
