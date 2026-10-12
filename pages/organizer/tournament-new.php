@@ -10,9 +10,12 @@
 declare(strict_types=1);
 
 require_once __DIR__ . '/../../lib/tournament.php';
+require_once __DIR__ . '/../../lib/guest.php';
 require_once __DIR__ . '/../../lib/layout.php';
 
 $user = require_action_level('create_tournament', LEVEL_USER);
+// ゲスト（お試し用の共通アカウント）には使わせない
+guest_forbid($user, 'ゲストでは大会を掲載できません。');
 
 $id     = (int) ($_GET['id'] ?? $_POST['id'] ?? 0);
 

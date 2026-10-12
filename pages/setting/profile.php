@@ -12,9 +12,12 @@
 declare(strict_types=1);
 
 require_once __DIR__ . '/../../lib/account.php';
+require_once __DIR__ . '/../../lib/guest.php';
 require_once __DIR__ . '/../../lib/layout.php';
 
 $user = require_login();
+// ゲスト（お試し用の共通アカウント）には使わせない
+guest_forbid($user, 'ゲストのプロフィールは変更できません。');
 
 $errors = [];
 $error  = null;

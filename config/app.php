@@ -23,6 +23,16 @@ return [
     'lock_minutes'       => 15,           // ロックする時間
   ],
 
+  // ゲスト（お試し用の共通アカウント）。ログイン画面の「ゲストとしてログイン」で入れる。
+  // パスワードでは入らない（lib/guest.php がサーバー側でログインさせる）。
+  // 無ければ最初に押されたときに作る。電話番号は持たない（db/migrate-phone-nullable.sql が必要）。
+  // 本番で使わないときは enabled を false にする。
+  'guest' => [
+    'enabled'  => true,
+    'email'    => 'guest@gmal.com',
+    'nickname' => 'ゲスト',
+  ],
+
   // 添付書類とメール送信ログの保存先。
   // 必ず公開ディレクトリ（MAMP の htdocs）の外に置くこと。
   // 既定は htdocs のひとつ上＝ ~/Documents/spotive-storage。

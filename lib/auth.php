@@ -166,6 +166,35 @@ function login_user(int $userId): void
 
   $_SESSION['user_id']      = $userId;
   $_SESSION['session_hash'] = $hash;
+
+  mark_returning_visitor();
+}
+
+/** 「この端末で一度ログインしたことがある」印の Cookie の名前 */
+const RETURNING_COOKIE = 'spotive_returning';
+
+/**
+ * この端末で一度ログインしたことがある、という印を残す（1 年）。
+ * index.php が、初めての人にはスタート画面、そうでない人にはログイン画面を出すのに使う。
+ * 中身は「1」だけで、誰なのかは入れない。ログアウトしても消さない。
+ */
+function mark_returning_visitor(): void
+{
+  if (headers_sent()) {
+    return;
+  }
+  setcookie(RETURNING_COOKIE, '1', [
+    'expires'  => time() + 60 * 60 * 24 * 365,
+    'path'     => '/',
+    'httponly' => true,
+    'samesite' => 'Lax',
+  ]);
+}
+
+/** この端末で一度ログインしたことがあるか */
+function is_returning_visitor(): bool
+{
+  return ($_COOKIE[RETURNING_COOKIE] ?? '') === '1';
 }
 
 function logout_user(): void

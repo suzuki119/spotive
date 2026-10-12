@@ -35,13 +35,14 @@ session_boot();
     <div class="inner">
       <section class="header">
         <span class="header-account">
-          <a href="javascript:history.back();" class="setting-back">
-            <img src="/SPOTIVE/images/icons/setting-back.svg" alt="">
+          <!-- 戻る：来た画面があればそこへ（js/main.js）、URL を直接開いたときはマイページへ -->
+          <a href="setting.php" class="setting-back">
+            <img src="<?= h(url('images/icons/setting-back.svg')) ?>" alt="戻る">
           </a>
         </span>
         <h1 class="header-title">SPOTIVE</h1>
         <span class="header-notice">
-          <img src="/SPOTIVE/images/icons/notice.svg" alt="">
+          <img src="<?= h(url('images/icons/notice.svg')) ?>" alt="">
         </span>
       </section>
     </div>
@@ -296,6 +297,7 @@ session_boot();
   <footer class="site-footer"></footer>
 
   <script src="../../js/main.js"></script>
+  <?php require __DIR__ . '/../menu-bar.php'; ?>
 </body>
 
 </html>
