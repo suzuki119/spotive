@@ -89,10 +89,19 @@
 | 3 | 条件検索・フィルター | チケット価格・エリア・日付などで絞り込む | **先に作る** |
 | 4 | お気に入り登録 | お気に入りのチームを登録できる | **先に作る** |
 | 5 | 遠征サポート | 遠征先の周辺試合を提案。「土曜に野球観戦、日曜にサッカー観戦」など、旅行と観戦を組み合わせた提案 | **デモ版を実装済み**（設計は `docs/away-travel.md`。交通・ホテルは目安） |
-| 6 | 周辺施設表示 | 会場周辺の飲食店・カフェ・ホテル・駐車場・コンビニを表示し、観戦前後も楽しめるようにする | **後回し**（DB 設計を含め後で決める） |
+| 6 | 周辺施設表示 | 会場周辺の飲食店・カフェ・ホテル・駐車場・コンビニを表示し、観戦前後も楽しめるようにする | **デモ版を実装済み**（Geoapify で検索。DB 設計は後で決める） |
 
-**6 は「やらない」ではなく「今は手をつけない」です。** データベースの設計も含めて後で決めるので、今の段階で先回りしてテーブルを作らないでください。
 5（遠征サポート）はデモ版を先に作りました。仕組みと、まだやっていないことは `docs/away-travel.md` にまとめています。
+
+6（周辺施設表示）も、**DB を使わないデモ版**を先に作りました。データベースの設計は後で決めるので、**今の段階で先回りしてテーブルを作らないでください。**
+
+| 画面 | 内容 | 仕組み |
+| --- | --- | --- |
+| 地図（`pages/map/map.php`） | ピンの詳細の「周辺施設」から種類（飲食店・カフェ・コンビニ・ホテル・駐車場）を選ぶと、会場から半径 800m の施設を地図に出す | `js/pages/map.js` → `pages/map/nearby.php` → `lib/geoapify.php` → Geoapify Places API |
+| 検索（`pages/match/match-search.php`）・試合詳細 | 「周辺検索」のリンクから `map.php?nearby=food` などで地図を開き、選んだ会場の周辺施設を自動で出す | 上と同じ |
+| ホテル詳細（`pages/hotel/hotel-detail.php`） | 会場近くのホテルを一覧・詳細で出す | `lib/hotel.php` が仮データ `data/hotels.json`（名前・料金はすべて架空）を読む。楽天トラベル API につなぐときは `load_hotels()` を差し替える |
+
+API キーの置き方と守ることは「3. 技術構成」の「外部 API」を参照してください。
 
 ### 収益モデル
 
@@ -158,7 +167,23 @@ CSS は「スマホ幅のスタイルを先に書き、`min-width` のメディ�
 
 - **アクセントのオレンジは CTA と強調だけに使う。** 使いすぎると「押してほしい場所」が分からなくなります
 - 地図の上に置く要素は、背景が淡いグレー／ベージュになるため、必ず `$color-primary` か `$color-bg`（白）で塗って埋もれないようにする
-- エラー表示は赤（`#DC2626`）を使い、アクセントのオレンジとは区別する
+- エラー表示は赤（`#DC2626`、`$color-error`）を使い、アクセントのオレンジとは区別する
+
+上の表のほかに、状態を知らせる色と画面固有の色を `_variables.scss` に置いています。**この表に無い色が必要になったら、SCSS に直接書かず `_variables.scss` に変数を足し、ここにも追記してください。**
+
+| 役割 | 変数名 | カラーコード | 用途 |
+| --- | --- | --- | --- |
+| エラー | `$color-error` | `#DC2626` | エラー文、削除ボタン |
+| エラー（濃） | `$color-error-dark` | `#8A1C1F` | エラーのお知らせ枠の文字 |
+| エラー（淡） | `$color-error-light` | `#FDECEC` | エラーのお知らせ枠の背景 |
+| 完了 | `$color-success` | `#1A6B3C` | 完了のお知らせ枠の文字 |
+| 完了（淡） | `$color-success-light` | `#DCF5E5` | 完了のお知らせ枠の背景 |
+| 完了（枠） | `$color-success-border` | `#B7E4C8` | 完了の状態の枠線 |
+| 注意 | `$color-warning` | `#8A5A00` | 注意書きの文字 |
+| 注意（淡） | `$color-warning-light` | `#FFF4D6` | 注意書きの背景 |
+| 地図の海 | `$color-map-sea` | `#BED2FF` | 地図のタイルが出ていないところの下地（淡色地図の海と同じ色） |
+| スタート画面 | `$color-start-overlay` | `#11356B` | スタート画面の写真に重ねる紺のグラデーション |
+| 競技ごとの色 | `$sport-colors` | — | 地図のピン・競技タグ。`js/pages/map.js` の `SPORTS` と揃える |
 
 ### フォント
 
@@ -251,6 +276,22 @@ $font-body: "Noto Sans JP", sans-serif;
 
 ここに無いライブラリを足すときは、先にチームに共有してからこの表に追記してください。
 
+### 外部 API
+
+| サービス | 使っている場所 | 状態 | キーを置く場所 |
+| --- | --- | --- | --- |
+| **Geoapify Places API** | 周辺施設の検索（機能 6）。`lib/geoapify.php`、`pages/map/nearby.php` | 使用中（無料プラン：1 日 3,000 クレジット、1 回の検索で 1 クレジット） | `config/geoapify.local.php`（見本は `config/geoapify.example.php`） |
+| **楽天ウェブサービス（楽天トラベル API）** | 会場周辺のホテル（機能 6）。つなぐときは `lib/hotel.php` の `load_hotels()` を差し替える | **未接続**（利用規約の確認中。今は `data/hotels.json` の仮データ） | `config/rakuten.local.php`（見本は `config/rakuten.example.php`） |
+
+守ること：
+
+- **API キーはコミットしない。** `*.example.php` をコピーして `*.local.php` を作り、そこに書く（`.gitignore` 済み）。キーが無くても、該当の機能が案内文を出すだけで、ほかの画面は動くようにしておく
+- **API はブラウザ（JS）から直接呼ばない。** キーが見えてしまうので、必ず PHP（`lib/` と、JSON を返す `pages/*/xxx.php`）を通す
+- **キーの入った URL や API の応答の中身をログに出さない。** `error_log()` には種類とステータスコードだけを出す
+- **無料枠を使い切らないようにする。** 利用者が選んだものだけを検索し、同じ条件の結果は一時ファイルに取っておく（Geoapify は 1 時間）。日本国外の座標など、おかしな値ではリクエストしない
+- **クレジット表記を出す。** Geoapify の無料プランは、地図の近くに「Powered by Geoapify」と OpenStreetMap の表記を出すことが条件（`js/pages/map.js` で、周辺施設を初めて出したときに足している）
+- 新しい外部 API を足すときは、ライブラリと同じく先にチームに共有し、この表に追記する
+
 ### 環境ごとの設定
 
 XAMPP と MAMP では URL や MySQL のポートが違います。**違いはコミットしないファイルで吸収します。**
@@ -259,6 +300,7 @@ XAMPP と MAMP では URL や MySQL のポートが違います。**違いはコ
 | --- | --- | --- | --- |
 | サイトの URL | `http://localhost/spotive/` | `http://localhost:8888/spotive/` | `config/app.php` の `app.base_url`（確認メールのリンクに使う） |
 | MySQL のポート／パスワード | 3306 ／ 空 | 8889 ／ `root` | `config/db.local.php`（`.gitignore` 済み。各自で作る） |
+| 外部 API のキー | 共通 | 共通 | `config/geoapify.local.php` / `config/rakuten.local.php`（`.gitignore` 済み。上の「外部 API」を参照） |
 
 `config/app.php` の `base_url` を自分の環境向けに書き換えた場合は、その変更をコミットしないでください。
 
@@ -293,33 +335,42 @@ sass/
 ├── style.scss          ← ここで全パーシャルを @use するだけ。スタイルは書かない
 ├── _variables.scss     ← 色・フォント・余白・角丸・BP の変数
 ├── _mixin.scss         ← メディアクエリなどの mixin（未作成）
-├── _reset.scss         ← リセット CSS（未作成）
-├── _base.scss          ← body, a, img などの基本スタイル（未作成）
-├── _header.scss        ← 共通ヘッダー（未作成）
+├── _reset.scss         ← リセット CSS（未作成。今は the-new-css-reset を CDN で読み込んでいる）
 ├── _footer.scss        ← 共通フッター（未作成）
-├── _button.scss        ← 共通ボタン（未作成）
-├── _form.scss          ← 共通フォーム（アカウント・設定・主催者ページ）
+│
+├── _base.scss          ← body など全ページ共通の基本スタイル、.inner
+├── _header.scss        ← 共通ヘッダー（pages/header.php）
+├── _app-header.scss    ← 共通ヘッダー（pages/app-header.php）
+├── _menu-bar.scss      ← 画面下のメニューバー（pages/menu-bar.php）
+├── _button.scss        ← 共通ボタン（.btn / .back）
+├── _form.scss          ← 共通フォーム（アカウント・設定・主催者・運営ページ）
 ├── _match-card.scss    ← 共通パーツ（試合カード）
-├── _sports-map.scss    ← ページ固有（pages/map/map.php 用）
-├── _match-list.scss    ← ページ固有（pages/match/match-list.php 用）
-├── _match-detail.scss  ← ページ固有（pages/match/match-detail.php 用）
-├── _favorite.scss      ← ページ固有（pages/favorite/favorite.php 用）
-└── ...
+│
+├── _start.scss              ← ページ固有（index.php のスタート画面）
+├── _account.scss            ← ページ固有（pages/account/ の登録・ログイン）
+├── _home.scss               ← ページ固有（pages/home/home.php）
+├── _sports-map.scss         ← ページ固有（pages/map/map.php）
+├── _match-list.scss         ← ページ固有（pages/match/match-list.php）
+├── _match-detail.scss       ← ページ固有（pages/match/match-detail.php）
+├── _match-search.scss       ← ページ固有（pages/match/match-search.php）
+├── _favorite.scss           ← ページ固有（pages/favorite/favorite.php）
+├── _hotel-detail.scss       ← ページ固有（pages/hotel/hotel-detail.php）
+├── _travel.scss             ← ページ固有（pages/travel/）
+├── _notification.scss       ← ページ固有（pages/notification/notification.php）
+├── _setting.scss            ← ページ固有（pages/setting/setting.php のマイページ）
+├── _notification-setting.scss ← ページ固有（pages/setting/notification-setting.php）
+└── _plus.scss               ← ページ固有（pages/plus/plus.php のサブスク）
 ```
 
-「未作成」のパーシャルは、作るときにこの名前を使ってください。現在の `style.scss` にはスタイルが直接書かれている箇所があるので、共通パーツを作るときに該当するパーシャルへ移してください。
+「未作成」のパーシャルは、作るときにこの名前を使ってください。新しいページのパーシャルを作ったら、この一覧と下の `style.scss` に追記してください。
 
 **担当ページのスタイルは、必ず自分のページ用のパーシャルに書いてください。** 共通パーツ（`_header.scss` など）を触るときは、他のページが崩れる可能性があるので、事前にチームに共有してください。
 
 `style.scss` の中身はこの形だけです。
 
 ```scss
-@use "variables" as *;
-@use "mixin" as *;
-@use "reset";
 @use "base";
 @use "header";
-@use "footer";
 @use "button";
 @use "form";
 @use "match-card";
@@ -327,7 +378,22 @@ sass/
 @use "match-list";
 @use "match-detail";
 @use "favorite";
+@use "match-search";
+@use "menu-bar";
+@use "app-header";
+@use "home";
+@use "hotel-detail";
+@use "setting";
+@use "notification";
+@use "notification-setting";
+@use "travel";
+@use "start";
+@use "account";
+@use "plus";
 ```
+
+- `_variables.scss` は `style.scss` では読み込みません。**変数を使うパーシャルの先頭で、それぞれ `@use "variables" as *;` を書きます**（`@use` は読み込んだファイルの中でしか変数が使えないため）
+- `_mixin.scss` `_reset.scss` `_footer.scss` を作ったら、`base` の前（`reset`）や `header` の後ろ（`footer`）に足してください
 
 ### コンパイル後の CSS の扱い
 
@@ -419,6 +485,7 @@ SPOTIVE は PHP と MySQL を使います。**データベースの正は `db/sc
 - **観戦用の試合データ** … `data/*.json` の仮データで画面を作る
 - **遠征プラン** … `travel_plans` / `travel_plan_items` に保存する（`lib/travel.php`、設計は `docs/away-travel.md`）。試合・チーム・ホテルは JSON の id をそのまま持つ
 - **お気に入りのチーム** … ログイン中は `favorite_teams` に保存し、未ログインのあいだはブラウザ（localStorage）に保存する（`lib/favorite.php`）。チームのテーブルがまだ無いので、`team_id` は `data/teams.json` の id をそのまま持つ
+- **周辺施設** … DB には保存しない。Geoapify をその都度検索し、結果は一時ファイルに 1 時間だけ取っておく（`lib/geoapify.php`）。ホテルは `data/hotels.json` の仮データ（`lib/hotel.php`）
 - **観戦用のテーブル設計は、まだ各自で作らない。** 必要になったらチームで `schema.sql` に追加します
 
 自分の担当ページのためだけに勝手なテーブルを足すと、あとで統合できなくなります。必ず相談してください。
@@ -455,7 +522,9 @@ index.php              ← トップページ
 config/
 ├── db.php             ← DB 接続（PDO）。全ページここから読み込む
 ├── db.local.php       ← 各自の DB 接続設定（.gitignore 済み。コミットしない）
-└── app.php            ← アプリ全体の設定（URL・保存先・レベルの条件など）
+├── app.php            ← アプリ全体の設定（URL・保存先・レベルの条件など）
+├── geoapify.example.php ← Geoapify の API キーの見本。geoapify.local.php にコピーして使う
+└── rakuten.example.php  ← 楽天ウェブサービスのキーの見本。rakuten.local.php にコピーして使う
 db/
 ├── schema.sql         ← テーブル定義。これが正
 ├── schema-lolipop.sql ← ロリポップ（公開サーバー）に入れる用。schema.sql から作る（下記「ロリポップへの DB の入れ方」）

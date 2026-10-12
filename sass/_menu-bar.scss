@@ -1,11 +1,4 @@
-// --- ブレークポイント ---
-$breakpoints: (
-  mobile: 375px,
-  tablet: 768px,
-  desktop: 1100px
-);
-
-
+@use "variables" as *;
 
 .menu-bar {
   // 画面下に固定
@@ -172,7 +165,7 @@ $breakpoints: (
     gap: 4px;
     padding: 4px 8px;
 
-    color: #333;
+    color: $color-text;
     text-decoration: none;
 
     &:hover .menu-bar__label {
