@@ -597,3 +597,9 @@ $travel-done: map.get($sport-colors, soccer); // 購入済み・予約済み（�
     font-size: 14px;
   }
 }
+
+// 試合のチェックを変えて、費用の目安を読み直している間（js/pages/travel.js）
+.travel__create.is-loading .travel-cost {
+  opacity: 0.6;
+  transition: opacity 0.2s;
+}

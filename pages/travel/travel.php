@@ -10,6 +10,7 @@
  *   GET game  … 遠征の試合（data/matches.json の id）。team が無ければ、この試合のアウェー側のチームにする
  *   GET from  … 出発地（data/areas.json の id）。省略時はチームの本拠地
  *   GET hotel … ホテル（data/hotels.json の id）。省略時は会場に一番近いホテル
+ *   GET extras[] … 一緒に観る試合。費用の目安に含める（チェックすると js/pages/travel.js が送る）
  *   POST      … プランの作成（ログインが必要）
  *
  * 画面は誰でも見られる。金額はすべて目安（交通は距離からの計算、ホテルは仮データ）。
@@ -51,7 +52,7 @@ $teamId  = input_string($input, 'team');
 $gameRef = input_string($input, 'game');
 $fromId  = input_string($input, 'from');
 $hotelId = input_string($input, 'hotel');
-$picked  = array_filter((array) ($input['extras'] ?? []), 'is_string');
+$picked  = travel_input_extras($input);
 
 $user        = null;
 $favoriteIds = [];
@@ -84,17 +85,23 @@ $trips = $teamId === '' ? [] : travel_trips($teamId);
 $trip  = ($gameRef === '' ? null : travel_find_trip($teamId, $gameRef)) ?? ($trips[0] ?? null);
 $area  = $areas[$fromId] ?? $areas[(string) ($teams[$teamId]['areaId'] ?? '')] ?? reset($areas);
 
-$estimate = $trip === null || $area === false ? null : travel_estimate($trip['games'], $area, $hotelId);
+// 一緒に観る試合も含めて目安を出す（プランを作るときと同じ計算。lib/travel.php）
+$extras   = $trip === null ? [] : travel_pick_extras($trip, $picked);
+$extraIds = array_column($extras, 'ref');
+$estimate = $trip === null || $area === false
+  ? null
+  : travel_estimate([...$trip['games'], ...$extras], $area, $hotelId, $trip['games'][0]);
 $nearby   = $trip === null ? [] : travel_nearby_games($trip);
 $teamName = (string) ($teams[$teamId]['name'] ?? '');
 
 /** 今の条件を引き継いだ、この画面へのリンク */
-$link = static function (array $override) use ($teamId, $trip, $area, $estimate): string {
+$link = static function (array $override) use ($teamId, $trip, $area, $estimate, $extraIds): string {
   $query = [
-    'team'  => $teamId,
-    'game'  => $trip['games'][0]['ref'] ?? '',
-    'from'  => $area === false ? '' : (string) $area['id'],
-    'hotel' => (string) ($estimate['hotel']['id'] ?? ''),
+    'team'   => $teamId,
+    'game'   => $trip['games'][0]['ref'] ?? '',
+    'from'   => $area === false ? '' : (string) $area['id'],
+    'hotel'  => (string) ($estimate['hotel']['id'] ?? ''),
+    'extras' => $extraIds,
   ];
   return 'travel.php?' . http_build_query(array_filter(array_merge($query, $override), static fn($v): bool => $v !== ''));
 };
@@ -174,7 +181,7 @@ $teamGroups = [
                     <li>
                       <a
                         class="travel-choice__link <?= $other['games'][0]['ref'] === $trip['games'][0]['ref'] ? 'is-active' : '' ?>"
-                        href="<?= h($link(['game' => $other['games'][0]['ref'], 'hotel' => ''])) ?>"
+                        href="<?= h($link(['game' => $other['games'][0]['ref'], 'hotel' => '', 'extras' => []])) ?>"
                       >
                         <?= h(travel_date_label($other['start'], true)) ?>
                         <?= $other['end'] !== $other['start'] ? '〜' . h(travel_date_label($other['end'], true)) : '' ?>
@@ -206,6 +213,11 @@ $teamGroups = [
               <input type="hidden" name="team" value="<?= h($teamId) ?>" />
               <input type="hidden" name="game" value="<?= h($trip['games'][0]['ref']) ?>" />
               <input type="hidden" name="hotel" value="<?= h($hotelId) ?>" />
+              <span data-travel-live="from-extras">
+                <?php foreach ($extraIds as $extraId) : ?>
+                  <input type="hidden" name="extras[]" value="<?= h($extraId) ?>" />
+                <?php endforeach; ?>
+              </span>
               <label class="travel-from__label" for="travel-from">出発地</label>
               <select class="travel-from__select" id="travel-from" name="from">
                 <?php foreach ($areas as $id => $option) : ?>
@@ -218,7 +230,7 @@ $teamGroups = [
             </form>
           </div>
 
-          <div class="travel-cards">
+          <div class="travel-cards" data-travel-live="cards">
             <article class="travel-card">
               <p class="travel-card__head">
                 <img class="travel-card__icon" src="<?= h(url('images/icons/train.svg')) ?>" alt="" width="20" height="20" />
@@ -293,7 +305,8 @@ $teamGroups = [
                         type="checkbox"
                         name="extras[]"
                         value="<?= h($game['ref']) ?>"
-                        <?= in_array($game['ref'], $picked, true) ? 'checked' : '' ?>
+                        <?= in_array($game['ref'], $extraIds, true) ? 'checked' : '' ?>
+                        data-travel-extra
                       />
                       <span>プランに追加（会場から約<?= h(hotel_distance_label($game['km'])) ?>）</span>
                     </label>
@@ -307,7 +320,7 @@ $teamGroups = [
           <!-- 費用の目安 -->
           <section class="travel__section">
             <h2 class="travel__heading">ESTIMATED COST</h2>
-            <div class="travel-cost">
+            <div class="travel-cost" data-travel-live="cost">
               <p class="travel-cost__caption">1人あたりの目安</p>
               <p class="travel-cost__total"><?= h(travel_yen($estimate['cost']['total'])) ?>〜</p>
               <dl class="travel-cost__list">
@@ -329,8 +342,8 @@ $teamGroups = [
                 </div>
               </dl>
               <p class="travel-cost__note">
-                交通は距離からの計算、ホテルは仮のデータによる目安です。
-                試合を追加したときのチケット代・宿泊は、プランを作るときに計算し直します。
+                交通は距離からの計算、ホテルは仮のデータによる目安です。追加した試合のチケット代・宿泊も含みます。
+                <noscript>試合のチェックを変えたときは、プランを作るときに計算し直します。</noscript>
               </p>
             </div>
           </section>
