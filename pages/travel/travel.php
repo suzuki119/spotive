@@ -314,7 +314,7 @@ $teamGroups = [
                 徒歩 約<?= (int) $routeHotel['walk'] ?>分（直線距離からの目安）
               </p>
               <div class="travel-route__map" data-route-map></div>
-              <a class="travel-route__link" href="<?= h($routeUrl) ?>" target="_blank" rel="noopener">Google マップで道順を見る</a>
+              <a class="travel-route__link" href="<?= h($routeUrl) ?>" target="_blank" rel="noopener">Google マップで道順を見る<span class="visually-hidden">（新しいタブで開きます）</span></a>
             </div>
           <?php else : ?>
             <!-- 日帰りのときは出さない。試合を追加して泊まりになったら、JS がここを差し替える -->

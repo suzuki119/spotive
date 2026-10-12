@@ -42,13 +42,33 @@ document.addEventListener("DOMContentLoaded", () => {
   let selectedDate = dateInput && dateInput.value >= today ? dateInput.value : today;
 
   // -----------------------------------------------------------------
-  // 競技のタブ。選んだらすぐに表示し直す
+  // 競技のタブ。押したらすぐに表示し直す。
+  // キーボードの矢印キーでもラジオの change が起きるので、そのときは送らずに選ぶだけにし、
+  // Enter / スペースで表示し直す（矢印を押すたびに読み込み直すと、目的のタブまで進めない）
   // -----------------------------------------------------------------
   if (form) {
+    const submitTabs = () => {
+      if (dateInput) dateInput.value = selectedDate === today ? "" : selectedDate;
+      form.requestSubmit();
+    };
+    let movedByKey = false;
     form.querySelectorAll(".search-tabs__input").forEach((tab) => {
+      tab.addEventListener("keydown", (e) => {
+        if (e.key.startsWith("Arrow")) {
+          movedByKey = true;
+        } else if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          submitTabs();
+        }
+      });
+      // 矢印で change が起きなかったときに、次のクリックまで無視しないよう戻しておく
+      tab.addEventListener("keyup", () => { movedByKey = false; });
       tab.addEventListener("change", () => {
-        if (dateInput) dateInput.value = selectedDate === today ? "" : selectedDate;
-        form.requestSubmit();
+        if (movedByKey) {
+          movedByKey = false;
+          return;
+        }
+        submitTabs();
       });
     });
   }

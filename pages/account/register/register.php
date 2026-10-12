@@ -2,7 +2,7 @@
 
 /**
  * pages/account/register/register.php
- * アカウント登録の入力（お名前・電話番号・生年月日）。
+ * アカウント登録の入力（ニックネーム・電話番号・生年月日）。
  * 入力はセッションに溜めていき、confirm.php で確認して complete.php で登録する。
  */
 
@@ -22,7 +22,7 @@ if (is_post()) {
     $_SESSION['register']['intent'] = ($_POST['intent'] ?? '') === 'organizer' ? 'organizer' : 'user';
   }
 
-  // この画面から お名前・電話番号・生年月日 が送られてきた場合
+  // この画面から ニックネーム・電話番号・生年月日 が送られてきた場合
   if (isset($_POST['nickname'])) {
     $input = [
       'nickname'  => trim((string) $_POST['nickname']),
@@ -32,7 +32,7 @@ if (is_post()) {
 
     // ここで確かめておかないと、最後の登録で弾かれて入力し直しになる
     $v = (new Validator($input))
-      ->required('nickname', 'お名前')->length('nickname', 'お名前', 1, 50)
+      ->required('nickname', 'ニックネーム')->length('nickname', 'ニックネーム', 1, 50)
       ->required('phone', '電話番号')->phone('phone')
       ->required('birthdate', '生年月日')->date('birthdate', '生年月日')->minAge('birthdate', 13);
 
@@ -75,14 +75,18 @@ $saved = $_SESSION['register'] ?? [];
 
         <form action="" method="POST">
           <article class="register-form">
-            <p>お名前</p>
+            <label for="nickname">ニックネーム</label>
+            <!-- 大会の主催者名などで、ほかの人にも表示される。本名は入れてもらわない（AGENTS.md「個人情報」） -->
+            <p class="register-form-hint" id="nickname-hint">ほかの人にも表示される名前です。本名でなくて構いません。</p>
             <input
               type="text"
               id="nickname"
               name="nickname"
               value="<?= h(old($saved, 'nickname')) ?>"
-              placeholder="田中　太郎"
+              placeholder="例：スポたろう"
               maxlength="50"
+              autocomplete="nickname"
+              aria-describedby="nickname-hint"
               required
               class="register-form-name input">
             <?php if (isset($errors['nickname'])) : ?>
@@ -91,13 +95,16 @@ $saved = $_SESSION['register'] ?? [];
           </article>
 
           <article class="register-form">
-            <p>電話番号</p>
+            <label for="phone">電話番号</label>
+            <p class="register-form-hint" id="phone-hint">SMS を受け取れる携帯電話の番号です。ハイフンはあってもなくても構いません。</p>
             <input
               type="tel"
               id="phone"
               name="phone"
               value="<?= h(old($saved, 'phone')) ?>"
-              placeholder="09012345678"
+              placeholder="例：090-1234-5678"
+              autocomplete="tel"
+              aria-describedby="phone-hint"
               required
               class="register-form-tel input">
             <?php if (isset($errors['phone'])) : ?>
@@ -106,7 +113,7 @@ $saved = $_SESSION['register'] ?? [];
           </article>
 
           <article class="register-form">
-            <p>生年月日</p>
+            <label for="birthdate">生年月日</label>
             <input
               type="date"
               id="birthdate"

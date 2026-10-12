@@ -103,7 +103,8 @@ $favoriteState = favorite_client_state();
 
       <form class="schedule-list__form" id="schedule-form" action="match-list.php" method="get">
         <!-- 競技のタブ。選ぶとすぐに表示し直す（JS が無いときは下のボタンで） -->
-        <div class="search-tabs" role="radiogroup" aria-label="競技">
+        <p class="visually-hidden" id="sport-tabs-hint">矢印キーで競技を選び、Enter キーで表示を切り替えます。</p>
+        <div class="search-tabs" role="radiogroup" aria-label="競技" aria-describedby="sport-tabs-hint">
           <?php foreach ($tabs as $value => $label) : ?>
             <label class="search-tabs__tab">
               <input

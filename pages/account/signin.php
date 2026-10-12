@@ -99,7 +99,7 @@ if (is_post()) {
           <input type="hidden" name="next" value="<?= h($requestedNext) ?>">
 
           <article class="signin-form">
-            <p>メールアドレス</p>
+            <label for="email">メールアドレス</label>
             <input
               type="email"
               id="email"
@@ -112,7 +112,7 @@ if (is_post()) {
           </article>
 
           <article class="signin-form">
-            <p>パスワード</p>
+            <label for="password">パスワード</label>
             <input
               type="password"
               id="password"

@@ -45,27 +45,25 @@ require_once __DIR__ . '/../../config/db.php';
         </p>
 
         <form action="./register/register.php" method="POST">
-          <label for="email"></label>
+          <label for="email">メールアドレス</label>
 
           <input
             type="email"
             id="email"
             name="email"
             placeholder="email"
+            autocomplete="email"
             required
             class="account-type-email input">
 
           <button type="submit" name="intent" value="user" class="account-type-btn btn">登録</button>
+        </form>
 
-
-          <article>
-            <p>大会・イベントを主催する方</p>
-            <form action="../account/register/organizer-register.php">
-              <button class="account-type-organizer btn">
-                登録
-              </button>
-            </form>
-          </article>
+        <!-- 主催者の登録はメールアドレスの入力が要らないので、上のフォームとは分ける（form の入れ子は無効になる） -->
+        <article>
+          <p>大会・イベントを主催する方</p>
+          <a href="./register/organizer-register.php" class="account-type-organizer btn">登録</a>
+        </article>
       </div>
 
       <hr>

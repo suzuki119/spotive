@@ -11,22 +11,31 @@ document.addEventListener("DOMContentLoaded", () => {
   if (!toggle || !sub) return;
 
   const icon = toggle.querySelector(".menu-bar__icon");
+  let iconTimer = null;
 
   function setOpen(open) {
-    sub.hidden = !open;
+    sub.classList.toggle("is-open", open);
     toggle.setAttribute("aria-expanded", open ? "true" : "false");
-    toggle.classList.toggle("is-open", open);
-    icon.src = open ? toggle.dataset.iconClose : toggle.dataset.iconOpen;
+
+    // アイコンを一度消してから差し替え、また出す（_menu-bar.scss の .is-changing）
+    toggle.classList.add("is-changing");
+    clearTimeout(iconTimer);
+    iconTimer = setTimeout(() => {
+      icon.src = open ? toggle.dataset.iconClose : toggle.dataset.iconOpen;
+      toggle.classList.remove("is-changing");
+    }, 200);
   }
 
-  toggle.addEventListener("click", () => setOpen(sub.hidden));
+  const isOpen = () => sub.classList.contains("is-open");
+
+  toggle.addEventListener("click", () => setOpen(!isOpen()));
 
   // メニューの外を押したとき・Esc を押したときも閉じる
   document.addEventListener("click", (e) => {
-    if (!sub.hidden && !e.target.closest(".menu-bar")) setOpen(false);
+    if (isOpen() && !e.target.closest(".menu-bar")) setOpen(false);
   });
   document.addEventListener("keydown", (e) => {
-    if (e.key === "Escape" && !sub.hidden) {
+    if (e.key === "Escape" && isOpen()) {
       setOpen(false);
       toggle.focus();
     }

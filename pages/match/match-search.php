@@ -94,7 +94,8 @@ $priceValue = SEARCH_PRICE_STEPS[$priceIndex];
     <main class="match-search">
       <form class="search-form" id="search-form" action="match-search.php#results" method="get">
         <!-- 競技のタブ。選ぶとすぐに検索し直す（JS が無いときは下のボタンで） -->
-        <div class="search-tabs" role="radiogroup" aria-label="競技">
+        <p class="visually-hidden" id="sport-tabs-hint">矢印キーで競技を選び、Enter キーで表示を切り替えます。</p>
+        <div class="search-tabs" role="radiogroup" aria-label="競技" aria-describedby="sport-tabs-hint">
           <?php foreach ($tabs as $value => $label) : ?>
             <label class="search-tabs__tab">
               <input
@@ -186,6 +187,7 @@ $priceValue = SEARCH_PRICE_STEPS[$priceIndex];
               step="1"
               value="<?= (int) $priceIndex ?>"
               aria-label="価格の上限"
+              aria-valuetext="<?= $priceValue === MATCH_SEARCH_PRICE_MAX ? '上限なし' : h(number_format($priceValue) . '円まで') ?>"
               data-price-range
               data-steps="<?= h(implode(',', SEARCH_PRICE_STEPS)) ?>"
             />
@@ -231,7 +233,7 @@ $priceValue = SEARCH_PRICE_STEPS[$priceIndex];
           <?= $isActive ? '条件に合う試合' : 'これからの試合' ?>
           <span class="match-search__number" data-result-count><?= count($results) ?></span>件
         </h2>
-        <p class="match-search__status" data-near-status hidden></p>
+        <p class="match-search__status" data-near-status role="status" hidden></p>
 
         <p class="match-search__empty" data-empty <?= $results === [] ? '' : 'hidden' ?>>
           条件に合う試合が見つかりませんでした。<br />

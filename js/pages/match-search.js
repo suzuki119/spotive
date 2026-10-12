@@ -28,10 +28,29 @@ document.addEventListener("DOMContentLoaded", () => {
   if (!form) return;
 
   // -----------------------------------------------------------------
-  // タブ
+  // タブ。押したらすぐに検索し直す。
+  // 矢印キーでもラジオの change が起きるので、そのときは送らずに選ぶだけにし、
+  // Enter / スペースで検索する（矢印を押すたびに読み込み直すと、目的のタブまで進めない）
   // -----------------------------------------------------------------
+  let movedByKey = false;
   form.querySelectorAll(".search-tabs__input").forEach((tab) => {
-    tab.addEventListener("change", () => form.requestSubmit());
+    tab.addEventListener("keydown", (e) => {
+      if (e.key.startsWith("Arrow")) {
+        movedByKey = true;
+      } else if (e.key === "Enter" || e.key === " ") {
+        e.preventDefault();
+        form.requestSubmit();
+      }
+    });
+    // 矢印で change が起きなかったときに、次のクリックまで無視しないよう戻しておく
+    tab.addEventListener("keyup", () => { movedByKey = false; });
+    tab.addEventListener("change", () => {
+      if (movedByKey) {
+        movedByKey = false;
+        return;
+      }
+      form.requestSubmit();
+    });
   });
 
   // -----------------------------------------------------------------
@@ -99,6 +118,8 @@ document.addEventListener("DOMContentLoaded", () => {
     // 右端は「上限なし」。値を送らない
     priceValue.value = unlimited ? "" : String(yen);
     priceLabel.textContent = unlimited ? "上限なし" : `¥${yen.toLocaleString("ja-JP")}まで`;
+    // 読み上げでは目盛りの番号ではなく金額を伝える
+    range.setAttribute("aria-valuetext", unlimited ? "上限なし" : `${yen.toLocaleString("ja-JP")}円まで`);
     range.style.setProperty("--fill", `${(index / (steps.length - 1)) * 100}%`);
   }
 
@@ -129,8 +150,9 @@ document.addEventListener("DOMContentLoaded", () => {
   const items = document.querySelectorAll("[data-match]");
 
   function showStatus(text) {
-    status.textContent = text;
+    // 先に見せてから文字を入れる（隠れている間に入れると、読み上げられないことがある）
     status.hidden = false;
+    status.textContent = text;
   }
 
   const toRad = (deg) => (deg * Math.PI) / 180;
@@ -155,7 +177,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
     count.textContent = String(shown);
     empty.hidden = shown > 0;
-    showStatus(`現在地から${nearKm}km以内の試合を表示しています。`);
+    showStatus(`現在地から${nearKm}km以内の試合を${shown}件表示しています。`);
   }
 
   if (!navigator.geolocation) {

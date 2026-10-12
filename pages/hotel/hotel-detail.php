@@ -157,7 +157,7 @@ $pageTitle = $hotel === null ? 'ホテルが見つかりません' : (string) $h
             <p class="hotel-card__note">徒歩と距離は直線距離からの目安です。</p>
             <a class="hotel-card__button" href="<?= h($routeUrl) ?>" target="_blank" rel="noopener">
               <img src="<?= h(url('images/icons/route.svg')) ?>" alt="" width="20" height="20" />
-              アクセスルートを検索
+              アクセスルートを検索<span class="visually-hidden">（新しいタブで開きます）</span>
             </a>
           </section>
         <?php endif; ?>
@@ -170,7 +170,7 @@ $pageTitle = $hotel === null ? 'ホテルが見つかりません' : (string) $h
               ¥<?= h(number_format((int) $hotel['priceMin'])) ?>〜
             </p>
             <?php if (preg_match('#\Ahttps?://#i', (string) $hotel['reserveUrl']) === 1) : ?>
-              <a class="hotel-card__reserve" href="<?= h((string) $hotel['reserveUrl']) ?>" target="_blank" rel="noopener">予約サイトへ</a>
+              <a class="hotel-card__reserve" href="<?= h((string) $hotel['reserveUrl']) ?>" target="_blank" rel="noopener">予約サイトへ<span class="visually-hidden">（新しいタブで開きます）</span></a>
             <?php else : ?>
               <span class="hotel-card__reserve is-disabled" aria-disabled="true">予約サイト（準備中）</span>
             <?php endif; ?>

@@ -236,6 +236,10 @@
     background: $color-bg;
     box-shadow: 0 -4px 16px rgba($color-secondary, 0.2);
     animation: calendar-sheet-in 0.2s ease;
+
+    @media (prefers-reduced-motion: reduce) {
+      animation: none;
+    }
   }
 
   &__handle {

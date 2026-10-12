@@ -32,7 +32,7 @@ if (is_post()) {
     ];
 
     (new Validator($input))
-      ->required('nickname', 'お名前')->length('nickname', 'お名前', 1, 50)
+      ->required('nickname', 'ニックネーム')->length('nickname', 'ニックネーム', 1, 50)
       ->required('phone', '電話番号')->phone('phone')
       ->validate();
 
@@ -86,7 +86,7 @@ page_header('ユーザー情報の編集', 'ユーザー情報の編集');
   <?= csrf_field() ?>
 
   <div class="form__field">
-    <label class="form__label" for="nickname">お名前</label>
+    <label class="form__label" for="nickname">ニックネーム</label>
     <input
       class="form__input"
       type="text"

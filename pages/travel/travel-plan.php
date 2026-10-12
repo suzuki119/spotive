@@ -165,7 +165,7 @@ $messages = take_flash();
                     <div class="travel-item__actions">
                       <?php if ($item['url'] !== null) : ?>
                         <a class="travel-item__link" href="<?= h((string) $item['url']) ?>" target="_blank" rel="noopener">
-                          <?= $item['item_type'] === 'match' ? 'チケット販売サイトへ' : '予約サイトへ' ?>
+                          <?= $item['item_type'] === 'match' ? 'チケット販売サイトへ' : '予約サイトへ' ?><span class="visually-hidden">（新しいタブで開きます）</span>
                         </a>
                       <?php elseif ($detail !== '') : ?>
                         <a class="travel-item__link travel-item__link--sub" href="<?= h(url($detail)) ?>">

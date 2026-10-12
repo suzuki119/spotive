@@ -1,3 +1,5 @@
+@use "variables" as *;
+
 // --- ブレークポイント ---
 $breakpoints: (
   mobile: 375px,
@@ -179,6 +181,22 @@ $breakpoints: (
       text-decoration: underline;
     }
 
+    // キーボードで選んでいる項目。リセット CSS を読み込むページでは標準の枠が消えるので、ここで描く
+    &:focus-visible {
+      outline: 2px solid $color-primary;
+      outline-offset: 2px;
+      border-radius: $radius-md;
+    }
+
+    // いま開いているページ（aria-current="page"）
+    &.is-current {
+      color: $color-primary;
+
+      .menu-bar__label {
+        font-weight: 700;
+      }
+    }
+
     // リンク先のページがまだ無い項目（準備中）
     &--disabled {
       opacity: 0.4;
@@ -283,4 +301,23 @@ $breakpoints: (
 
 .menu-bar__nav.is-closing {
   animation: bar-close 0.45s ease forwards;
+}
+
+
+// =========================
+// 動きを減らす設定の人には、開閉をその場で切り替える。
+// アニメーションは forwards で最後の形（開いたバーの高さ）を保っているので、
+// none にはせず、時間だけ縮める
+// =========================
+
+@media (prefers-reduced-motion: reduce) {
+  .menu-bar__sub {
+    transition-duration: 0.01s;
+  }
+
+  .menu-bar__sub.is-open .menu-bar__item,
+  .menu-bar:has(.menu-bar__sub.is-open) .menu-bar__nav,
+  .menu-bar__nav.is-closing {
+    animation-duration: 0.01s;
+  }
 }

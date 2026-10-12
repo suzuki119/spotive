@@ -109,7 +109,23 @@ $teamsVs = static function (array $match, string $block): void {
                                                                                                                                                                                                                                                                                                                                       endforeach;
                                                                                                                                                                                                                                                                                                                                     };
 
-                                                                                                                                                                                                                                                                                                                                          ?>
+
+/**
+ * お気に入りの試合の、片方のチームのロゴ。ロゴが無いチームは、競技の色の丸に略称を入れて代わりにする
+ * （何も出さないと、どのチームの試合か分からなくなる）
+ */
+$favLogo = static function (?array $team, array $match): void {
+  if ($team === null) {
+    return;
+  }
+  if ($team['logo'] !== '') : ?>
+    <img class="fav-match__logo" src="<?= h(url($team['logo'])) ?>" alt="<?= h($team['name']) ?>" width="72" height="72" />
+  <?php else : ?>
+    <span class="fav-match__logo team-logo team-logo--<?= h(match_sport_key($match['sport'])) ?>" role="img" aria-label="<?= h($team['name']) ?>"><?= h($team['initial']) ?></span>
+  <?php endif;
+};
+
+?>
 <!DOCTYPE html>
 <html lang="ja">
   <head>
@@ -165,9 +181,7 @@ $teamsVs = static function (array $match, string $block): void {
                 >
                   <?php $homeTeam = $match['teams'][0] ?? null; $awayTeam = $match['teams'][1] ?? null; ?>
                   <span class="fav-match__side">
-                    <?php if ($homeTeam !== null && $homeTeam['logo'] !== '') : ?>
-                      <img class="fav-match__logo" src="<?= h(url($homeTeam['logo'])) ?>" alt="<?= h($homeTeam['name']) ?>" width="72" height="72" />
-                    <?php endif; ?>
+                    <?php $favLogo($homeTeam, $match); ?>
                   </span>
                   <span class="fav-match__center">
                     <span class="fav-match__round"><?= h(match_league_label($match)) ?></span>
@@ -178,9 +192,7 @@ $teamsVs = static function (array $match, string $block): void {
                     </span>
                   </span>
                   <span class="fav-match__side">
-                    <?php if ($awayTeam !== null && $awayTeam['logo'] !== '') : ?>
-                      <img class="fav-match__logo" src="<?= h(url($awayTeam['logo'])) ?>" alt="<?= h($awayTeam['name']) ?>" width="72" height="72" />
-                    <?php endif; ?>
+                    <?php $favLogo($awayTeam, $match); ?>
                   </span>
                 </a>
               </li>
@@ -209,7 +221,7 @@ $teamsVs = static function (array $match, string $block): void {
             <?php endforeach; ?>
           </select>
         </label>
-        <p class="home__status" data-radius-status hidden></p>
+        <p class="home__status" data-radius-status role="status" hidden></p>
         <p class="home__empty" data-now-empty hidden>この範囲で、これから観戦できる試合はありません。</p>
 
         <?php if ($nowMatches === []) : ?>
@@ -249,11 +261,13 @@ $teamsVs = static function (array $match, string $block): void {
                       </span>
                     </span>
                   </span>
-                </span>
-                <span class="now-match__ticket">
-                  <span class="now-match__venue">
-                    <img src="<?= h(url('images/icons/point.svg')) ?>" alt="" width="11" height="14" />
-                    <?= h($match['venue']) ?>
+                  <!-- 半券：会場と料金（「予算内で観たい」に答えられるよう、料金も一覧で見せる） -->
+                  <span class="now-match__ticket">
+                    <span class="now-match__venue">
+                      <img src="<?= h(url('images/icons/point.svg')) ?>" alt="" width="11" height="14" />
+                      <?= h($match['venue']) ?>
+                    </span>
+                    <span class="now-match__price"><?= h(match_price_label($match['price'])) ?></span>
                   </span>
                 </a>
               </li>

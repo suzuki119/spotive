@@ -37,20 +37,24 @@ $menuItems = [
  * href が null の項目は、ページがまだ無いので押せない表示（準備中）にする
  */
 $subMenuItems = [
-  ['href' => 'pages/setting/notification-setting.php',         'icon' => 'setting.svg',      'label' => '設定'],
+  ['href' => 'pages/setting/setting.php',          'icon' => 'setting.svg',      'label' => '設定'],
   ['href' => 'pages/plus/plus.php',                'icon' => 'crown.svg',           'label' => 'プラス'],
   ['href' => 'pages/notification/notification.php', 'icon' => 'mail.svg',  'label' => 'お知らせ'],
   ['href' => 'pages/travel/travel.php',            'icon' => 'travel.svg',        'label' => '遠征'],
-  ['href' => 'pages/account/account.php',          'icon' => 'account.svg',       'label' => 'アカウント'],
+  ['href' => 'pages/setting/account-setting.php',  'icon' => 'account.svg',       'label' => 'アカウント'],
 ];
+
+/** いま開いているページの項目か（aria-current と見た目に使う） */
+$menuIsCurrent = static fn(array $item): bool =>
+  isset($item['href']) && str_ends_with((string) ($_SERVER['SCRIPT_NAME'] ?? ''), '/' . $item['href']);
 
 ?>
 
 <!-- メニュー -->
-<section class="menu-bar">
+<nav class="menu-bar" aria-label="メニュー">
 
   <!-- 追加メニュー -->
-  <div class="menu-bar__sub">
+  <div class="menu-bar__sub" id="menu-bar-sub">
     <ul class="menu-bar__sub-list">
 
       <?php foreach ($subMenuItems as $item) : ?>
@@ -81,8 +85,9 @@ $subMenuItems = [
           <?php else : ?>
 
             <a
-              class="menu-bar__link"
-              href="<?= h(url($item['href'])) ?>">
+              class="menu-bar__link<?= $menuIsCurrent($item) ? ' is-current' : '' ?>"
+              href="<?= h(url($item['href'])) ?>"
+              <?= $menuIsCurrent($item) ? 'aria-current="page"' : '' ?>>
 
               <img
                 class="menu-bar__icon"
@@ -107,7 +112,7 @@ $subMenuItems = [
 
 
   <!-- 下段の通常メニュー -->
-  <nav class="menu-bar__nav">
+  <div class="menu-bar__nav">
 
     <ul class="menu-bar__list">
 
@@ -121,7 +126,10 @@ $subMenuItems = [
             <button
               type="button"
               class="menu-bar__link menu-bar__toggle"
-              aria-expanded="false">
+              aria-expanded="false"
+              aria-controls="menu-bar-sub"
+              data-icon-open="<?= h(url('images/icons/menu.svg')) ?>"
+              data-icon-close="<?= h(url('images/icons/close.svg')) ?>">
 
               <img
                 class="menu-bar__icon"
@@ -140,8 +148,9 @@ $subMenuItems = [
 
             <!-- 通常のリンク -->
             <a
-              class="menu-bar__link"
-              href="<?= h(url($item['href'])) ?>">
+              class="menu-bar__link<?= $menuIsCurrent($item) ? ' is-current' : '' ?>"
+              href="<?= h(url($item['href'])) ?>"
+              <?= $menuIsCurrent($item) ? 'aria-current="page"' : '' ?>>
 
               <img
                 class="menu-bar__icon"
@@ -164,38 +173,9 @@ $subMenuItems = [
 
     </ul>
 
-  </nav>
+  </div>
 
-</section>
+</nav>
 
-
-<script>
-  const menuToggle = document.querySelector('.menu-bar__toggle');
-  const subMenu = document.querySelector('.menu-bar__sub');
-  const menuIcon = menuToggle.querySelector('.menu-bar__icon');
-
-  menuToggle.addEventListener('click', () => {
-
-    const isOpen = subMenu.classList.toggle('is-open');
-
-    menuToggle.setAttribute('aria-expanded', isOpen);
-
-    // SVGを一度消す
-    menuToggle.classList.add('is-changing');
-
-    // 消えてからSVGを変更
-    setTimeout(() => {
-
-      if (isOpen) {
-        menuIcon.src = "<?= h(url('images/icons/close.svg')) ?>";
-      } else {
-        menuIcon.src = "<?= h(url('images/icons/menu.svg')) ?>";
-      }
-
-      // 新しいSVGを表示
-      menuToggle.classList.remove('is-changing');
-
-    }, 200);
-
-  });
-</script>
+<!-- 開閉の処理（ほかのページで読み込む必要はない） -->
+<script src="<?= h(asset('js/common/navigation.js')) ?>"></script>
