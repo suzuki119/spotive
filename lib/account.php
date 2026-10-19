@@ -151,7 +151,7 @@ function account_register(array $in): int
 {
   (new Validator($in))
     ->required('email', 'メールアドレス')->email('email')
-    ->required('nickname', 'お名前')->length('nickname', 'お名前', 1, 50)
+    ->required('nickname', 'ニックネーム')->length('nickname', 'ニックネーム', 1, 50)
     ->required('phone', '電話番号')->phone('phone')
     ->required('birthdate', '生年月日')->date('birthdate', '生年月日')->minAge('birthdate', 13)
     ->required('password', 'パスワード')->password('password')

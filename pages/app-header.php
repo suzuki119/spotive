@@ -20,6 +20,7 @@
 declare(strict_types=1);
 
 require_once __DIR__ . '/../lib/auth.php';
+require_once __DIR__ . '/../lib/guest.php';
 
 /** @var array{title:string,noticeIcon?:string,noticeLabel?:string,back?:string,close?:string} $appHeader */
 $appHeader += ['title' => 'SPOTIVE', 'noticeIcon' => 'notice.svg', 'noticeLabel' => '', 'back' => '', 'close' => ''];
@@ -33,6 +34,9 @@ try {
 }
 $appHeaderAccount = $appHeaderUser === null ? 'pages/account/signin.php' : 'pages/setting/setting.php';
 
+// 見出しが英語（SCHEDULE・SEARCH など）のときは lang="en" を付け、読み上げが日本語読みにならないようにする
+$appHeaderTitleLang = preg_match('/\A[\x20-\x7E]+\z/', $appHeader['title']) === 1 ? 'en' : '';
+
 ?>
 <header class="app-header">
   <?php if ($appHeader['back'] !== '') : ?>
@@ -44,23 +48,27 @@ $appHeaderAccount = $appHeaderUser === null ? 'pages/account/signin.php' : 'page
       <img src="<?= h(url('images/icons/account.svg')) ?>" alt="アカウント" width="32" height="32" />
     </a>
   <?php endif; ?>
-  <h1 class="app-header__title"><?= h($appHeader['title']) ?></h1>
+  <h1 class="app-header__title"<?= $appHeaderTitleLang === '' ? '' : ' lang="' . h($appHeaderTitleLang) . '"' ?>><?= h($appHeader['title']) ?></h1>
   <?php if ($appHeader['close'] !== '') : ?>
     <a class="app-header__icon" href="<?= h(url($appHeader['close'])) ?>" data-header-back>
       <img src="<?= h(url('images/icons/close.svg')) ?>" alt="閉じる" width="32" height="32" />
     </a>
   <?php else : ?>
-  <a class="app-header__icon" href="<?= h(url('pages/notification/notification.php')) ?>">
+  <!-- 添える文字は英語（Notice）のこともあるので、読み上げでは「お知らせ」と伝える -->
+  <a class="app-header__icon" href="<?= h(url('pages/notification/notification.php')) ?>" aria-label="お知らせ">
     <img
       src="<?= h(url('images/icons/' . $appHeader['noticeIcon'])) ?>"
-      alt="<?= $appHeader['noticeLabel'] === '' ? 'お知らせ' : '' ?>"
+      alt=""
       width="32"
       height="32"
     />
     <?php if ($appHeader['noticeLabel'] !== '') : ?>
-      <span class="app-header__label"><?= h($appHeader['noticeLabel']) ?></span>
+      <span class="app-header__label" aria-hidden="true"><?= h($appHeader['noticeLabel']) ?></span>
     <?php endif; ?>
   </a>
   <?php endif; ?>
 </header>
+<?php if (is_guest($appHeaderUser)) : ?>
+  <?php require __DIR__ . '/guest-bar.php'; ?>
+<?php endif; ?>
 <script src="<?= h(asset('js/common/header.js')) ?>"></script>

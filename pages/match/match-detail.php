@@ -10,6 +10,8 @@
  *
  * 天気は Open-Meteo の予報（lib/weather.php。試作）。予報が出るのは試合の約 2 週間前から。
  * ホテルだけは、画面確認用の仮データ（lib/hotel.php）で「周辺のホテル」を出している。
+ * 「この試合で遠征プランを作る」は、この試合で遠征サポート（pages/travel/travel.php）を開く。
+ * 地図の詳細シートもこのページを埋め込んでいるので、地図からも同じリンクが出る。
  *
  * デザインにあってデータに無いもの（リーグ名・節・戦績・最寄り駅・試合の写真）は、
  * 競技名や所在地、競技の色の絵で代わりにしている。
@@ -20,7 +22,11 @@ declare(strict_types=1);
 require_once __DIR__ . '/../../lib/match.php';
 require_once __DIR__ . '/../../lib/hotel.php';
 require_once __DIR__ . '/../../lib/favorite.php';
+<<<<<<< HEAD
+require_once __DIR__ . '/../../lib/travel.php';
+=======
 require_once __DIR__ . '/../../lib/weather.php';
+>>>>>>> origin/main
 
 /** 試合の写真が無いときに上に出す写真 */
 const DETAIL_DEFAULT_IMAGE = 'images/sample/sample-match.png';
@@ -224,6 +230,22 @@ if ($game !== null && $game['lat'] !== null && $game['lng'] !== null) {
 }
 $fromMatchId = $type === 'match' ? $rawId : '';
 
+<<<<<<< HEAD
+// 「会場周辺のホテルを探す」。会場の座標を渡し、地図でこの会場を開いた状態からホテルを出す
+// （座標が無いと全国の地図から会場を探し直すことになる）
+$hotelSearchPath = 'pages/map/map.php?nearby=hotel';
+if ($game !== null && $game['lat'] !== null && $game['lng'] !== null) {
+  $hotelSearchPath .= '&' . http_build_query(['lat' => (float) $game['lat'], 'lng' => (float) $game['lng']]);
+}
+
+// この試合で遠征を組む（遠征サポート）。チームどうしの、これから先の試合だけ。
+// 遠征は「アウェー側のチームを応援して観に行く人」の目線で組む（出発地は遠征の画面で変えられる）
+$travelUrl = '';
+if ($game !== null && $type === 'match' && !$isOver && count($game['team_ids']) === 2) {
+  $awayTeamId = $game['team_ids'][1];
+  if (travel_find_trip($awayTeamId, $rawId) !== null) {
+    $travelUrl = 'pages/travel/travel.php?' . http_build_query(['team' => $awayTeamId, 'game' => $rawId]);
+=======
 // 試合の日の天気（Open-Meteo）。終わった試合と、位置の分からない会場には出さない
 //   ok … 予報あり ／ later … まだ予報が出ていない ／ error … 取れなかった ／ none … 出さない
 $weather       = null;
@@ -239,6 +261,7 @@ if ($game !== null && $startsAt !== null && !$isOver && $game['lat'] !== null &&
     } catch (InvalidArgumentException | RuntimeException $e) {
       $weatherStatus = 'error';
     }
+>>>>>>> origin/main
   }
 }
 
@@ -397,7 +420,7 @@ $embed = ($_GET['embed'] ?? '') === '1';
               </p>
               <?php if ($game['kind'] === 'match') : ?>
                 <?php if ($ticketUrl !== '' && !$isOver) : ?>
-                  <a class="match-detail__cta" href="<?= h($ticketUrl) ?>" target="_blank" rel="noopener">チケット販売サイトへ</a>
+                  <a class="match-detail__cta" href="<?= h($ticketUrl) ?>" target="_blank" rel="noopener">チケット販売サイトへ<span class="visually-hidden">（新しいタブで開きます）</span></a>
                 <?php else : ?>
                   <span class="match-detail__cta is-disabled" aria-disabled="true">販売情報は準備中</span>
                 <?php endif; ?>
@@ -471,7 +494,7 @@ $embed = ($_GET['embed'] ?? '') === '1';
               </div>
             </dl>
             <?php if ($routeUrl !== '') : ?>
-              <a class="match-detail__route" href="<?= h($routeUrl) ?>" target="_blank" rel="noopener">ルートを調べる（Google マップ）</a>
+              <a class="match-detail__route" href="<?= h($routeUrl) ?>" target="_blank" rel="noopener">ルートを調べる（Google マップ）<span class="visually-hidden">（新しいタブで開きます）</span></a>
             <?php else : ?>
               <p class="match-detail__note">会場の位置情報がまだ登録されていません。</p>
             <?php endif; ?>
@@ -499,11 +522,25 @@ $embed = ($_GET['embed'] ?? '') === '1';
             <?php else : ?>
               <p class="match-detail__note">会場の近くのホテルはまだ登録されていません。</p>
             <?php endif; ?>
-            <a class="match-detail__hotel-search" href="<?= h(url('pages/map/map.php?nearby=hotel')) ?>">
+            <a class="match-detail__hotel-search" href="<?= h(url($hotelSearchPath)) ?>">
               <span class="match-detail__hotel-icon" aria-hidden="true">🛏️</span>
               会場周辺のホテルを探す
             </a>
           </section>
+
+          <!-- 遠征プラン（遠征サポート。docs/away-travel.md） -->
+          <?php if ($travelUrl !== '') : ?>
+            <section class="match-detail__section">
+              <h2 class="match-detail__heading">遠征プラン</h2>
+              <a class="match-detail__travel" href="<?= h(url($travelUrl)) ?>">
+                <span class="match-detail__travel-icon" aria-hidden="true">🧳</span>
+                <span class="match-detail__travel-body">
+                  <span class="match-detail__travel-title">この試合で遠征プランを作る</span>
+                  <span class="match-detail__travel-text">交通・ホテル・費用の目安と、前後に近くで観られる試合を出します</span>
+                </span>
+              </a>
+            </section>
+          <?php endif; ?>
 
           <!-- 会場の特徴 -->
           <?php if ($game['is_indoor'] !== null) : ?>

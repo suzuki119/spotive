@@ -9,7 +9,8 @@
  *   Away Travel    … 遠征プラン（travel_plans）。まだ終わっていないプランのうち一番近いものの試合を出す
  *   Records        … 観戦記録。記録のテーブルはまだ無いので、仮データ（data/records.json）
  *   SPOTIVE PLUS+  … サブスクリプション（未設計）の案内。まだ押せない
- * 主催者は「自分の大会」、全員に各設定へのリンクも出す。
+ * 主催者として登録している人には、Favorite の上に主催者ページへの大きなリンクと、下に「自分の大会」も出す。
+ * 全員に各設定へのリンクも出す。
  */
 
 declare(strict_types=1);
@@ -18,6 +19,8 @@ require_once __DIR__ . '/../../lib/tournament.php';
 require_once __DIR__ . '/../../lib/favorite.php';
 require_once __DIR__ . '/../../lib/match-search.php';
 require_once __DIR__ . '/../../lib/travel.php';
+require_once __DIR__ . '/../../lib/organizer.php';
+require_once __DIR__ . '/../../lib/guest.php';
 require_once __DIR__ . '/../../lib/layout.php';   // status_label() / format_datetime()
 
 /** 仮のプロフィール画像。プロフィール画像の設定ができたら差し替える */
@@ -91,6 +94,22 @@ if ((int) $user['trust_level'] >= (int) config('verification.require_level.creat
   }
 }
 
+// 主催者として登録しているか。主催者の申請（取り下げ・却下を除く）か主催者のプロフィールがある人、
+// または大会を登録したことがある人（デモ版は申請しなくても大会を登録できるため）。ゲストは除く
+$isOrganizer = false;
+if (!is_guest($user)) {
+  try {
+    $organizer   = organizer_status((int) $user['id']);
+    $application = $organizer['application'];
+    $isOrganizer = $myEvents !== []
+      || $organizer['profile'] !== null
+      || ($application !== null && !in_array((string) $application['status'], ['rejected', 'withdrawn'], true));
+  } catch (PDOException $e) {
+    error_log('[SPOTIVE] DB error: ' . $e->getMessage());
+  }
+}
+$publishedCount = count(array_filter($myEvents, static fn(array $e): bool => $e['status'] === 'published'));
+
 $fmtMd = static fn(string $date): string => $date === '' ? '' : date('m/d', (int) strtotime($date));
 
 ?>
@@ -131,6 +150,21 @@ $fmtMd = static fn(string $date): string => $date === '' ? '' : date('m/d', (int
       </div>
       <a class="mypage-profile__setting" href="account-setting.php">アカウント設定</a>
     </section>
+
+    <?php if ($isOrganizer) : ?>
+      <!-- 主催者ページへの入口（主催者として登録している人だけ） -->
+      <a class="mypage-organizer" href="<?= h(url('pages/organizer/dashboard.php')) ?>">
+        <span class="mypage-organizer__label" lang="en">ORGANIZER</span>
+        <span class="mypage-organizer__title">主催者ページ</span>
+        <span class="mypage-organizer__text">
+          <?php if ($myEvents === []) : ?>
+            大会・イベントを登録して、地図と一覧に載せましょう
+          <?php else : ?>
+            公開中の大会 <?= (int) $publishedCount ?>件・大会の登録と管理はこちら
+          <?php endif; ?>
+        </span>
+      </a>
+    <?php endif; ?>
 
     <!-- Favorite -->
     <section class="mypage__section">

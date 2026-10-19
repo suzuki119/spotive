@@ -25,15 +25,12 @@ document.addEventListener("DOMContentLoaded", () => {
   const yen = (n) => "¥" + n.toLocaleString("ja-JP");
 
   const WEEK = ["日", "月", "火", "水", "木", "金", "土"];
-  const PRICE_RANGES = {
-    u2000: [0, 2000],
-    "2to4": [2001, 4000],
-    "4to6": [4001, 6000],
-    o6: [6001, Infinity],
-  };
   // AGENTS.md のブレイクポイント（タブレット 768px）に合わせる。
   // これ未満がスマホ表示＝絞り込みと詳細を下から出すシートで扱う
   const MOBILE = window.matchMedia("(max-width: 767px)");
+  // 端末で「視差効果を減らす」を選んでいる人には、地図を飛ばしたりなめらかに送ったりしない
+  const REDUCED_MOTION = window.matchMedia("(prefers-reduced-motion: reduce)");
+  const scrollBehavior = () => (REDUCED_MOTION.matches ? "auto" : "smooth");
   const POPUP_GAME_LIMIT = 5;
 
   // 地図の拡大率
@@ -279,7 +276,8 @@ document.addEventListener("DOMContentLoaded", () => {
   // -----------------------------------------------------------------
   let games = [];
   let visible = [];
-  const teamLogos = readEmbeddedTeamLogos();
+  const teamLogos = readEmbeddedObject("map-team-logos");             // 読めなくても、ロゴが出ないだけでよい
+  const teamShortNames = readEmbeddedObject("map-team-short-names");   // 読めなくても、フルネームで出るだけでよい
   let userLatLng = null;
   let userMarker = null;
 
@@ -461,7 +459,7 @@ document.addEventListener("DOMContentLoaded", () => {
               <li class="${g.id === focusId ? "is-focus" : ""}">
                 <a class="pop-game" href="${esc(g.detailUrl)}" data-detail="${esc(g.detailUrl)}" aria-expanded="false">
                   <span class="tag" style="--c:${s.color}">${s.icon} ${esc(g.roundText || leagueText(g))}</span>
-                  <strong>${esc(g.title)}</strong>
+                  <strong>${esc((teamShortTitle(g) || [g.title]).join(" vs "))}</strong>
                   <span class="pop-meta">${fmtStart(g)} ・ ${priceText(g)}</span>
                 </a>
                 ${ticket}
@@ -543,14 +541,15 @@ document.addEventListener("DOMContentLoaded", () => {
     if (f.time === "day" && g.start.getHours() >= 17) return false;
     if (f.time === "night" && g.start.getHours() < 17) return false;
     if (f.price !== "all") {
-      const [lo, hi] = PRICE_RANGES[f.price];
-      if (g.price == null || g.price < lo || g.price > hi) return false;
+      // 価格は上限で絞る（最安席の目安がこの金額以下なら出す）。価格が分からない試合は出さない
+      const max = Number(f.price);
+      if (g.price == null || g.price > max) return false;
     }
     if (f.place === "indoor" && !g.v.indoor) return false;
     if (f.place === "outdoor" && g.v.indoor) return false;
     if (f.keyword) {
-      // チーム名（試合名）・会場名・リーグと節・競技名・主催者で探す
-      const haystack = [g.title, g.v.name, g.v.pref, g.roundText, g.sportName, g.league]
+      // チーム名（試合名と略称）・会場名・リーグと節・競技名・主催者で探す
+      const haystack = [g.title, ...(teamShortTitle(g) || []), g.v.name, g.v.pref, g.roundText, g.sportName, g.league]
         .filter(Boolean).join(" ").toLowerCase();
       if (!haystack.includes(f.keyword)) return false;
     }
@@ -587,6 +586,9 @@ document.addEventListener("DOMContentLoaded", () => {
     $("#result-count").textContent = countText;
     $("#filter-count").textContent = countText;   // スマホの絞り込みの画面でも件数を知らせる
     $("#handle-count").textContent = countText;   // スマホの閉じた一覧の帯にも出す
+    // 読み上げ用。同じ件数で何度も読み上げないよう、変わったときだけ入れ替える
+    const live = $("#result-live");
+    if (live.textContent !== countText) live.textContent = countText;
     $("#list").innerHTML = visible.length
       ? visible.map(cardHtml).join("")
       : '<li class="empty">条件に合う試合がありません。<br>条件を変えてみてください。</li>';
@@ -630,11 +632,21 @@ document.addEventListener("DOMContentLoaded", () => {
     return logos.length === 2 && logos.every(Boolean) ? logos : null;
   }
 
-  /** 対戦する 2 チームの名前。試合名「A vs B」から取る。対戦でない大会は null */
+  /** 対戦する 2 チームの名前（フルネーム）。試合名「A vs B」から取る。対戦でない大会は null */
   function teamNames(g) {
     if ((g.teamIds || []).length < 2) return null;
     const names = String(g.title).split(" vs ");
     return names.length === 2 ? names : null;
+  }
+
+  /**
+   * カードやピンの詳細に出す 2 チームの名前（略称。data/teams.json の shortName）。
+   * 略称が無いチームはフルネーム。対戦でない大会は null
+   */
+  function teamShortTitle(g) {
+    const names = teamNames(g);
+    if (!names) return null;
+    return names.map((name, i) => teamShortNames[g.teamIds[i]] || name);
   }
 
   /**
@@ -650,7 +662,8 @@ document.addEventListener("DOMContentLoaded", () => {
   function cardHtml(g) {
     const s = sportOf(g.sport);
     const km = distanceKm(g);
-    const names = teamNames(g);
+    const names = teamNames(g);          // ロゴの alt（読み上げ）はフルネーム
+    const shortNames = teamShortTitle(g);
     const logos = teamLogoSrcs(g);
 
     // ロゴが無い（主催者の大会など）ときは、競技のアイコンを丸に入れて代わりにする
@@ -659,8 +672,8 @@ document.addEventListener("DOMContentLoaded", () => {
          <span class="card-emblem-vs" aria-hidden="true">vs</span>
          <img class="card-emblem" src="${esc(logos[1])}" alt="${esc(names[1])}" width="44" height="44" loading="lazy">`
       : `<span class="card-emblem card-emblem--icon" aria-hidden="true">${s.icon}</span>`;
-    const title = names
-      ? `${esc(names[0])}<span class="card-vs">vs</span>${esc(names[1])}`
+    const title = shortNames
+      ? `${esc(shortNames[0])}<span class="card-vs">vs</span>${esc(shortNames[1])}`
       : esc(g.title);
     // ロゴの下に出す競技名。「その他」は、入力された競技名のほうが分かりやすい
     const sportName = g.sport === "other" && g.sportName ? g.sportName : s.label;
@@ -737,31 +750,52 @@ document.addEventListener("DOMContentLoaded", () => {
   const matchSheet   = $("#match-sheet");
   const matchBody    = $("#match-sheet-body");
 
+  // シートを開いたらフォーカスを中へ移し、閉じたら開く前の場所へ戻す。
+  // これが無いと、キーボードや読み上げでは開いたシートにたどり着けず、閉じたあとも迷子になる
+  /** 戻り先が消えていたら（ピンは描き直されることがある）、代わりの場所へ */
+  function restoreFocus(target, fallback) {
+    const el = target && target.isConnected ? target : fallback;
+    el?.focus({ preventScroll: true });
+  }
+
   function openFilterSheet() {
     closeMatchSheet();
     filterPanel.classList.add("is-open");
     filterToggle.setAttribute("aria-expanded", "true");
     filterPanel.scrollTop = 0;   // 前に開いたときの位置を引きずらない
+    $("#filter-close").focus({ preventScroll: true });
   }
 
   function closeFilterSheet() {
+    const wasOpen = filterPanel.classList.contains("is-open");
+    const hadFocus = filterPanel.contains(document.activeElement);
     filterPanel.classList.remove("is-open");
     filterToggle.setAttribute("aria-expanded", "false");
+    // 一覧（同じ aside の中）で試合を選んだときなどは、開いていなかったので戻さない
+    if (wasOpen && hadFocus) filterToggle.focus({ preventScroll: true });
   }
+
+  let matchSheetOpener = null;   // 試合の詳細シートを開く前にフォーカスがあった場所（ピンなど）
 
   function openMatchSheet(marker) {
     closeFilterSheet();
+    if (!matchSheet.contains(document.activeElement)) matchSheetOpener = document.activeElement;
     matchBody.innerHTML = venuePopupHtml(marker.venueGames, marker.focusId);
     matchSheet.classList.add("is-open");
     matchSheet.setAttribute("aria-hidden", "false");
     matchSheet.scrollTop = 0;
+    $("#match-sheet-close").focus({ preventScroll: true });
     applyPresetNearby(matchBody);   // 検索画面の「周辺検索」から来たとき
   }
 
   function closeMatchSheet() {
     closeDetailSheet();   // 詳細ページだけが残らないようにする
+    const wasOpen = matchSheet.classList.contains("is-open");
+    const hadFocus = matchSheet.contains(document.activeElement);
     matchSheet.classList.remove("is-open");
     matchSheet.setAttribute("aria-hidden", "true");
+    if (wasOpen && hadFocus) restoreFocus(matchSheetOpener, $("#map"));
+    if (wasOpen) matchSheetOpener = null;
   }
 
   function closeSheets() {
@@ -785,7 +819,10 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
+  let detailOpener = null;   // 詳細ページを開いた試合のリンク
+
   function openDetailSheet(url) {
+    if (!detailSheet.contains(document.activeElement)) detailOpener = document.activeElement;
     if (detailUrl !== url) {
       const src = new URL(url, location.href);
       src.searchParams.set("embed", "1");   // 詳細ページ側で「シートの中」用の表示にする
@@ -797,16 +834,20 @@ document.addEventListener("DOMContentLoaded", () => {
     matchSheet.classList.add("has-detail");   // スマホは試合の詳細シートを上に持ち上げる
     mapRoot.classList.add("has-detail");      // PC は地図の右に列として出す
     syncDetailToggles();
+    detailFrame.focus({ preventScroll: true });   // 読み上げやキーボードで、そのまま詳細ページを読めるように
   }
 
   function closeDetailSheet() {
     if (detailUrl === null) return;
+    const hadFocus = detailSheet.contains(document.activeElement);
     detailUrl = null;
     detailSheet.classList.remove("is-open");
     detailSheet.setAttribute("aria-hidden", "true");
     matchSheet.classList.remove("has-detail");
     mapRoot.classList.remove("has-detail");
     syncDetailToggles();
+    if (hadFocus) restoreFocus(detailOpener, $("#map"));
+    detailOpener = null;
   }
 
   function toggleDetailSheet(url) {
@@ -896,7 +937,7 @@ document.addEventListener("DOMContentLoaded", () => {
       if (overflow > 0) map.panBy([0, -overflow]);
     } else {
       // シート（スマホ）は下に伸びるので、選択肢が見える位置まで送る
-      panel.scrollIntoView({ behavior: "smooth", block: "nearest" });
+      panel.scrollIntoView({ behavior: scrollBehavior(), block: "nearest" });
     }
   }
 
@@ -921,10 +962,43 @@ document.addEventListener("DOMContentLoaded", () => {
     showNearby(lat, lng, presetNearby);
   }
 
+  // 試合の詳細ページの「会場周辺のホテルを探す」から来たとき（map.php?nearby=hotel&lat=..&lng=..）は、
+  // その会場を開いた状態から始める。座標が無ければ、会場のピンを選んでもらう
+  const presetPlace = (() => {
+    const params = new URLSearchParams(location.search);
+    const lat = Number(params.get("lat"));
+    const lng = Number(params.get("lng"));
+    if (!presetNearby || !params.has("lat") || !params.has("lng") || !Number.isFinite(lat) || !Number.isFinite(lng)) return null;
+    return L.latLng(lat, lng);
+  })();
+
   if (presetNearby) {
     map.on("popupopen", (e) => applyPresetNearby(e.popup.getElement()));
-    // showStatus が使う変数はこの下で用意されるので、初期化が終わってから出す
-    setTimeout(() => showStatus(`会場のピンを選ぶと、周辺の${NEARBY[presetNearby].label}を表示します`, 6000), 0);
+    if (!presetPlace) {
+      // showStatus が使う変数はこの下で用意されるので、初期化が終わってから出す。
+      // ピンを選ぶまで案内を消さない（選ぶと周辺施設の件数の案内に入れ替わる）
+      setTimeout(() => showStatus(`会場のピンを選ぶと、周辺の${NEARBY[presetNearby].label}を表示します`, 0), 0);
+    }
+  }
+
+  /** presetPlace の会場を開き、周辺施設を出す。試合が無い会場なら、その場所の周辺施設だけを出す */
+  function openPresetPlace() {
+    const PLACE_MATCH_M = 500;   // 詳細ページと会場マスタで座標が少しずれることがあるので、この距離までは同じ会場とみなす
+    let nearest = null;
+    let nearestM = Infinity;
+    visible.forEach((g) => {
+      const m = presetPlace.distanceTo([g.v.lat, g.v.lng]);
+      if (m < nearestM) {
+        nearest = g;
+        nearestM = m;
+      }
+    });
+    if (nearest && nearestM <= PLACE_MATCH_M) {
+      focusGame(nearest.id);   // 開いた詳細で applyPresetNearby が周辺施設を出す
+      return;
+    }
+    map.setView(presetPlace, NEARBY_ZOOM);
+    showNearby(presetPlace.lat, presetPlace.lng, presetNearby);
   }
 
   // ボタンはポップアップ（PC）とシート（スマホ）の中で作り直されるので、document で拾う
@@ -1025,7 +1099,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const game = games.find((g) => g.id === id);
     if (!game) return;
 
-    if (MOBILE.matches) $("#map").scrollIntoView({ behavior: "smooth", block: "start" });
+    if (MOBILE.matches) $("#map").scrollIntoView({ behavior: scrollBehavior(), block: "start" });
 
     const target = L.latLng(game.v.lat-0.002, game.v.lng);
     const zoom = Math.max(map.getZoom(), FOCUS_ZOOM);
@@ -1058,6 +1132,13 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
+    // 動きを減らす設定なら、飛ばさずにその場所へ切り替える
+    if (REDUCED_MOTION.matches) {
+      map.setView(target, zoom, { animate: false });
+      arrive();
+      return;
+    }
+
     // 動きが何かで止まっても詳細が開くように、時間で保険をかける
     const fallback = setTimeout(arrive, (FLY_DURATION + 0.6) * 1000);
     const done = () => {
@@ -1075,12 +1156,14 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   let statusTimer;
+  /** 地図の上の案内。duration に 0 を渡すと、次の案内が出るまで消さない */
   function showStatus(text, duration = 3000) {
     const el = $("#status");
-    el.textContent = text;
+    // 先に見せてから文字を入れる（隠れている間に入れると、読み上げられないことがある）
     el.hidden = false;
+    el.textContent = text;
     clearTimeout(statusTimer);
-    statusTimer = setTimeout(() => { el.hidden = true; }, duration);
+    if (duration > 0) statusTimer = setTimeout(() => { el.hidden = true; }, duration);
   }
 
   // 最初の表示だけは、アニメーションなしでいきなり現在地にする
@@ -1293,15 +1376,19 @@ document.addEventListener("DOMContentLoaded", () => {
   // -----------------------------------------------------------------
   // 読み込み
   // -----------------------------------------------------------------
-  /** map.php が埋め込んだチームのロゴ（チーム ID => [ホーム側, アウェイ側]） */
-  function readEmbeddedTeamLogos() {
-    const el = document.getElementById("map-team-logos");
+  /**
+   * map.php が埋め込んだチームの情報（チーム ID => 値）を読む。
+   *   #map-team-logos       … [ホーム側, アウェイ側, 代わりの 1 枚]
+   *   #map-team-short-names … 略称
+   */
+  function readEmbeddedObject(id) {
+    const el = document.getElementById(id);
     if (!el) return {};
     try {
       const parsed = JSON.parse(el.textContent);
       return parsed && typeof parsed === "object" ? parsed : {};
     } catch {
-      return {}; // 読めなくても、ロゴが出ないだけでよい
+      return {};
     }
   }
 
@@ -1347,6 +1434,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
     buildSportChips(new Set(games.map((g) => g.sport)));
     render({ fit: "none" });
+
+    if (presetPlace) {
+      openPresetPlace();   // 詳細ページから会場を指定して来たときは、現在地へは寄せない
+      return;
+    }
 
     // 位置情報が許可済みなら、最初から自分のまわりを見せる
     locateOnStartIfAllowed();

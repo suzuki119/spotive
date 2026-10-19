@@ -10,6 +10,7 @@
  *   GET game  … 遠征の試合（data/matches.json の id）。team が無ければ、この試合のアウェー側のチームにする
  *   GET from  … 出発地（data/areas.json の id）。省略時はチームの本拠地
  *   GET hotel … ホテル（data/hotels.json の id）。省略時は会場に一番近いホテル
+ *   GET extras[] … 一緒に観る試合。費用の目安に含める（チェックすると js/pages/travel.js が送る）
  *   POST      … プランの作成（ログインが必要）
  *
  * 画面は誰でも見られる。金額はすべて目安（交通は距離からの計算、ホテルは仮データ）。
@@ -51,7 +52,7 @@ $teamId  = input_string($input, 'team');
 $gameRef = input_string($input, 'game');
 $fromId  = input_string($input, 'from');
 $hotelId = input_string($input, 'hotel');
-$picked  = array_filter((array) ($input['extras'] ?? []), 'is_string');
+$picked  = travel_input_extras($input);
 
 $user        = null;
 $favoriteIds = [];
@@ -84,17 +85,33 @@ $trips = $teamId === '' ? [] : travel_trips($teamId);
 $trip  = ($gameRef === '' ? null : travel_find_trip($teamId, $gameRef)) ?? ($trips[0] ?? null);
 $area  = $areas[$fromId] ?? $areas[(string) ($teams[$teamId]['areaId'] ?? '')] ?? reset($areas);
 
-$estimate = $trip === null || $area === false ? null : travel_estimate($trip['games'], $area, $hotelId);
+// 一緒に観る試合も含めて目安を出す（プランを作るときと同じ計算。lib/travel.php）
+$extras   = $trip === null ? [] : travel_pick_extras($trip, $picked);
+$extraIds = array_column($extras, 'ref');
+$estimate = $trip === null || $area === false
+  ? null
+  : travel_estimate([...$trip['games'], ...$extras], $area, $hotelId, $trip['games'][0]);
 $nearby   = $trip === null ? [] : travel_nearby_games($trip);
+
+// ホテルから会場へのルート。泊まるときだけ、仮データのホテル（id のあるもの）から遠征の本来の試合の会場へ
+$routeHotel = ($estimate['hotel']['id'] ?? '') !== '' ? $estimate['hotel'] : null;
+$routeGame  = $trip['games'][0] ?? null;
+$routeUrl   = $routeHotel === null || $routeGame === null ? '' : 'https://www.google.com/maps/dir/?' . http_build_query([
+  'api'         => 1,
+  'origin'      => $routeHotel['lat'] . ',' . $routeHotel['lng'],
+  'destination' => $routeGame['lat'] . ',' . $routeGame['lng'],
+  'travelmode'  => 'walking',
+]);
 $teamName = (string) ($teams[$teamId]['name'] ?? '');
 
 /** 今の条件を引き継いだ、この画面へのリンク */
-$link = static function (array $override) use ($teamId, $trip, $area, $estimate): string {
+$link = static function (array $override) use ($teamId, $trip, $area, $estimate, $extraIds): string {
   $query = [
-    'team'  => $teamId,
-    'game'  => $trip['games'][0]['ref'] ?? '',
-    'from'  => $area === false ? '' : (string) $area['id'],
-    'hotel' => (string) ($estimate['hotel']['id'] ?? ''),
+    'team'   => $teamId,
+    'game'   => $trip['games'][0]['ref'] ?? '',
+    'from'   => $area === false ? '' : (string) $area['id'],
+    'hotel'  => (string) ($estimate['hotel']['id'] ?? ''),
+    'extras' => $extraIds,
   ];
   return 'travel.php?' . http_build_query(array_filter(array_merge($query, $override), static fn($v): bool => $v !== ''));
 };
@@ -119,6 +136,7 @@ $teamGroups = [
       href="https://fonts.googleapis.com/css2?family=Jost:wght@400;600&family=Noto+Sans+JP:wght@400;500;700&display=swap"
       rel="stylesheet"
     />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <link rel="stylesheet" href="<?= h(asset('css/style.css')) ?>" />
   </head>
 
@@ -174,7 +192,7 @@ $teamGroups = [
                     <li>
                       <a
                         class="travel-choice__link <?= $other['games'][0]['ref'] === $trip['games'][0]['ref'] ? 'is-active' : '' ?>"
-                        href="<?= h($link(['game' => $other['games'][0]['ref'], 'hotel' => ''])) ?>"
+                        href="<?= h($link(['game' => $other['games'][0]['ref'], 'hotel' => '', 'extras' => []])) ?>"
                       >
                         <?= h(travel_date_label($other['start'], true)) ?>
                         <?= $other['end'] !== $other['start'] ? '〜' . h(travel_date_label($other['end'], true)) : '' ?>
@@ -206,6 +224,11 @@ $teamGroups = [
               <input type="hidden" name="team" value="<?= h($teamId) ?>" />
               <input type="hidden" name="game" value="<?= h($trip['games'][0]['ref']) ?>" />
               <input type="hidden" name="hotel" value="<?= h($hotelId) ?>" />
+              <span data-travel-live="from-extras">
+                <?php foreach ($extraIds as $extraId) : ?>
+                  <input type="hidden" name="extras[]" value="<?= h($extraId) ?>" />
+                <?php endforeach; ?>
+              </span>
               <label class="travel-from__label" for="travel-from">出発地</label>
               <select class="travel-from__select" id="travel-from" name="from">
                 <?php foreach ($areas as $id => $option) : ?>
@@ -218,7 +241,7 @@ $teamGroups = [
             </form>
           </div>
 
-          <div class="travel-cards">
+          <div class="travel-cards" data-travel-live="cards">
             <article class="travel-card">
               <p class="travel-card__head">
                 <img class="travel-card__icon" src="<?= h(url('images/icons/train.svg')) ?>" alt="" width="20" height="20" />
@@ -268,6 +291,35 @@ $teamGroups = [
               <?php endif; ?>
             </article>
           </div>
+
+          <!-- ホテルから会場へ。地図にホテルと会場の 2 点を出す（js/pages/travel.js）。道順は Google マップに任せる -->
+          <?php if ($routeUrl !== '') : ?>
+            <div
+              class="travel-route"
+              data-travel-live="route"
+              data-from-lat="<?= (float) $routeHotel['lat'] ?>"
+              data-from-lng="<?= (float) $routeHotel['lng'] ?>"
+              data-to-lat="<?= (float) $routeGame['lat'] ?>"
+              data-to-lng="<?= (float) $routeGame['lng'] ?>"
+            >
+              <p class="travel-route__head">
+                <img class="travel-card__icon" src="<?= h(url('images/icons/point.svg')) ?>" alt="" width="11" height="14" />
+                ホテルから会場へ
+              </p>
+              <p class="travel-route__places">
+                <span class="travel-route__place travel-route__place--hotel"><?= h($routeHotel['name']) ?></span>
+                <span class="travel-route__place travel-route__place--venue"><?= h($routeGame['venue']) ?></span>
+              </p>
+              <p class="travel-route__summary" data-route-summary>
+                徒歩 約<?= (int) $routeHotel['walk'] ?>分（直線距離からの目安）
+              </p>
+              <div class="travel-route__map" data-route-map></div>
+              <a class="travel-route__link" href="<?= h($routeUrl) ?>" target="_blank" rel="noopener">Google マップで道順を見る<span class="visually-hidden">（新しいタブで開きます）</span></a>
+            </div>
+          <?php else : ?>
+            <!-- 日帰りのときは出さない。試合を追加して泊まりになったら、JS がここを差し替える -->
+            <div data-travel-live="route" hidden></div>
+          <?php endif; ?>
         </section>
 
         <form class="travel__create" action="travel.php" method="post">
@@ -293,7 +345,8 @@ $teamGroups = [
                         type="checkbox"
                         name="extras[]"
                         value="<?= h($game['ref']) ?>"
-                        <?= in_array($game['ref'], $picked, true) ? 'checked' : '' ?>
+                        <?= in_array($game['ref'], $extraIds, true) ? 'checked' : '' ?>
+                        data-travel-extra
                       />
                       <span>プランに追加（会場から約<?= h(hotel_distance_label($game['km'])) ?>）</span>
                     </label>
@@ -307,7 +360,7 @@ $teamGroups = [
           <!-- 費用の目安 -->
           <section class="travel__section">
             <h2 class="travel__heading">ESTIMATED COST</h2>
-            <div class="travel-cost">
+            <div class="travel-cost" data-travel-live="cost">
               <p class="travel-cost__caption">1人あたりの目安</p>
               <p class="travel-cost__total"><?= h(travel_yen($estimate['cost']['total'])) ?>〜</p>
               <dl class="travel-cost__list">
@@ -329,8 +382,8 @@ $teamGroups = [
                 </div>
               </dl>
               <p class="travel-cost__note">
-                交通は距離からの計算、ホテルは仮のデータによる目安です。
-                試合を追加したときのチケット代・宿泊は、プランを作るときに計算し直します。
+                交通は距離からの計算、ホテルは仮のデータによる目安です。追加した試合のチケット代・宿泊も含みます。
+                <noscript>試合のチェックを変えたときは、プランを作るときに計算し直します。</noscript>
               </p>
             </div>
           </section>
@@ -354,6 +407,7 @@ $teamGroups = [
     </main>
 
     <script src="<?= h(asset('js/main.js')) ?>"></script>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script src="<?= h(asset('js/pages/travel.js')) ?>"></script>
     <?php require __DIR__ . '/../menu-bar.php'; ?>
   </body>

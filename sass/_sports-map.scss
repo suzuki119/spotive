@@ -32,6 +32,11 @@ $bp-tablet: v.$bp-tablet;
   transform: translateY(100%);
   visibility: hidden;
   transition: transform 0.2s ease, visibility 0.2s ease;
+
+  // 動きを減らす設定の人には、せり上がらずにその場で出す
+  @media (prefers-reduced-motion: reduce) {
+    transition-duration: 0.01s;
+  }
 }
 
 @mixin slide-up-open {
@@ -80,6 +85,10 @@ $sheet-peek: 168px; // 閉じているときに見える高さ（帯の分と、
   box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.15);
   transform: translateY(calc(100% - #{$sheet-peek}));
   transition: transform 0.25s ease;
+
+  @media (prefers-reduced-motion: reduce) {
+    transition-duration: 0.01s;
+  }
 
   // 広げたとき：一覧をスクロールできる
   &.is-expanded {
@@ -416,6 +425,11 @@ $detail-width: 360px; // PC で地図の右に出すときの幅
   .sports-map {
     grid-template-columns: 360px 1fr 0;
     transition: grid-template-columns 0.25s ease;
+
+    // 0 にすると transitionend が来ず、ポップアップの位置合わせ（js/pages/map.js）が動かないので、ごく短くする
+    @media (prefers-reduced-motion: reduce) {
+      transition-duration: 0.01s;
+    }
 
     &.has-detail {
       grid-template-columns: 360px 1fr $detail-width;

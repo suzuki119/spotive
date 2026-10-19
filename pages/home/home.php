@@ -12,6 +12,9 @@
  * お気に入りは、ログイン中なら DB、未ログインならブラウザに保存されている
  * （lib/favorite.php・js/common/favorite-store.js）。どちらでも同じように出せるよう、
  * チームの付いた試合をすべて埋めておき、お気に入りかどうかの切り替えは JS が行う。
+ *
+ * チーム名は略称（data/teams.json の shortName。lib/match.php の team_short_name()）で出す。
+ * 読み上げ（alt・aria-label）はフルネームのまま。
  */
 
 declare(strict_types=1);
@@ -53,11 +56,8 @@ foreach (load_data_json('matches.json') as $m) {
 
 /** 試合に、画面で使うチーム（ロゴ・略称）と座標を足す */
 $decorate = static function (array $match) use ($coords): array {
-  // match_teams() は、仮のロゴが両チームで同じにならないようにしてくれる
-  $match['teams'] = array_map(
-    static fn(array $t): array => $t + ['initial' => mb_substr($t['name'], 0, 2)],
-    match_teams($match['teamIds'])
-  );
+  // match_teams() は、仮のロゴが両チームで同じにならないようにしてくれる。略称（shortName）も付いてくる
+  $match['teams'] = match_teams($match['teamIds']);
   $match['coords'] = $coords[$match['key']] ?? null;
   return $match;
 };
@@ -77,9 +77,9 @@ $nowMatches = array_map($decorate, array_values(array_filter(
   static fn(array $m): bool => $m['date'] > $today || $m['time'] === '' || $m['time'] >= $now
 )));
 
-// お気に入りのタブに出すチーム名（どのチームがお気に入りかは JS が決める）
+// お気に入りのタブに出すチーム名（略称。どのチームがお気に入りかは JS が決める）
 $teamNamesJson = (string) json_encode(
-  array_map(static fn(array $t): string => (string) ($t['name'] ?? ''), $teams),
+  array_map(static fn(array $t): string => team_short_name($t), $teams),
   JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT
 );
 
@@ -104,12 +104,28 @@ $teamsVs = static function (array $match, string $block): void {
                                                 if ($team['logo'] !== '') :
                                                   ?><img class="team-logo" src="<?= h(url($team['logo'])) ?>" alt="<?= h($team['name']) ?>" width="48" height="48" /><?php
                                                                                                                                                                     else :
-                                                                                                                                                                      ?><span class="team-logo team-logo--<?= h(match_sport_key($match['sport'])) ?>" role="img" aria-label="<?= h($team['name']) ?>"><?= h($team['initial']) ?></span><?php
+                                                                                                                                                                      ?><span class="team-logo team-logo--<?= h(match_sport_key($match['sport'])) ?>" role="img" aria-label="<?= h($team['name']) ?>"><?= h($team['shortName']) ?></span><?php
                                                                                                                                                                                                                                                                                                                                         endif;
                                                                                                                                                                                                                                                                                                                                       endforeach;
                                                                                                                                                                                                                                                                                                                                     };
 
-                                                                                                                                                                                                                                                                                                                                          ?>
+
+/**
+ * お気に入りの試合の、片方のチームのロゴ。ロゴが無いチームは、競技の色の丸に略称を入れて代わりにする
+ * （何も出さないと、どのチームの試合か分からなくなる）
+ */
+$favLogo = static function (?array $team, array $match): void {
+  if ($team === null) {
+    return;
+  }
+  if ($team['logo'] !== '') : ?>
+    <img class="fav-match__logo" src="<?= h(url($team['logo'])) ?>" alt="<?= h($team['name']) ?>" width="72" height="72" />
+  <?php else : ?>
+    <span class="fav-match__logo team-logo team-logo--<?= h(match_sport_key($match['sport'])) ?>" role="img" aria-label="<?= h($team['name']) ?>"><?= h($team['shortName']) ?></span>
+  <?php endif;
+};
+
+?>
 <!DOCTYPE html>
 <html lang="ja">
   <head>
@@ -165,9 +181,7 @@ $teamsVs = static function (array $match, string $block): void {
                 >
                   <?php $homeTeam = $match['teams'][0] ?? null; $awayTeam = $match['teams'][1] ?? null; ?>
                   <span class="fav-match__side">
-                    <?php if ($homeTeam !== null && $homeTeam['logo'] !== '') : ?>
-                      <img class="fav-match__logo" src="<?= h(url($homeTeam['logo'])) ?>" alt="<?= h($homeTeam['name']) ?>" width="72" height="72" />
-                    <?php endif; ?>
+                    <?php $favLogo($homeTeam, $match); ?>
                   </span>
                   <span class="fav-match__center">
                     <span class="fav-match__round"><?= h(match_league_label($match)) ?></span>
@@ -178,9 +192,7 @@ $teamsVs = static function (array $match, string $block): void {
                     </span>
                   </span>
                   <span class="fav-match__side">
-                    <?php if ($awayTeam !== null && $awayTeam['logo'] !== '') : ?>
-                      <img class="fav-match__logo" src="<?= h(url($awayTeam['logo'])) ?>" alt="<?= h($awayTeam['name']) ?>" width="72" height="72" />
-                    <?php endif; ?>
+                    <?php $favLogo($awayTeam, $match); ?>
                   </span>
                 </a>
               </li>
@@ -209,7 +221,7 @@ $teamsVs = static function (array $match, string $block): void {
             <?php endforeach; ?>
           </select>
         </label>
-        <p class="home__status" data-radius-status hidden></p>
+        <p class="home__status" data-radius-status role="status" hidden></p>
         <p class="home__empty" data-now-empty hidden>この範囲で、これから観戦できる試合はありません。</p>
 
         <?php if ($nowMatches === []) : ?>
@@ -235,7 +247,7 @@ $teamsVs = static function (array $match, string $block): void {
                       </span>
                       <span class="now-match__title">
                         <?php if (count($match['teams']) === 2) : ?>
-                          <?= h($match['teams'][0]['name']) ?><span class="now-match__title-vs">vs</span><?= h($match['teams'][1]['name']) ?>
+                          <?= h($match['teams'][0]['shortName']) ?><span class="now-match__title-vs">vs</span><?= h($match['teams'][1]['shortName']) ?>
                         <?php else : ?>
                           <?= h($match['title']) ?>
                         <?php endif; ?>
@@ -249,11 +261,13 @@ $teamsVs = static function (array $match, string $block): void {
                       </span>
                     </span>
                   </span>
-                </span>
-                <span class="now-match__ticket">
-                  <span class="now-match__venue">
-                    <img src="<?= h(url('images/icons/point.svg')) ?>" alt="" width="11" height="14" />
-                    <?= h($match['venue']) ?>
+                  <!-- 半券：会場と料金（「予算内で観たい」に答えられるよう、料金も一覧で見せる） -->
+                  <span class="now-match__ticket">
+                    <span class="now-match__venue">
+                      <img src="<?= h(url('images/icons/point.svg')) ?>" alt="" width="11" height="14" />
+                      <?= h($match['venue']) ?>
+                    </span>
+                    <span class="now-match__price"><?= h(match_price_label($match['price'])) ?></span>
                   </span>
                 </a>
               </li>

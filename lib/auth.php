@@ -197,6 +197,33 @@ function is_returning_visitor(): bool
   return ($_COOKIE[RETURNING_COOKIE] ?? '') === '1';
 }
 
+/** 「ログインせずに使う」を選んだ印の Cookie の名前 */
+const BROWSING_COOKIE = 'spotive_browsing';
+
+/**
+ * 「ログインせずに使う」を選んだ、という印を残す（1 年）。
+ * index.php が、次に来たときにスタート画面を飛ばしてホームを出すのに使う。
+ * 中身は「1」だけで、誰なのかは入れない。お気に入りはブラウザ（localStorage）に保存される。
+ */
+function mark_browsing_visitor(): void
+{
+  if (headers_sent()) {
+    return;
+  }
+  setcookie(BROWSING_COOKIE, '1', [
+    'expires'  => time() + 60 * 60 * 24 * 365,
+    'path'     => '/',
+    'httponly' => true,
+    'samesite' => 'Lax',
+  ]);
+}
+
+/** この端末で「ログインせずに使う」を選んだことがあるか */
+function is_browsing_visitor(): bool
+{
+  return ($_COOKIE[BROWSING_COOKIE] ?? '') === '1';
+}
+
 function logout_user(): void
 {
   session_boot();

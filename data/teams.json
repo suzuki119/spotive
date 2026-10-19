@@ -2,6 +2,7 @@
   {
     "id": "team-001",
     "name": "横浜ブルーウィングス",
+    "shortName": "横浜",
     "sport": "soccer",
     "areaId": "area-14",
     "homeVenue": "みなとみらいスタジアム",
@@ -10,6 +11,7 @@
   {
     "id": "team-002",
     "name": "東京ユナイテッド",
+    "shortName": "東京U",
     "sport": "soccer",
     "areaId": "area-13",
     "homeVenue": "東京セントラルフィールド",
@@ -18,6 +20,7 @@
   {
     "id": "team-003",
     "name": "大阪ファルコンズ",
+    "shortName": "大阪F",
     "sport": "baseball",
     "areaId": "area-27",
     "homeVenue": "なにわドーム",
@@ -26,6 +29,7 @@
   {
     "id": "team-004",
     "name": "名古屋グランズ",
+    "shortName": "名古屋G",
     "sport": "baseball",
     "areaId": "area-23",
     "homeVenue": "なごやスタジアム",
@@ -34,6 +38,7 @@
   {
     "id": "team-005",
     "name": "札幌ノーザンベアーズ",
+    "shortName": "札幌",
     "sport": "basketball",
     "areaId": "area-01",
     "homeVenue": "さっぽろアリーナ",
@@ -42,6 +47,7 @@
   {
     "id": "team-006",
     "name": "仙台スパークス",
+    "shortName": "仙台",
     "sport": "basketball",
     "areaId": "area-04",
     "homeVenue": "せんだいアリーナ",
@@ -50,6 +56,7 @@
   {
     "id": "team-007",
     "name": "福岡シーガルズ",
+    "shortName": "福岡SG",
     "sport": "volleyball",
     "areaId": "area-40",
     "homeVenue": "はかた総合体育館",
@@ -58,6 +65,7 @@
   {
     "id": "team-008",
     "name": "広島ウェーブス",
+    "shortName": "広島",
     "sport": "volleyball",
     "areaId": "area-34",
     "homeVenue": "ひろしま体育館",
@@ -66,6 +74,7 @@
   {
     "id": "team-009",
     "name": "埼玉グリーンアローズ",
+    "shortName": "埼玉",
     "sport": "soccer",
     "areaId": "area-11",
     "homeVenue": "さいたまパークスタジアム",
@@ -74,6 +83,7 @@
   {
     "id": "team-010",
     "name": "静岡オーシャンズ",
+    "shortName": "静岡",
     "sport": "soccer",
     "areaId": "area-22",
     "homeVenue": "しずおか海浜スタジアム",
@@ -82,6 +92,7 @@
   {
     "id": "team-011",
     "name": "千葉サンライズ",
+    "shortName": "千葉",
     "sport": "baseball",
     "areaId": "area-12",
     "homeVenue": "ちばベイパーク球場",
@@ -90,6 +101,7 @@
   {
     "id": "team-012",
     "name": "福岡サンダーバーズ",
+    "shortName": "福岡TB",
     "sport": "baseball",
     "areaId": "area-40",
     "homeVenue": "はかたベースボールパーク",
@@ -98,6 +110,7 @@
   {
     "id": "team-013",
     "name": "東京スカイホークス",
+    "shortName": "東京SH",
     "sport": "basketball",
     "areaId": "area-13",
     "homeVenue": "東京ベイアリーナ",
@@ -106,6 +119,7 @@
   {
     "id": "team-014",
     "name": "京都フェニックス",
+    "shortName": "京都",
     "sport": "basketball",
     "areaId": "area-26",
     "homeVenue": "京都みやこアリーナ",
@@ -114,6 +128,7 @@
   {
     "id": "team-015",
     "name": "大阪ブリッツ",
+    "shortName": "大阪B",
     "sport": "volleyball",
     "areaId": "area-27",
     "homeVenue": "なにわ中央体育館",
@@ -122,6 +137,7 @@
   {
     "id": "team-016",
     "name": "名古屋ストライプス",
+    "shortName": "名古屋S",
     "sport": "volleyball",
     "areaId": "area-23",
     "homeVenue": "なごや市民体育館",

@@ -51,7 +51,7 @@ foreach (['email', 'nickname', 'phone', 'birthdate', 'password'] as $key) {
         </h1>
 
         <article class="confirm-item">
-          <p class="confirm-item-label">お名前</p>
+          <p class="confirm-item-label">ニックネーム</p>
           <p class="confirm-item-value"><?= h($register['nickname']) ?></p>
         </article>
 

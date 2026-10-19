@@ -235,6 +235,8 @@ function travel_hotel_options(float $lat, float $lng): array
     $list[] = [
       'id'       => (string) $hotel['id'],
       'name'     => (string) $hotel['name'],
+      'lat'      => (float) $hotel['lat'],   // 「ホテルから会場へ」の地図に使う
+      'lng'      => (float) $hotel['lng'],
       'price'    => (int) ($hotel['priceMin'] ?? TRAVEL_HOTEL_FALLBACK_YEN),
       'walk'     => hotel_walk_minutes((float) $hotel['distance']),
       'checkIn'  => (string) ($hotel['checkIn'] ?? '15:00'),
@@ -383,6 +385,44 @@ function travel_nearby_games(array $trip): array
   return $list;
 }
 
+/**
+ * 受け取った extras[]（一緒に観る試合の ref）。文字列以外は捨てる
+ *
+ * @param array<string,mixed> $in $_GET / $_POST
+ * @return list<string>
+ */
+function travel_input_extras(array $in): array
+{
+  return array_values(array_map('strval', array_filter((array) ($in['extras'] ?? []), 'is_string')));
+}
+
+/**
+ * 一緒に観る試合として選ばれたもののうち、実際にプランに入れる試合。
+ * 画面の目安とプランの保存の両方で使う（どちらも同じ試合で計算するため）。
+ *
+ * 候補（travel_nearby_games()）として出したものだけを受け付け、TRAVEL_EXTRA_LIMIT 件までにする。
+ * 追加した試合どうしが重なるときは、先に並んでいる方だけを残す。
+ *
+ * @param list<string> $picked 選ばれた試合の ref
+ * @return list<array<string,mixed>>
+ */
+function travel_pick_extras(array $trip, array $picked): array
+{
+  $extras = [];
+  foreach (travel_nearby_games($trip) as $game) {
+    if (!in_array($game['ref'], $picked, true) || count($extras) >= TRAVEL_EXTRA_LIMIT) {
+      continue;
+    }
+    foreach ($extras as $kept) {
+      if (travel_games_conflict($game, $kept)) {
+        continue 2;
+      }
+    }
+    $extras[] = $game;
+  }
+  return $extras;
+}
+
 // ---------------------------------------------------------------------
 // プランの保存・取得
 // ---------------------------------------------------------------------
@@ -408,22 +448,7 @@ function travel_create_plan(array $user, array $in): int
     throw new AppError('出発地を選んでください。');
   }
 
-  // 追加する試合は、候補として出したものだけを受け付ける
-  $picked = array_map('strval', array_filter((array) ($in['extras'] ?? []), 'is_string'));
-  // 追加した試合どうしが重なるときは、先に並んでいる方だけを残す
-  $extras = [];
-  foreach (travel_nearby_games($trip) as $game) {
-    if (!in_array($game['ref'], $picked, true) || count($extras) >= TRAVEL_EXTRA_LIMIT) {
-      continue;
-    }
-    foreach ($extras as $kept) {
-      if (travel_games_conflict($game, $kept)) {
-        continue 2;
-      }
-    }
-    $extras[] = $game;
-  }
-
+  $extras   = travel_pick_extras($trip, travel_input_extras($in));
   $plan     = travel_estimate([...$trip['games'], ...$extras], $area, input_string($in, 'hotel'), $trip['games'][0]);
   $opponent = (string) ($teams[$trip['games'][0]['home']]['name'] ?? $trip['venue']);
   $title    = mb_substr((string) $teams[$teamId]['name'] . 'vs' . $opponent . '観戦プラン', 0, 150);

@@ -66,7 +66,10 @@ $mapTournamentsJson = json_encode(
 // チーム ID => [ホーム側で出すとき, アウェイ側で出すとき, 相手と同じロゴになったときの代わり]
 // （まだロゴが無いチームは仮のロゴ。仮のロゴは両チームで同じになることがあるので、代わりも渡す）
 $mapTeamLogos = [];
-foreach (array_keys(load_teams()) as $teamId) {
+// 一覧のカードとピンの詳細に出すチームの略称（チーム ID => 略称）。フルネームは試合の詳細ページで出す
+$mapTeamShortNames = [];
+foreach (load_teams() as $teamId => $team) {
+  $mapTeamShortNames[$teamId] = team_short_name($team);
   $away = match_team_logo($teamId, 1);
   $mapTeamLogos[$teamId] = array_map(
     static fn(string $logo): string => $logo === '' ? '' : url($logo),
@@ -75,6 +78,11 @@ foreach (array_keys(load_teams()) as $teamId) {
 }
 $mapTeamLogosJson = json_encode(
   $mapTeamLogos,
+  JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES
+    | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT
+);
+$mapTeamShortNamesJson = json_encode(
+  $mapTeamShortNames,
   JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES
     | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT
 );
@@ -111,6 +119,8 @@ $mapTeamLogosJson = json_encode(
 <body>
 
   <main class="l-main">
+    <!-- 地図の画面は見出しを画面に出さないデザインなので、読み上げ用にだけ置く（ページの見出しが無いと、何の画面か伝わらない） -->
+    <h1 class="visually-hidden">観戦マップ</h1>
     <div class="sports-map">
       <!--
         スマホ：普段は、メニューバーの上に「試合一覧を開く」の帯だけが見える。押すと一覧が開く。
@@ -126,7 +136,7 @@ $mapTeamLogosJson = json_encode(
             <span class="sheet-handle__count" id="handle-count"></span>
           </span>
         </button>
-        <a href="../../index.php" class="logo">SPOTIVE</a>
+        <a href="<?= h(url('index.php')) ?>" class="logo">SPOTIVE</a>
         <!-- 普段は隠れている。地図左上の「絞り込み」ボタンで開閉する -->
         <div class="sports-map__filters">
           <div class="sheet__head">
@@ -178,13 +188,15 @@ $mapTeamLogosJson = json_encode(
               </label>
 
               <label>
-                チケット価格（目安）
+                チケット価格の上限（目安）
+                <!-- 「3,000円以内で観たい」に答えられるよう、上限で選ぶ（検索画面の価格と同じ考え方） -->
                 <select name="price">
                   <option value="all">指定なし</option>
-                  <option value="u2000">〜2,000円</option>
-                  <option value="2to4">2,000〜4,000円</option>
-                  <option value="4to6">4,000〜6,000円</option>
-                  <option value="o6">6,000円以上</option>
+                  <option value="1000">1,000円まで</option>
+                  <option value="2000">2,000円まで</option>
+                  <option value="3000">3,000円まで</option>
+                  <option value="5000">5,000円まで</option>
+                  <option value="10000">10,000円まで</option>
                 </select>
               </label>
 
@@ -256,7 +268,9 @@ $mapTeamLogosJson = json_encode(
           <div class="match-sheet__body" id="match-sheet-body"></div>
         </section>
 
-        <div id="status" class="status" hidden></div>
+        <div id="status" class="status" role="status" hidden></div>
+        <!-- 絞り込んだ件数を読み上げで伝える。スマホでは一覧がたたまれていて件数が見えないので、一覧の外に置く -->
+        <p class="visually-hidden" id="result-live" role="status"></p>
       </section>
 
       <!--
@@ -279,6 +293,11 @@ $mapTeamLogosJson = json_encode(
   <!-- チームのロゴ。js/pages/map.js が一覧のカードの背景に使う -->
   <script type="application/json" id="map-team-logos">
     <?= $mapTeamLogosJson ?>
+  </script>
+
+  <!-- チームの略称。js/pages/map.js が一覧のカードとピンの詳細に使う -->
+  <script type="application/json" id="map-team-short-names">
+    <?= $mapTeamShortNamesJson ?>
   </script>
 
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>

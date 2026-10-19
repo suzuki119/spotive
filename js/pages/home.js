@@ -201,8 +201,9 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function showStatus(text) {
-    status.textContent = text;
+    // 先に見せてから文字を入れる（隠れている間に入れると、読み上げられないことがある）
     status.hidden = text === "";
+    status.textContent = text;
   }
 
   function renderNow() {

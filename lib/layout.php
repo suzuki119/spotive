@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 require_once __DIR__ . '/support.php';
 require_once __DIR__ . '/auth.php';
+require_once __DIR__ . '/guest.php';
 
 /** 申請・大会の状態 => 画面に出す日本語 */
 const STATUS_LABELS = [
@@ -119,6 +120,10 @@ function page_header(string $title, string $heading = ''): void
         <?php endif; ?>
       </nav>
     </header>
+
+    <?php if (is_guest($user)) : ?>
+      <?php require __DIR__ . '/../pages/guest-bar.php'; ?>
+    <?php endif; ?>
 
     <main class="l-main">
       <div class="form-page">
