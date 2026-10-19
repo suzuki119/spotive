@@ -276,7 +276,8 @@ document.addEventListener("DOMContentLoaded", () => {
   // -----------------------------------------------------------------
   let games = [];
   let visible = [];
-  const teamLogos = readEmbeddedTeamLogos();
+  const teamLogos = readEmbeddedObject("map-team-logos");             // 読めなくても、ロゴが出ないだけでよい
+  const teamShortNames = readEmbeddedObject("map-team-short-names");   // 読めなくても、フルネームで出るだけでよい
   let userLatLng = null;
   let userMarker = null;
 
@@ -438,7 +439,7 @@ document.addEventListener("DOMContentLoaded", () => {
               <li class="${g.id === focusId ? "is-focus" : ""}">
                 <a class="pop-game" href="${esc(g.detailUrl)}" data-detail="${esc(g.detailUrl)}" aria-expanded="false">
                   <span class="tag" style="--c:${s.color}">${s.icon} ${esc(g.roundText || leagueText(g))}</span>
-                  <strong>${esc(g.title)}</strong>
+                  <strong>${esc((teamShortTitle(g) || [g.title]).join(" vs "))}</strong>
                   <span class="pop-meta">${fmtStart(g)} ・ ${priceText(g)}</span>
                 </a>
                 ${ticket}
@@ -527,8 +528,8 @@ document.addEventListener("DOMContentLoaded", () => {
     if (f.place === "indoor" && !g.v.indoor) return false;
     if (f.place === "outdoor" && g.v.indoor) return false;
     if (f.keyword) {
-      // チーム名（試合名）・会場名・リーグと節・競技名・主催者で探す
-      const haystack = [g.title, g.v.name, g.v.pref, g.roundText, g.sportName, g.league]
+      // チーム名（試合名と略称）・会場名・リーグと節・競技名・主催者で探す
+      const haystack = [g.title, ...(teamShortTitle(g) || []), g.v.name, g.v.pref, g.roundText, g.sportName, g.league]
         .filter(Boolean).join(" ").toLowerCase();
       if (!haystack.includes(f.keyword)) return false;
     }
@@ -611,11 +612,21 @@ document.addEventListener("DOMContentLoaded", () => {
     return logos.length === 2 && logos.every(Boolean) ? logos : null;
   }
 
-  /** 対戦する 2 チームの名前。試合名「A vs B」から取る。対戦でない大会は null */
+  /** 対戦する 2 チームの名前（フルネーム）。試合名「A vs B」から取る。対戦でない大会は null */
   function teamNames(g) {
     if ((g.teamIds || []).length < 2) return null;
     const names = String(g.title).split(" vs ");
     return names.length === 2 ? names : null;
+  }
+
+  /**
+   * カードやピンの詳細に出す 2 チームの名前（略称。data/teams.json の shortName）。
+   * 略称が無いチームはフルネーム。対戦でない大会は null
+   */
+  function teamShortTitle(g) {
+    const names = teamNames(g);
+    if (!names) return null;
+    return names.map((name, i) => teamShortNames[g.teamIds[i]] || name);
   }
 
   /**
@@ -631,7 +642,8 @@ document.addEventListener("DOMContentLoaded", () => {
   function cardHtml(g) {
     const s = sportOf(g.sport);
     const km = distanceKm(g);
-    const names = teamNames(g);
+    const names = teamNames(g);          // ロゴの alt（読み上げ）はフルネーム
+    const shortNames = teamShortTitle(g);
     const logos = teamLogoSrcs(g);
 
     // ロゴが無い（主催者の大会など）ときは、競技のアイコンを丸に入れて代わりにする
@@ -640,8 +652,8 @@ document.addEventListener("DOMContentLoaded", () => {
          <span class="card-emblem-vs" aria-hidden="true">vs</span>
          <img class="card-emblem" src="${esc(logos[1])}" alt="${esc(names[1])}" width="44" height="44" loading="lazy">`
       : `<span class="card-emblem card-emblem--icon" aria-hidden="true">${s.icon}</span>`;
-    const title = names
-      ? `${esc(names[0])}<span class="card-vs">vs</span>${esc(names[1])}`
+    const title = shortNames
+      ? `${esc(shortNames[0])}<span class="card-vs">vs</span>${esc(shortNames[1])}`
       : esc(g.title);
     // ロゴの下に出す競技名。「その他」は、入力された競技名のほうが分かりやすい
     const sportName = g.sport === "other" && g.sportName ? g.sportName : s.label;
@@ -1344,15 +1356,19 @@ document.addEventListener("DOMContentLoaded", () => {
   // -----------------------------------------------------------------
   // 読み込み
   // -----------------------------------------------------------------
-  /** map.php が埋め込んだチームのロゴ（チーム ID => [ホーム側, アウェイ側]） */
-  function readEmbeddedTeamLogos() {
-    const el = document.getElementById("map-team-logos");
+  /**
+   * map.php が埋め込んだチームの情報（チーム ID => 値）を読む。
+   *   #map-team-logos       … [ホーム側, アウェイ側, 代わりの 1 枚]
+   *   #map-team-short-names … 略称
+   */
+  function readEmbeddedObject(id) {
+    const el = document.getElementById(id);
     if (!el) return {};
     try {
       const parsed = JSON.parse(el.textContent);
       return parsed && typeof parsed === "object" ? parsed : {};
     } catch {
-      return {}; // 読めなくても、ロゴが出ないだけでよい
+      return {};
     }
   }
 

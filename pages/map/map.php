@@ -66,7 +66,10 @@ $mapTournamentsJson = json_encode(
 // チーム ID => [ホーム側で出すとき, アウェイ側で出すとき, 相手と同じロゴになったときの代わり]
 // （まだロゴが無いチームは仮のロゴ。仮のロゴは両チームで同じになることがあるので、代わりも渡す）
 $mapTeamLogos = [];
-foreach (array_keys(load_teams()) as $teamId) {
+// 一覧のカードとピンの詳細に出すチームの略称（チーム ID => 略称）。フルネームは試合の詳細ページで出す
+$mapTeamShortNames = [];
+foreach (load_teams() as $teamId => $team) {
+  $mapTeamShortNames[$teamId] = team_short_name($team);
   $away = match_team_logo($teamId, 1);
   $mapTeamLogos[$teamId] = array_map(
     static fn(string $logo): string => $logo === '' ? '' : url($logo),
@@ -75,6 +78,11 @@ foreach (array_keys(load_teams()) as $teamId) {
 }
 $mapTeamLogosJson = json_encode(
   $mapTeamLogos,
+  JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES
+    | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT
+);
+$mapTeamShortNamesJson = json_encode(
+  $mapTeamShortNames,
   JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES
     | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT
 );
@@ -285,6 +293,11 @@ $mapTeamLogosJson = json_encode(
   <!-- チームのロゴ。js/pages/map.js が一覧のカードの背景に使う -->
   <script type="application/json" id="map-team-logos">
     <?= $mapTeamLogosJson ?>
+  </script>
+
+  <!-- チームの略称。js/pages/map.js が一覧のカードとピンの詳細に使う -->
+  <script type="application/json" id="map-team-short-names">
+    <?= $mapTeamShortNamesJson ?>
   </script>
 
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>

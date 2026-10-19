@@ -90,6 +90,18 @@ function load_data_json(string $name): array
   return array_values(array_filter($data, 'is_array'));
 }
 
+/**
+ * チームの略称（中日・阪神 など）。ホーム・一覧・地図のカードなど、狭いところに出すときに使う。
+ * 試合の詳細・お気に入りの登録など、どのチームかをはっきり見せたい画面ではフルネーム（name）を使う。
+ * 略称は data/teams.json の shortName に書く（決まった規則では作れないので、人が書く）。
+ * 書かれていないチームは、略称を作らずにフルネームを出す（先頭の数文字だと「読売」のように一般的な略称と違うことがある）
+ */
+function team_short_name(array $team): string
+{
+  $short = trim((string) ($team['shortName'] ?? ''));
+  return $short !== '' ? $short : (string) ($team['name'] ?? '');
+}
+
 /** @return array<string,array<string,mixed>> チーム ID => チーム */
 function load_teams(): array
 {
@@ -144,10 +156,10 @@ function match_next_placeholder(string $logo): string
 }
 
 /**
- * 対戦する 2 チームの名前とロゴ。2 チームそろわない試合（主催者の大会など）は空配列。
+ * 対戦する 2 チームの名前（フルネームと略称）とロゴ。2 チームそろわない試合（主催者の大会など）は空配列。
  *
  * @param list<string> $teamIds
- * @return list<array{name:string,logo:string}>
+ * @return list<array{name:string,shortName:string,logo:string}>
  */
 function match_teams(array $teamIds): array
 {
@@ -158,7 +170,11 @@ function match_teams(array $teamIds): array
     if (!isset($teams[$id])) {
       return [];
     }
-    $list[] = ['name' => (string) ($teams[$id]['name'] ?? ''), 'logo' => match_team_logo($id, $side)];
+    $list[] = [
+      'name'      => (string) ($teams[$id]['name'] ?? ''),
+      'shortName' => team_short_name($teams[$id]),
+      'logo'      => match_team_logo($id, $side),
+    ];
   }
   if (count($list) !== 2) {
     return [];

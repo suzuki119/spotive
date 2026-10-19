@@ -7,6 +7,8 @@
  *   左 … 両チームのロゴ（vs）と、その下に競技名
  *   右 … リーグと節（B.PREMIER 第1節 GAME2）、対戦カード、日付｜開始時間、会場、料金
  *
+ * チーム名は略称（data/teams.json の shortName）で出す。フルネームは試合の詳細で出し、ここでは読み上げ（alt・aria-label）に使う。
+ *
  * 読み込む前に $match（lib/match.php の match_row() の形）を用意しておくこと。
  * data-team-ids は js/common/favorite-store.js がお気に入りの判定に使う。
  */
@@ -51,7 +53,7 @@ $sport = match_sport_key($match['sport']);
             <img class="match-card__emblem" src="<?= h(url($team['logo'])) ?>" alt="<?= h($team['name']) ?>" width="48" height="48" loading="lazy" />
           <?php else : ?>
             <span class="match-card__emblem match-card__emblem--<?= h($sport) ?>" role="img" aria-label="<?= h($team['name']) ?>">
-              <?= h(mb_substr($team['name'], 0, 2)) ?>
+              <?= h($team['shortName']) ?>
             </span>
           <?php endif; ?>
         <?php endforeach; ?>
@@ -75,7 +77,7 @@ $sport = match_sport_key($match['sport']);
         <a class="match-card__link" href="<?= h(url($match['detailPath'])) ?>">
       <?php endif; ?>
       <?php if ($teams !== []) : ?>
-        <?= h($teams[0]['name']) ?><span class="match-card__vs">vs</span><?= h($teams[1]['name']) ?>
+        <?= h($teams[0]['shortName']) ?><span class="match-card__vs">vs</span><?= h($teams[1]['shortName']) ?>
       <?php else : ?>
         <?= h($match['title']) ?>
       <?php endif; ?>
