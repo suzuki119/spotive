@@ -445,6 +445,55 @@ $mypage-shadow: 0 2px 12px rgba($color-secondary, 0.1);
   }
 }
 
+// ---- 主催者ページへの入口（主催者として登録している人だけ） ----
+.mypage-organizer {
+  position: relative;
+  display: grid;
+  gap: 4px;
+  margin-top: 32px;
+  padding: 24px 64px 24px 24px;
+  border-radius: $radius-lg;
+  background: $color-primary;
+  box-shadow: $mypage-shadow;
+  color: $color-bg;
+  text-decoration: none;
+
+  // 右端の矢印
+  &::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    right: 24px;
+    width: 12px;
+    height: 12px;
+    border-top: 3px solid $color-bg;
+    border-right: 3px solid $color-bg;
+    transform: translateY(-50%) rotate(45deg);
+  }
+
+  &:hover {
+    background: $color-primary-dark;
+  }
+
+  &__label {
+    font-family: $font-heading;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+  }
+
+  &__title {
+    font-size: 22px;
+    font-weight: 700;
+  }
+
+  &__text {
+    font-size: 13px;
+    font-weight: 400;
+    line-height: 1.6;
+  }
+}
+
 // ---- SPOTIVE PLUS+ ----
 .mypage-plus {
   margin-top: 48px;

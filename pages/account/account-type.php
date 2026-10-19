@@ -8,7 +8,6 @@
 declare(strict_types=1);
 
 require_once __DIR__ . '/../../config/db.php';
-
 // ここでデータを取得する（HTML は書かない）
 
 ?>
@@ -64,6 +63,12 @@ require_once __DIR__ . '/../../config/db.php';
           <p>大会・イベントを主催する方</p>
           <a href="./register/organizer-register.php" class="account-type-organizer btn">登録</a>
         </article>
+
+        <!-- アカウントを作らずに使う（browse.php）。ログイン画面と同じボタン -->
+        <div class="signin-guest">
+          <p class="signin-guest-text">アカウントを作らずに使いたい方</p>
+          <a href="browse.php" class="btn signin-guest-btn">ログインせずに使う</a>
+        </div>
       </div>
 
       <hr>

@@ -7,6 +7,7 @@
  *   ログインしている                         … ホーム（pages/home/home.php）
  *   ログインしていないが、この端末で一度
  *   ログインしたことがある（lib/auth.php の印）… ログイン画面（pages/account/signin.php）
+ *   「ログインせずに使う」を選んだことがある … ホーム（pages/account/browse.php の印）
  *   初めての人                               … このスタート画面。「はじめる」でアカウント作成へ
  */
 
@@ -31,6 +32,10 @@ if (is_returning_visitor()) {
   redirect('pages/account/signin.php');
 }
 
+if (is_browsing_visitor()) {
+  redirect('pages/home/home.php');
+}
+
 ?>
 <!DOCTYPE html>
 <html lang="ja">
@@ -53,6 +58,9 @@ if (is_returning_visitor()) {
     <!-- 別の端末で登録した人など、印が無くてもアカウントを持っている人のために -->
     <p class="start-signin">
       アカウントをお持ちの方は<a href="./pages/account/signin.php">ログイン</a>
+    </p>
+    <p class="start-signin">
+      <a href="./pages/account/browse.php">ログインせずに使う</a>
     </p>
   </section>
 

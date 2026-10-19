@@ -469,6 +469,11 @@ input[type=radio] {
   transform: translateY(calc(100% - 168px));
   transition: transform 0.25s ease;
 }
+@media (prefers-reduced-motion: reduce) {
+  .sports-map__side {
+    transition-duration: 0.01s;
+  }
+}
 .sports-map__side.is-expanded {
   overflow-y: auto;
   transform: translateY(0);
@@ -689,6 +694,11 @@ input[type=radio] {
     box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.2);
   }
 }
+@media (min-width: 768px) and (prefers-reduced-motion: reduce) {
+  .sports-map__filters {
+    transition-duration: 0.01s;
+  }
+}
 
 @media (min-width: 768px) {
   .sports-map__side.is-open .sports-map__filters {
@@ -712,6 +722,11 @@ input[type=radio] {
   padding-bottom: 16px;
   border-radius: 16px 16px 0 0;
   box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.2);
+}
+@media (prefers-reduced-motion: reduce) {
+  .match-sheet {
+    transition-duration: 0.01s;
+  }
 }
 .match-sheet.is-open {
   transform: translateY(0);
@@ -754,6 +769,11 @@ input[type=radio] {
   border-radius: 16px 16px 0 0;
   box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.2);
 }
+@media (prefers-reduced-motion: reduce) {
+  .detail-sheet {
+    transition-duration: 0.01s;
+  }
+}
 .detail-sheet.is-open {
   transform: translateY(0);
   visibility: visible;
@@ -791,6 +811,13 @@ input[type=radio] {
     grid-template-columns: 360px 1fr 0;
     transition: grid-template-columns 0.25s ease;
   }
+}
+@media (min-width: 1024px) and (prefers-reduced-motion: reduce) {
+  .sports-map {
+    transition-duration: 0.01s;
+  }
+}
+@media (min-width: 1024px) {
   .sports-map.has-detail {
     grid-template-columns: 360px 1fr 360px;
   }
@@ -1914,6 +1941,12 @@ input[type=radio] {
   -webkit-animation: calendar-sheet-in 0.2s ease;
           animation: calendar-sheet-in 0.2s ease;
 }
+@media (prefers-reduced-motion: reduce) {
+  .calendar-sheet__panel {
+    -webkit-animation: none;
+            animation: none;
+  }
+}
 .calendar-sheet__handle {
   display: block;
   width: 48px;
@@ -2975,6 +3008,17 @@ a.nearby-links__item:hover .nearby-links__image {
 .menu-bar__link:hover .menu-bar__label {
   text-decoration: underline;
 }
+.menu-bar__link:focus-visible {
+  outline: 2px solid #0B63E5;
+  outline-offset: 2px;
+  border-radius: 8px;
+}
+.menu-bar__link.is-current {
+  color: #0B63E5;
+}
+.menu-bar__link.is-current .menu-bar__label {
+  font-weight: 700;
+}
 .menu-bar__link--disabled {
   opacity: 0.4;
   cursor: not-allowed;
@@ -3068,6 +3112,17 @@ a.nearby-links__item:hover .nearby-links__image {
           animation: bar-close 0.45s ease forwards;
 }
 
+@media (prefers-reduced-motion: reduce) {
+  .menu-bar__sub {
+    transition-duration: 0.01s;
+  }
+  .menu-bar__sub.is-open .menu-bar__item,
+.menu-bar:has(.menu-bar__sub.is-open) .menu-bar__nav,
+.menu-bar__nav.is-closing {
+    -webkit-animation-duration: 0.01s;
+            animation-duration: 0.01s;
+  }
+}
 .app-header {
   display: flex;
   align-items: center;
@@ -3116,6 +3171,40 @@ a.nearby-links__item:hover .nearby-links__image {
 .app-header__icon:has(.app-header__label) img {
   width: 28px;
   height: 24px;
+}
+
+.guest-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px 16px;
+  max-width: 1200px;
+  margin: 0 auto 16px;
+  padding: 12px 16px;
+  background: #E7F0FE;
+  color: #0F172A;
+  font-size: 13px;
+  font-weight: 400;
+  line-height: 1.6;
+}
+@media (min-width: 768px) {
+  .guest-bar {
+    border-radius: 8px;
+    padding: 12px 24px;
+  }
+}
+.guest-bar__text {
+  margin: 0;
+}
+.guest-bar__link {
+  color: #0B63E5;
+  font-weight: 700;
+  text-decoration: underline;
+  white-space: nowrap;
+}
+.guest-bar__link:hover {
+  color: #0847A6;
 }
 
 .home {
@@ -3531,7 +3620,7 @@ img.team-logo {
   padding: 12px 16px;
   background: #FFFFFF;
   border-top: 2px dashed #E5E7EB;
-  border-radius: 0 0 16px 16px;
+  border-radius: 0 16px 16px 16px;
 }
 .now-match__venue {
   display: flex;
@@ -5335,6 +5424,18 @@ body {
   background-color: #fafafa;
 }
 
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
 .inner {
   width: 90%;
   max-width: 600px;
@@ -5350,11 +5451,15 @@ body {
   margin: 30px auto 0;
   border-radius: 50px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-  color: rgba(0, 0, 0, 0.5);
+  color: #6B7280;
   transition: box-shadow 0.3s;
 }
 .btn:hover {
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+}
+.btn:focus-visible {
+  outline: 2px solid #0B63E5;
+  outline-offset: 2px;
 }
 
 .input {
@@ -5367,10 +5472,14 @@ body {
   padding-left: 20px;
 }
 .input::-moz-placeholder {
-  color: rgba(0, 0, 0, 0.2);
+  color: #6B7280;
 }
 .input::placeholder {
-  color: rgba(0, 0, 0, 0.2);
+  color: #6B7280;
+}
+.input:focus-visible {
+  outline: 2px solid #0B63E5;
+  outline-offset: 2px;
 }
 
 .back {
@@ -5481,6 +5590,12 @@ body {
   text-align: center;
   color: rgba(0, 0, 0, 0.8);
 }
+.account-type label {
+  display: block;
+  margin-top: 24px;
+  text-align: center;
+  color: rgba(0, 0, 0, 0.8);
+}
 .account-type article {
   margin-top: 40px;
 }
@@ -5513,7 +5628,7 @@ body {
   margin: 30px auto 0;
   border-radius: 50px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-  color: rgba(0, 0, 0, 0.5);
+  color: #6B7280;
   transition: box-shadow 0.3s;
 }
 .account-type-signin-btn:hover {
@@ -5527,6 +5642,12 @@ body {
   width: 100%;
   max-width: 400px;
   margin: 30px auto 0;
+}
+.register-form-hint {
+  margin-top: 4px;
+  font-size: 12px;
+  font-weight: 400;
+  color: #6B7280;
 }
 
 .verification {

@@ -20,6 +20,7 @@
 declare(strict_types=1);
 
 require_once __DIR__ . '/../lib/auth.php';
+require_once __DIR__ . '/../lib/guest.php';
 
 /** @var array{title:string,noticeIcon?:string,noticeLabel?:string,back?:string,close?:string} $appHeader */
 $appHeader += ['title' => 'SPOTIVE', 'noticeIcon' => 'notice.svg', 'noticeLabel' => '', 'back' => '', 'close' => ''];
@@ -67,4 +68,7 @@ $appHeaderTitleLang = preg_match('/\A[\x20-\x7E]+\z/', $appHeader['title']) === 
   </a>
   <?php endif; ?>
 </header>
+<?php if (is_guest($appHeaderUser)) : ?>
+  <?php require __DIR__ . '/guest-bar.php'; ?>
+<?php endif; ?>
 <script src="<?= h(asset('js/common/header.js')) ?>"></script>

@@ -27,8 +27,10 @@ return [
   // パスワードでは入らない（lib/guest.php がサーバー側でログインさせる）。
   // 無ければ最初に押されたときに作る。電話番号は持たない（db/migrate-phone-nullable.sql が必要）。
   // 本番で使わないときは enabled を false にする。
+  // いまは「ログインせずに使う」（pages/account/browse.php）に置き換えたので止めている。
+  // 発表などで共通のアカウントを見せたいときは true に戻す（ボタンは画面から外してある）。
   'guest' => [
-    'enabled'  => true,
+    'enabled'  => false,
     'email'    => 'guest@gmal.com',
     'nickname' => 'ゲスト',
   ],
