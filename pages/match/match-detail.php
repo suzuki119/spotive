@@ -22,11 +22,8 @@ declare(strict_types=1);
 require_once __DIR__ . '/../../lib/match.php';
 require_once __DIR__ . '/../../lib/hotel.php';
 require_once __DIR__ . '/../../lib/favorite.php';
-<<<<<<< HEAD
 require_once __DIR__ . '/../../lib/travel.php';
-=======
 require_once __DIR__ . '/../../lib/weather.php';
->>>>>>> origin/main
 
 /** 試合の写真が無いときに上に出す写真 */
 const DETAIL_DEFAULT_IMAGE = 'images/sample/sample-match.png';
@@ -230,7 +227,6 @@ if ($game !== null && $game['lat'] !== null && $game['lng'] !== null) {
 }
 $fromMatchId = $type === 'match' ? $rawId : '';
 
-<<<<<<< HEAD
 // 「会場周辺のホテルを探す」。会場の座標を渡し、地図でこの会場を開いた状態からホテルを出す
 // （座標が無いと全国の地図から会場を探し直すことになる）
 $hotelSearchPath = 'pages/map/map.php?nearby=hotel';
@@ -245,7 +241,9 @@ if ($game !== null && $type === 'match' && !$isOver && count($game['team_ids']) 
   $awayTeamId = $game['team_ids'][1];
   if (travel_find_trip($awayTeamId, $rawId) !== null) {
     $travelUrl = 'pages/travel/travel.php?' . http_build_query(['team' => $awayTeamId, 'game' => $rawId]);
-=======
+  }
+}
+
 // 試合の日の天気（Open-Meteo）。終わった試合と、位置の分からない会場には出さない
 //   ok … 予報あり ／ later … まだ予報が出ていない ／ error … 取れなかった ／ none … 出さない
 $weather       = null;
@@ -261,7 +259,6 @@ if ($game !== null && $startsAt !== null && !$isOver && $game['lat'] !== null &&
     } catch (InvalidArgumentException | RuntimeException $e) {
       $weatherStatus = 'error';
     }
->>>>>>> origin/main
   }
 }
 
