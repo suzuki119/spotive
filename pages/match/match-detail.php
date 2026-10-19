@@ -8,7 +8,7 @@
  *   type=match       … data/matches.json の仮データ（id は match-001 の形）
  *   type=tournament  … 主催者が掲載した大会。v_public_tournaments から取る（id は数字）
  *
- * 周辺施設・天気は主要機能 5・6（後回し）なので、まだ出さない。
+ * 天気は Open-Meteo の予報（lib/weather.php。試作）。予報が出るのは試合の約 2 週間前から。
  * ホテルだけは、画面確認用の仮データ（lib/hotel.php）で「周辺のホテル」を出している。
  *
  * デザインにあってデータに無いもの（リーグ名・節・戦績・最寄り駅・試合の写真）は、
@@ -20,6 +20,7 @@ declare(strict_types=1);
 require_once __DIR__ . '/../../lib/match.php';
 require_once __DIR__ . '/../../lib/hotel.php';
 require_once __DIR__ . '/../../lib/favorite.php';
+require_once __DIR__ . '/../../lib/weather.php';
 
 /** 試合の写真が無いときに上に出す写真 */
 const DETAIL_DEFAULT_IMAGE = 'images/sample/sample-match.png';
@@ -223,6 +224,24 @@ if ($game !== null && $game['lat'] !== null && $game['lng'] !== null) {
 }
 $fromMatchId = $type === 'match' ? $rawId : '';
 
+// 試合の日の天気（Open-Meteo）。終わった試合と、位置の分からない会場には出さない
+//   ok … 予報あり ／ later … まだ予報が出ていない ／ error … 取れなかった ／ none … 出さない
+$weather       = null;
+$weatherStatus = 'none';
+if ($game !== null && $startsAt !== null && !$isOver && $game['lat'] !== null && $game['lng'] !== null) {
+  if (!weather_in_range($startsAt)) {
+    $weatherStatus = 'later';
+  } else {
+    try {
+      $weatherHour   = $game['time_tbd'] ? null : (int) $startsAt->format('G');
+      $weather       = weather_forecast((float) $game['lat'], (float) $game['lng'], $startsAt, $weatherHour);
+      $weatherStatus = 'ok';
+    } catch (InvalidArgumentException | RuntimeException $e) {
+      $weatherStatus = 'error';
+    }
+  }
+}
+
 // デザインの「10/14 ｜ 13:00〜」と、対戦チームのロゴ
 $shortDate = $startsAt === null ? '日程未定' : $startsAt->format('n/j');
 $timeText  = $startsAt === null || $game['time_tbd'] ? '時刻未定' : $startsAt->format('H:i') . '〜';
@@ -390,6 +409,47 @@ $embed = ($_GET['embed'] ?? '') === '1';
               </p>
             <?php endif; ?>
           </section>
+
+          <!-- 試合の日の天気（Open-Meteo。試作） -->
+          <?php if ($weatherStatus !== 'none') : ?>
+            <section class="match-detail__section">
+              <h2 class="match-detail__heading">試合の日の天気</h2>
+              <?php if ($weatherStatus === 'ok') : ?>
+                <?php $day = weather_code_info($weather['code']); ?>
+                <div class="match-weather">
+                  <span class="match-weather__icon" aria-hidden="true"><?= h($day['icon']) ?></span>
+                  <div class="match-weather__body">
+                    <p class="match-weather__label"><?= h($day['label']) ?></p>
+                    <p class="match-weather__temp">
+                      <span class="match-weather__max"><?= (int) round($weather['max']) ?>℃</span>
+                      <span class="match-weather__min"><?= (int) round($weather['min']) ?>℃</span>
+                    </p>
+                  </div>
+                  <p class="match-weather__rain">
+                    <span class="match-weather__rain-label">降水確率</span>
+                    <span class="match-weather__rain-value"><?= (int) $weather['rain'] ?>%</span>
+                  </p>
+                </div>
+                <?php if ($weather['at'] !== null) : ?>
+                  <?php $at = weather_code_info($weather['at']['code']); ?>
+                  <p class="match-weather__kickoff">
+                    試合開始（<?= (int) $weather['at']['hour'] ?>時）ごろ：<?= h($at['label']) ?>・<?= (int) round($weather['at']['temp']) ?>℃・降水確率 <?= (int) $weather['at']['rain'] ?>%
+                  </p>
+                <?php endif; ?>
+                <?php if ($game['is_indoor'] === true) : ?>
+                  <p class="match-detail__note">屋内の会場です。行き帰りの服装の参考にしてください。</p>
+                <?php endif; ?>
+                <p class="match-detail__note">
+                  予報は変わることがあります。
+                  <a class="match-weather__credit" href="https://open-meteo.com/" target="_blank" rel="noopener">Weather data by Open-Meteo.com</a>
+                </p>
+              <?php elseif ($weatherStatus === 'later') : ?>
+                <p class="match-detail__note">天気予報は、試合の約 2 週間前から表示します。</p>
+              <?php else : ?>
+                <p class="match-detail__note">天気予報を読み込めませんでした。時間をおいてお試しください。</p>
+              <?php endif; ?>
+            </section>
+          <?php endif; ?>
 
           <!-- アクセス情報 -->
           <section class="match-detail__section">
