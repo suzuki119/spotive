@@ -8,8 +8,13 @@
  * guest_login() を呼び、パスワード無しでゲストのアカウントにログインさせる。
  * パスワードを画面に埋めて自動入力する形にしないのは、ページのソースから誰でも読めてしまうため。
  *
+ * ログインせずに使っている人がマイページ・主催者ページを開いたときは、guest_auto_login() で
+ * 自動でゲストにログインさせる（ログインの画面は出さない）。
+ *
  * ゲストは全員で 1 つのアカウントを使うので、退会・プロフィール変更・主催者登録などはさせない
  * （guest_forbid() を各画面の先頭で呼ぶ）。お気に入りなども、ゲスト全員で共有になる。
+ * localhost で試すときは、config/app.local.php で guest.allow_register を true にすると、
+ * 退会以外はゲストでもできるようになる。
  * 設定は config/app.php の guest。
  */
 
@@ -81,13 +86,44 @@ function guest_login(): void
   audit_log((int) $user['id'], 'guest.login', 'user', (int) $user['id']);
 }
 
+/** ゲストにも登録・変更を許すか（localhost で試すとき。config/app.local.php で true にする） */
+function guest_can_register(): bool
+{
+  return (bool) config('guest.allow_register', false);
+}
+
+/**
+ * ログインが必要な画面の先頭（require_login() などより前）で呼ぶ。
+ * ログインしていなければゲストにログインさせて、同じ画面を開き直す。
+ * ゲストを受け付けていないときや失敗したときは何もしない（そのあとの require_login() がログイン画面へ送る）。
+ */
+function guest_auto_login(): void
+{
+  // 送信（POST）のときは勝手にログインさせない。開いたとき（GET）だけ
+  if (is_post() || !guest_enabled() || current_user() !== null) {
+    return;
+  }
+
+  try {
+    guest_login();
+  } catch (AppError $e) {
+    return;
+  } catch (PDOException $e) {
+    error_log('[SPOTIVE] DB error: ' . $e->getMessage());
+    return;
+  }
+  // current_user() は 1 回目の結果を覚えているので、開き直してログイン後の状態で表示する
+  redirect(current_url());
+}
+
 /**
  * ゲストには使わせない画面の先頭で呼ぶ。ゲストなら案内を出して $backPath へ戻す。
  * $backPath はアプリのルートからのパス（例：'pages/setting/setting.php'）。
+ * $allowLocal が true の画面は、guest_can_register() のとき（localhost で試すとき）だけゲストにも使わせる。
  */
-function guest_forbid(array $user, string $message, string $backPath = 'pages/setting/setting.php'): void
+function guest_forbid(array $user, string $message, string $backPath = 'pages/setting/setting.php', bool $allowLocal = false): void
 {
-  if (!is_guest($user)) {
+  if (!is_guest($user) || ($allowLocal && guest_can_register())) {
     return;
   }
   flash($message . 'アカウントを作成するとご利用いただけます。', 'error');

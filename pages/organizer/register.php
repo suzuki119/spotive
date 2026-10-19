@@ -12,9 +12,10 @@ require_once __DIR__ . '/../../lib/organizer.php';
 require_once __DIR__ . '/../../lib/guest.php';
 require_once __DIR__ . '/../../lib/layout.php';
 
+guest_auto_login();
 $user   = require_login();
-// ゲスト（お試し用の共通アカウント）には使わせない
-guest_forbid($user, 'ゲストでは主催者として登録できません。');
+// ゲスト（お試し用の共通アカウント）には使わせない（localhost で試すときは使える）
+guest_forbid($user, 'ゲストでは主催者として登録できません。', 'pages/setting/setting.php', true);
 $errors = [];
 $error  = null;
 

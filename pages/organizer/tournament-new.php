@@ -13,9 +13,10 @@ require_once __DIR__ . '/../../lib/tournament.php';
 require_once __DIR__ . '/../../lib/guest.php';
 require_once __DIR__ . '/../../lib/layout.php';
 
+guest_auto_login();
 $user = require_action_level('create_tournament', LEVEL_USER);
-// ゲスト（お試し用の共通アカウント）には使わせない
-guest_forbid($user, 'ゲストでは大会を掲載できません。');
+// ゲスト（お試し用の共通アカウント）には使わせない（localhost で試すときは使える）
+guest_forbid($user, 'ゲストでは大会を掲載できません。', 'pages/organizer/dashboard.php', true);
 
 $id     = (int) ($_GET['id'] ?? $_POST['id'] ?? 0);
 

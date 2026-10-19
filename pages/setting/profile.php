@@ -17,7 +17,7 @@ require_once __DIR__ . '/../../lib/layout.php';
 
 $user = require_login();
 // ゲスト（お試し用の共通アカウント）には使わせない
-guest_forbid($user, 'ゲストのプロフィールは変更できません。');
+guest_forbid($user, 'ゲストのプロフィールは変更できません。', 'pages/setting/setting.php', true);
 
 $errors = [];
 $error  = null;

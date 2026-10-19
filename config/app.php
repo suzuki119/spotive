@@ -23,14 +23,16 @@ return [
     'lock_minutes'       => 15,           // ロックする時間
   ],
 
-  // ゲスト（お試し用の共通アカウント）。ログイン画面の「ゲストとしてログイン」で入れる。
+  // ゲスト（お試し用の共通アカウント）。ログインせずに使っている人がマイページ・主催者ページを開くと、
+  // 自動でこのアカウントにログインさせる（lib/guest.php の guest_auto_login()）。
   // パスワードでは入らない（lib/guest.php がサーバー側でログインさせる）。
   // 無ければ最初に押されたときに作る。電話番号は持たない（db/migrate-phone-nullable.sql が必要）。
   // 本番で使わないときは enabled を false にする。
-  // いまは「ログインせずに使う」（pages/account/browse.php）に置き換えたので止めている。
-  // 発表などで共通のアカウントを見せたいときは true に戻す（ボタンは画面から外してある）。
+  // allow_register を true にすると、ゲストでも主催者の登録・大会の掲載・プロフィールの変更ができる
+  // （退会だけはできない）。ここでは false のままにし、localhost だけ config/app.local.php で true にする。
   'guest' => [
-    'enabled'  => false,
+    'enabled'        => true,
+    'allow_register' => false,
     'email'    => 'guest@gmal.com',
     'nickname' => 'ゲスト',
   ],

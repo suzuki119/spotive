@@ -10,8 +10,11 @@ declare(strict_types=1);
 
 require_once __DIR__ . '/../../lib/tournament.php';
 require_once __DIR__ . '/../../lib/organizer.php';
+require_once __DIR__ . '/../../lib/guest.php';
 require_once __DIR__ . '/../../lib/layout.php';
 
+// ログインせずに使っている人は、ゲストにログインさせてから開く
+guest_auto_login();
 $user   = require_action_level('create_tournament', LEVEL_USER);
 $errors = [];
 $error  = null;

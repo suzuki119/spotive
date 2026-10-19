@@ -33,6 +33,8 @@ function mypage_league(string $sport): string
   return MATCH_SEARCH_TABS[$key] ?? match_sport_label($sport);
 }
 
+// ログインせずに使っている人は、ゲストにログインさせてから開く
+guest_auto_login();
 $user = require_login();
 
 // -------------------------------------------------------------------
@@ -95,9 +97,10 @@ if ((int) $user['trust_level'] >= (int) config('verification.require_level.creat
 }
 
 // 主催者として登録しているか。主催者の申請（取り下げ・却下を除く）か主催者のプロフィールがある人、
-// または大会を登録したことがある人（デモ版は申請しなくても大会を登録できるため）。ゲストは除く
-$isOrganizer = false;
-if (!is_guest($user)) {
+// または大会を登録したことがある人（デモ版は申請しなくても大会を登録できるため）。
+// ゲストは主催者ページを試せるよう、いつも出す
+$isOrganizer = is_guest($user);
+if (!$isOrganizer) {
   try {
     $organizer   = organizer_status((int) $user['id']);
     $application = $organizer['application'];
