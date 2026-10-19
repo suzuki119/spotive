@@ -10,11 +10,17 @@
   margin: 32px auto 0;
   border-radius: $radius-full;
   box-shadow: 0 2px 8px rgba($color-secondary, 0.2);
-  color: rgba($color-secondary, 0.5);
+  color: $color-text-sub; // 背景とのコントラストを 4.5:1 以上にする（以前の半透明の色は足りなかった）
   transition: box-shadow .3s;
 
   &:hover {
     box-shadow: 0 2px 8px rgba($color-secondary, 0.4);
+  }
+
+  // キーボードで選んでいるボタン。リセット CSS で標準の枠が消えるので、ここで描く
+  &:focus-visible {
+    outline: 2px solid $color-primary;
+    outline-offset: 2px;
   }
 }
 

@@ -39,7 +39,14 @@ class AppError extends RuntimeException
 function config(string $path, mixed $default = null): mixed
 {
   static $config = null;
-  $config ??= require __DIR__ . '/../config/app.php';
+  if ($config === null) {
+    $config = require __DIR__ . '/../config/app.php';
+    // 自分の環境だけ変えたい値は config/app.local.php に書く（.gitignore 済み。db.local.php と同じ考え方）
+    $local = __DIR__ . '/../config/app.local.php';
+    if (is_file($local)) {
+      $config = array_replace_recursive($config, (array) require $local);
+    }
+  }
 
   $value = $config;
   foreach (explode('.', $path) as $key) {

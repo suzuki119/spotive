@@ -1,6 +1,9 @@
 # 環境ごとの DB 接続設定（各自の環境で作る。コミットしない）
 config/db.local.php
 
+# 環境ごとのアプリ設定の上書き（例：localhost でゲストに登録を許す。コミットしない）
+config/app.local.php
+
 # Geoapify の API キー（各自で置く。コミットしない）
 config/geoapify.local.php
 
