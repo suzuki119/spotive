@@ -1,0 +1,82 @@
+// スタート画面（index.php）専用のスタイル。
+@use "variables" as *;
+
+.start {
+  background: url(../images/sports/start.png)no-repeat 0 0/130%;
+  color: $color-bg;
+  line-height: 3.5rem;
+
+  &-text {
+    position: absolute;
+    left: 5%;
+    bottom: 27%;
+    animation: text 1s ease-out forwards;
+  }
+
+  @keyframes text {
+    0% {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+
+    100% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  &-title {
+    text-align: left;
+    font-size: 25px;
+    font-weight: bold;
+  }
+
+  &-letter {
+    text-align: left;
+    font-size: 18px;
+    font-weight: bold;
+  }
+
+  &-gradation {
+
+    max-width: 100vw;
+    height: 100vh;
+    background: linear-gradient(to top, $color-start-overlay 0%, rgba($color-bg, 0) 100%);
+
+    // 「はじめる」のボタン（すぐ下の「ログイン」のリンクには効かせない）
+    > a {
+      width: 200px;
+      height: 60px;
+      padding: 0 64px;
+      background-color: $color-bg;
+      color: $color-secondary;
+      border-radius: $radius-full;
+      display: block;
+      position: absolute;
+      bottom: 70px;
+      left: 50%;
+      transform: translateX(-50%);
+      text-align: center;
+      align-self: center;
+
+    }
+  }
+
+  // アカウントをお持ちの方はログイン（「はじめる」の下に小さく）
+  &-signin {
+    position: absolute;
+    bottom: 16px;
+    left: 50%;
+    width: max-content;
+    font-size: 14px;
+    line-height: 1.6;
+    transform: translateX(-50%);
+
+    a {
+      margin-left: 4px;
+      color: $color-bg;
+      font-weight: bold;
+      text-decoration: underline;
+    }
+  }
+}

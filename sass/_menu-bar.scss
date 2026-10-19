@@ -1,4 +1,5 @@
 @use "variables" as *;
+<<<<<<< HEAD
 
 // --- ブレークポイント ---
 $breakpoints: (
@@ -8,6 +9,8 @@ $breakpoints: (
 );
 
 
+=======
+>>>>>>> origin/main
 
 .menu-bar {
   // 画面下に固定
@@ -174,7 +177,7 @@ $breakpoints: (
     gap: 4px;
     padding: 4px 8px;
 
-    color: #333;
+    color: $color-text;
     text-decoration: none;
 
     &:hover .menu-bar__label {

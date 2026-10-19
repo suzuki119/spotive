@@ -1,0 +1,29 @@
+// 共通ヘッダー（pages/header.php）。
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  position: fixed;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  max-width: 400px;
+  padding: 16px 0;
+
+  &-title {
+    font-size: 25px;
+    font-weight: bold;
+  }
+
+  &-account {
+    width: 40px;
+    height: 40px;
+    display: block;
+
+    img {
+      width: 40px;
+      height: 40px;
+    }
+  }
+}

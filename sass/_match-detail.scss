@@ -403,3 +403,78 @@ $detail-line: 1px solid $color-secondary;
     font-size: 12px;
   }
 }
+
+// 試合の日の天気（lib/weather.php。試作）
+// [☀️] 晴れ / 24℃ 16℃        降水確率 20%
+.match-weather {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px;
+  border-radius: $radius-lg;
+  background: $color-primary-light;
+
+  &__icon {
+    font-size: 40px;
+    line-height: 1;
+  }
+
+  &__body {
+    flex: 1;
+    min-width: 0;
+  }
+
+  &__label {
+    margin: 0;
+    color: $color-secondary;
+    font-size: 16px;
+    font-weight: 700;
+  }
+
+  &__temp {
+    display: flex;
+    gap: 8px;
+    margin: 4px 0 0;
+    font-family: $font-heading;
+    font-size: 16px;
+    font-weight: 600;
+  }
+
+  // 最高気温は暖色ではなくメインの色にする（オレンジは CTA と強調だけ：AGENTS.md「カラー」）
+  &__max {
+    color: $color-primary;
+  }
+
+  &__min {
+    color: $color-text-sub;
+  }
+
+  &__rain {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    margin: 0;
+  }
+
+  &__rain-label {
+    color: $color-text-sub;
+    font-size: 12px;
+  }
+
+  &__rain-value {
+    color: $color-primary;
+    font-family: $font-heading;
+    font-size: 24px;
+    font-weight: 600;
+  }
+
+  &__kickoff {
+    margin: 12px 0 0;
+    font-size: 14px;
+  }
+
+  &__credit {
+    color: $color-primary;
+    text-decoration: underline;
+  }
+}

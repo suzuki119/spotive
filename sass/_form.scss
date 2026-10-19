@@ -1,24 +1,24 @@
 // アカウント・主催者・運営の画面で使うフォームまわり。
-// 色は暫定値。_variables.scss ができたらそちらの変数に置き換えること。
+// スマホを基準に書き、min-width で広い画面に広げる（AGENTS.md「対応デバイス」）。
+@use "variables" as *;
 
-$form-text: #1c2024;
-$form-muted: #60646c;
-$form-line: #e0e1e6;
-$form-accent: #0b6bcb;
-$form-danger: #e5484d;
-$form-bp: 760px;
+$form-text: $color-text;
+$form-muted: $color-text-sub;
+$form-line: $color-border;
+$form-accent: $color-primary;
+$form-danger: $color-error;
 
 .site-header {
   display: flex;
   align-items: center;
   gap: 16px;
   padding: 12px 20px;
-  background: #fff;
+  background: $color-bg;
   border-bottom: 1px solid $form-line;
 }
 
 .site-header__logo {
-  font-family: Jost, sans-serif;
+  font-family: $font-heading;
   font-size: 20px;
   font-weight: 600;
   color: $form-text;
@@ -99,18 +99,18 @@ $form-bp: 760px;
   font-size: 14px;
 
   &--info {
-    color: #0b4a8a;
-    background: #e7f1fb;
+    color: $color-primary-dark;
+    background: $color-primary-light;
   }
 
   &--success {
-    color: #1a6b3c;
-    background: #dcf5e5;
+    color: $color-success;
+    background: $color-success-light;
   }
 
   &--error {
-    color: #8a1c1f;
-    background: #fdecec;
+    color: $color-error-dark;
+    background: $color-error-light;
   }
 }
 
@@ -154,7 +154,7 @@ input[type="radio"] {
   padding: 9px 10px;
   font: inherit;
   color: inherit;
-  background: #fff;
+  background: $color-bg;
   border: 1px solid $form-line;
   border-radius: 8px;
 
@@ -212,17 +212,17 @@ input[type="radio"] {
   color: $form-text;
   text-align: center;
   text-decoration: none;
-  background: #fff;
+  background: $color-bg;
   border: 1px solid $form-line;
   border-radius: 8px;
   cursor: pointer;
 
   &:hover {
-    background: #f7f8fa;
+    background: $color-bg-gray;
   }
 
   &--primary {
-    color: #fff;
+    color: $color-bg;
     background: $form-accent;
     border-color: $form-accent;
 
@@ -233,7 +233,7 @@ input[type="radio"] {
   }
 
   &--danger {
-    color: #fff;
+    color: $color-bg;
     background: $form-danger;
     border-color: $form-danger;
 
@@ -260,14 +260,14 @@ input[type="radio"] {
 // ---- 表示のための部品 ----
 .detail {
   display: grid;
-  grid-template-columns: 160px 1fr;
-  gap: 10px 16px;
+  grid-template-columns: 1fr;
+  gap: 4px;
   margin: 0 0 24px;
   font-size: 14px;
 
-  @media (max-width: $form-bp) {
-    grid-template-columns: 1fr;
-    gap: 2px;
+  @media (min-width: $bp-tablet) {
+    grid-template-columns: 160px 1fr;
+    gap: 8px 16px;
   }
 }
 
@@ -325,7 +325,7 @@ input[type="radio"] {
 .level-card {
   padding: 20px;
   margin-bottom: 28px;
-  background: #fff;
+  background: $color-bg;
   border: 1px solid $form-line;
   border-radius: 12px;
 }
@@ -359,9 +359,9 @@ input[type="radio"] {
   border-radius: 999px;
 
   &.is-done {
-    color: #1a6b3c;
-    background: #dcf5e5;
-    border-color: #b7e4c8;
+    color: $color-success;
+    background: $color-success-light;
+    border-color: $color-success-border;
   }
 
   a {
@@ -406,17 +406,17 @@ input[type="radio"] {
 // ---- アカウント種別の選択 ----
 .choice {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 1fr;
   gap: 16px;
 
-  @media (max-width: $form-bp) {
-    grid-template-columns: 1fr;
+  @media (min-width: $bp-tablet) {
+    grid-template-columns: 1fr 1fr;
   }
 }
 
 .choice__item {
   padding: 20px;
-  background: #fff;
+  background: $color-bg;
   border: 1px solid $form-line;
   border-radius: 12px;
 }
@@ -454,7 +454,7 @@ input[type="radio"] {
   border-radius: 999px;
 
   &.is-current {
-    color: #fff;
+    color: $color-bg;
     background: $form-accent;
     border-color: $form-accent;
   }

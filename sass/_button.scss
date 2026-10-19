@@ -1,0 +1,24 @@
+// 共通ボタン（アカウント登録・ログインなどの画面で使う）。
+@use "variables" as *;
+
+.btn {
+  width: 70px;
+  height: 50px;
+  text-align: center;
+  align-content: center;
+  display: block;
+  margin: 32px auto 0;
+  border-radius: $radius-full;
+  box-shadow: 0 2px 8px rgba($color-secondary, 0.2);
+  color: rgba($color-secondary, 0.5);
+  transition: box-shadow .3s;
+
+  &:hover {
+    box-shadow: 0 2px 8px rgba($color-secondary, 0.4);
+  }
+}
+
+.back {
+  box-shadow: none;
+  margin-top: 8px;
+}
