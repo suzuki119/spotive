@@ -406,9 +406,29 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
     if (!marker.getPopup()) {
-      marker.bindPopup(() => venuePopupHtml(marker.venueGames, marker.focusId), { maxWidth: 300 });
+      marker.bindPopup(() => venuePopupHtml(marker.venueGames, marker.focusId), {
+        maxWidth: 300,
+        autoPanPaddingTopLeft: popupPadTopLeft,
+      });
     }
   }
+
+  /**
+   * 地図の上端から、検索欄・右上のボタン（.map-tools）の下までの高さ。
+   * ポップアップはこれらの下に潜るので、ここより下に出るようにする。
+   */
+  function mapToolsBottom() {
+    const tools = document.querySelector(".map-tools");
+    const top = map.getContainer().getBoundingClientRect().top;
+    if (!tools) return 8;
+    return Math.max(8, Math.ceil(tools.getBoundingClientRect().bottom - top) + 8);
+  }
+
+  // ポップアップが自動で地図をずらすときの、左上の余白。
+  // Leaflet はこの配列を開くたびに読むので、全ポップアップで同じ配列を共有し、
+  // 画面幅が変わったら中身だけ書き換える（作り直すと、作成済みのポップアップに届かない）
+  const popupPadTopLeft = [8, mapToolsBottom()];
+  map.on("resize", () => { popupPadTopLeft[1] = mapToolsBottom(); });
 
   function venuePopupHtml(venueGames, focusId) {
     const v = venueGames[0].v;
@@ -913,7 +933,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // 吹き出し（PC）は上に伸びるので、地図の上端からはみ出した分だけ地図をずらす
     const popupEl = panel.closest(".leaflet-popup");
     if (popupEl) {
-      const overflow = map.getContainer().getBoundingClientRect().top + 8 - popupEl.getBoundingClientRect().top;
+      const overflow = map.getContainer().getBoundingClientRect().top + mapToolsBottom() - popupEl.getBoundingClientRect().top;
       if (overflow > 0) map.panBy([0, -overflow]);
     } else {
       // シート（スマホ）は下に伸びるので、選択肢が見える位置まで送る

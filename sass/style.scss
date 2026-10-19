@@ -1,11 +1,18 @@
+<<<<<<< HEAD
 @use "sass:math";
 @use "variables" as *;
+=======
+// 全パーシャルを @use するだけのファイル。ここにスタイルは書かない（AGENTS.md「SCSS のファイル構成」）。
+@use "base";
+@use "header";
+@use "button";
+>>>>>>> origin/main
 @use "form";
-@use "sports-map";
 @use "match-card";
+@use "sports-map";
 @use "match-list";
-@use "favorite";
 @use "match-detail";
+@use "favorite";
 @use "match-search";
 @use "menu-bar";
 @use "app-header";
@@ -14,8 +21,13 @@
 @use "hotel-detail";
 @use "setting";
 @use "notification";
+@use "notification-setting";
 @use "travel";
+@use "start";
+@use "account";
+@use "plus";
 @use "administrators";
+<<<<<<< HEAD
 
 body {
   font-family: "Inter", sans-serif;
@@ -1098,3 +1110,5 @@ $breakpoints: (
     margin: 45px auto 110px;
   }
 }
+=======
+>>>>>>> origin/main

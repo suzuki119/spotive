@@ -14,6 +14,19 @@ $color-bg: #FFFFFF;
 $color-bg-gray: #F5F7FA;
 $color-error: #DC2626;
 
+// 状態を知らせる色（フォームの完了・エラー表示、注意書き）。パレットに無いので、ここで決める
+$color-success: #1A6B3C;
+$color-success-light: #DCF5E5;
+$color-success-border: #B7E4C8;
+$color-error-dark: #8A1C1F;
+$color-error-light: #FDECEC;
+$color-warning: #8A5A00;
+$color-warning-light: #FFF4D6;
+
+// 画面固有の色
+$color-map-sea: #BED2FF; // 淡色地図の海と同じ色。地図のタイルが出ていないところに出す
+$color-start-overlay: #11356B; // スタート画面の写真に重ねる紺のグラデーション
+
 // 競技ごとの色。js/pages/map.js の SPORTS（地図のピン）と揃える
 $sport-colors: (
   soccer: #2f9e5b,
