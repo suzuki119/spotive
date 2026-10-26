@@ -16,6 +16,7 @@
 declare(strict_types=1);
 
 require_once __DIR__ . '/../../lib/hotel.php';
+require_once __DIR__ . '/../../lib/icon.php';
 
 // -------------------------------------------------------------------
 // ホテルと、どの試合（会場）から来たかの取得
@@ -97,7 +98,7 @@ $pageTitle = $hotel === null ? 'ホテルが見つかりません' : (string) $h
         <?php if ($hotel['image'] !== '') : ?>
           <img class="hotel-detail__photo" src="<?= h(url((string) $hotel['image'])) ?>" alt="<?= h((string) $hotel['name']) ?>" width="740" height="400" />
         <?php else : ?>
-          <div class="hotel-detail__photo hotel-detail__photo--none" role="img" aria-label="写真はまだありません">🏨</div>
+          <div class="hotel-detail__photo hotel-detail__photo--none" role="img" aria-label="写真はまだありません"><?= icon_html('hotel') ?></div>
         <?php endif; ?>
 
         <h1 class="hotel-detail__name"><?= h((string) $hotel['name']) ?></h1>

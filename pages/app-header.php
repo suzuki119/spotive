@@ -25,14 +25,15 @@ require_once __DIR__ . '/../lib/guest.php';
 /** @var array{title:string,noticeIcon?:string,noticeLabel?:string,back?:string,close?:string} $appHeader */
 $appHeader += ['title' => 'SPOTIVE', 'noticeIcon' => 'notice.svg', 'noticeLabel' => '', 'back' => '', 'close' => ''];
 
-// ログイン中はマイページ、未ログインならログイン画面へ
+// ログイン中はマイページ、未ログインならログイン画面へ。
+// ゲストを受け付けているときは、未ログインでもマイページへ（開くとゲストに自動ログインする。lib/guest.php）
 $appHeaderUser = null;
 try {
   $appHeaderUser = current_user();
 } catch (PDOException $e) {
   error_log('[SPOTIVE] DB error: ' . $e->getMessage());
 }
-$appHeaderAccount = $appHeaderUser === null ? 'pages/account/signin.php' : 'pages/setting/setting.php';
+$appHeaderAccount = $appHeaderUser === null && !guest_enabled() ? 'pages/account/signin.php' : 'pages/setting/setting.php';
 
 // 見出しが英語（SCHEDULE・SEARCH など）のときは lang="en" を付け、読み上げが日本語読みにならないようにする
 $appHeaderTitleLang = preg_match('/\A[\x20-\x7E]+\z/', $appHeader['title']) === 1 ? 'en' : '';

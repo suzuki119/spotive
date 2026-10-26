@@ -26,9 +26,9 @@
     max-width: 370px;
     height: 100%;
     padding: 24px;
-    border: solid 1px $color-secondary;
+    border: solid 3px $color-secondary;
     border-radius: $radius-lg;
-    box-shadow: 0 4px 10px rgba($color-secondary, 0.3);
+    box-shadow: 9px 9px 10px rgba($color-secondary, 1);
     margin: 48px auto;
 
     display: grid;
@@ -86,12 +86,13 @@
   }
 
   &-btn {
+    display: block;
     width: 370px;
     height: 55px;
     background-color: $color-secondary;
     color: $color-bg;
     border-radius: $radius-full;
     text-align: center;
-    margin: 48px auto 112px;
+    margin: 48px auto 160px;
   }
 }

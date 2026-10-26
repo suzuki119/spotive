@@ -27,3 +27,16 @@ body {
   white-space: nowrap;
   border: 0;
 }
+
+// images/icons/ の SVG アイコンを文字のように出す（lib/icon.php の icon_html()、js/pages/map.js の iconHtml()）。
+// マスクで描くので、色は color（currentColor）、大きさは font-size に合わせて変わる。全ページ共通
+.icon {
+  display: inline-block;
+  flex-shrink: 0;
+  width: 1em;
+  height: 1em;
+  vertical-align: -0.125em;
+  background-color: currentColor;
+  -webkit-mask: var(--icon) center / contain no-repeat;
+  mask: var(--icon) center / contain no-repeat;
+}

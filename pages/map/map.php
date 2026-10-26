@@ -14,6 +14,7 @@ declare(strict_types=1);
 require_once __DIR__ . '/../../config/db.php';
 require_once __DIR__ . '/../../lib/support.php';
 require_once __DIR__ . '/../../lib/match.php';
+require_once __DIR__ . '/../../lib/icon.php';
 
 // -------------------------------------------------------------------
 // 地図に載せる大会の取得
@@ -254,7 +255,7 @@ $mapTeamShortNamesJson = json_encode(
             <span class="map-tools__lines" aria-hidden="true"></span>
           </button>
           <div class="map-tools__sub">
-            <button class="map-tools__round" id="locate" type="button" aria-label="現在地"><span aria-hidden="true">📍</span></button>
+            <button class="map-tools__round" id="locate" type="button" aria-label="現在地"><?= icon_html('point') ?></button>
             <button class="map-tools__round" id="fit" type="button" aria-label="結果全体を表示"><span aria-hidden="true">⤢</span></button>
           </div>
         </div>

@@ -40,18 +40,26 @@ document.addEventListener("DOMContentLoaded", () => {
   const FLY_DURATION = 2.2;    // 秒。一覧から選んだ試合へ飛ぶのにかける時間。
                                // いちばん引いたところで県名が読める程度にゆっくり見せる
 
-  // 競技コードは index.php の SPORT_LABELS と揃える。色とアイコンは地図の見た目用
+  /**
+   * images/icons/ の SVG アイコン（絵文字は端末ごとに見た目が違うので使わない）。
+   * CSS のマスク（sass/style.scss の .icon）で描くので、色は周りの文字の色、大きさは文字の大きさに合う。
+   * パスはこのページ（pages/map/map.php）からの相対
+   */
+  const iconHtml = (name) =>
+    `<span class="icon" style="--icon: url('../../images/icons/${name}.svg')" aria-hidden="true"></span>`;
+
+  // 競技コードは index.php の SPORT_LABELS と揃える。色とアイコン（images/icons/ のファイル名）は地図の見た目用
   const SPORTS = {
-    soccer:      { label: "サッカー",       color: "#2f9e5b", icon: "⚽" },
-    baseball:    { label: "野球",           color: "#e5484d", icon: "⚾" },
-    basketball:  { label: "バスケットボール", color: "#ef7a1a", icon: "🏀" },
-    volleyball:  { label: "バレーボール",   color: "#3e63dd", icon: "🏐" },
-    futsal:      { label: "フットサル",     color: "#26a269", icon: "⚽" },
-    tennis:      { label: "テニス",         color: "#c2410c", icon: "🎾" },
-    badminton:   { label: "バドミントン",   color: "#0f9b8e", icon: "🏸" },
-    rugby:       { label: "ラグビー",       color: "#8e4ec6", icon: "🏉" },
-    tabletennis: { label: "卓球",           color: "#0284c7", icon: "🏓" },
-    other:       { label: "その他",         color: "#6f6e77", icon: "🏅" },
+    soccer:      { label: "サッカー",       color: "#2f9e5b", icon: "sport-soccer" },
+    baseball:    { label: "野球",           color: "#e5484d", icon: "sport-baseball" },
+    basketball:  { label: "バスケットボール", color: "#ef7a1a", icon: "sport-basketball" },
+    volleyball:  { label: "バレーボール",   color: "#3e63dd", icon: "sport-volleyball" },
+    futsal:      { label: "フットサル",     color: "#26a269", icon: "sport-soccer" },
+    tennis:      { label: "テニス",         color: "#c2410c", icon: "sport-tennis" },
+    badminton:   { label: "バドミントン",   color: "#0f9b8e", icon: "sport-badminton" },
+    rugby:       { label: "ラグビー",       color: "#8e4ec6", icon: "sport-rugby" },
+    tabletennis: { label: "卓球",           color: "#0284c7", icon: "sport-tabletennis" },
+    other:       { label: "その他",         color: "#6f6e77", icon: "sport-other" },
   };
   const sportOf = (key) => SPORTS[key] || SPORTS.other;
 
@@ -377,7 +385,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const count = venueGames.length > 1 ? `<b class="pin-count">${venueGames.length}</b>` : "";
     const icon = L.divIcon({
       className: "pin-icon",
-      html: `<div class="pin" style="--c:${s.color}"><span>${s.icon}</span></div>${count}`,
+      html: `<div class="pin" style="--c:${s.color}">${iconHtml(s.icon)}</div>${count}`,
       iconSize: [34, 34],
       iconAnchor: [17, 41],
       popupAnchor: [0, -38],
@@ -458,7 +466,7 @@ document.addEventListener("DOMContentLoaded", () => {
             return `
               <li class="${g.id === focusId ? "is-focus" : ""}">
                 <a class="pop-game" href="${esc(g.detailUrl)}" data-detail="${esc(g.detailUrl)}" aria-expanded="false">
-                  <span class="tag" style="--c:${s.color}">${s.icon} ${esc(g.roundText || leagueText(g))}</span>
+                  <span class="tag" style="--c:${s.color}">${iconHtml(s.icon)} ${esc(g.roundText || leagueText(g))}</span>
                   <strong>${esc((teamShortTitle(g) || [g.title]).join(" vs "))}</strong>
                   <span class="pop-meta">${fmtStart(g)} ・ ${priceText(g)}</span>
                 </a>
@@ -477,7 +485,7 @@ document.addEventListener("DOMContentLoaded", () => {
           <div class="pop-nearby__kinds">
             ${Object.entries(NEARBY).map(([key, k]) => `
               <button class="pop-nearby__kind" type="button" data-nearby="${v.lat},${v.lng}" data-kind="${key}">
-                ${k.icon} ${k.label}
+                ${iconHtml(k.icon)} ${k.label}
               </button>`).join("")}
           </div>
         </div>
@@ -499,7 +507,7 @@ document.addEventListener("DOMContentLoaded", () => {
         .map(([key, s]) => `
         <label class="chip" style="--c:${s.color}">
           <input type="checkbox" name="sport" value="${key}">
-          <span>${s.icon} ${esc(s.label)}</span>
+          <span>${iconHtml(s.icon)} ${esc(s.label)}</span>
         </label>`).join("");
 
     $("#sport-all").addEventListener("click", () => {
@@ -671,7 +679,7 @@ document.addEventListener("DOMContentLoaded", () => {
       ? `<img class="card-emblem" src="${esc(logos[0])}" alt="${esc(names[0])}" width="44" height="44" loading="lazy">
          <span class="card-emblem-vs" aria-hidden="true">vs</span>
          <img class="card-emblem" src="${esc(logos[1])}" alt="${esc(names[1])}" width="44" height="44" loading="lazy">`
-      : `<span class="card-emblem card-emblem--icon" aria-hidden="true">${s.icon}</span>`;
+      : `<span class="card-emblem card-emblem--icon" aria-hidden="true">${iconHtml(s.icon)}</span>`;
     const title = shortNames
       ? `${esc(shortNames[0])}<span class="card-vs">vs</span>${esc(shortNames[1])}`
       : esc(g.title);
@@ -684,7 +692,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const d = g.start;
     const date = todayOnly ? "" : `${d.getMonth() + 1}/${d.getDate()} `;
     const time = g.timeTBD ? "時刻未定" : `${d.toTimeString().slice(0, 5)}〜`;
-    const dist = km == null ? "" : `<span class="card-dist">📍${km < 10 ? km.toFixed(1) : Math.round(km)}km</span>`;
+    const dist = km == null ? "" : `<span class="card-dist">${iconHtml("point")}${km < 10 ? km.toFixed(1) : Math.round(km)}km</span>`;
 
     return `
       <li>
@@ -701,7 +709,7 @@ document.addEventListener("DOMContentLoaded", () => {
             </span>
           </span>
           <span class="card-ticket">
-            <span class="card-venue">📍 ${esc(g.v.name)}</span>
+            <span class="card-venue">${iconHtml("point")} ${esc(g.v.name)}</span>
             <span class="card-price">${g.price == null ? "価格未登録" : `${yen(g.price)}〜<small>目安</small>`}</span>
           </span>
         </button>
@@ -870,11 +878,11 @@ document.addEventListener("DOMContentLoaded", () => {
   //   施設のピンは試合のピンとまとめないよう、別のレイヤーに置く。
   // -----------------------------------------------------------------
   const NEARBY = {
-    food:        { label: "飲食店",   icon: "🍴" },
-    cafe:        { label: "カフェ",   icon: "☕" },
-    convenience: { label: "コンビニ", icon: "🏪" },
-    hotel:       { label: "ホテル",   icon: "🏨" },
-    parking:     { label: "駐車場",   icon: "🅿️" },
+    food:        { label: "飲食店",   icon: "facility-food" },
+    cafe:        { label: "カフェ",   icon: "facility-cafe" },
+    convenience: { label: "コンビニ", icon: "facility-convenience" },
+    hotel:       { label: "ホテル",   icon: "hotel" },
+    parking:     { label: "駐車場",   icon: "facility-parking" },
   };
   const NEARBY_ZOOM = 15;   // 半径 800m の施設が画面に収まるくらい
   const nearbyLayer = L.layerGroup().addTo(map);
@@ -912,7 +920,7 @@ document.addEventListener("DOMContentLoaded", () => {
       L.marker([p.lat, p.lng], {
         icon: L.divIcon({
           className: "nearby-icon",
-          html: `<span class="nearby-pin nearby-pin--${p.kind}">${kind.icon}</span>`,
+          html: `<span class="nearby-pin nearby-pin--${p.kind}">${iconHtml(kind.icon)}</span>`,
           iconSize: [28, 28],
           iconAnchor: [14, 14],
         }),
