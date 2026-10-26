@@ -129,7 +129,7 @@
 
 //__________________________________アカウントパスワード登録＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿
 
-.pasword {
+.password {
   margin-top: 12px;
 
   &-title {
@@ -214,69 +214,5 @@
 
   &-btn {
     width: 200px;
-  }
-}
-
-//__________________________主催者登録選択画面＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿
-.organizer {
-  color: $color-secondary;
-  display: grid;
-  grid-template-columns: 1fr;
-  row-gap: 8px;
-  width: 200px;
-  margin: 48px auto 0;
-
-  label {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    cursor: pointer;
-  }
-
-  input {
-    appearance: none;
-    width: 20px;
-    height: 20px;
-    border: 2px solid $color-secondary;
-    border-radius: $radius-full;
-    position: relative;
-    cursor: pointer;
-
-    &:checked {
-
-      &::after {
-        content: "";
-        width: 10px;
-        height: 10px;
-        background: $color-secondary;
-        border-radius: $radius-full;
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        animation: potti 0.3s ease;
-      }
-    }
-  }
-}
-
-@keyframes potti {
-  0% {
-    transform: translate(-50%, -50%) scale(0);
-  }
-
-  100% {
-    transform: translate(-50%, -50%) scale(1);
-  }
-}
-
-//________________________________主催者側の情報入力画面＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿
-.organizer-input {
-  &-title {
-    font-size: 22px;
-  }
-
-  article {
-    margin-top: 24px;
   }
 }

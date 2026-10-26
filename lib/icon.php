@@ -19,7 +19,26 @@ require_once __DIR__ . '/support.php';
  */
 function icon_html(string $name, string $class = ''): string
 {
-  $src = url('images/icons/' . $name . '.svg');
+  $src = icon_src($name);
   return '<span class="icon' . ($class === '' ? '' : ' ' . h($class)) . '"'
     . ' style="--icon: url(&quot;' . h($src) . '&quot;)" aria-hidden="true"></span>';
+}
+
+/**
+ * アイコンの URL（/spotive/images/icons/home.svg のような、サイトのルートからのパス）。
+ * --icon の url() は、ページではなく css/style.css の場所から解決されるので、
+ * url() の ../.. のような相対パスでは /spotive/ が抜けて読み込めない
+ */
+function icon_src(string $name): string
+{
+  $parts = [];
+  $path  = dirname((string) ($_SERVER['SCRIPT_NAME'] ?? '')) . '/' . url('images/icons/' . $name . '.svg');
+  foreach (explode('/', str_replace('\\', '/', $path)) as $part) {
+    if ($part === '..') {
+      array_pop($parts);
+    } elseif ($part !== '' && $part !== '.') {
+      $parts[] = $part;
+    }
+  }
+  return '/' . implode('/', $parts);
 }

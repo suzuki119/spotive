@@ -92,7 +92,7 @@ function require_level(int $level): array
   flash(level_message($level), 'error');
   redirect(match ($level) {
     LEVEL_ORGANIZER  => url('pages/organizer/register.php'),
-    default          => url('pages/setting/setting.php'),
+    default          => url('pages/setting/mypage.php'),
   });
 }
 
@@ -102,8 +102,23 @@ function require_level(int $level): array
  */
 function require_action_level(string $action, int $default): array
 {
+  return require_level(action_level($action, $default));
+}
+
+/**
+ * require_action_level() と同じ条件を満たすか（移らずに true / false だけ返す）。
+ * 開けないページへのリンクを出さないために使う（ヘッダー・マイページの主催者ページへのリンクなど）
+ */
+function can_action_level(?array $user, string $action, int $default): bool
+{
+  return $user !== null && (int) $user['trust_level'] >= action_level($action, $default);
+}
+
+/** 機能に必要なレベル。config/app.php に無ければ $default */
+function action_level(string $action, int $default): int
+{
   $level = config('verification.require_level.' . $action);
-  return require_level($level === null ? $default : (int) $level);
+  return $level === null ? $default : (int) $level;
 }
 
 /** 運営だけが開けるページで使う */

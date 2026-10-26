@@ -43,18 +43,29 @@ document.addEventListener("DOMContentLoaded", () => {
   /**
    * images/icons/ の SVG アイコン（絵文字は端末ごとに見た目が違うので使わない）。
    * CSS のマスク（sass/style.scss の .icon）で描くので、色は周りの文字の色、大きさは文字の大きさに合う。
-   * パスはこのページ（pages/map/map.php）からの相対
+   * --icon の url() は css/style.css の場所から解決されるので、このページからの相対パスを絶対 URL に直して渡す
    */
+  const ICON_BASE = new URL("../../images/icons/", location.href).href;
   const iconHtml = (name) =>
-    `<span class="icon" style="--icon: url('../../images/icons/${name}.svg')" aria-hidden="true"></span>`;
+    `<span class="icon" style="--icon: url('${ICON_BASE}${name}.svg')" aria-hidden="true"></span>`;
 
-  // 競技コードは index.php の SPORT_LABELS と揃える。色とアイコン（images/icons/ のファイル名）は地図の見た目用
+  /**
+   * 競技のアイコン。images/sports/ に競技の画像（色付きのボール）がある競技はそれを使い、
+   * 無い競技は images/icons/ の SVG アイコンにする
+   */
+  const sportIconHtml = (s) =>
+    s.image
+      ? `<img class="sport-img" src="../../images/sports/${s.image}.png" alt="" width="16" height="16" aria-hidden="true">`
+      : iconHtml(s.icon);
+
+  // 競技コードは index.php の SPORT_LABELS と揃える。色とアイコン（images/icons/ のファイル名）は地図の見た目用。
+  // image は images/sports/ の画像（拡張子なし）。あればアイコンの代わりに使う
   const SPORTS = {
-    soccer:      { label: "サッカー",       color: "#2f9e5b", icon: "sport-soccer" },
-    baseball:    { label: "野球",           color: "#e5484d", icon: "sport-baseball" },
-    basketball:  { label: "バスケットボール", color: "#ef7a1a", icon: "sport-basketball" },
-    volleyball:  { label: "バレーボール",   color: "#3e63dd", icon: "sport-volleyball" },
-    futsal:      { label: "フットサル",     color: "#26a269", icon: "sport-soccer" },
+    soccer:      { label: "サッカー",       color: "#2f9e5b", icon: "sport-soccer", image: "soccer" },
+    baseball:    { label: "野球",           color: "#e5484d", icon: "sport-baseball", image: "base" },
+    basketball:  { label: "バスケットボール", color: "#ef7a1a", icon: "sport-basketball", image: "basket" },
+    volleyball:  { label: "バレーボール",   color: "#3e63dd", icon: "sport-volleyball", image: "balley" },
+    futsal:      { label: "フットサル",     color: "#26a269", icon: "sport-soccer", image: "soccer" },
     tennis:      { label: "テニス",         color: "#c2410c", icon: "sport-tennis" },
     badminton:   { label: "バドミントン",   color: "#0f9b8e", icon: "sport-badminton" },
     rugby:       { label: "ラグビー",       color: "#8e4ec6", icon: "sport-rugby" },
@@ -385,7 +396,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const count = venueGames.length > 1 ? `<b class="pin-count">${venueGames.length}</b>` : "";
     const icon = L.divIcon({
       className: "pin-icon",
-      html: `<div class="pin" style="--c:${s.color}">${iconHtml(s.icon)}</div>${count}`,
+      html: `<div class="pin" style="--c:${s.color}">${sportIconHtml(s)}</div>${count}`,
       iconSize: [34, 34],
       iconAnchor: [17, 41],
       popupAnchor: [0, -38],
@@ -466,7 +477,7 @@ document.addEventListener("DOMContentLoaded", () => {
             return `
               <li class="${g.id === focusId ? "is-focus" : ""}">
                 <a class="pop-game" href="${esc(g.detailUrl)}" data-detail="${esc(g.detailUrl)}" aria-expanded="false">
-                  <span class="tag" style="--c:${s.color}">${iconHtml(s.icon)} ${esc(g.roundText || leagueText(g))}</span>
+                  <span class="tag" style="--c:${s.color}">${sportIconHtml(s)} ${esc(g.roundText || leagueText(g))}</span>
                   <strong>${esc((teamShortTitle(g) || [g.title]).join(" vs "))}</strong>
                   <span class="pop-meta">${fmtStart(g)} ・ ${priceText(g)}</span>
                 </a>
@@ -507,7 +518,7 @@ document.addEventListener("DOMContentLoaded", () => {
         .map(([key, s]) => `
         <label class="chip" style="--c:${s.color}">
           <input type="checkbox" name="sport" value="${key}">
-          <span>${iconHtml(s.icon)} ${esc(s.label)}</span>
+          <span>${sportIconHtml(s)} ${esc(s.label)}</span>
         </label>`).join("");
 
     $("#sport-all").addEventListener("click", () => {
@@ -679,7 +690,7 @@ document.addEventListener("DOMContentLoaded", () => {
       ? `<img class="card-emblem" src="${esc(logos[0])}" alt="${esc(names[0])}" width="44" height="44" loading="lazy">
          <span class="card-emblem-vs" aria-hidden="true">vs</span>
          <img class="card-emblem" src="${esc(logos[1])}" alt="${esc(names[1])}" width="44" height="44" loading="lazy">`
-      : `<span class="card-emblem card-emblem--icon" aria-hidden="true">${iconHtml(s.icon)}</span>`;
+      : `<span class="card-emblem card-emblem--icon" aria-hidden="true">${sportIconHtml(s)}</span>`;
     const title = shortNames
       ? `${esc(shortNames[0])}<span class="card-vs">vs</span>${esc(shortNames[1])}`
       : esc(g.title);

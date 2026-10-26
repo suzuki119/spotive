@@ -25,8 +25,9 @@ foreach ($teams as $team) {
   $teamsBySport[(string) ($team['sport'] ?? '')][] = $team;
 }
 
-// 保存先（ログイン中なら DB）と、今の登録内容
+// 保存先（ログイン中なら DB。ゲストはブラウザ）と、今の登録内容
 $favoriteState = favorite_client_state();
+$isGuest       = is_guest(current_user());
 
 // お気に入りの試合はチームで判定するので、チームの付いている試合だけでよい
 $days = group_matches_by_date(array_values(array_filter(
@@ -59,6 +60,11 @@ $days = group_matches_by_date(array_values(array_filter(
         <h1 class="favorite__title">お気に入り</h1>
         <?php if ($favoriteState['loggedIn']) : ?>
           <p class="favorite__note">お気に入りはアカウントに保存されます。どの端末からでも同じ内容が見られます。</p>
+        <?php elseif ($isGuest) : ?>
+          <p class="favorite__note">
+            ゲストのお気に入りは、この端末のブラウザに保存されます。
+            <a href="<?= h(url('pages/account/account-type.php')) ?>">アカウントを作成</a>すると、アカウントに移せます。
+          </p>
         <?php else : ?>
           <p class="favorite__note">
             お気に入りはこの端末のブラウザに保存されます。

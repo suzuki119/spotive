@@ -137,7 +137,7 @@ function account_complete_signup(string $token, array $in): int
 }
 
 /**
- * 画面で入力しきってから一度に登録する流れ（account-type → register → pasword → confirm）用。
+ * 画面で入力しきってから一度に登録する流れ（account-type → register → register/password → confirm）用。
  *
  * メールのリンクを先に踏ませる account_complete_signup() とは入口が違うだけで、
  * 重複の確認・正規化・規約同意の記録・監査ログは同じものを通す。

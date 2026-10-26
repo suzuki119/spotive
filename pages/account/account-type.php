@@ -56,13 +56,14 @@ require_once __DIR__ . '/../../config/db.php';
             class="account-type-email input">
 
           <button type="submit" name="intent" value="user" class="account-type-btn btn">登録</button>
-        </form>
 
-        <!-- 主催者の登録はメールアドレスの入力が要らないので、上のフォームとは分ける（form の入れ子は無効になる） -->
-        <article>
-          <p>大会・イベントを主催する方</p>
-          <a href="./register/organizer-register.php" class="account-type-organizer btn">登録</a>
-        </article>
+          <!-- 主催者もアカウントはふつうの会員登録で作る。押したボタンの intent で、登録後に主催者の申請
+               （pages/organizer/register.php）へ案内する（pages/account/register/register.php・complete.php） -->
+          <article>
+            <p>大会・イベントを主催する方</p>
+            <button type="submit" name="intent" value="organizer" class="account-type-organizer btn">登録</button>
+          </article>
+        </form>
 
         <!-- アカウントを作らずに使う（browse.php）。ログイン画面と同じボタン -->
         <div class="signin-guest">

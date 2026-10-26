@@ -101,11 +101,11 @@ function page_header(string $title, string $heading = ''): void
           <a class="site-header__link" href="<?= h($base) ?>/pages/account/signin.php">ログイン</a>
           <a class="site-header__link" href="<?= h($base) ?>/pages/account/account-type.php">新規登録</a>
         <?php else : ?>
-          <a class="site-header__link" href="<?= h($base) ?>/pages/setting/setting.php">
+          <a class="site-header__link" href="<?= h($base) ?>/pages/setting/mypage.php">
             <?= h((string) $user['nickname']) ?> さん
           </a>
-          <?php if ((int) $user['trust_level'] >= (int) config('verification.require_level.create_tournament', LEVEL_ORGANIZER)) : ?>
-            <a class="site-header__link" href="<?= h($base) ?>/pages/organizer/dashboard.php">主催者ページ</a>
+          <?php if (can_action_level($user, 'create_tournament', LEVEL_USER)) : ?>
+            <a class="site-header__link" href="<?= h($base) ?>/pages/administrators/administrators.php">主催者ページ</a>
           <?php endif; ?>
           <?php if (in_array((string) $user['role'], ['reviewer', 'admin'], true)) : ?>
             <a class="site-header__link" href="<?= h($base) ?>/pages/admin/review.php">審査</a>

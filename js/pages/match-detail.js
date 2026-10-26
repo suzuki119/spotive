@@ -4,6 +4,7 @@
  *   ・右上の ✕ で、来た画面に戻る
  *   ・「現在地から」に会場までの距離を出す（位置情報がすでに許可されているときだけ）
  *   ・対戦チームの ☆ でお気に入りに登録・解除する（js/common/favorite-store.js）
+ *   ・閲覧とチケットのリンクを押したことを数える（pages/match/access-api.php）
  */
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -32,6 +33,28 @@ document.addEventListener("DOMContentLoaded", () => {
     // 保存に失敗して元に戻したときや、ブラウザの登録をアカウントに移したときに描き直す
     SpotiveFavorites.onChange(renderFavorites);
     renderFavorites();
+  }
+
+  // -----------------------------------------------------------------
+  // アクセス数（管理者画面のアクセスボードに出す。pages/match/access-api.php）
+  //   開いたときに「閲覧」、チケット販売サイトへのリンクを押したときに「チケットページ遷移」を送る。
+  //   sendBeacon はページを離れる途中でも送り切れるので、リンクの移動を待たせない
+  // -----------------------------------------------------------------
+  const page = document.querySelector("[data-access-endpoint]");
+  if (page && navigator.sendBeacon) {
+    const sendAccess = (metric) => {
+      const body = new FormData();
+      body.append("type", page.dataset.accessType);
+      body.append("id", page.dataset.accessId);
+      body.append("metric", metric);
+      body.append("csrf_token", page.dataset.accessCsrf);
+      navigator.sendBeacon(page.dataset.accessEndpoint, body);
+    };
+
+    sendAccess("page_view");
+    document.querySelectorAll("[data-access-ticket]").forEach((link) => {
+      link.addEventListener("click", () => sendAccess("ticket_click"));
+    });
   }
 
   // -----------------------------------------------------------------

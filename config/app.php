@@ -33,7 +33,7 @@ return [
   'guest' => [
     'enabled'        => true,
     'allow_register' => false,
-    'email'    => 'guest@gmal.com',
+    'email'    => 'guest@example.com',   // 例示用に予約されたドメイン。実在する人に届かない
     'nickname' => 'ゲスト',
   ],
 

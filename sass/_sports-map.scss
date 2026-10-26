@@ -661,6 +661,16 @@ $detail-width: 360px; // PC で地図の右に出すときの幅
   gap: 8px;
 }
 
+// 競技の画像（images/sports/）。.icon と同じく、文字の大きさに合わせる
+.sport-img {
+  display: inline-block;
+  flex-shrink: 0;
+  width: 1em;
+  height: 1em;
+  vertical-align: -0.125em;
+  object-fit: contain;
+}
+
 .card-emblems {
   display: flex;
   align-items: center;
@@ -989,6 +999,16 @@ $detail-width: 360px; // PC で地図の右に出すときの幅
     line-height: 1;
     color: v.$color-bg;
   }
+
+  // 競技の画像（色付きのボール）は、ピンの色に埋もれないよう白い丸にのせる
+  .sport-img {
+    width: 24px;
+    height: 24px;
+    padding: 2px;
+    transform: rotate(45deg);
+    background: v.$color-bg;
+    border-radius: v.$radius-full;
+  }
 }
 
 // 会場ピンに出す試合数
@@ -1041,6 +1061,12 @@ $detail-width: 360px; // PC で地図の右に出すときの幅
     color: v.$color-bg;
     background: var(--c);
     border-radius: 999px;
+
+    // 競技の色の上では画像が見えにくいので、白い丸にのせる
+    .sport-img {
+      background: v.$color-bg;
+      border-radius: v.$radius-full;
+    }
   }
 }
 

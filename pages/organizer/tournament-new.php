@@ -16,7 +16,7 @@ require_once __DIR__ . '/../../lib/layout.php';
 guest_auto_login();
 $user = require_action_level('create_tournament', LEVEL_USER);
 // ゲスト（お試し用の共通アカウント）には使わせない（localhost で試すときは使える）
-guest_forbid($user, 'ゲストでは大会を掲載できません。', 'pages/organizer/dashboard.php', true);
+guest_forbid($user, 'ゲストでは大会を掲載できません。', 'pages/administrators/administrators.php', true);
 
 $id     = (int) ($_GET['id'] ?? $_POST['id'] ?? 0);
 
@@ -52,7 +52,7 @@ if (is_post()) {
       case 'submit_verification':
         tournament_submit_verification($user, $id);
         flash('大会確認を申請しました。', 'success');
-        redirect('dashboard.php');
+        redirect(url('pages/administrators/administrators.php'));
     }
   } catch (AppError $e) {
     $error  = $e->getMessage();
@@ -70,7 +70,7 @@ if ($id > 0) {
     $t = tournament_owned_detail((int) $user['id'], $id);
   } catch (AppError $e) {
     flash($e->getMessage(), 'error');
-    redirect('dashboard.php');
+    redirect(url('pages/administrators/administrators.php'));
   }
 }
 $form      = is_post() ? $_POST : $t;
@@ -356,7 +356,7 @@ page_header($id > 0 ? '大会の編集' : '大会の登録', $id > 0 ? '大会�
 <?php endif; ?>
 
 <p class="form-page__note">
-  <a href="dashboard.php">主催者ページへ戻る</a>
+  <a href="../administrators/administrators.php">主催者ページへ戻る</a>
 </p>
 
 <?php page_footer();

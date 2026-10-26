@@ -40,7 +40,7 @@ if (is_post()) {
       $errors = $v->errors();
     } else {
       $_SESSION['register'] += $input;
-      redirect('../pasword.php');
+      redirect('password.php');
     }
   }
 }

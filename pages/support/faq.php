@@ -15,7 +15,7 @@ page_header('よくある質問', 'よくある質問');
 <p class="form-page__lead">このページは準備中です。</p>
 
 <p class="form-page__note">
-  <a href="<?= h(url('pages/setting/notification-setting.php')) ?>">設定へ戻る</a>
+  <a href="<?= h(url('pages/setting/setting.php')) ?>">設定へ戻る</a>
 </p>
 
 <?php page_footer();

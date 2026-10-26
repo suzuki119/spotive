@@ -1,13 +1,13 @@
 <?php
 
 /**
- * pages/account/password.php
- * パスワード設定画面
+ * pages/account/register/password.php
+ * アカウント登録のパスワード入力（register.php の次、confirm.php の前）
  */
 
 declare(strict_types=1);
 
-require_once __DIR__ . '/../../lib/account.php';
+require_once __DIR__ . '/../../../lib/account.php';
 
 session_boot();
 
@@ -31,7 +31,7 @@ if (is_post()) {
     $error = 'パスワードが一致していません。';
   } else {
     $_SESSION['register']['password'] = $password;
-    redirect('confirm.php');
+    redirect('../confirm.php');
   }
 }
 
@@ -56,7 +56,7 @@ if (is_post()) {
     rel="stylesheet"
     href="https://cdn.jsdelivr.net/npm/the-new-css-reset/css/reset.min.css">
 
-  <link rel="stylesheet" href="../../css/style.css">
+  <link rel="stylesheet" href="../../../css/style.css">
 </head>
 
 <body>
@@ -64,7 +64,7 @@ if (is_post()) {
   <header class="site-header">
     <?php
     // header.phpを読み込む
-    include_once __DIR__ . '/../header.php';
+    include_once __DIR__ . '/../../header.php';
     ?>
   </header>
 
@@ -77,11 +77,11 @@ if (is_post()) {
           <?= htmlspecialchars($error, ENT_QUOTES, 'UTF-8') ?>
         </p>
       <?php endif; ?>
-      <div class="pasword">
-        <h1 class="pasword-title">アカウント登録</h1>
+      <div class="password">
+        <h1 class="password-title">アカウント登録</h1>
         <form action="" method="post">
 
-          <article class="pasword-form">
+          <article class="password-form">
             <p>パスワード</p>
 
             <input
@@ -90,10 +90,10 @@ if (is_post()) {
               name="password"
               placeholder="パスワードを入力"
               required
-              class="pasword-form-first input">
+              class="password-form-first input">
           </article>
 
-          <article class="pasword-form">
+          <article class="password-form">
             <p>パスワード（確認）</p>
 
             <input
@@ -102,7 +102,7 @@ if (is_post()) {
               name="password-confirm"
               placeholder="もう一度入力"
               required
-              class="pasword-form-second input">
+              class="password-form-second input">
           </article>
       </div>
 
@@ -118,7 +118,7 @@ if (is_post()) {
   <footer class="site-footer">
   </footer>
 
-  <script src="../../js/main.js"></script>
+  <script src="../../../js/main.js"></script>
 
 </body>
 

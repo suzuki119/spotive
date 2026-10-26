@@ -42,6 +42,15 @@ const DETAIL_SPORT_ICONS = [
   'tabletennis' => 'sport-tabletennis',
 ];
 
+/** 競技コード => 競技の画像（images/sports/ のファイル名）。あればアイコンの代わりに使う。js/pages/map.js の SPORTS と揃える */
+const DETAIL_SPORT_IMAGES = [
+  'soccer'     => 'soccer.png',
+  'baseball'   => 'base.png',
+  'basketball' => 'basket.png',
+  'volleyball' => 'balley.png',
+  'futsal'     => 'soccer.png',
+];
+
 /** 仮データの試合 1 件を、画面で使う形にする。見つからなければ null */
 function detail_from_match(string $id): ?array
 {
@@ -188,12 +197,14 @@ $dateText  = '';
 $isOver    = false;
 $ticketUrl = '';
 $routeUrl  = '';
+$accessData = null;
 
 if ($game !== null) {
   $sportKey  = match_sport_key($game['sport']);
   $sportInfo = [
     'label' => $game['sport'] !== '' ? match_sport_label($game['sport']) : 'その他',
     'icon'  => DETAIL_SPORT_ICONS[$sportKey] ?? 'sport-other',
+    'image' => DETAIL_SPORT_IMAGES[$sportKey] ?? '',
   ];
 
   try {
@@ -214,6 +225,15 @@ if ($game !== null) {
   if (preg_match('#\Ahttps?://#i', $game['ticket_url']) === 1) {
     $ticketUrl = $game['ticket_url'];
   }
+
+  // 閲覧とチケットのリンクを数える（js/pages/match-detail.js → pages/match/access-api.php → 管理者画面のアクセスボード）。
+  // セッションを使うので、HTML を出す前に合言葉を作っておく
+  $accessData = [
+    'endpoint' => url('pages/match/access-api.php'),
+    'type'     => $game['kind'],
+    'id'       => $game['kind'] === 'tournament' ? (string) $tournamentId : $rawId,
+    'csrf'     => csrf_token(),
+  ];
 
   if ($game['lat'] !== null && $game['lng'] !== null) {
     $routeUrl = 'https://www.google.com/maps/dir/?api=1&destination='
@@ -307,11 +327,13 @@ $embed = ($_GET['embed'] ?? '') === '1';
   </head>
 
   <body>
-    <main class="match-detail match-detail--<?= h($sportKey !== '' ? $sportKey : 'other') ?>">
+    <main class="match-detail match-detail--<?= h($sportKey !== '' ? $sportKey : 'other') ?>"<?php if ($accessData !== null) : ?> data-access-endpoint="<?= h($accessData['endpoint']) ?>" data-access-type="<?= h($accessData['type']) ?>" data-access-id="<?= h($accessData['id']) ?>" data-access-csrf="<?= h($accessData['csrf']) ?>"<?php endif; ?>>
       <!-- 上の写真。飾りなので読み上げない。写真が 1 枚も無いときは、競技の色とアイコンで代わりにする -->
       <div class="match-detail__hero" aria-hidden="true">
         <?php if ($heroImage !== '') : ?>
           <img class="match-detail__hero-image" src="<?= h(url($heroImage)) ?>" alt="" width="402" height="205" />
+        <?php elseif (($sportInfo['image'] ?? '') !== '') : ?>
+          <img class="match-detail__hero-sport" src="<?= h(url('images/sports/' . $sportInfo['image'])) ?>" alt="" width="96" height="96" />
         <?php else : ?>
           <?= icon_html((string) ($sportInfo['icon'] ?? 'stadium'), 'match-detail__hero-icon') ?>
         <?php endif; ?>
@@ -418,7 +440,7 @@ $embed = ($_GET['embed'] ?? '') === '1';
               </p>
               <?php if ($game['kind'] === 'match') : ?>
                 <?php if ($ticketUrl !== '' && !$isOver) : ?>
-                  <a class="match-detail__cta" href="<?= h($ticketUrl) ?>" target="_blank" rel="noopener">チケット販売サイトへ<span class="visually-hidden">（新しいタブで開きます）</span></a>
+                  <a class="match-detail__cta" href="<?= h($ticketUrl) ?>" target="_blank" rel="noopener" data-access-ticket>チケット販売サイトへ<span class="visually-hidden">（新しいタブで開きます）</span></a>
                 <?php else : ?>
                   <span class="match-detail__cta is-disabled" aria-disabled="true">販売情報は準備中</span>
                 <?php endif; ?>

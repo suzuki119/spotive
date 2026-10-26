@@ -2,118 +2,16 @@
 
 /**
  * pages/setting/setting.php
- * マイページ（設定メニューのトップも兼ねる）。ヘッダーのアカウントのアイコンから来る。
- *
- *   プロフィール   … ニックネームと信頼レベル。アイコンは仮の画像（images/sample/sample-icon.png）
- *   Favorite       … お気に入りのチーム（favorite_teams テーブル）
- *   Away Travel    … 遠征プラン（travel_plans）。まだ終わっていないプランのうち一番近いものの試合を出す
- *   Records        … 観戦記録。記録のテーブルはまだ無いので、仮データ（data/records.json）
- *   SPOTIVE PLUS+  … サブスクリプション（未設計）の案内。まだ押せない
- * 主催者として登録している人には、Favorite の上に主催者ページへの大きなリンクと、下に「自分の大会」も出す。
- * 全員に各設定へのリンクも出す。
+ * 設定画面。アカウント・通知・観戦・遠征・表示・プライバシー・サポートの各設定へのリンクを並べる。
+ * マイページ（pages/setting/mypage.php）の「設定」と、画面下のメニューの「設定」から来る。
  */
 
 declare(strict_types=1);
 
-require_once __DIR__ . '/../../lib/tournament.php';
-require_once __DIR__ . '/../../lib/favorite.php';
-require_once __DIR__ . '/../../lib/match-search.php';
-require_once __DIR__ . '/../../lib/travel.php';
-require_once __DIR__ . '/../../lib/organizer.php';
-require_once __DIR__ . '/../../lib/guest.php';
-require_once __DIR__ . '/../../lib/layout.php';   // status_label() / format_datetime()
+require_once __DIR__ . '/../../config/db.php';
+require_once __DIR__ . '/../../lib/auth.php';   // csrf_field()（ログアウトの POST 用）
 
-/** 仮のプロフィール画像。プロフィール画像の設定ができたら差し替える */
-const MYPAGE_DEFAULT_ICON = 'images/sample/sample-icon.png';
-
-/** 競技 => 見出しに出すリーグ名（lib/match-search.php の MATCH_SEARCH_TABS。競技のタブは競技名で出すので、ここだけリーグ名） */
-function mypage_league(string $sport): string
-{
-  $key = match_sport_key($sport);
-  return MATCH_SEARCH_TABS[$key] ?? match_sport_label($sport);
-}
-
-// ログインせずに使っている人は、ゲストにログインさせてから開く
-guest_auto_login();
-$user = require_login();
-
-// -------------------------------------------------------------------
-// お気に入りのチーム
-// -------------------------------------------------------------------
-$teams       = load_teams();
-$favoriteIds = [];
-try {
-  $favoriteIds = favorite_team_ids((int) $user['id']);
-} catch (PDOException $e) {
-  error_log('[SPOTIVE] DB error: ' . $e->getMessage());
-}
-$favoriteTeams = [];
-foreach ($favoriteIds as $id) {
-  if (isset($teams[$id])) {
-    $favoriteTeams[] = $teams[$id] + ['logoPath' => match_team_logo($id, 0)];
-  }
-}
-
-// -------------------------------------------------------------------
-// 遠征プラン：まだ終わっていないプランのうち一番近いもの。カードはその試合ごとに出す
-// -------------------------------------------------------------------
-$travelPlan   = null;
-$travelCount  = 0;
-$travelGames  = [];
-$travelError  = false;
-try {
-  ['plan' => $travelPlan, 'count' => $travelCount] = travel_upcoming_plan((int) $user['id']);
-} catch (PDOException $e) {
-  error_log('[SPOTIVE] DB error: ' . $e->getMessage());
-  $travelError = true;
-}
-if ($travelPlan !== null) {
-  $travelGames = array_values(array_filter(
-    $travelPlan['items'],
-    static fn(array $item): bool => $item['item_type'] === 'match'
-  ));
-}
-
-// -------------------------------------------------------------------
-// 観戦記録（仮データ）。競技ごとのタブで切り替える
-// -------------------------------------------------------------------
-$records = load_data_json('records.json');
-usort($records, static fn(array $a, array $b): int => strcmp((string) $b['date'], (string) $a['date']));
-$recordSports = [];
-foreach ($records as $record) {
-  $recordSports[match_sport_key((string) $record['sport'])] = mypage_league((string) $record['sport']);
-}
-
-// -------------------------------------------------------------------
-// 主催者の大会
-// -------------------------------------------------------------------
-$myEvents = [];
-if ((int) $user['trust_level'] >= (int) config('verification.require_level.create_tournament', LEVEL_ORGANIZER)) {
-  try {
-    $myEvents = tournament_list_mine((int) $user['id']);
-  } catch (PDOException $e) {
-    error_log('[SPOTIVE] DB error: ' . $e->getMessage());
-  }
-}
-
-// 主催者として登録しているか。主催者の申請（取り下げ・却下を除く）か主催者のプロフィールがある人、
-// または大会を登録したことがある人（デモ版は申請しなくても大会を登録できるため）。
-// ゲストは主催者ページを試せるよう、いつも出す
-$isOrganizer = is_guest($user);
-if (!$isOrganizer) {
-  try {
-    $organizer   = organizer_status((int) $user['id']);
-    $application = $organizer['application'];
-    $isOrganizer = $myEvents !== []
-      || $organizer['profile'] !== null
-      || ($application !== null && !in_array((string) $application['status'], ['rejected', 'withdrawn'], true));
-  } catch (PDOException $e) {
-    error_log('[SPOTIVE] DB error: ' . $e->getMessage());
-  }
-}
-$publishedCount = count(array_filter($myEvents, static fn(array $e): bool => $e['status'] === 'published'));
-
-$fmtMd = static fn(string $date): string => $date === '' ? '' : date('m/d', (int) strtotime($date));
+session_boot();
 
 ?>
 <!DOCTYPE html>
@@ -122,240 +20,284 @@ $fmtMd = static fn(string $date): string => $date === '' ? '' : date('m/d', (int
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>マイページ | SPOTIVE</title>
+  <title>設定 | SPOTIVE</title>
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link
     href="https://fonts.googleapis.com/css2?family=Jost:wght@400;600&family=Noto+Sans+JP:wght@400;500;700&display=swap"
     rel="stylesheet" />
-  <link rel="stylesheet" href="<?= h(asset('css/style.css')) ?>" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/the-new-css-reset/css/reset.min.css">
+  <link rel="stylesheet" href="../../css/style.css" />
 </head>
 
 <body>
-  <?php
-  $appHeader = ['title' => 'MY PAGE', 'noticeIcon' => 'mail.svg', 'noticeLabel' => 'Notice', 'back' => 'pages/home/home.php'];
-  require __DIR__ . '/../app-header.php';
-  ?>
-
-  <main class="mypage">
-    <!-- ほかの画面から戻ってきたときのお知らせ（ゲストでは使えない画面など） -->
-    <?php foreach (take_flash() as $message) : ?>
-      <p class="notice notice--<?= h($message['type']) ?>"><?= h($message['message']) ?></p>
-    <?php endforeach; ?>
-
-    <!-- プロフィール -->
-    <section class="mypage-profile" aria-label="プロフィール">
-      <img class="mypage-profile__icon" src="<?= h(url(MYPAGE_DEFAULT_ICON)) ?>" alt="" width="90" height="90" />
-      <div class="mypage-profile__body">
-        <p class="mypage-profile__name"><?= h((string) $user['nickname']) ?></p>
-        <p class="mypage-profile__level"><?= h(level_label((int) $user['trust_level'])) ?></p>
-      </div>
-      <a class="mypage-profile__setting" href="account-setting.php">アカウント設定</a>
-    </section>
-
-    <?php if ($isOrganizer) : ?>
-      <!-- 主催者ページへの入口（主催者として登録している人だけ） -->
-      <a class="mypage-organizer" href="<?= h(url('pages/organizer/dashboard.php')) ?>">
-        <span class="mypage-organizer__label" lang="en">ORGANIZER</span>
-        <span class="mypage-organizer__title">主催者ページ</span>
-        <span class="mypage-organizer__text">
-          <?php if ($myEvents === []) : ?>
-            大会・イベントを登録して、地図と一覧に載せましょう
-          <?php else : ?>
-            公開中の大会 <?= (int) $publishedCount ?>件・大会の登録と管理はこちら
-          <?php endif; ?>
+  <header class="headerr">
+    <div class="inner">
+      <section class="header">
+        <span class="header-account">
+          <!-- 戻る：来た画面があればそこへ（js/main.js）、URL を直接開いたときはマイページへ -->
+          <a href="mypage.php" class="setting-back">
+            <img src="<?= h(url('images/icons/setting-back.svg')) ?>" alt="戻る">
+          </a>
         </span>
-      </a>
-    <?php endif; ?>
+        <h1 class="header-title">SPOTIVE</h1>
+        <span class="header-notice">
+          <img src="<?= h(url('images/icons/notice.svg')) ?>" alt="">
+        </span>
+      </section>
+    </div>
+  </header>
 
-    <!-- Favorite -->
-    <section class="mypage__section">
-      <h2 class="mypage__heading">Favorite<span class="mypage__heading-sub">お気に入りチーム</span></h2>
-      <?php if ($favoriteTeams === []) : ?>
-        <p class="mypage__empty">
-          お気に入りのチームはまだありません。<br />
-          <a href="<?= h(url('pages/favorite/favorite.php')) ?>">チームを登録する</a>
-        </p>
-      <?php else : ?>
-        <ul class="favorite-teams">
-          <?php foreach ($favoriteTeams as $team) : ?>
-            <li class="favorite-teams__item favorite-teams__item--<?= h(match_sport_key((string) $team['sport'])) ?>">
-              <span class="favorite-teams__logo">
-                <?php if ($team['logoPath'] !== '') : ?>
-                  <img src="<?= h(url($team['logoPath'])) ?>" alt="" width="64" height="64" />
-                <?php endif; ?>
+  <main class="l-main">
+    <div class="inner">
+      <div class="setting">
+        <section class="setting-account">
+          <h2>アカウント</h2>
+          <article>
+            <!-- プロフィールの変更とアカウント情報・退会は、同じ画面（account-setting.php）にまとめている -->
+            <a href="account-setting.php" class="setting-account-content">
+              <span>
+                <div class="setting-account-img"><img src="../../images/icons/setting-account.svg" alt=""></div>
+                <p>プロフィール・アカウント情報</p>
               </span>
-              <span class="favorite-teams__body">
-                <span class="favorite-teams__sport"><?= h(match_sport_label((string) $team['sport'])) ?></span>
-                <span class="favorite-teams__name"><?= h((string) $team['name']) ?></span>
-                <span class="favorite-teams__league"><?= h(mypage_league((string) $team['sport'])) ?></span>
+              <img src="../../images/icons/setting-next.svg" alt="" class="setting-account-next">
+            </a>
+            <!-- 準備中（ページがまだ無い）。押せない表示にする -->
+            <span class="setting-account-content is-disabled" role="link" aria-disabled="true">
+              <span>
+                <div class="setting-account-img"><img src="../../images/icons/setting-key.svg" alt=""></div>
+                <p>パスワード</p>
               </span>
-            </li>
-          <?php endforeach; ?>
-        </ul>
-        <a class="mypage__more" href="<?= h(url('pages/favorite/favorite.php')) ?>">お気に入りを編集</a>
-      <?php endif; ?>
-    </section>
+              <span class="setting-soon">準備中</span>
+            </span>
+          </article>
+        </section>
 
-    <!-- Away Travel（遠征プラン。一番近いプランの試合ごとに、チケットを買ったかを出す） -->
-    <section class="mypage__section">
-      <h2 class="mypage__heading">Away Travel</h2>
-      <?php if ($travelError) : ?>
-        <p class="mypage__empty">遠征プランを読み込めませんでした。</p>
-      <?php elseif ($travelPlan === null) : ?>
-        <p class="mypage__empty">
-          これからの遠征プランはありません。
-          <a href="<?= h(url('pages/travel/travel.php')) ?>">遠征プランを作る</a>
-        </p>
-      <?php else : ?>
-        <div class="mypage-travel__head">
-          <p class="mypage-travel__dates">
-            <?= h($fmtMd((string) $travelPlan['start_date'])) ?>
-            <?php if ($travelPlan['end_date'] !== $travelPlan['start_date']) : ?>
-              〜<?= h($fmtMd((string) $travelPlan['end_date'])) ?>
-            <?php endif; ?>
-          </p>
-          <a class="mypage-travel__check" href="<?= h(url('pages/travel/travel-plan.php?id=' . (int) $travelPlan['id'])) ?>">プランを確認</a>
-        </div>
-        <ul class="mypage-travel">
-          <?php foreach ($travelGames as $item) : ?>
-            <?php
-            $vs     = match_teams(travel_item_team_ids($item));   // 主催者の大会は空
-            $bought = $item['booking_status'] === 'booked';
-            $detail = travel_item_detail_path($item);
-            $start  = (string) $item['starts_at'];
-            ?>
-            <li class="mypage-travel__item <?= $bought ? 'is-done' : 'is-todo' ?>">
-              <a class="mypage-travel__link" href="<?= h(url($detail !== '' ? $detail : 'pages/travel/travel-plan.php?id=' . (int) $travelPlan['id'])) ?>">
-                <span class="mypage-travel__logos">
-                  <?php foreach ($vs as $j => $team) : ?>
-                    <?php if ($j === 1) : ?><span class="mypage-travel__vs">vs</span><?php endif; ?>
-                    <?php if ($team['logo'] !== '') : ?>
-                      <img src="<?= h(url($team['logo'])) ?>" alt="<?= h($team['name']) ?>" width="48" height="48" />
-                    <?php endif; ?>
-                  <?php endforeach; ?>
-                </span>
-                <span class="mypage-travel__body">
-                  <span class="mypage-travel__meta"><?= h($fmtMd($start)) ?> <?= h(date('H:i', (int) strtotime($start))) ?>〜 ・ <?= h((string) $item['from_label']) ?></span>
-                  <span class="mypage-travel__title"><?= h((string) $item['title']) ?></span>
-                  <span class="mypage-travel__status"><?= $bought ? 'チケット購入済み ✓' : 'チケット未購入' ?></span>
-                </span>
-              </a>
-            </li>
-          <?php endforeach; ?>
-        </ul>
-        <?php if ($travelCount > 1) : ?>
-          <p class="mypage-travel__more">
-            <a href="<?= h(url('pages/travel/travel-plan.php')) ?>">ほかの遠征プラン（<?= (int) $travelCount - 1 ?>件）</a>
-          </p>
-        <?php endif; ?>
-      <?php endif; ?>
-    </section>
+        <!-- __________________________________________________________________ -->
 
-    <!-- Records（観戦記録。仮データ） -->
-    <section class="mypage__section">
-      <h2 class="mypage__heading">Records</h2>
-      <p class="mypage__mock">観戦記録は画面確認用の仮データです。</p>
-      <?php if ($records === []) : ?>
-        <p class="mypage__empty">観戦記録はまだありません。</p>
-      <?php else : ?>
-        <div class="mypage-tabs" role="tablist" aria-label="競技">
-          <?php $first = true; ?>
-          <?php foreach ($recordSports as $key => $label) : ?>
-            <button
-              class="mypage-tabs__tab<?= $first ? ' is-active' : '' ?>"
-              type="button"
-              role="tab"
-              aria-selected="<?= $first ? 'true' : 'false' ?>"
-              data-record-tab="<?= h($key) ?>"><?= h($label) ?></button>
-            <?php $first = false; ?>
-          <?php endforeach; ?>
-        </div>
+        <section class="setting-notification">
+          <h2>通知設定</h2>
 
-        <ul class="records">
-          <?php $firstSport = array_key_first($recordSports); ?>
-          <?php foreach ($records as $record) : ?>
-            <?php
-            $vs     = match_teams([(string) $record['homeTeamId'], (string) $record['awayTeamId']]);
-            $home   = (int) $record['homeScore'];
-            $away   = (int) $record['awayScore'];
-            $sport  = match_sport_key((string) $record['sport']);
-            ?>
-            <li class="records__item" data-record-sport="<?= h($sport) ?>" <?= $sport === $firstSport ? '' : 'hidden' ?>>
-              <div class="records__main">
-                <?php if ($vs !== []) : ?>
-                  <img class="records__logo" src="<?= h(url($vs[0]['logo'])) ?>" alt="<?= h($vs[0]['name']) ?>" width="72" height="72" />
-                <?php endif; ?>
-                <div class="records__center">
-                  <p class="records__round"><?= h(mypage_league((string) $record['sport'])) ?> <?= h((string) $record['round']) ?></p>
-                  <p class="records__score">
-                    <span class="records__point<?= $home > $away ? ' is-win' : '' ?>"><?= $home ?></span>
-                    <span class="records__dash">-</span>
-                    <span class="records__point<?= $away > $home ? ' is-win' : '' ?>"><?= $away ?></span>
-                  </p>
+          <article>
+            <!-- 準備中（ページがまだ無い）。押せない表示にする -->
+            <span class="setting-notification-content is-disabled" role="link" aria-disabled="true">
+              <span>
+                <div class="setting-notification-img">
+                  <img src="../../images/icons/setting-game.svg" alt="">
                 </div>
-                <?php if ($vs !== []) : ?>
-                  <img class="records__logo" src="<?= h(url($vs[1]['logo'])) ?>" alt="<?= h($vs[1]['name']) ?>" width="72" height="72" />
-                <?php endif; ?>
-              </div>
-              <div class="records__foot">
-                <span class="records__venue">
-                  <img src="<?= h(url('images/icons/point.svg')) ?>" alt="" width="11" height="14" />
-                  <?= h((string) $record['venue']) ?>
-                </span>
-                <time class="records__date" datetime="<?= h((string) $record['date']) ?>"><?= h(date('Y/m/d', (int) strtotime((string) $record['date']))) ?></time>
-              </div>
-            </li>
-          <?php endforeach; ?>
-        </ul>
-      <?php endif; ?>
-    </section>
-
-    <?php if ($myEvents !== []) : ?>
-      <!-- 主催者の大会 -->
-      <section class="mypage__section">
-        <h2 class="mypage__heading">My Events<span class="mypage__heading-sub">自分の大会</span></h2>
-        <ul class="mypage-events">
-          <?php foreach (array_slice($myEvents, 0, 5) as $event) : ?>
-            <li class="mypage-events__item">
-              <a href="<?= h(url('pages/organizer/tournament-new.php?id=' . (int) $event['id'])) ?>"><?= h((string) $event['title']) ?></a>
-              <span class="mypage-events__meta">
-                <?= h(format_datetime((string) $event['starts_at'])) ?>
-                ・<?= h(status_label((string) $event['status'])) ?>
-                ・<?= h(status_label((string) $event['verification_status'])) ?>
+                <p>試合開始前の通知</p>
               </span>
-            </li>
-          <?php endforeach; ?>
-        </ul>
-        <a class="mypage__more" href="<?= h(url('pages/organizer/dashboard.php')) ?>">主催者ページで管理する</a>
-      </section>
-    <?php endif; ?>
+              <span class="setting-soon">準備中</span>
+            </span>
 
-    <!-- SPOTIVE PLUS+（サブスクリプション。未設計なのでまだ押せない） -->
-    <a href="../plus/plus.php">
-      <section class="mypage-plus" aria-label="SPOTIVE PLUS+">
-        <p class="mypage-plus__title">
-          <img src="<?= h(url('images/icons/crown.svg')) ?>" alt="" width="20" height="20" />
-          SPOTIVE PLUS+
-        </p>
-        <p class="mypage-plus__text">プレミアムプランにアップグレードして、スポーツ観戦をもっと便利に。</p>
-      </section>
-    </a>
+            <!-- 準備中（ページがまだ無い）。押せない表示にする -->
+            <span class="setting-notification-content is-disabled" role="link" aria-disabled="true">
+              <span>
+                <div class="setting-notification-img">
+                  <img src="../../images/icons/setting-heart.svg" alt="">
+                </div>
+                <p>お気に入りチーム</p>
+              </span>
+              <span class="setting-soon">準備中</span>
+            </span>
 
-    <!-- 設定 -->
-    <nav class="mypage-settings" aria-label="設定">
-      <h2 class="mypage__heading">Settings<span class="mypage__heading-sub">設定</span></h2>
-      <ul class="mypage-settings__list">
-        <li><a class="mypage-settings__link" href="profile.php">プロフィール設定</a></li>
-        <li><a class="mypage-settings__link" href="notification-setting.php">通知設定</a></li>
-        <li><a class="mypage-settings__link" href="account-setting.php">アカウント設定</a></li>
-      </ul>
-    </nav>
+            <a href="<?= h(url('pages/notification/notification.php')) ?>" class="setting-notification-content">
+              <span>
+                <div class="setting-notification-img">
+                  <img src="../../images/icons/notice.svg" alt="">
+                </div>
+                <p>アプリからのお知らせ</p>
+              </span>
+              <img src="../../images/icons/setting-next.svg" alt="" class="setting-notification-next">
+            </a>
+          </article>
+        </section>
+        <!-- __________________________________________________________________ -->
+        <section class="setting-game">
+          <h2>観戦</h2>
+
+          <article>
+            <a href="<?= h(url('pages/favorite/favorite.php')) ?>" class="setting-game-content">
+              <span>
+                <div class="setting-game-img">
+                  <img src="../../images/icons/setting-heart.svg" alt="">
+                </div>
+                <p>お気に入りチーム</p>
+              </span>
+              <img src="../../images/icons/setting-next.svg" alt="" class="setting-game-next">
+            </a>
+
+            <!-- 準備中（ページがまだ無い）。押せない表示にする -->
+            <span class="setting-game-content is-disabled" role="link" aria-disabled="true">
+              <span>
+                <div class="setting-game-img">
+                  <img src="../../images/icons/setting-place.svg" alt="">
+                </div>
+                <p>よく行く会場</p>
+              </span>
+              <span class="setting-soon">準備中</span>
+            </span>
+          </article>
+        </section>
+
+        <!-- __________________________________________________________________ -->
+
+        <section class="setting-expedition">
+          <h2>遠征サポート設定</h2>
+
+          <article>
+            <a href="<?= h(url('pages/travel/travel.php')) ?>" class="setting-expedition-content">
+              <span>
+                <div class="setting-expedition-img">
+                  <img src="../../images/icons/setting-departure.svg" alt="">
+                </div>
+                <p>出発地</p>
+              </span>
+              <img src="../../images/icons/setting-next.svg" alt="" class="setting-expedition-next">
+            </a>
+
+            <a href="<?= h(url('pages/travel/travel.php')) ?>" class="setting-expedition-content">
+              <span>
+                <div class="setting-expedition-img">
+                  <img src="../../images/icons/setting-train.svg" alt="">
+                </div>
+                <p>交通手段</p>
+              </span>
+              <img src="../../images/icons/setting-next.svg" alt="" class="setting-expedition-next">
+            </a>
+
+            <a href="<?= h(url('pages/travel/travel.php')) ?>" class="setting-expedition-content">
+              <span>
+                <div class="setting-expedition-img">
+                  <img src="../../images/icons/setting-hotel.svg" alt="">
+                </div>
+                <p>宿泊条件</p>
+              </span>
+              <img src="../../images/icons/setting-next.svg" alt="" class="setting-expedition-next">
+            </a>
+
+            <a href="<?= h(url('pages/travel/travel.php')) ?>" class="setting-expedition-content">
+              <span>
+                <div class="setting-expedition-img">
+                  <img src="../../images/icons/setting-money.svg" alt="">
+                </div>
+                <p>予算</p>
+              </span>
+              <img src="../../images/icons/setting-next.svg" alt="" class="setting-expedition-next">
+            </a>
+          </article>
+        </section>
+
+
+        <!-- __________________________________________________________________ -->
+
+
+        <section class="setting-display">
+          <h2>表示設定</h2>
+
+          <article>
+            <!-- 準備中（ページがまだ無い）。押せない表示にする -->
+            <span class="setting-display-content is-disabled" role="link" aria-disabled="true">
+              <span>
+                <div class="setting-display-img">
+                  <img src="../../images/icons/setting-display.svg" alt="">
+                </div>
+                <p>テーマ</p>
+              </span>
+              <span class="setting-soon">準備中</span>
+            </span>
+          </article>
+        </section>
+        <!-- __________________________________________________________________ -->
+
+        <section class="setting-privacy">
+          <h2>プライバシー・安全</h2>
+
+          <article>
+            <!-- 準備中（ページがまだ無い）。押せない表示にする -->
+            <span class="setting-privacy-content is-disabled" role="link" aria-disabled="true">
+              <span>
+                <div class="setting-privacy-img">
+                  <img src="../../images/icons/map.svg" alt="">
+                </div>
+                <p>位置情報</p>
+              </span>
+              <span class="setting-soon">準備中</span>
+            </span>
+
+            <a href="<?= h(url('pages/legal/privacy.php')) ?>" class="setting-privacy-content">
+              <span>
+                <div class="setting-privacy-img">
+                  <img src="../../images/icons/setting-privacy.svg" alt="">
+                </div>
+                <p>プライバシーポリシー</p>
+              </span>
+              <img src="../../images/icons/setting-link.svg" alt="" class="setting-privacy-next">
+            </a>
+
+            <a href="<?= h(url('pages/legal/terms.php')) ?>" class="setting-privacy-content">
+              <span>
+                <div class="setting-privacy-img">
+                  <img src="../../images/icons/setting-term.svg" alt="">
+                </div>
+                <p>利用規約</p>
+              </span>
+              <img src="../../images/icons/setting-link.svg" alt="" class="setting-privacy-next">
+            </a>
+          </article>
+        </section>
+
+        <!-- __________________________________________________________________ -->
+
+        <section class="setting-support">
+          <h2>サポート</h2>
+
+          <article>
+            <a href="<?= h(url('pages/support/faq.php')) ?>" class="setting-support-content">
+              <span>
+                <div class="setting-support-img">
+                  <img src="../../images/icons/setting-question.svg" alt="">
+                </div>
+                <p>よくある質問</p>
+              </span>
+              <img src="../../images/icons/setting-link.svg" alt="" class="setting-support-next">
+            </a>
+
+            <a href="<?= h(url('pages/support/contact.php')) ?>" class="setting-support-content">
+              <span>
+                <div class="setting-support-img">
+                  <img src="../../images/icons/mail.svg" alt="">
+                </div>
+                <p>お問い合わせ</p>
+              </span>
+              <img src="../../images/icons/setting-link.svg" alt="" class="setting-support-next">
+            </a>
+          </article>
+        </section>
+
+        <section class="setting-logout">
+          <article>
+            <!-- logout.php は POST しか受けないので、リンクではなくフォームで送る -->
+            <form action="<?= h(url('pages/account/logout.php')) ?>" method="post">
+              <?= csrf_field() ?>
+              <button type="submit" class="setting-logout-content">
+                <span>
+                  <p>ログアウト</p>
+                </span>
+                <img src="../../images/icons/setting-logout.svg" alt="" class="setting-logout-next">
+              </button>
+            </form>
+          </article>
+        </section>
+      </div> <!--  setting -->
+
+    </div>
   </main>
 
-  <script src="<?= h(asset('js/main.js')) ?>"></script>
-  <script src="<?= h(asset('js/pages/setting.js')) ?>"></script>
+  <footer class="site-footer"></footer>
+
+  <script src="../../js/main.js"></script>
   <?php require __DIR__ . '/../menu-bar.php'; ?>
 </body>
 

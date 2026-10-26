@@ -43,10 +43,12 @@ DROP TABLE IF EXISTS `tournament_verifications`;
 DROP TABLE IF EXISTS `tournament_verification_checks`;
 DROP TABLE IF EXISTS `audit_logs`;
 DROP TABLE IF EXISTS `favorite_teams`;
+DROP TABLE IF EXISTS `team_admins`;
 DROP TABLE IF EXISTS `notifications`;
 DROP TABLE IF EXISTS `notification_reads`;
 DROP TABLE IF EXISTS `travel_plans`;
 DROP TABLE IF EXISTS `travel_plan_items`;
+DROP TABLE IF EXISTS `access_daily_counts`;
 SET FOREIGN_KEY_CHECKS = 1;
 
 -- =====================================================================
@@ -454,6 +456,27 @@ CREATE TABLE favorite_teams (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- ---------------------------------------------------------------------
+-- チームの管理者（管理者画面 pages/administrators/administrators.php）
+-- どのユーザーが、どのチームの管理画面を使えるか。1 人が複数のチームを持ってもよい。
+-- チームのテーブルがまだ無いので、team_id は favorite_teams と同じく data/teams.json の id（team-001）。
+-- 行を足すのは運営（users.role = 'admin'）だけ。本人が自分で足せる画面は作らない。
+-- display_name は管理画面のあいさつ（「Hallo TUBC!」）と、お知らせの送り主（notifications.sender_name）に使う。
+-- ---------------------------------------------------------------------
+CREATE TABLE team_admins (
+  user_id       BIGINT UNSIGNED NOT NULL,
+  team_id       VARCHAR(32)  NOT NULL,
+  display_name  VARCHAR(120) NOT NULL,             -- 例：「TUBC事務局」
+  role          ENUM('owner','editor') NOT NULL DEFAULT 'editor',
+                                                   -- owner=管理者を増やせる editor=掲載とお知らせだけ
+  created_by    BIGINT UNSIGNED NULL,              -- 権限を付けた運営のユーザー
+  created_at    DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (user_id, team_id),
+  KEY idx_tadmin_team (team_id),
+  CONSTRAINT fk_tadmin_user    FOREIGN KEY (user_id)    REFERENCES users(id) ON DELETE CASCADE,
+  CONSTRAINT fk_tadmin_creator FOREIGN KEY (created_by) REFERENCES users(id) ON DELETE SET NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- ---------------------------------------------------------------------
 -- お知らせ（運営からのお知らせ ＋ お気に入りチームのお知らせ）
 --   audience = 'all'  … 全員に出す（運営からのお知らせ）
 --   audience = 'team' … team_id をお気に入りにしている人に出す
@@ -469,6 +492,7 @@ CREATE TABLE notifications (
   team_id        VARCHAR(32)  NULL,                 -- audience = 'team' のときだけ入れる
   category       ENUM('info','change','cancel') NOT NULL DEFAULT 'info',
                                                     -- info=お知らせ change=日時・会場の変更 cancel=中止
+  is_important   TINYINT(1)   NOT NULL DEFAULT 0,   -- 1 で一覧に「重要」のバッジを出す
   sender_name    VARCHAR(120) NOT NULL,             -- 一覧に出す送り主
   title          VARCHAR(150) NOT NULL,             -- 一覧に出す 1 行
   body           TEXT NULL,                         -- 開いたときの本文
@@ -477,7 +501,7 @@ CREATE TABLE notifications (
   status         ENUM('draft','published','withdrawn') NOT NULL DEFAULT 'draft',
   published_at   DATETIME NULL,                     -- 公開日時。未来の日時にすると予約になる
   expires_at     DATETIME NULL,                     -- 掲載終了。NULL なら出し続ける
-  created_by     BIGINT UNSIGNED NOT NULL,          -- 作成した運営のユーザー
+  created_by     BIGINT UNSIGNED NOT NULL,          -- 作成したユーザー（運営、またはチームの管理者 team_admins）
   created_at     DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
   updated_at     DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (id),
@@ -548,6 +572,29 @@ CREATE TABLE travel_plan_items (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- ---------------------------------------------------------------------
+-- アクセス数（管理者画面のアクセスボード）
+-- 1 日・1 対象・1 種類ごとに 1 行で、数えるたびに count を 1 増やす
+--   INSERT INTO access_daily_counts (stat_date, target_type, target_id, metric, count)
+--   VALUES (CURRENT_DATE, 'team', 'team-001', 'page_view', 1)
+--   ON DUPLICATE KEY UPDATE count = count + 1;
+-- 誰が見たかは残さない（ユーザー ID・IP を持たない）。前週比は stat_date の範囲で合計して出す。
+-- 試合はまだ DB に無いので、試合ページの閲覧は、その試合のホームとアウェイの両チームに 1 ずつ数える。
+--   target_type = 'team'       … target_id は data/teams.json の id（team-001）
+--   target_type = 'tournament' … target_id は tournaments.id を文字にしたもの（'5'）
+--   metric = 'page_view'    … 試合・大会の詳細ページを開いた
+--   metric = 'ticket_click' … 公式チケットのリンクを押した
+-- お気に入り登録数は favorite_teams、お知らせの閲覧数は notification_reads から数えるので、ここには持たない。
+-- ---------------------------------------------------------------------
+CREATE TABLE access_daily_counts (
+  stat_date    DATE NOT NULL,
+  target_type  ENUM('team','tournament') NOT NULL,
+  target_id    VARCHAR(32) NOT NULL,
+  metric       ENUM('page_view','ticket_click') NOT NULL,
+  count        INT UNSIGNED NOT NULL DEFAULT 0,
+  PRIMARY KEY (target_type, target_id, metric, stat_date)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- ---------------------------------------------------------------------
 -- 公開用ビュー：一覧・地図に出す大会（確認済みバッジ付き）
 -- ---------------------------------------------------------------------
 CREATE OR REPLACE VIEW v_public_tournaments AS
@@ -569,7 +616,7 @@ WHERE t.status = 'published';
 -- ---------------------------------------------------------------------
 CREATE OR REPLACE VIEW v_public_notifications AS
 SELECT
-  n.id, n.audience, n.team_id, n.category, n.sender_name,
+  n.id, n.audience, n.team_id, n.category, n.is_important, n.sender_name,
   n.title, n.body, n.match_ref, n.tournament_id, n.published_at
 FROM notifications n
 WHERE n.status = 'published'

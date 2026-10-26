@@ -1,6 +1,6 @@
 /**
- * setting.js
- * マイページ（pages/setting/setting.php）の処理。
+ * mypage.js
+ * マイページ（pages/setting/mypage.php）の処理。
  *   ・Records のタブ（B.LEAGUE / プロ野球 / …）で、観戦記録を競技ごとに切り替える
  */
 

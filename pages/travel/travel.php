@@ -58,7 +58,8 @@ $user        = null;
 $favoriteIds = [];
 try {
   $user = current_user();
-  if ($user !== null) {
+  // ゲストのお気に入りはブラウザにあるので、ここでは使わない
+  if ($user !== null && !is_guest($user)) {
     $favoriteIds = array_values(array_filter(favorite_team_ids((int) $user['id']), static fn(string $id): bool => isset($teams[$id])));
   }
 } catch (PDOException $e) {
