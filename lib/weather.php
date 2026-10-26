@@ -18,42 +18,42 @@ declare(strict_types=1);
 const WEATHER_FORECAST_DAYS = 15;       // 今日から何日後まで予報を取るか（Open-Meteo の上限）
 const WEATHER_CACHE_TTL     = 60 * 60;  // 1 時間
 
-/** WMO の天気コード => [表示名, アイコン] */
+/** WMO の天気コード => [表示名, アイコン（images/icons/ のファイル名。lib/icon.php の icon_html() で出す）] */
 const WEATHER_CODES = [
-  0  => ['快晴', '☀️'],
-  1  => ['晴れ', '🌤️'],
-  2  => ['晴れ時々くもり', '⛅'],
-  3  => ['くもり', '☁️'],
-  45 => ['霧', '🌫️'],
-  48 => ['霧', '🌫️'],
-  51 => ['霧雨', '🌦️'],
-  53 => ['霧雨', '🌦️'],
-  55 => ['霧雨', '🌦️'],
-  56 => ['霧雨', '🌦️'],
-  57 => ['霧雨', '🌦️'],
-  61 => ['雨', '🌧️'],
-  63 => ['雨', '🌧️'],
-  65 => ['強い雨', '🌧️'],
-  66 => ['雨', '🌧️'],
-  67 => ['強い雨', '🌧️'],
-  71 => ['雪', '🌨️'],
-  73 => ['雪', '🌨️'],
-  75 => ['大雪', '🌨️'],
-  77 => ['雪', '🌨️'],
-  80 => ['にわか雨', '🌦️'],
-  81 => ['にわか雨', '🌦️'],
-  82 => ['強いにわか雨', '🌧️'],
-  85 => ['にわか雪', '🌨️'],
-  86 => ['にわか雪', '🌨️'],
-  95 => ['雷雨', '⛈️'],
-  96 => ['雷雨', '⛈️'],
-  99 => ['雷雨', '⛈️'],
+  0  => ['快晴', 'weather-clear'],
+  1  => ['晴れ', 'weather-partly-cloudy'],
+  2  => ['晴れ時々くもり', 'weather-partly-cloudy'],
+  3  => ['くもり', 'weather-cloudy'],
+  45 => ['霧', 'weather-fog'],
+  48 => ['霧', 'weather-fog'],
+  51 => ['霧雨', 'weather-drizzle'],
+  53 => ['霧雨', 'weather-drizzle'],
+  55 => ['霧雨', 'weather-drizzle'],
+  56 => ['霧雨', 'weather-drizzle'],
+  57 => ['霧雨', 'weather-drizzle'],
+  61 => ['雨', 'weather-rain'],
+  63 => ['雨', 'weather-rain'],
+  65 => ['強い雨', 'weather-rain'],
+  66 => ['雨', 'weather-rain'],
+  67 => ['強い雨', 'weather-rain'],
+  71 => ['雪', 'weather-snow'],
+  73 => ['雪', 'weather-snow'],
+  75 => ['大雪', 'weather-snow'],
+  77 => ['雪', 'weather-snow'],
+  80 => ['にわか雨', 'weather-drizzle'],
+  81 => ['にわか雨', 'weather-drizzle'],
+  82 => ['強いにわか雨', 'weather-rain'],
+  85 => ['にわか雪', 'weather-snow'],
+  86 => ['にわか雪', 'weather-snow'],
+  95 => ['雷雨', 'weather-thunder'],
+  96 => ['雷雨', 'weather-thunder'],
+  99 => ['雷雨', 'weather-thunder'],
 ];
 
 /** @return array{label:string,icon:string} 知らないコードは「—」 */
 function weather_code_info(int $code): array
 {
-  [$label, $icon] = WEATHER_CODES[$code] ?? ['—', '🌡️'];
+  [$label, $icon] = WEATHER_CODES[$code] ?? ['—', 'weather-unknown'];
   return ['label' => $label, 'icon' => $icon];
 }
 

@@ -19,6 +19,7 @@ declare(strict_types=1);
 
 require_once __DIR__ . '/../../lib/match-search.php';
 require_once __DIR__ . '/../../lib/favorite.php';
+require_once __DIR__ . '/../../lib/icon.php';
 
 /** 価格のスライダーの目盛り（円）。安い価格帯を細かく選べるよう、等間隔にしない */
 const SEARCH_PRICE_STEPS = [
@@ -201,19 +202,19 @@ $priceValue = SEARCH_PRICE_STEPS[$priceIndex];
         <ul class="nearby-links">
           <li>
             <a class="nearby-links__item" href="<?= h(url('pages/map/map.php?nearby=food')) ?>">
-              <span class="nearby-links__image nearby-links__image--food" aria-hidden="true">🍜</span>
+              <span class="nearby-links__image nearby-links__image--food" aria-hidden="true"><?= icon_html('facility-food') ?></span>
               <span class="nearby-links__label">アリーナグルメ</span>
             </a>
           </li>
           <li>
             <a class="nearby-links__item" href="<?= h(url('pages/map/map.php?nearby=hotel')) ?>">
-              <span class="nearby-links__image nearby-links__image--hotel" aria-hidden="true">🏨</span>
+              <span class="nearby-links__image nearby-links__image--hotel" aria-hidden="true"><?= icon_html('hotel') ?></span>
               <span class="nearby-links__label">ホテル検索</span>
             </a>
           </li>
           <li>
             <span class="nearby-links__item nearby-links__item--disabled" aria-disabled="true">
-              <span class="nearby-links__image nearby-links__image--transit" aria-hidden="true">🚃</span>
+              <span class="nearby-links__image nearby-links__image--transit" aria-hidden="true"><?= icon_html('facility-transit') ?></span>
               <span class="nearby-links__label">交通情報（準備中）</span>
             </span>
           </li>

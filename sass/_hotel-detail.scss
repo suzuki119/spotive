@@ -54,6 +54,7 @@ $hotel-shadow: 0 2px 12px rgba($color-secondary, 0.1);
       display: grid;
       place-items: center;
       font-size: 64px;
+      color: $color-bg;
       background: linear-gradient(135deg, $color-primary-light, $color-primary);
     }
   }
@@ -344,6 +345,7 @@ $hotel-shadow: 0 2px 12px rgba($color-secondary, 0.1);
     height: 88px;
     border-radius: $radius-md;
     background: linear-gradient(135deg, $color-primary-light, $color-primary);
+    color: $color-bg;
     font-size: 32px;
   }
 

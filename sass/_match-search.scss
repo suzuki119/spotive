@@ -381,6 +381,7 @@ $search-line: 1px solid $color-secondary;
     place-items: center;
     aspect-ratio: 16 / 10;
     border-radius: $radius-lg;
+    color: $color-bg;
     font-size: 32px;
 
     &--food {

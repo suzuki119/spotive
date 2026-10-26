@@ -24,21 +24,22 @@ require_once __DIR__ . '/../../lib/hotel.php';
 require_once __DIR__ . '/../../lib/favorite.php';
 require_once __DIR__ . '/../../lib/travel.php';
 require_once __DIR__ . '/../../lib/weather.php';
+require_once __DIR__ . '/../../lib/icon.php';
 
 /** 試合の写真が無いときに上に出す写真 */
 const DETAIL_DEFAULT_IMAGE = 'images/sample/sample-match.png';
 
-/** 競技コード => アイコン。js/pages/map.js の SPORTS と揃える（表示名は lib/match.php） */
+/** 競技コード => アイコン（images/icons/ のファイル名）。js/pages/map.js の SPORTS と揃える（表示名は lib/match.php） */
 const DETAIL_SPORT_ICONS = [
-  'soccer'      => '⚽',
-  'baseball'    => '⚾',
-  'basketball'  => '🏀',
-  'volleyball'  => '🏐',
-  'futsal'      => '⚽',
-  'tennis'      => '🎾',
-  'badminton'   => '🏸',
-  'rugby'       => '🏉',
-  'tabletennis' => '🏓',
+  'soccer'      => 'sport-soccer',
+  'baseball'    => 'sport-baseball',
+  'basketball'  => 'sport-basketball',
+  'volleyball'  => 'sport-volleyball',
+  'futsal'      => 'sport-soccer',
+  'tennis'      => 'sport-tennis',
+  'badminton'   => 'sport-badminton',
+  'rugby'       => 'sport-rugby',
+  'tabletennis' => 'sport-tabletennis',
 ];
 
 /** 仮データの試合 1 件を、画面で使う形にする。見つからなければ null */
@@ -192,7 +193,7 @@ if ($game !== null) {
   $sportKey  = match_sport_key($game['sport']);
   $sportInfo = [
     'label' => $game['sport'] !== '' ? match_sport_label($game['sport']) : 'その他',
-    'icon'  => DETAIL_SPORT_ICONS[$sportKey] ?? '🏅',
+    'icon'  => DETAIL_SPORT_ICONS[$sportKey] ?? 'sport-other',
   ];
 
   try {
@@ -312,7 +313,7 @@ $embed = ($_GET['embed'] ?? '') === '1';
         <?php if ($heroImage !== '') : ?>
           <img class="match-detail__hero-image" src="<?= h(url($heroImage)) ?>" alt="" width="402" height="205" />
         <?php else : ?>
-          <span class="match-detail__hero-icon"><?= h($sportInfo['icon'] ?? '🏟️') ?></span>
+          <?= icon_html((string) ($sportInfo['icon'] ?? 'stadium'), 'match-detail__hero-icon') ?>
         <?php endif; ?>
       </div>
 
@@ -437,7 +438,7 @@ $embed = ($_GET['embed'] ?? '') === '1';
               <?php if ($weatherStatus === 'ok') : ?>
                 <?php $day = weather_code_info($weather['code']); ?>
                 <div class="match-weather">
-                  <span class="match-weather__icon" aria-hidden="true"><?= h($day['icon']) ?></span>
+                  <?= icon_html($day['icon'], 'match-weather__icon') ?>
                   <div class="match-weather__body">
                     <p class="match-weather__label"><?= h($day['label']) ?></p>
                     <p class="match-weather__temp">
@@ -506,7 +507,7 @@ $embed = ($_GET['embed'] ?? '') === '1';
                 <?php foreach ($nearHotels as $nearHotel) : ?>
                   <li>
                     <a class="near-hotels__item" href="<?= h(url(hotel_detail_path((string) $nearHotel['id'], $fromMatchId))) ?>">
-                      <span class="near-hotels__photo" aria-hidden="true">🏨</span>
+                      <span class="near-hotels__photo" aria-hidden="true"><?= icon_html('hotel') ?></span>
                       <span class="near-hotels__body">
                         <span class="near-hotels__name"><?= h((string) $nearHotel['name']) ?></span>
                         <span class="near-hotels__meta">会場から約<?= h(hotel_distance_label((float) $nearHotel['distance'])) ?></span>
@@ -520,7 +521,7 @@ $embed = ($_GET['embed'] ?? '') === '1';
               <p class="match-detail__note">会場の近くのホテルはまだ登録されていません。</p>
             <?php endif; ?>
             <a class="match-detail__hotel-search" href="<?= h(url($hotelSearchPath)) ?>">
-              <span class="match-detail__hotel-icon" aria-hidden="true">🛏️</span>
+              <?= icon_html('hotel', 'match-detail__hotel-icon') ?>
               会場周辺のホテルを探す
             </a>
           </section>
@@ -530,7 +531,7 @@ $embed = ($_GET['embed'] ?? '') === '1';
             <section class="match-detail__section">
               <h2 class="match-detail__heading">遠征プラン</h2>
               <a class="match-detail__travel" href="<?= h(url($travelUrl)) ?>">
-                <span class="match-detail__travel-icon" aria-hidden="true">🧳</span>
+                <?= icon_html('travel', 'match-detail__travel-icon') ?>
                 <span class="match-detail__travel-body">
                   <span class="match-detail__travel-title">この試合で遠征プランを作る</span>
                   <span class="match-detail__travel-text">交通・ホテル・費用の目安と、前後に近くで観られる試合を出します</span>

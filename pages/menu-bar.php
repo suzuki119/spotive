@@ -37,7 +37,7 @@ $menuItems = [
  * href が null の項目は、ページがまだ無いので押せない表示（準備中）にする
  */
 $subMenuItems = [
-  ['href' => 'pages/setting/setting.php',          'icon' => 'setting.svg',      'label' => '設定'],
+  ['href' => 'pages/setting/notification-setting.php',          'icon' => 'setting.svg',      'label' => '設定'],
   ['href' => 'pages/plus/plus.php',                'icon' => 'crown.svg',           'label' => 'プラス'],
   ['href' => 'pages/notification/notification.php', 'icon' => 'mail.svg',  'label' => 'お知らせ'],
   ['href' => 'pages/travel/travel.php',            'icon' => 'travel.svg',        'label' => '遠征'],
@@ -46,7 +46,7 @@ $subMenuItems = [
 
 /** いま開いているページの項目か（aria-current と見た目に使う） */
 $menuIsCurrent = static fn(array $item): bool =>
-  isset($item['href']) && str_ends_with((string) ($_SERVER['SCRIPT_NAME'] ?? ''), '/' . $item['href']);
+isset($item['href']) && str_ends_with((string) ($_SERVER['SCRIPT_NAME'] ?? ''), '/' . $item['href']);
 
 ?>
 

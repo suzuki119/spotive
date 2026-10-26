@@ -25,6 +25,17 @@ body {
   border: 0;
 }
 
+.icon {
+  display: inline-block;
+  flex-shrink: 0;
+  width: 1em;
+  height: 1em;
+  vertical-align: -0.125em;
+  background-color: currentColor;
+  -webkit-mask: var(--icon) center/contain no-repeat;
+  mask: var(--icon) center/contain no-repeat;
+}
+
 .header {
   display: flex;
   justify-content: space-between;
@@ -1160,7 +1171,7 @@ input[type=radio] {
   align-items: center;
   gap: 8px;
 }
-.chips:not(:has(input:checked)) .chip span {
+.chips:not(:has(input:checked)) .chip > span {
   opacity: 1;
 }
 
@@ -1169,7 +1180,7 @@ input[type=radio] {
   opacity: 0;
   pointer-events: none;
 }
-.chip span {
+.chip > span {
   display: inline-block;
   padding: 4px 12px;
   border: 1px solid #E5E7EB;
@@ -1366,6 +1377,7 @@ input[type=radio] {
   display: grid;
   place-items: center;
   font-size: 22px;
+  color: var(--c);
   background: color-mix(in srgb, var(--c) 15%, white);
   border-radius: 999px;
 }
@@ -1646,6 +1658,7 @@ input[type=radio] {
   transform: rotate(45deg);
   font-size: 16px;
   line-height: 1;
+  color: #FFFFFF;
 }
 
 .pin-count {
@@ -1676,6 +1689,7 @@ input[type=radio] {
   place-items: center;
   font-size: 14px;
   line-height: 1;
+  color: #0B63E5;
   background: #FFFFFF;
   border: 2px solid #0B63E5;
   border-radius: 999px;
@@ -2245,6 +2259,7 @@ body.is-sheet-open {
 }
 .match-detail__hero-icon {
   font-size: 80px;
+  color: #FFFFFF;
 }
 .match-detail__sheet {
   position: relative;
@@ -2487,6 +2502,7 @@ body.is-sheet-open {
 .match-detail__hotel-icon {
   font-size: 32px;
   line-height: 1;
+  color: #0B63E5;
 }
 .match-detail__travel {
   display: flex;
@@ -2505,6 +2521,7 @@ body.is-sheet-open {
 .match-detail__travel-icon {
   font-size: 32px;
   line-height: 1;
+  color: #0B63E5;
 }
 .match-detail__travel-body {
   display: flex;
@@ -2548,6 +2565,7 @@ body.is-sheet-open {
 .match-weather__icon {
   font-size: 40px;
   line-height: 1;
+  color: #0B63E5;
 }
 .match-weather__body {
   flex: 1;
@@ -3017,6 +3035,7 @@ body.is-sheet-open {
   place-items: center;
   aspect-ratio: 16/10;
   border-radius: 16px;
+  color: #FFFFFF;
   font-size: 32px;
 }
 .nearby-links__image--food {
@@ -3687,7 +3706,7 @@ img.team-logo {
   gap: 16px;
   padding: 24px 16px;
   background: #FFFFFF;
-  border-radius: 16px 16px 0 0;
+  border-radius: 16px 16px 16px 0;
 }
 .now-match__teams {
   display: flex;
@@ -3824,6 +3843,7 @@ img.team-logo {
   display: grid;
   place-items: center;
   font-size: 64px;
+  color: #FFFFFF;
   background: linear-gradient(135deg, #E7F0FE, #0B63E5);
 }
 .hotel-detail__name {
@@ -4072,6 +4092,7 @@ img.team-logo {
   height: 88px;
   border-radius: 8px;
   background: linear-gradient(135deg, #E7F0FE, #0B63E5);
+  color: #FFFFFF;
   font-size: 32px;
 }
 .near-hotels__body {
@@ -6057,9 +6078,9 @@ li + li .mypage-settings__link {
   max-width: 370px;
   height: 100%;
   padding: 24px;
-  border: solid 1px #0F172A;
+  border: solid 3px #0F172A;
   border-radius: 16px;
-  box-shadow: 0 4px 10px rgba(15, 23, 42, 0.3);
+  box-shadow: 9px 9px 10px #0f172a;
   margin: 48px auto;
   display: grid;
   gap: 16px;
@@ -6106,13 +6127,14 @@ li + li .mypage-settings__link {
   text-align: right;
 }
 .plus-btn {
+  display: block;
   width: 370px;
   height: 55px;
   background-color: #0F172A;
   color: #FFFFFF;
   border-radius: 999px;
   text-align: center;
-  margin: 48px auto 112px;
+  margin: 48px auto 160px;
 }
 
 .administrators_search {

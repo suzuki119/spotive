@@ -451,7 +451,7 @@ $detail-width: 360px; // PC で地図の右に出すときの幅
   gap: 8px;
 
   // 何も選んでいない＝すべて表示なので、薄くせず普通に見せる
-  &:not(:has(input:checked)) .chip span {
+  &:not(:has(input:checked)) .chip > span {
     opacity: 1;
   }
 }
@@ -463,7 +463,7 @@ $detail-width: 360px; // PC で地図の右に出すときの幅
     pointer-events: none;
   }
 
-  span {
+  > span {
     display: inline-block;
     padding: 4px 12px;
     border: 1px solid $map-line;
@@ -677,6 +677,7 @@ $detail-width: 360px; // PC で地図の右に出すときの幅
     display: grid;
     place-items: center;
     font-size: 22px;
+    color: var(--c);
     background: color-mix(in srgb, var(--c) 15%, white);
     border-radius: 999px;
   }
@@ -986,6 +987,7 @@ $detail-width: 360px; // PC で地図の右に出すときの幅
     transform: rotate(45deg);
     font-size: 16px;
     line-height: 1;
+    color: v.$color-bg;
   }
 }
 
@@ -1019,6 +1021,7 @@ $detail-width: 360px; // PC で地図の右に出すときの幅
   place-items: center;
   font-size: 14px;
   line-height: 1;
+  color: $map-accent;
   background: $map-panel;
   border: 2px solid $map-accent;
   border-radius: 999px;

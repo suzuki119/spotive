@@ -54,6 +54,7 @@ $detail-line: 1px solid $color-secondary;
 
   &__hero-icon {
     font-size: 80px;
+    color: $color-bg;
   }
 
   // ---- 写真に重ねる白いシート ----
@@ -343,6 +344,7 @@ $detail-line: 1px solid $color-secondary;
   &__hotel-icon {
     font-size: 32px;
     line-height: 1;
+    color: $color-primary;
   }
 
   // この試合で遠征プランを作る（会場周辺のホテルを探すと同じ白い大きなボタン）
@@ -365,6 +367,7 @@ $detail-line: 1px solid $color-secondary;
   &__travel-icon {
     font-size: 32px;
     line-height: 1;
+    color: $color-primary;
   }
 
   &__travel-body {
@@ -417,6 +420,7 @@ $detail-line: 1px solid $color-secondary;
   &__icon {
     font-size: 40px;
     line-height: 1;
+    color: $color-primary;
   }
 
   &__body {

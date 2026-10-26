@@ -11,8 +11,11 @@
 declare(strict_types=1);
 
 require_once __DIR__ . '/../../lib/account.php';
+require_once __DIR__ . '/../../lib/guest.php';
 require_once __DIR__ . '/../../lib/layout.php';
 
+// ログインせずに使っている人は、ゲストにログインさせてから開く
+guest_auto_login();
 $user = require_login();
 
 $sessions = (int) db_one(
