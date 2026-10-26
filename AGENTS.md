@@ -44,6 +44,31 @@
 
 > **デモ版の扱い：** 現在はデモサイトとして、本人確認・主催者認証・書類の提出・大会の審査を外しています。メール確認が済んだ一般ユーザー（Lv.1）なら誰でも大会を登録でき、登録した時点で地図と一覧に載ります。**将来これらの確認を導入する可能性があります。** 詳しくは「4. PHP・データベースのルール」の「デモ版の扱い」を参照してください。
 
+### 画面の役割分担（マイページ・設定・主催者ページ）
+
+アカウントまわりの画面は、役割が重ならないように次のように分けています。**同じ情報や操作を 2 つの画面に置かないでください。** 置きたくなったら、片方は「もう片方への入口」だけにします。
+
+| 画面 | ファイル | 役割 | 来る場所 |
+| --- | --- | --- | --- |
+| マイページ | `pages/setting/mypage.php` | 観戦者としての自分（お気に入り・遠征・観戦記録）。主催者ページと設定へは**入口を 1 つずつ**置くだけ | ヘッダーのアカウントのアイコン、メニューの「マイページ」 |
+| 設定 | `pages/setting/setting.php` | 設定項目の一覧。各画面へのリンクを並べるだけ | マイページ、メニューの「設定」 |
+| アカウント | `pages/setting/account-setting.php` | プロフィールの変更・アカウント情報・ログイン中の端末・退会 | 設定、マイページのプロフィール |
+| 主催者ページ | `pages/administrators/administrators.php` | 大会の一覧・登録・編集、アクセス数、チームの管理（主催者の操作はすべてここ） | マイページの入口、ヘッダー。旧 `pages/organizer/dashboard.php` はここへ転送する |
+
+- **準備中の項目のために、中身の無いページを作らない。** 一覧の側で「準備中」と出して押せない表示にする（`aria-disabled="true"`。メニューバーの `href => null`、設定画面の `.is-disabled` と同じ）
+- **開けない画面へのリンクを出さない。** リンクを出す条件は、開く側の条件と同じ関数で決める（主催者ページなら `can_action_level($user, 'create_tournament', LEVEL_USER)`）
+
+会員登録の流れは 1 本です。主催者も、まずふつうの会員登録でアカウントを作ります。
+
+```
+pages/account/account-type.php（メールアドレスを入れる。「主催者」のボタンは intent=organizer を送る）
+  → pages/account/register/register.php（ニックネーム・電話番号・生年月日）
+  → pages/account/register/password.php
+  → pages/account/confirm.php（規約に同意）
+  → pages/account/complete.php
+  → （intent=organizer の人だけ）ログイン後に pages/organizer/register.php で主催者の申請
+```
+
 ### ターゲット
 
 - スポーツ観戦が好きな人
@@ -302,8 +327,10 @@ XAMPP と MAMP では URL や MySQL のポートが違います。**違いはコ
 | サイトの URL | `http://localhost/spotive/` | `http://localhost:8888/spotive/` | `config/app.php` の `app.base_url`（確認メールのリンクに使う） |
 | MySQL のポート／パスワード | 3306 ／ 空 | 8889 ／ `root` | `config/db.local.php`（`.gitignore` 済み。各自で作る） |
 | 外部 API のキー | 共通 | 共通 | `config/geoapify.local.php` / `config/rakuten.local.php`（`.gitignore` 済み。上の「外部 API」を参照） |
+| アプリ設定の上書き | 共通 | 共通 | `config/app.local.php`（`.gitignore` 済み。書いたキーだけが `config/app.php` を上書きする。例：localhost だけゲストに大会の掲載を許す。下記「ゲスト」を参照） |
 
 `config/app.php` の `base_url` を自分の環境向けに書き換えた場合は、その変更をコミットしないでください。
+`config/app.local.php` は**公開サーバーには置かないでください**（ゲストに掲載を許す設定などが、公開サイトで有効になってしまいます）。
 
 ### SCSS のコンパイル
 
@@ -342,6 +369,7 @@ sass/
 ├── _base.scss          ← body など全ページ共通の基本スタイル、.inner
 ├── _header.scss        ← 共通ヘッダー（pages/header.php）
 ├── _app-header.scss    ← 共通ヘッダー（pages/app-header.php）
+├── _guest-bar.scss     ← ゲストで利用中の帯（pages/guest-bar.php）
 ├── _menu-bar.scss      ← 画面下のメニューバー（pages/menu-bar.php）
 ├── _button.scss        ← 共通ボタン（.btn / .back）
 ├── _form.scss          ← 共通フォーム（アカウント・設定・主催者・運営ページ）
@@ -358,10 +386,10 @@ sass/
 ├── _hotel-detail.scss       ← ページ固有（pages/hotel/hotel-detail.php）
 ├── _travel.scss             ← ページ固有（pages/travel/）
 ├── _notification.scss       ← ページ固有（pages/notification/notification.php）
-├── _setting.scss            ← ページ固有（pages/setting/setting.php のマイページ）
-├── _notification-setting.scss ← ページ固有（pages/setting/notification-setting.php）
+├── _mypage.scss             ← ページ固有（pages/setting/mypage.php のマイページ）
+├── _setting.scss            ← ページ固有（pages/setting/setting.php の設定画面）
 ├── _plus.scss               ← ページ固有（pages/plus/plus.php のサブスク）
-└── _administrators.scss     ← ページ固有（pages/administrators/administrators.php の開発者画面）
+└── _administrators.scss     ← ページ固有（pages/administrators/administrators.php の主催者ページ）
 ```
 
 「未作成」のパーシャルは、作るときにこの名前を使ってください。新しいページのパーシャルを作ったら、この一覧と下の `style.scss` に追記してください。
@@ -383,11 +411,12 @@ sass/
 @use "match-search";
 @use "menu-bar";
 @use "app-header";
+@use "guest-bar";
 @use "home";
 @use "hotel-detail";
-@use "setting";
+@use "mypage";
 @use "notification";
-@use "notification-setting";
+@use "setting";
 @use "travel";
 @use "start";
 @use "account";
@@ -465,6 +494,12 @@ images/
 - 表示サイズの 2 倍を超える巨大な画像をそのまま置かない（表示 400px なら書き出しは 800px 程度まで）
 - `<img>` には必ず `alt` と `width` / `height` を書く（レイアウトがガタつくのを防ぐため）
 
+**アイコン・競技の画像の使い方**
+
+- `images/icons/` の SVG を文字と同じように出すときは、PHP では `icon_html('名前')`（`lib/icon.php`）、地図の JS では `iconHtml('名前')` を使う。CSS のマスク（`_base.scss` の `.icon`）で描くので、色は `color`、大きさは `font-size` で変わる
+- `--icon` の `url()` は、ページではなく `css/style.css` の場所から読まれる。**相対パスを渡さず、`/spotive/images/...` のようなサイトのルートからのパスにする**（`icon_html()` は自動でそうする）
+- 競技の色付きの画像（`images/sports/` のボール）は、マスクにすると色が消えるので `<img>` で出す。地図のピン・タグ・試合詳細で、画像のある競技（サッカー・フットサル・野球・バスケットボール・バレーボール）に使っている。画像が無い競技は SVG アイコンのまま
+
 ---
 
 ## 4. PHP・データベースのルール
@@ -487,7 +522,9 @@ SPOTIVE は PHP と MySQL を使います。**データベースの正は `db/sc
 - **ユーザーが掲載した大会** … `v_public_tournaments` から取る（下記のルールに従う）
 - **観戦用の試合データ** … `data/*.json` の仮データで画面を作る
 - **遠征プラン** … `travel_plans` / `travel_plan_items` に保存する（`lib/travel.php`、設計は `docs/away-travel.md`）。試合・チーム・ホテルは JSON の id をそのまま持つ
-- **お気に入りのチーム** … ログイン中は `favorite_teams` に保存し、未ログインのあいだはブラウザ（localStorage）に保存する（`lib/favorite.php`）。チームのテーブルがまだ無いので、`team_id` は `data/teams.json` の id をそのまま持つ
+- **お気に入りのチーム** … ログイン中は `favorite_teams` に保存し、未ログインのあいだとゲストはブラウザ（localStorage）に保存する（`lib/favorite.php`）。チームのテーブルがまだ無いので、`team_id` は `data/teams.json` の id をそのまま持つ
+- **お知らせの既読** … ログイン中は `notification_reads` に保存し、未ログインのあいだとゲストはブラウザに保存する（`lib/notification.php`）
+- **主催者ページ（チームの管理者・アクセス数）** … だれがどのチームを管理するかは `team_admins`（行を足すのは運営だけ。`php tools/add-team-admin.php`）、アクセス数は `access_daily_counts`（1 日・1 対象ごとの合計。だれが見たかは残さない）に保存する（`lib/team-admin.php`・`lib/access.php`）。試合詳細を開いたときとチケットのリンクを押したときに、`js/pages/match-detail.js` が `pages/match/access-api.php` へ送って数える。お気に入り登録数は `favorite_teams`、お知らせの閲覧数は `notification_reads` から数える。`team_id` は `data/teams.json` の id をそのまま持つ
 - **周辺施設** … DB には保存しない。Geoapify をその都度検索し、結果は一時ファイルに 1 時間だけ取っておく（`lib/geoapify.php`）。ホテルは `data/hotels.json` の仮データ（`lib/hotel.php`）
 - **観戦用のテーブル設計は、まだ各自で作らない。** 必要になったらチームで `schema.sql` に追加します
 
@@ -515,8 +552,39 @@ SPOTIVE は現在**デモサイト**です。「登録した大会が実際に�
 'tournament_review_required' => false,  // true で審査・書類・許認可の入力が戻る
 ```
 
-- デモ版の間も、**ここ以外の場所でレベルの判定を増やさないでください。** 判定は `require_action_level()` と `config/app.php` の値だけで行い、本番に切り替えるときは設定値を変えるだけで済むようにしておきます
+- デモ版の間も、**ここ以外の場所でレベルの判定を増やさないでください。** 判定は `require_action_level()`（開けなければ移す）・`can_action_level()`（リンクを出すかどうかなど、true / false だけ返す）と `config/app.php` の値だけで行い、本番に切り替えるときは設定値を変えるだけで済むようにしておきます
 - 本人確認を戻すときは、git の履歴から `lib/identity.php` と関連する画面を復元し、`lib/account.php` の `recalc_trust_level()` に Lv.2 の判定を戻します
+
+### ゲスト（お試し用の共通アカウント）
+
+アカウントを作らずに試せるよう、**全員で 1 つを使うゲストのアカウント**があります（`lib/guest.php`）。
+
+- ログインせずに使っている人がマイページ・主催者ページを開くと、`guest_auto_login()` で自動でゲストにログインさせる。パスワードでは入れない（ゲストのアカウントは、初めて使われたときに自動で作られる）
+- ゲストの間は、ヘッダーの下に帯（`pages/guest-bar.php`）を出し、共有であることとアカウント作成への導線を見せる
+- 設定は `config/app.php` の `guest`。公開サーバーでゲストを使わないときは `enabled` を `false` にする
+
+```php
+'guest' => [
+  'enabled'        => true,
+  'allow_register' => false,               // true にすると、ゲストでも主催者登録・大会の掲載・プロフィール変更ができる
+  'email'    => 'guest@example.com',       // 実在する人に届かない、例示用のドメインにする
+  'nickname' => 'ゲスト',
+],
+```
+
+`allow_register` は `config/app.php` では `false` のままにし、localhost で試すときだけ `config/app.local.php` で `true` にします。
+
+**ゲストは全員で同じアカウントを使うので、ほかの人と混ざって困るものは、ゲストに使わせないかブラウザに保存します。** 新しい画面を作るときも、次のどれに当たるかを決めてください。
+
+| 扱い | 書き方 | 今の対象 |
+| --- | --- | --- |
+| ゲストには使わせない | 画面・操作の先頭で `guest_forbid()` を呼ぶ（`$allowLocal = true` なら `allow_register` のときだけ使わせる） | 退会、プロフィール変更、主催者登録、大会の掲載・編集、遠征プランの削除 |
+| ブラウザに保存する（未ログインと同じ扱い） | `current_user()` の代わりに `current_member()` を使う（ゲストなら `null` を返す） | お気に入りのチーム、お知らせの既読 |
+| 共有でよい | そのまま | 遠征プランの作成と「購入済み」の印 |
+
+- 公開サーバー（`allow_register` が `false`）では、主催者ページはゲストに見せるが閲覧だけにする。押しても断られるボタンは出さない（「イベントを追加」は灰色、「編集する」は出さない）
+- 自動ログインには IP ごとに 1 時間 300 回の上限がある（`GUEST_LOGIN_LIMIT`）。教室など同じ IP から大勢が開くことを考えて、減らさないでください
+- ゲストかどうかの判定は `is_guest()` だけで行う。メールアドレスを画面ごとに直接比べない
 
 ### ファイル構成
 
@@ -525,20 +593,22 @@ index.php              ← トップページ
 config/
 ├── db.php             ← DB 接続（PDO）。全ページここから読み込む
 ├── db.local.php       ← 各自の DB 接続設定（.gitignore 済み。コミットしない）
-├── app.php            ← アプリ全体の設定（URL・保存先・レベルの条件など）
+├── app.php            ← アプリ全体の設定（URL・保存先・レベルの条件・ゲストなど）
+├── app.local.php      ← 各自の app.php の上書き（.gitignore 済み。コミットしない。公開サーバーに置かない）
 ├── geoapify.example.php ← Geoapify の API キーの見本。geoapify.local.php にコピーして使う
 └── rakuten.example.php  ← 楽天ウェブサービスのキーの見本。rakuten.local.php にコピーして使う
 db/
 ├── schema.sql         ← テーブル定義。これが正
 ├── schema-lolipop.sql ← ロリポップ（公開サーバー）に入れる用。schema.sql から作る（下記「ロリポップへの DB の入れ方」）
-└── seed.sql           ← 初期データ（利用規約・プライバシーポリシーの版）。テーブルを作ったあとに流す
+├── seed.sql           ← 初期データ（利用規約・プライバシーポリシーの版）。テーブルを作ったあとに流す
+└── migrate-*.sql      ← すでに作ってある DB を直す差分（下記「既存の DB を直すとき」）
 lib/                   ← 共通の処理（認証・大会・バリデーションなど）。ページから require_once する
 pages/                 ← 各ページ。機能ごとにフォルダを分ける（pages/map/map.php、pages/match/match-list.php）
 data/                  ← 観戦用の仮データ（JSON）
 js/
 ├── common/            ← 複数ページで使う JS
 └── pages/             ← ページ専用の JS（ページと同じ名前にする）
-tools/                 ← コマンドラインで使う管理用スクリプト（運営アカウントの作成など）
+tools/                 ← コマンドラインで使う管理用スクリプト（運営アカウントの作成、チームの管理者の登録など）
 docs/                  ← 機能ごとの設計メモ（例：docs/away-travel.md）
 ```
 
@@ -659,6 +729,18 @@ $order   = $allowed[$_GET['sort'] ?? ''] ?? 'starts_at ASC';
 3. **接続先** … サーバー上の `config/db.local.php` にロリポップのホスト・DB 名・ユーザー・パスワードを書き、`config/app.php` の `base_url` を公開サイトの URL にする（どちらもコミットしない）
 
 **`schema.sql` を変えたら、`schema-lolipop.sql` も作り直してください。** `schema.sql` の 16 行目以降を、`schema-lolipop.sql` の「ここから下は schema.sql と同じ」以降に貼り直します。テーブルを足した・消したときは、先頭の `DROP` の一覧も合わせます。
+
+### 既存の DB を直すとき（`db/migrate-*.sql`）
+
+すでにデータの入っている DB（各自のローカルや、ロリポップ）を、作り直さずに直すための SQL を `db/migrate-*.sql` に置いています。**ファイルの先頭のコメントに、いつ・なぜ・いつ流すかを書いてください。**
+
+| ファイル | 内容 | 流すタイミング |
+| --- | --- | --- |
+| `migrate-phone-nullable.sql` | `users.phone_e164` を NULL でもよい形にする（ゲストは電話番号を持たない） | 2026-09-30 より前に作った DB で 1 回 |
+| `migrate-guest-email.sql` | ゲストのメールアドレスを `guest@example.com` に移し、DB に残ったゲストのお気に入り・既読を消す | **ゲストでログインする前に** 1 回（先にログインすると新しいゲストが作られ、書き換えが重複で止まる） |
+
+- 新しく DB を作るとき（`schema.sql` / `schema-lolipop.sql` から入れるとき）は、構造の変更は反映済みなので流さなくてよい
+- テーブルやカラムを変える migrate を作ったら、`schema.sql` と `schema-lolipop.sql` にも同じ変更を入れる
 
 ### 公開する大会は必ずビューから取る
 
@@ -934,6 +1016,7 @@ fix/header-overlap        不具合修正
 - [ ] **`F12` の Console にエラー（赤い表示）が出ていない**
 - [ ] **画像が全部表示されている**（画像切れアイコンが出ていない）
 - [ ] **リンクが切れていない**（`href="#"` のまま放置していない）
+- [ ] **同じ情報・操作を 2 つの画面に置いていない／準備中のために空のページを作っていない**（「画面の役割分担」を参照）
 - [ ] **色・余白・角丸が、このファイルで決めた値になっている**
       （カラーコードを直書きしていない、8 の倍数以外の余白を使っていない）
 - [ ] **ファイル名が命名規則に従っている**（小文字・ハイフン）
@@ -952,6 +1035,8 @@ PHP を触ったときは、加えて次も確認してください。
 - [ ] **自分の環境向けに書き換えた `config/app.php` の `base_url` をコミットしていない**
 - [ ] **`db/schema.sql` を変えたときは、`db/schema-lolipop.sql` も作り直した**
 - [ ] **本名・電話番号・書類の内容をログに出していない**
+- [ ] **ゲストで混ざって困るものに、`guest_forbid()` か `current_member()` を使っている**（「ゲスト」を参照）
+- [ ] **`db/migrate-*.sql` を足したときは、「既存の DB を直すとき」の表に追記した**
 
 ---
 

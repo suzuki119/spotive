@@ -7,7 +7,7 @@
  *   GET id なし … 自分のプランの一覧
  *   GET id あり … 予定表（日付ごと・時刻順）。他人のプランは開けない
  *   POST action=toggle … 「購入済み」「予約済み」の印を切り替える（item_id）
- *   POST action=delete … プランを削除する（plan_id）
+ *   POST action=delete … プランを削除する（plan_id）。ゲストはほかの人のプランを消せてしまうので使えない
  *
  * 「購入済み」はユーザーが自分で付ける印。SPOTIVE はチケットや切符を売らないので、本当に買ったかは分からない。
  */
@@ -15,6 +15,7 @@
 declare(strict_types=1);
 
 require_once __DIR__ . '/../../lib/travel.php';
+require_once __DIR__ . '/../../lib/guest.php';
 
 $user   = require_login();
 $userId = (int) $user['id'];
@@ -36,6 +37,8 @@ if (is_post()) {
         // no break
 
       case 'delete':
+        // ゲスト（お試し用の共通アカウント）には使わせない
+        guest_forbid($user, 'ゲストでは観戦プランを削除できません。', 'pages/travel/travel-plan.php?id=' . $planId);
         travel_delete_plan($userId, $planId);
         flash('観戦プランを削除しました。', 'success');
         redirect('travel-plan.php');
@@ -55,9 +58,10 @@ if (is_post()) {
 // -------------------------------------------------------------------
 // プランの取得
 // -------------------------------------------------------------------
-$plan  = null;
-$plans = [];
-$days  = [];
+$plan    = null;
+$plans   = [];
+$days    = [];
+$isGuest = is_guest($user);
 
 try {
   if ($planId > 0) {
@@ -195,12 +199,16 @@ $messages = take_flash();
           <p class="travel-cost__note">交通は距離からの計算、ホテルは仮のデータによる目安です。「購入済み」はご自身の記録用の印です。</p>
         </section>
 
-        <form class="travel-plan__delete" action="travel-plan.php" method="post">
-          <?= csrf_field() ?>
-          <input type="hidden" name="action" value="delete" />
-          <input type="hidden" name="plan_id" value="<?= (int) $plan['id'] ?>" />
-          <button class="travel-plan__delete-button" type="submit">このプランを削除する</button>
-        </form>
+        <?php if ($isGuest) : ?>
+          <p class="travel-plan__delete">ゲストでは観戦プランを削除できません。</p>
+        <?php else : ?>
+          <form class="travel-plan__delete" action="travel-plan.php" method="post">
+            <?= csrf_field() ?>
+            <input type="hidden" name="action" value="delete" />
+            <input type="hidden" name="plan_id" value="<?= (int) $plan['id'] ?>" />
+            <button class="travel-plan__delete-button" type="submit">このプランを削除する</button>
+          </form>
+        <?php endif; ?>
 
       <?php elseif ($planId === 0) : ?>
         <h1 class="travel-plan__title">観戦プラン</h1>

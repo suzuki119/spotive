@@ -5,6 +5,7 @@
  * お気に入りのチーム（企画書の機能 4）。
  *   ログイン中 … favorite_teams テーブルに保存する（どの端末から開いても同じ）
  *   未ログイン … ブラウザの localStorage に保存する（js/common/favorite-store.js）
+ *   ゲスト     … 未ログインと同じ。全員で 1 つのアカウントなので、DB に入れるとほかの人と混ざる（lib/guest.php）
  * ログインしたら、ブラウザに残っていた分を favorite_merge() でアカウントに移す。
  *
  * チームはまだ DB に無いので、team_id は data/teams.json の id（team-001 の形）をそのまま使う。
@@ -14,6 +15,7 @@ declare(strict_types=1);
 
 require_once __DIR__ . '/support.php';
 require_once __DIR__ . '/auth.php';
+require_once __DIR__ . '/guest.php';
 require_once __DIR__ . '/match.php';
 
 /** 一度に移せる件数の上限（ブラウザから大量に送られてきても受け付けすぎない） */
@@ -75,7 +77,7 @@ function favorite_insert(int $userId, string $teamId): void
 
 /**
  * ページに埋め込み、js/common/favorite-store.js が最初に読む状態。
- * DB に繋がらないときや favorite_teams がまだ無いときは、未ログイン扱い（localStorage）にする。
+ * DB に繋がらないときや favorite_teams がまだ無いとき、ゲストのときは、未ログイン扱い（localStorage）にする。
  */
 function favorite_client_state(): array
 {
@@ -87,7 +89,7 @@ function favorite_client_state(): array
   ];
 
   try {
-    $user = current_user();
+    $user = current_member();
     if ($user !== null) {
       $state['teamIds']  = favorite_team_ids((int) $user['id']);
       $state['loggedIn'] = true;

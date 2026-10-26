@@ -3,7 +3,7 @@
 /**
  * pages/notification/notification-api.php
  * お知らせの既読を受け付ける（js/pages/notification.js から fetch で呼ぶ）。
- * ログイン中のユーザーだけが使える。未ログインの既読はブラウザ（localStorage）に持つ。
+ * ログイン中のユーザーだけが使える。未ログインとゲストの既読はブラウザ（localStorage）に持つ。
  *
  *   action=read  ids[]=1&ids[]=2 … 既読にする
  *
@@ -13,6 +13,7 @@
 declare(strict_types=1);
 
 require_once __DIR__ . '/../../lib/notification.php';
+require_once __DIR__ . '/../../lib/guest.php';
 
 /** JSON を返して終わる */
 function notification_api_respond(int $status, array $body): never
@@ -31,7 +32,7 @@ if (!is_post()) {
 try {
   csrf_verify();
 
-  $user = current_user();
+  $user = current_member();
   if ($user === null) {
     notification_api_respond(401, ['ok' => false, 'message' => 'ログインが必要です。']);
   }

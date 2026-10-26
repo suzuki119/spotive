@@ -35,7 +35,7 @@ const MATCH_SEARCH_NEAR_KM = [1, 3, 5, 10, 30];
 
 /**
  * 競技 => リーグ名。キーは競技コード（空文字は ALL）。
- *   ・マイページ（pages/setting/setting.php の mypage_league()）が、見出しのリーグ名に使う
+ *   ・マイページ（pages/setting/mypage.php の mypage_league()）が、見出しのリーグ名に使う
  *   ・試合一覧・試合を探すの競技タブは、この「並び順」だけを使う。
  *     タブの文字は競技名（バスケットボールなど）にそろえる（match_search_tabs()）
  */

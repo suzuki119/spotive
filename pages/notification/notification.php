@@ -8,13 +8,14 @@
  * カードを開くと本文が出て、既読になる（js/pages/notification.js）。
  *   ログイン中 … 既読は DB（notification-api.php 経由）
  *   未ログイン … チーム向けのお知らせは、ブラウザに保存したお気に入りのチームの分だけ出す。
- *                既読もブラウザ（localStorage）に持つ
+ *                既読もブラウザ（localStorage）に持つ。ゲストも同じ（お気に入りをブラウザに持つため）
  */
 
 declare(strict_types=1);
 
 require_once __DIR__ . '/../../lib/notification.php';
 require_once __DIR__ . '/../../lib/favorite.php';
+require_once __DIR__ . '/../../lib/guest.php';
 
 // -------------------------------------------------------------------
 // お知らせの取得
@@ -24,7 +25,7 @@ $notifications = [];
 $dbError       = false;
 
 try {
-  $user          = current_user();
+  $user          = current_member();
   $notifications = notification_list($user === null ? null : (int) $user['id']);
 } catch (PDOException $e) {
   // テーブルがまだ無い環境でも、画面は開けるようにする

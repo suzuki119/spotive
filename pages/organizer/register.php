@@ -15,7 +15,7 @@ require_once __DIR__ . '/../../lib/layout.php';
 guest_auto_login();
 $user   = require_login();
 // ゲスト（お試し用の共通アカウント）には使わせない（localhost で試すときは使える）
-guest_forbid($user, 'ゲストでは主催者として登録できません。', 'pages/setting/setting.php', true);
+guest_forbid($user, 'ゲストでは主催者として登録できません。', 'pages/setting/mypage.php', true);
 $errors = [];
 $error  = null;
 
@@ -70,7 +70,7 @@ page_header('主催者登録', '主催者認証（Lv.3）');
 <?php if ($profile !== null && $profile['status'] === 'active') : ?>
   <p class="notice notice--success">
     主催者認証が完了しています（<?= h((string) $profile['display_name']) ?>）。
-    <a href="dashboard.php">主催者ページへ</a>
+    <a href="../administrators/administrators.php">主催者ページへ</a>
   </p>
 <?php endif; ?>
 
@@ -319,7 +319,7 @@ page_header('主催者登録', '主催者認証（Lv.3）');
 <?php endif; ?>
 
 <p class="form-page__note">
-  <a href="<?= h($base) ?>/pages/setting/setting.php">マイページへ戻る</a>
+  <a href="<?= h($base) ?>/pages/setting/mypage.php">マイページへ戻る</a>
 </p>
 
 <?php page_footer();

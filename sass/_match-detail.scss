@@ -57,6 +57,15 @@ $detail-line: 1px solid $color-secondary;
     color: $color-bg;
   }
 
+  // 競技の画像（色付きのボール）は、背景の競技の色に埋もれないよう白い丸にのせる
+  &__hero-sport {
+    width: 96px;
+    height: 96px;
+    padding: 8px;
+    background: $color-bg;
+    border-radius: $radius-full;
+  }
+
   // ---- 写真に重ねる白いシート ----
   &__sheet {
     position: relative;

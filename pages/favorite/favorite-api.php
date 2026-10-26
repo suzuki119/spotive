@@ -3,7 +3,7 @@
 /**
  * pages/favorite/favorite-api.php
  * お気に入りの登録・解除を受け付ける（js/common/favorite-store.js から fetch で呼ぶ）。
- * ログイン中のユーザーだけが使える。返すのは JSON で、画面は持たない。
+ * ログイン中のユーザーだけが使える（ゲストはブラウザに保存するので使えない）。返すのは JSON で、画面は持たない。
  *
  *   action=toggle  team_id=team-001  on=1|0  … 1 件の登録・解除
  *   action=merge   team_ids[]=...            … ブラウザに保存していた分をアカウントに移す
@@ -32,7 +32,7 @@ if (!is_post()) {
 try {
   csrf_verify();
 
-  $user = current_user();
+  $user = current_member();
   if ($user === null) {
     favorite_api_respond(401, ['ok' => false, 'message' => 'ログインが必要です。']);
   }
