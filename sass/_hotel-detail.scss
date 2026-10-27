@@ -210,6 +210,7 @@ $hotel-shadow: 0 2px 12px rgba($color-secondary, 0.1);
 
   &__row {
     display: flex;
+    flex-wrap: wrap; // 狭い画面では、予約のボタンを料金の下に回す
     align-items: center;
     justify-content: space-between;
     gap: 16px;
@@ -271,15 +272,15 @@ $hotel-shadow: 0 2px 12px rgba($color-secondary, 0.1);
 // ---- 徒歩 ｜ 電車 ｜ 会場まで ----
 .hotel-access {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   margin: 16px 0 0;
   padding: 0;
   list-style: none;
 
+  // スマホは 3 列に横並びが入らないので、アイコンを上に置く。タブレット以上はアイコンを左に置く
   &__item {
     display: grid;
-    grid-template-columns: auto 1fr;
-    grid-template-rows: auto auto;
+    justify-items: start;
     align-items: center;
     column-gap: 8px;
     padding: 0 8px;
@@ -288,8 +289,13 @@ $hotel-shadow: 0 2px 12px rgba($color-secondary, 0.1);
       border-left: 1px solid $color-border;
     }
 
-    img {
-      grid-row: span 2;
+    @media (min-width: $bp-tablet) {
+      grid-template-columns: auto 1fr;
+      grid-template-rows: auto auto;
+
+      img {
+        grid-row: span 2;
+      }
     }
   }
 

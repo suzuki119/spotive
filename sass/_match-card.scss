@@ -63,7 +63,7 @@
     gap: 8px;
   }
 
-  // チームのロゴ（画像が無いときは頭文字の丸）
+  // チームのロゴ（画像が無いときは images/sports/ の競技の画像。それも無い競技は、競技の色の丸にアイコン）
   &__emblem {
     display: grid;
     flex-shrink: 0;
@@ -73,8 +73,7 @@
     object-fit: contain;
     border-radius: $radius-full;
     color: $color-bg;
-    font-size: 12px;
-    font-weight: 700;
+    font-size: 24px; // 中のアイコンの大きさ
     background: map.get($sport-colors, other);
 
     @each $sport, $color in $sport-colors {
@@ -186,6 +185,7 @@
   // 10/14 ｜ 13:00〜
   &__when {
     display: flex;
+    flex-wrap: wrap; // 狭いとき（320px など）は、開始時間を日付の下に折り返す
     align-items: center;
     margin: 0;
     font-family: $font-heading;

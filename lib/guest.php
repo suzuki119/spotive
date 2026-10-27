@@ -101,6 +101,17 @@ function guest_login(): void
   audit_log((int) $user['id'], 'guest.login', 'user', (int) $user['id']);
 }
 
+/**
+ * ゲストのまま自分のアカウントでログインし直すとき、login_user() の前に呼ぶ。
+ * login_user() はセッション ID を作り直すだけなので、ゲストのセッションの行を先に失効させておく。
+ */
+function guest_end_session(): void
+{
+  if (is_guest(current_user())) {
+    revoke_current_session();
+  }
+}
+
 /** ゲストにも登録・変更を許すか（localhost で試すとき。config/app.local.php で true にする） */
 function guest_can_register(): bool
 {

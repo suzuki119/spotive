@@ -15,6 +15,8 @@
 
 declare(strict_types=1);
 
+require_once __DIR__ . '/../../lib/icon.php';
+
 /** @var array<string,mixed> $match */
 if (!isset($match)) {
   return;   // URL で直接開かれたときは何も出さない
@@ -23,6 +25,7 @@ if (!isset($match)) {
 $place = $match['pref'] === '' ? $match['venue'] : $match['venue'] . '（' . $match['pref'] . '）';
 $teams = match_teams($match['teamIds']);   // 2 チームそろわない大会は空
 $sport = match_sport_key($match['sport']);
+$sportImage = match_sport_image($match['sport']);   // チームの画像が無いときに代わりに出す。無い競技はアイコン
 
 ?>
 <article
@@ -40,9 +43,11 @@ $sport = match_sport_key($match['sport']);
 
   <div class="match-card__side">
     <div class="match-card__emblems">
-      <?php if ($teams === []) : ?>
+      <?php if ($teams === [] && $sportImage !== '') : ?>
+        <img class="match-card__emblem" src="<?= h(url($sportImage)) ?>" alt="" width="48" height="48" loading="lazy" />
+      <?php elseif ($teams === []) : ?>
         <span class="match-card__emblem match-card__emblem--<?= h($sport) ?>" aria-hidden="true">
-          <?= h(mb_substr(match_sport_label($match['sport']), 0, 2)) ?>
+          <?= icon_html(match_sport_icon($match['sport'])) ?>
         </span>
       <?php else : ?>
         <?php foreach ($teams as $i => $team) : ?>
@@ -51,9 +56,11 @@ $sport = match_sport_key($match['sport']);
           <?php endif; ?>
           <?php if ($team['logo'] !== '') : ?>
             <img class="match-card__emblem" src="<?= h(url($team['logo'])) ?>" alt="<?= h($team['name']) ?>" width="48" height="48" loading="lazy" />
+          <?php elseif ($sportImage !== '') : ?>
+            <img class="match-card__emblem" src="<?= h(url($sportImage)) ?>" alt="<?= h($team['name']) ?>" width="48" height="48" loading="lazy" />
           <?php else : ?>
             <span class="match-card__emblem match-card__emblem--<?= h($sport) ?>" role="img" aria-label="<?= h($team['name']) ?>">
-              <?= h($team['shortName']) ?>
+              <?= icon_html(match_sport_icon($match['sport'])) ?>
             </span>
           <?php endif; ?>
         <?php endforeach; ?>

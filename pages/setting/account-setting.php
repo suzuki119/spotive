@@ -6,8 +6,8 @@
  * （以前の profile.php もここに入れた）。設定画面（setting.php）とマイページから来る。
  *
  * 変えられるのはニックネームと電話番号だけ。
- * メールアドレスの変更は本人のものか確かめ直す手順が必要なので、
- * パスワードの変更は今のパスワードの確認が必要なので、まだ作っていない。
+ * メールアドレスの変更は本人のものか確かめ直す手順が必要なので、まだ作っていない。
+ * パスワードの変更は password-setting.php で行う。
  * ゲスト（お試し用の共通アカウント）は見るだけで、変更はできない（localhost で試すときは除く）。
  * 退会（アカウントの削除）は account-delete.php で行う。
  */
@@ -95,93 +95,110 @@ try {
   error_log('[SPOTIVE] DB error: ' . $e->getMessage());
 }
 
-page_header('アカウント', 'アカウント');
+setting_page_header('アカウント');
 ?>
 
-<?php if ($error !== null) : ?>
-  <p class="notice notice--error"><?= h($error) ?></p>
-<?php endif; ?>
+        <?php if ($error !== null) : ?>
+          <p class="notice notice--error"><?= h($error) ?></p>
+        <?php endif; ?>
 
-<h2 class="form-page__subtitle">プロフィール</h2>
+        <section>
+          <h2>プロフィール</h2>
 
-<?php if ($canEdit) : ?>
-  <form class="form" action="account-setting.php" method="post">
-    <?= csrf_field() ?>
+          <?php if ($canEdit) : ?>
+            <form class="setting-form" action="account-setting.php" method="post">
+              <?= csrf_field() ?>
 
-    <div class="form__field">
-      <label class="form__label" for="nickname">ニックネーム</label>
-      <input
-        class="form__input"
-        type="text"
-        id="nickname"
-        name="nickname"
-        value="<?= h(old($form, 'nickname')) ?>"
-        maxlength="50"
-        required
-      />
-      <p class="form__hint">画面に表示される名前です。</p>
-      <?php field_error($errors, 'nickname'); ?>
-    </div>
+              <div class="setting-form__field">
+                <label class="setting-form__label" for="nickname">ニックネーム</label>
+                <input
+                  class="form__input"
+                  type="text"
+                  id="nickname"
+                  name="nickname"
+                  value="<?= h(old($form, 'nickname')) ?>"
+                  maxlength="50"
+                  required
+                />
+                <p class="setting-form__hint">画面に表示される名前です。</p>
+                <?php field_error($errors, 'nickname'); ?>
+              </div>
 
-    <div class="form__field">
-      <label class="form__label" for="phone">電話番号</label>
-      <input
-        class="form__input"
-        type="tel"
-        id="phone"
-        name="phone"
-        value="<?= h(old($form, 'phone')) ?>"
-        placeholder="09012345678"
-        required
-      />
-      <?php if ($user['phone_e164'] !== null) : ?>
-        <p class="form__hint"><?= $user['phone_verified_at'] !== null ? '確認済みです。' : 'まだ確認していません。' ?>変えると、もう一度確認が必要になります。</p>
-      <?php endif; ?>
-      <?php field_error($errors, 'phone'); ?>
-    </div>
+              <div class="setting-form__field">
+                <label class="setting-form__label" for="phone">電話番号</label>
+                <input
+                  class="form__input"
+                  type="tel"
+                  id="phone"
+                  name="phone"
+                  value="<?= h(old($form, 'phone')) ?>"
+                  placeholder="09012345678"
+                  required
+                />
+                <?php if ($user['phone_e164'] !== null) : ?>
+                  <p class="setting-form__hint"><?= $user['phone_verified_at'] !== null ? '確認済みです。' : 'まだ確認していません。' ?>変えると、もう一度確認が必要になります。</p>
+                <?php endif; ?>
+                <?php field_error($errors, 'phone'); ?>
+              </div>
 
-    <button class="button button--primary" type="submit">保存する</button>
-  </form>
-<?php else : ?>
-  <p class="form-page__note">ゲストのプロフィールは変更できません。アカウントを作成するとご利用いただけます。</p>
-  <dl class="detail">
-    <dt class="detail__label">ニックネーム</dt>
-    <dd class="detail__value"><?= h((string) $user['nickname']) ?></dd>
-  </dl>
-<?php endif; ?>
+              <button class="setting-form__submit" type="submit">保存する</button>
+            </form>
+          <?php else : ?>
+            <dl class="detail detail--striped">
+              <div class="detail__row">
+                <dt class="detail__label">ニックネーム</dt>
+                <dd class="detail__value"><?= h((string) $user['nickname']) ?></dd>
+              </div>
+            </dl>
+            <p class="setting-form__hint">ゲストのプロフィールは変更できません。アカウントを作成するとご利用いただけます。</p>
+          <?php endif; ?>
+        </section>
 
-<h2 class="form-page__subtitle">アカウント情報</h2>
+        <section>
+          <h2>アカウント情報</h2>
 
-<dl class="detail">
-  <dt class="detail__label">メールアドレス</dt>
-  <dd class="detail__value">
-    <?= h((string) $user['email']) ?>
-    <?= $user['email_verified_at'] !== null ? '（確認済み）' : '（未確認）' ?>
-  </dd>
+          <dl class="detail detail--striped">
+            <div class="detail__row">
+              <dt class="detail__label">メールアドレス</dt>
+              <dd class="detail__value">
+                <?= h((string) $user['email']) ?>
+                <?= $user['email_verified_at'] !== null ? '（確認済み）' : '（未確認）' ?>
+              </dd>
+            </div>
 
-  <dt class="detail__label">生年月日</dt>
-  <dd class="detail__value"><?= h((string) $user['birthdate']) ?></dd>
+            <div class="detail__row">
+              <dt class="detail__label">生年月日</dt>
+              <dd class="detail__value"><?= h((string) $user['birthdate']) ?></dd>
+            </div>
 
-  <dt class="detail__label">信頼レベル</dt>
-  <dd class="detail__value"><?= h(level_label((int) $user['trust_level'])) ?></dd>
+            <div class="detail__row">
+              <dt class="detail__label">信頼レベル</dt>
+              <dd class="detail__value"><?= h(level_label((int) $user['trust_level'])) ?></dd>
+            </div>
 
-  <dt class="detail__label">最終ログイン</dt>
-  <dd class="detail__value"><?= h(format_datetime((string) $user['last_login_at'])) ?></dd>
+            <div class="detail__row">
+              <dt class="detail__label">最終ログイン</dt>
+              <dd class="detail__value"><?= h(format_datetime((string) $user['last_login_at'])) ?></dd>
+            </div>
 
-  <dt class="detail__label">ログイン中の端末</dt>
-  <dd class="detail__value"><?= $sessions ?>件</dd>
-</dl>
+            <div class="detail__row">
+              <dt class="detail__label">ログイン中の端末</dt>
+              <dd class="detail__value"><?= $sessions ?>件</dd>
+            </div>
+          </dl>
+          <p class="setting-form__hint">メールアドレス・生年月日の変更はまだ作っていません。</p>
+        </section>
 
-<p class="form-page__note">メールアドレス・生年月日・パスワードの変更はまだ作っていません。</p>
+        <!-- 退会。設定画面のログアウトと同じく、赤い枠と文字で区別する。ゲストは退会できないので出さない -->
+        <?php if (!is_guest($user)) : ?>
+          <section class="setting-danger">
+            <h2>アカウントの削除</h2>
+            <a class="setting-danger__link" href="account-delete.php">
+              <span>アカウントを削除する</span>
+              <img src="<?= h(url('images/icons/setting-next.svg')) ?>" alt="" width="11" height="18" />
+            </a>
+            <p class="setting-form__hint">削除すると、登録内容は元に戻せません。</p>
+          </section>
+        <?php endif; ?>
 
-<h2 class="form-page__subtitle">アカウントの削除</h2>
-<p class="form-page__note">
-  アカウントを削除すると、登録内容は元に戻せません。<br />
-  <a href="account-delete.php">アカウントを削除する</a>
-</p>
-
-<p class="form-page__note">
-  <a href="setting.php">設定へ戻る</a> ・ <a href="mypage.php">マイページへ戻る</a>
-</p>
-
-<?php page_footer();
+<?php setting_page_footer();

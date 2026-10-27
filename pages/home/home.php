@@ -20,6 +20,7 @@
 declare(strict_types=1);
 
 require_once __DIR__ . '/../../lib/favorite.php';
+require_once __DIR__ . '/../../lib/icon.php';
 
 const HOME_NOW_LIMIT = 10;   // 「今から観戦できる試合」に出す数（距離で絞っても、この数まで）
 const HOME_NOW_RADIUS_KM = [1, 3, 5, 10, 30];   // 「現在地から○km以内」の選択肢
@@ -85,44 +86,54 @@ $teamNamesJson = (string) json_encode(
 
 
 /**
- * 対戦カードのロゴ部分（チーム vs チーム）。チームが無い大会は競技名を出す。
+ * ロゴが無いときの代わり。images/sports/ の競技の画像、それも無い競技は競技の色の丸にアイコンを出す。
+ * $label が空なら飾りとして読み上げない。
+ */
+$sportLogo = static function (array $match, string $class, string $label, int $size): void {
+  $image = match_sport_image($match['sport']);
+  if ($image !== '') : ?>
+    <img class="<?= h($class) ?>" src="<?= h(url($image)) ?>" alt="<?= h($label) ?>" width="<?= $size ?>" height="<?= $size ?>" />
+  <?php elseif ($label === '') : ?>
+    <span class="<?= h($class) ?> team-logo--<?= h(match_sport_key($match['sport'])) ?>" aria-hidden="true"><?= icon_html(match_sport_icon($match['sport'])) ?></span>
+  <?php else : ?>
+    <span class="<?= h($class) ?> team-logo--<?= h(match_sport_key($match['sport'])) ?>" role="img" aria-label="<?= h($label) ?>"><?= icon_html(match_sport_icon($match['sport'])) ?></span>
+  <?php endif;
+};
+
+/**
+ * 対戦カードのロゴ部分（チーム vs チーム）。チームが無い大会は競技の画像を出す。
  * 表示だけの小さな部品なので、ここに置いている。
  */
-$teamsVs = static function (array $match, string $block): void {
+$teamsVs = static function (array $match, string $block) use ($sportLogo): void {
   if (count($match['teams']) < 2) {
-?>
-    <span class="<?= h($block) ?>__solo team-logo team-logo--<?= h(match_sport_key($match['sport'])) ?>">
-      <?= h(match_sport_label($match['sport'])) ?>
-    </span>
-    <?php
+    $sportLogo($match, 'team-logo', match_sport_label($match['sport']), 48);
     return;
   }
   foreach ($match['teams'] as $i => $team) :
-    if ($i === 1) :
-    ?><span class="<?= h($block) ?>__vs">vs</span><?php
-                                                endif;
-                                                if ($team['logo'] !== '') :
-                                                  ?><img class="team-logo" src="<?= h(url($team['logo'])) ?>" alt="<?= h($team['name']) ?>" width="48" height="48" /><?php
-                                                                                                                                                                    else :
-                                                                                                                                                                      ?><span class="team-logo team-logo--<?= h(match_sport_key($match['sport'])) ?>" role="img" aria-label="<?= h($team['name']) ?>"><?= h($team['shortName']) ?></span><?php
-                                                                                                                                                                                                                                                                                                                                        endif;
-                                                                                                                                                                                                                                                                                                                                      endforeach;
-                                                                                                                                                                                                                                                                                                                                    };
-
+    if ($i === 1) : ?>
+      <span class="<?= h($block) ?>__vs">vs</span>
+    <?php endif;
+    if ($team['logo'] !== '') : ?>
+      <img class="team-logo" src="<?= h(url($team['logo'])) ?>" alt="<?= h($team['name']) ?>" width="48" height="48" />
+    <?php else :
+      $sportLogo($match, 'team-logo', $team['name'], 48);
+    endif;
+  endforeach;
+};
 
 /**
- * お気に入りの試合の、片方のチームのロゴ。ロゴが無いチームは、競技の色の丸に略称を入れて代わりにする
+ * お気に入りの試合の、片方のチームのロゴ。ロゴが無いチームは、競技の画像で代わりにする
  * （何も出さないと、どのチームの試合か分からなくなる）
  */
-$favLogo = static function (?array $team, array $match): void {
+$favLogo = static function (?array $team, array $match) use ($sportLogo): void {
   if ($team === null) {
     return;
   }
   if ($team['logo'] !== '') : ?>
     <img class="fav-match__logo" src="<?= h(url($team['logo'])) ?>" alt="<?= h($team['name']) ?>" width="72" height="72" />
-  <?php else : ?>
-    <span class="fav-match__logo team-logo team-logo--<?= h(match_sport_key($match['sport'])) ?>" role="img" aria-label="<?= h($team['name']) ?>"><?= h($team['shortName']) ?></span>
-  <?php endif;
+  <?php else :
+    $sportLogo($match, 'fav-match__logo team-logo', $team['name'], 72);
+  endif;
 };
 
 ?>
@@ -261,8 +272,17 @@ $favLogo = static function (?array $team, array $match): void {
                       </span>
                     </span>
                   </span>
-                  <!-- 半券：会場と料金（「予算内で観たい」に答えられるよう、料金も一覧で見せる） -->
-                  <span class="now-match__ticket">
+                  <!-- 半券：競技・会場・料金（「予算内で観たい」に答えられるよう、料金も一覧で見せる）。
+                       背景を競技の色にして、何の競技か一目で分かるようにする -->
+                  <?php $nowSport = match_sport_key($match['sport']); $nowSportImage = match_sport_image($match['sport']); ?>
+                  <span class="now-match__ticket now-match__ticket--<?= h($nowSport) ?>">
+                    <span class="now-match__sport" role="img" aria-label="<?= h(match_sport_label($match['sport'])) ?>">
+                      <?php if ($nowSportImage !== '') : ?>
+                        <img src="<?= h(url($nowSportImage)) ?>" alt="" width="24" height="24" loading="lazy" />
+                      <?php else : ?>
+                        <?= icon_html(match_sport_icon($match['sport'])) ?>
+                      <?php endif; ?>
+                    </span>
                     <span class="now-match__venue">
                       <img src="<?= h(url('images/icons/point.svg')) ?>" alt="" width="11" height="14" />
                       <?= h($match['venue']) ?>

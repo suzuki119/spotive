@@ -9,11 +9,13 @@
  * 利用停止アカウントの拒否はそちらにまとめてある。
  *
  * next= が付いていれば、ログイン後にそのページへ戻す。
+ * ゲストでログイン中の人は、自分のアカウントに入り直せるよう、ログイン済みとして扱わない（lib/guest.php）。
  */
 
 declare(strict_types=1);
 
 require_once __DIR__ . '/../../lib/account.php';
+require_once __DIR__ . '/../../lib/guest.php';
 
 session_boot();
 
@@ -24,7 +26,7 @@ $requestedNext = safe_next(input_string($_GET, 'next') ?: input_string($_POST, '
 $next  = $requestedNext !== '' ? $requestedNext : url('pages/map/map.php');
 $error = null;
 
-if (is_logged_in()) {
+if (current_member() !== null) {
   redirect($next);
 }
 
@@ -38,6 +40,7 @@ if (is_post()) {
       ->validate();
 
     $user = account_login((string) $_POST['email'], (string) $_POST['password']);
+    guest_end_session();
     login_user((int) $user['id']);
 
     redirect($next);
@@ -63,8 +66,7 @@ if (is_post()) {
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link
     href="https://fonts.googleapis.com/css2?family=Jost:wght@400;600&family=Noto+Sans+JP:wght@400;500;700&display=swap"
-    rel="stylesheet"
-  />
+    rel="stylesheet" />
 
   <link
     rel="stylesheet"
@@ -125,15 +127,14 @@ if (is_post()) {
           <button type="submit" class="next btn">ログイン</button>
         </form>
 
-        <!-- アカウントを作らずに使う（browse.php）。お気に入りはこの端末のブラウザに保存される -->
-        <div class="signin-guest">
-          <p class="signin-guest-text">アカウントを作らずに使いたい方</p>
-          <a href="browse.php" class="btn signin-guest-btn">ログインせずに使う</a>
-        </div>
-
         <div class="signin-register">
           <p>アカウントをお持ちでない方</p>
           <a href="account-type.php" class="btn">新規登録</a>
+        </div>
+
+        <!-- アカウントを作らずに使う（browse.php）。お気に入りはこの端末のブラウザに保存される -->
+        <div class="signin-guest">
+          <a href="browse.php" class="btn signin-guest-btn">ゲストとしてログイン</a>
         </div>
       </div>
 

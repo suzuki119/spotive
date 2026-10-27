@@ -7,7 +7,7 @@
  *   タブ         … ALL / 野球 / サッカー / バスケットボール / バレーボール …（競技での絞り込み）
  *   キーワード   … チーム名・会場名など
  *   条件検索     … 日程（開始日〜終了日）、エリア（現在地から○km以内 or 都道府県）、価格の上限
- *   周辺検索     … 地図へ移り、会場を選ぶと周辺の施設を出す（企画書の機能 6 のデモ）
+ *   周辺検索     … アリーナグルメ・ホテル検索・交通情報。今はすべて準備中で押せない
  * 結果は下に日付ごとに並べる。
  *
  * 対象は data/matches.json（仮データ）と v_public_tournaments（掲載大会）の両方。
@@ -201,16 +201,16 @@ $priceValue = SEARCH_PRICE_STEPS[$priceIndex];
         <h2 class="search-form__heading">周辺検索</h2>
         <ul class="nearby-links">
           <li>
-            <a class="nearby-links__item" href="<?= h(url('pages/map/map.php?nearby=food')) ?>">
+            <span class="nearby-links__item nearby-links__item--disabled" aria-disabled="true">
               <span class="nearby-links__image nearby-links__image--food" aria-hidden="true"><?= icon_html('facility-food') ?></span>
-              <span class="nearby-links__label">アリーナグルメ</span>
-            </a>
+              <span class="nearby-links__label">アリーナグルメ（準備中）</span>
+            </span>
           </li>
           <li>
-            <a class="nearby-links__item" href="<?= h(url('pages/map/map.php?nearby=hotel')) ?>">
+            <span class="nearby-links__item nearby-links__item--disabled" aria-disabled="true">
               <span class="nearby-links__image nearby-links__image--hotel" aria-hidden="true"><?= icon_html('hotel') ?></span>
-              <span class="nearby-links__label">ホテル検索</span>
-            </a>
+              <span class="nearby-links__label">ホテル検索（準備中）</span>
+            </span>
           </li>
           <li>
             <span class="nearby-links__item nearby-links__item--disabled" aria-disabled="true">
@@ -268,6 +268,7 @@ $priceValue = SEARCH_PRICE_STEPS[$priceIndex];
     <script src="<?= h(asset('js/main.js')) ?>"></script>
     <script type="application/json" id="favorite-state"><?= favorite_state_json($favoriteState) ?></script>
     <script src="<?= h(asset('js/common/favorite-store.js')) ?>"></script>
+    <script src="<?= h(asset('js/common/search-tabs.js')) ?>"></script>
     <script src="<?= h(asset('js/pages/match-search.js')) ?>"></script>
     <?php require __DIR__ . '/../menu-bar.php'; ?>
   </body>

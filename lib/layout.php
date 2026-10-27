@@ -6,6 +6,8 @@
  *
  * 観戦者向けのページ（home / match-list など）は各担当が作るので、
  * この枠は「アカウント・主催者・運営」の画面だけで使っている。
+ *   page_header() / page_footer()                 … 主催者・運営・サポートなど
+ *   setting_page_header() / setting_page_footer() … 設定から開く画面（設定画面と同じ見た目）
  */
 
 declare(strict_types=1);
@@ -150,6 +152,82 @@ function page_footer(): void
 
     <script src="<?= h(asset('js/main.js')) ?>"></script>
   </body>
+</html>
+  <?php
+}
+
+/**
+ * 設定から開く画面（AGENTS.md「画面の役割分担」）の上半分。設定画面（pages/setting/setting.php）と同じ見た目にする。
+ * ヘッダーの戻るは設定へ。中身は .setting の中に <section><h2>…</h2>…</section> を並べる。
+ * ゲストの帯とお知らせ（flash）も、ここで .setting の先頭に出す。
+ * データ取得が終わってから呼ぶこと（ここで出力が始まるので、以降は redirect() できない）。
+ */
+function setting_page_header(string $title): void
+{
+  $user = current_user();
+  ?>
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title><?= h($title) ?> | SPOTIVE</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Jost:wght@400;600&family=Noto+Sans+JP:wght@400;500;700&display=swap"
+    rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/the-new-css-reset/css/reset.min.css">
+  <link rel="stylesheet" href="<?= h(asset('css/style.css')) ?>" />
+</head>
+
+<body>
+  <header class="headerr">
+    <div class="inner">
+      <section class="header header--setting">
+        <span class="header-account">
+          <!-- 戻る：来た画面があればそこへ（js/main.js）、URL を直接開いたときは設定へ -->
+          <a href="<?= h(url('pages/setting/setting.php')) ?>" class="setting-back">
+            <img src="<?= h(url('images/icons/setting-back.svg')) ?>" alt="戻る">
+          </a>
+        </span>
+        <h1 class="header-title">SPOTIVE</h1>
+        <span class="header-notice">
+          <img src="<?= h(url('images/icons/notice.svg')) ?>" alt="">
+        </span>
+      </section>
+    </div>
+  </header>
+
+  <main class="l-main">
+    <div class="inner">
+      <div class="setting">
+        <?php if (is_guest($user)) : ?>
+          <?php require __DIR__ . '/../pages/guest-bar.php'; ?>
+        <?php endif; ?>
+
+        <?php foreach (take_flash() as $message) : ?>
+          <p class="notice notice--<?= h($message['type']) ?>"><?= h($message['message']) ?></p>
+        <?php endforeach; ?>
+  <?php
+}
+
+/** 設定から開く画面の下半分。下にメニューバーを出す */
+function setting_page_footer(): void
+{
+  ?>
+      </div>
+    </div>
+  </main>
+
+  <footer class="site-footer"></footer>
+
+  <script src="<?= h(asset('js/main.js')) ?>"></script>
+  <?php require __DIR__ . '/../pages/menu-bar.php'; ?>
+</body>
+
 </html>
   <?php
 }

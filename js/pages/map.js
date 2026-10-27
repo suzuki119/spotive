@@ -65,7 +65,7 @@ document.addEventListener("DOMContentLoaded", () => {
     baseball:    { label: "野球",           color: "#e5484d", icon: "sport-baseball", image: "base" },
     basketball:  { label: "バスケットボール", color: "#ef7a1a", icon: "sport-basketball", image: "basket" },
     volleyball:  { label: "バレーボール",   color: "#3e63dd", icon: "sport-volleyball", image: "balley" },
-    futsal:      { label: "フットサル",     color: "#26a269", icon: "sport-soccer", image: "soccer" },
+    futsal:      { label: "フットサル",     color: "#d6409f", icon: "sport-soccer", image: "soccer" },
     tennis:      { label: "テニス",         color: "#c2410c", icon: "sport-tennis" },
     badminton:   { label: "バドミントン",   color: "#0f9b8e", icon: "sport-badminton" },
     rugby:       { label: "ラグビー",       color: "#8e4ec6", icon: "sport-rugby" },
@@ -406,9 +406,19 @@ document.addEventListener("DOMContentLoaded", () => {
     marker.focusId = null;
     marker.on("popupclose", () => { marker.focusId = null; });
 
+    // 押したら、会場が分かるところまで寄ってから詳細を出す（すでに寄っていればそのまま出す）。
     // スマホはポップアップではなく、画面下から出るシートに詳細を出す
     marker.on("click", () => {
-      if (MOBILE.matches) openMatchSheet(marker);
+      if (map.getZoom() < FOCUS_ZOOM - 0.01) {
+        flyToVenue(first, null, { zoomOnly: true });
+        return;
+      }
+      if (MOBILE.matches) {
+        openMatchSheet(marker);
+        return;
+      }
+      if (marker.isPopupOpen()) marker.closePopup();
+      else marker.openPopup();
     });
 
     applyMarkerMode(marker);
@@ -429,6 +439,8 @@ document.addEventListener("DOMContentLoaded", () => {
         maxWidth: 300,
         autoPanPaddingTopLeft: popupPadTopLeft,
       });
+      // 押したときにすぐ開く Leaflet の動き（内部処理）を外す。寄ってから開くのは makeVenueMarker の click で行う
+      marker.off("click", marker._openPopup, marker);
     }
   }
 
@@ -1119,7 +1131,15 @@ document.addEventListener("DOMContentLoaded", () => {
     if (!game) return;
 
     if (MOBILE.matches) $("#map").scrollIntoView({ behavior: scrollBehavior(), block: "start" });
+    flyToVenue(game, id);
+  }
 
+  /**
+   * game の会場へ寄ってから、そのピンの詳細を開く（一覧から選んだとき・ピンを押したとき）。
+   * focusId … ポップアップで先頭に出す試合の id。null なら日付の順のまま
+   * zoomOnly … true なら、引きながら飛ばずに Leaflet のふつうの拡大で寄る（ピンを押したとき。ピンは画面の中にあるため）
+   */
+  function flyToVenue(game, focusId, { zoomOnly = false } = {}) {
     const target = L.latLng(game.v.lat-0.002, game.v.lng);
     const zoom = Math.max(map.getZoom(), FOCUS_ZOOM);
     const token = ++flyToken;
@@ -1136,7 +1156,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
       const marker = venueMarkers.get(placeKey(game));
       if (!marker) return;
-      marker.focusId = id;   // ポップアップで、選んだ試合を先頭に出すため
+      marker.focusId = focusId;   // ポップアップで、選んだ試合を先頭に出すため
 
       if (MOBILE.matches) {
         openMatchSheet(marker);
@@ -1159,12 +1179,17 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     // 動きが何かで止まっても詳細が開くように、時間で保険をかける
-    const fallback = setTimeout(arrive, (FLY_DURATION + 0.6) * 1000);
+    const fallback = setTimeout(arrive, ((zoomOnly ? 0 : FLY_DURATION) + 0.6) * 1000);
     const done = () => {
       clearTimeout(fallback);
       arrive();
     };
 
+    if (zoomOnly) {
+      map.once("moveend", done);
+      map.setView(target, zoom);
+      return;
+    }
     if (typeof map._moveStart === "function" && typeof map._move === "function") {
       flyToPlace(target, zoom, done);
       return;
@@ -1245,7 +1270,17 @@ document.addEventListener("DOMContentLoaded", () => {
     render();
   });
 
-  $("#fit").addEventListener("click", () => { closeSheets(); fitToResults(); });
+  // 結果全体を表示。現在地と同じく、動かしたことを上のお知らせ（#status）で伝える。
+  // fitToResults() は絞り込んだときにも呼ぶので、お知らせはボタンを押したときだけ出す
+  $("#fit").addEventListener("click", () => {
+    closeSheets();
+    if (!visible.length) {
+      showStatus("表示できる試合がありません");
+      return;
+    }
+    fitToResults();
+    showStatus("結果全体を表示しました");
+  });
   $("#locate").addEventListener("click", () => { closeSheets(); locate(); });
 
   // ハンバーガーで絞り込みを開閉する（スマホ）

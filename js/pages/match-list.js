@@ -194,6 +194,9 @@ document.addEventListener("DOMContentLoaded", () => {
   const sheet = document.querySelector("[data-calendar]");
   const grid = document.querySelector("[data-calendar-grid]");
   const monthLabel = document.querySelector("[data-month-label]");
+  const monthPicker = document.querySelector("[data-month-picker]");
+  const monthList = document.querySelector("[data-month-list]");
+  const calendarDays = document.querySelector("[data-calendar-days]");
   const openButton = document.querySelector("[data-calendar-open]");
   const prevMonth = document.querySelector('[data-month-step="-1"]');
   let shownMonth = new Date(parseYmd(selectedDate).getFullYear(), parseYmd(selectedDate).getMonth(), 1);
@@ -251,6 +254,109 @@ document.addEventListener("DOMContentLoaded", () => {
     if (focusedDate) grid.querySelector(`[data-date="${focusedDate}"]`)?.focus();
   }
 
+  // -----------------------------------------------------------------
+  // 月の一覧（「2026年10月 ▾」で開く）。月ごとの試合数を出す
+  // -----------------------------------------------------------------
+  /** 2026-10 => 試合数（絞り込み込み） */
+  function matchCountByMonth() {
+    const counts = {};
+    days.forEach((day) => {
+      const n = [...day.querySelectorAll("[data-match]")].filter(itemVisible).length;
+      if (n === 0) return;
+      const key = day.dataset.date.slice(0, 7);
+      counts[key] = (counts[key] || 0) + n;
+    });
+    return counts;
+  }
+
+  /** 一覧に出す月。今月から、試合のある最後の月（最低でも 12 か月先）まで */
+  function pickerMonths() {
+    const now = new Date();
+    const lastDate = matchDates().at(-1);
+    const last = lastDate ? parseYmd(lastDate) : now;
+    const months = [];
+    const d = new Date(now.getFullYear(), now.getMonth(), 1);
+    const end = new Date(now.getFullYear(), now.getMonth() + 11, 1);
+    while (d <= end || d.getFullYear() < last.getFullYear() || (d.getFullYear() === last.getFullYear() && d.getMonth() <= last.getMonth())) {
+      months.push(new Date(d));
+      d.setMonth(d.getMonth() + 1);
+    }
+    return months;
+  }
+
+  const monthKey = (d) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
+
+  function openMonthList() {
+    const counts = matchCountByMonth();
+    const shownKey = monthKey(shownMonth);
+    const items = pickerMonths().map((d) => {
+      const key = monthKey(d);
+      const count = counts[key] || 0;
+      const li = document.createElement("li");
+      li.className = "calendar-sheet__month";
+      li.setAttribute("role", "option");
+      li.tabIndex = -1;
+      li.dataset.month = key;
+      li.setAttribute("aria-selected", String(key === shownKey));
+      if (count === 0) li.classList.add("is-empty");
+
+      const name = document.createElement("span");
+      name.textContent = `${d.getFullYear()}年${d.getMonth() + 1}月`;
+      const badge = document.createElement("span");
+      badge.className = "calendar-sheet__month-count";
+      badge.textContent = count === 0 ? "試合なし" : `${count}試合`;
+      li.append(name, badge);
+      return li;
+    });
+    monthList.replaceChildren(...items);
+
+    calendarDays.hidden = true;
+    monthList.hidden = false;
+    monthPicker.setAttribute("aria-expanded", "true");
+    const selected = monthList.querySelector('[aria-selected="true"]') || monthList.firstElementChild;
+    selected?.scrollIntoView({ block: "center" });
+    selected?.focus();
+  }
+
+  function closeMonthList(focusPicker = true) {
+    if (monthList.hidden) return;
+    monthList.hidden = true;
+    calendarDays.hidden = false;
+    monthPicker.setAttribute("aria-expanded", "false");
+    if (focusPicker) monthPicker.focus();
+  }
+
+  function chooseMonth(item) {
+    const [y, m] = item.dataset.month.split("-").map(Number);
+    shownMonth = new Date(y, m - 1, 1);
+    closeMonthList();
+    renderCalendar();
+    loadHolidays(y);
+  }
+
+  monthPicker.addEventListener("click", () => {
+    if (monthList.hidden) openMonthList();
+    else closeMonthList();
+  });
+
+  monthList.addEventListener("click", (e) => {
+    const item = e.target.closest("[data-month]");
+    if (item) chooseMonth(item);
+  });
+
+  // ↑↓ で移動、Enter / スペースで決める
+  monthList.addEventListener("keydown", (e) => {
+    const item = document.activeElement.closest("[data-month]");
+    if (!item) return;
+    if (e.key === "ArrowDown" || e.key === "ArrowUp") {
+      e.preventDefault();
+      (e.key === "ArrowDown" ? item.nextElementSibling : item.previousElementSibling)?.focus();
+    } else if (e.key === "Enter" || e.key === " ") {
+      e.preventDefault();
+      chooseMonth(item);
+    }
+  });
+
   function openCalendar() {
     shownMonth = new Date(parseYmd(selectedDate).getFullYear(), parseYmd(selectedDate).getMonth(), 1);
     sheet.hidden = false;
@@ -262,6 +368,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function closeCalendar() {
     if (sheet.hidden) return;
+    closeMonthList(false);
     sheet.hidden = true;
     document.body.classList.remove("is-sheet-open");
     openButton.focus();
@@ -269,12 +376,16 @@ document.addEventListener("DOMContentLoaded", () => {
 
   openButton.addEventListener("click", openCalendar);
   sheet.querySelectorAll("[data-calendar-close]").forEach((el) => el.addEventListener("click", closeCalendar));
+  // Esc は、月の一覧が開いていればそれだけを閉じる
   document.addEventListener("keydown", (e) => {
-    if (e.key === "Escape") closeCalendar();
+    if (e.key !== "Escape") return;
+    if (!monthList.hidden) closeMonthList();
+    else closeCalendar();
   });
 
   sheet.querySelectorAll("[data-month-step]").forEach((button) => {
     button.addEventListener("click", () => {
+      closeMonthList(false);
       shownMonth = new Date(shownMonth.getFullYear(), shownMonth.getMonth() + Number(button.dataset.monthStep), 1);
       renderCalendar();
       loadHolidays(shownMonth.getFullYear());

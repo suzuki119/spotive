@@ -144,6 +144,11 @@ $search-line: 1px solid $color-secondary;
 
 // ---- 競技のタブ（ALL / プロ野球 / …）。はみ出した分は横にスクロール ----
 .search-tabs {
+  // 続きがある側の端を薄くして、横にスクロールできることを伝える（js/common/search-tabs.js がクラスを付ける）。
+  // マスクは色ではなく濃さだけを見るので、不透明な色なら何でもよい
+  --fade-start: 0px;
+  --fade-end: 0px;
+
   position: relative; // 隠したラジオボタン（absolute）をこの中に収め、ページが横にはみ出さないようにする
   display: flex;
   gap: 24px;
@@ -151,9 +156,24 @@ $search-line: 1px solid $color-secondary;
   padding: 0 16px;
   overflow-x: auto;
   scrollbar-width: none;
+  mask-image: linear-gradient(
+    to right,
+    transparent,
+    $color-bg var(--fade-start),
+    $color-bg calc(100% - var(--fade-end)),
+    transparent
+  );
 
   &::-webkit-scrollbar {
     display: none;
+  }
+
+  &.is-more-start {
+    --fade-start: 48px;
+  }
+
+  &.is-more-end {
+    --fade-end: 48px;
   }
 
   @media (min-width: $bp-tablet) {
@@ -257,9 +277,16 @@ $search-line: 1px solid $color-secondary;
     gap: 12px;
     padding: 0 24px 16px;
 
+    // 日付の欄はブラウザが決める幅より狭くできないので、入らないときは「〜 終了日」を 2 行目に折り返す
     &--dates {
-      grid-template-columns: 1fr auto 1fr;
+      display: flex;
+      flex-wrap: wrap;
       align-items: center;
+
+      .search-cond__input {
+        flex: 1 1 144px;
+        width: auto;
+      }
     }
 
     // 0円 ━━━○┅┅┅ 10万円

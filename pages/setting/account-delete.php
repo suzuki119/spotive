@@ -23,15 +23,20 @@ require_once __DIR__ . '/../../lib/layout.php';
 // 完了（ログアウト済み）
 // -------------------------------------------------------------------
 if (($_GET['done'] ?? '') === '1') {
-  page_header('アカウントを削除しました', 'アカウントを削除しました');
+  setting_page_header('アカウントを削除しました');
   ?>
-  <p class="form-page__lead">
-    ご利用ありがとうございました。アカウントと登録内容を削除しました。<br />
-    同じメールアドレスで、もう一度登録することもできます。
-  </p>
-  <p class="form-page__note"><a href="<?= h(url('index.php')) ?>">トップへ戻る</a></p>
+  <section>
+    <h2>アカウントを削除しました</h2>
+    <div class="setting-form">
+      <p>
+        ご利用ありがとうございました。アカウントと登録内容を削除しました。<br />
+        同じメールアドレスで、もう一度登録することもできます。
+      </p>
+      <a class="setting-form__submit" href="<?= h(url('index.php')) ?>">トップへ戻る</a>
+    </div>
+  </section>
   <?php
-  page_footer();
+  setting_page_footer();
   exit;
 }
 
@@ -102,7 +107,7 @@ if (is_post()) {
 $blockers = account_delete_blockers($user);
 $isFinal  = ($_GET['step'] ?? '') === 'final' && $blockers === [] && account_delete_confirmed((int) $user['id']);
 
-page_header('アカウントの削除', $isFinal ? '本当に削除しますか？' : 'アカウントの削除');
+setting_page_header('アカウントの削除');
 ?>
 
 <?php if ($error !== null) : ?>
@@ -111,49 +116,62 @@ page_header('アカウントの削除', $isFinal ? '本当に削除しますか�
 
 <?php if ($blockers !== []) : ?>
 
-  <?php foreach ($blockers as $message) : ?>
-    <p class="notice notice--error"><?= h($message) ?></p>
-  <?php endforeach; ?>
-  <p class="form-page__note"><a href="account-setting.php">アカウント設定へ戻る</a></p>
+  <section>
+    <h2>アカウントの削除</h2>
+    <?php foreach ($blockers as $message) : ?>
+      <p class="notice notice--error"><?= h($message) ?></p>
+    <?php endforeach; ?>
+    <a class="setting-form__cancel" href="account-setting.php">アカウントへ戻る</a>
+  </section>
 
 <?php elseif ($isFinal) : ?>
 
-  <p class="notice notice--error">
-    この操作は取り消せません。「削除する」を押すと、すぐにアカウントが削除されます。
-  </p>
+  <section>
+    <h2>本当に削除しますか？</h2>
 
-  <dl class="detail">
-    <dt class="detail__label">削除するアカウント</dt>
-    <dd class="detail__value">
-      <?= h((string) $user['nickname']) ?>（<?= h((string) $user['email']) ?>）
-    </dd>
-  </dl>
+    <p class="notice notice--error">
+      この操作は取り消せません。「削除する」を押すと、すぐにアカウントが削除されます。
+    </p>
 
-  <form class="form" action="account-delete.php" method="post">
+    <dl class="detail detail--striped">
+      <div class="detail__row">
+        <dt class="detail__label">削除するアカウント</dt>
+        <dd class="detail__value">
+          <?= h((string) $user['nickname']) ?>（<?= h((string) $user['email']) ?>）
+        </dd>
+      </div>
+    </dl>
+  </section>
+
+  <form class="setting-form" action="account-delete.php" method="post">
     <?= csrf_field() ?>
     <input type="hidden" name="action" value="delete" />
     <input type="hidden" name="token" value="<?= h((string) $_SESSION['account_delete']['token']) ?>" />
-    <div class="form__actions">
-      <button class="button button--danger" type="submit">削除する</button>
-      <a class="button" href="account-setting.php">やめる</a>
-    </div>
+    <button class="setting-form__submit setting-form__submit--danger" type="submit">削除する</button>
+    <a class="setting-form__cancel" href="account-setting.php">やめる</a>
   </form>
 
 <?php else : ?>
 
-  <p class="form-page__lead">アカウントを削除すると、次のものが消え、元に戻せません。</p>
-  <ul class="doc-list">
-    <li class="doc-list__item">ログイン情報（メールアドレス・電話番号・パスワード）とニックネーム</li>
-    <li class="doc-list__item">お気に入りのチーム、お知らせの既読、遠征プラン</li>
-    <li class="doc-list__item">本人確認で登録した氏名・生年月日と、提出した書類</li>
-    <li class="doc-list__item">主催者の資格（主催した過去の大会は「<?= h(ACCOUNT_DELETED_NICKNAME) ?>」の名前で残ります）</li>
-  </ul>
+  <section>
+    <h2>アカウントの削除</h2>
 
-  <form class="form" action="account-delete.php" method="post">
+    <div class="setting-form">
+      <p>アカウントを削除すると、次のものが消え、元に戻せません。</p>
+      <ul class="setting-form__list">
+        <li>ログイン情報（メールアドレス・電話番号・パスワード）とニックネーム</li>
+        <li>お気に入りのチーム、お知らせの既読、遠征プラン</li>
+        <li>本人確認で登録した氏名・生年月日と、提出した書類</li>
+        <li>主催者の資格（主催した過去の大会は「<?= h(ACCOUNT_DELETED_NICKNAME) ?>」の名前で残ります）</li>
+      </ul>
+    </div>
+  </section>
+
+  <form class="setting-form" action="account-delete.php" method="post">
     <?= csrf_field() ?>
     <input type="hidden" name="action" value="check" />
 
-    <div class="form__field form__field--check">
+    <div class="setting-form__field">
       <label class="form__check">
         <input type="checkbox" name="understand" value="1" required />
         <span>削除すると元に戻せないことを理解しました</span>
@@ -161,20 +179,18 @@ page_header('アカウントの削除', $isFinal ? '本当に削除しますか�
       <?php field_error($errors, 'understand'); ?>
     </div>
 
-    <div class="form__field">
-      <label class="form__label" for="password">パスワード</label>
+    <div class="setting-form__field">
+      <label class="setting-form__label" for="password">パスワード</label>
       <input class="form__input" type="password" id="password" name="password"
              autocomplete="current-password" required />
-      <p class="form__hint">本人の操作か確かめるため、今のパスワードを入力してください。</p>
+      <p class="setting-form__hint">本人の操作か確かめるため、今のパスワードを入力してください。</p>
       <?php field_error($errors, 'password'); ?>
     </div>
 
-    <div class="form__actions">
-      <button class="button button--danger" type="submit">次へ（最後の確認）</button>
-      <a class="button" href="account-setting.php">やめる</a>
-    </div>
+    <button class="setting-form__submit setting-form__submit--danger" type="submit">次へ（最後の確認）</button>
+    <a class="setting-form__cancel" href="account-setting.php">やめる</a>
   </form>
 
 <?php endif; ?>
 
-<?php page_footer(); ?>
+<?php setting_page_footer();
