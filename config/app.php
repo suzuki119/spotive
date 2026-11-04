@@ -12,7 +12,7 @@ declare(strict_types=1);
 return [
   'app' => [
     // メールに載せるリンクの土台。MAMP の URL に合わせて書き換える
-    'base_url' => 'http://localhost:8888/spotive',
+    'base_url' => 'https://susuki-island.heavy.jp/spotive',
     'timezone' => 'Asia/Tokyo',
   ],
 

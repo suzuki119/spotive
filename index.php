@@ -43,27 +43,31 @@ if (is_browsing_visitor()) {
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Jost:wght@400;600&family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/the-new-css-reset/css/reset.min.css">
   <link rel="stylesheet" href="<?= h(asset('css/style.css')) ?>">
   <title>SPOTIVE</title>
 </head>
 
 <body class="start">
-  <div class="start-text">
-    <h1 class="start-title">SPOTIVEへようこそ。</h1>
-    <p class="start-letter">スポーツ観戦をもっと身近に。</p>
-  </div>
-  <section class="start-gradation">
-    <a href="./pages/account/account-type.php">はじめる</a>
-    <!-- 別の端末で登録した人など、印が無くてもアカウントを持っている人のために -->
-    <p class="start-signin">
-      アカウントをお持ちの方は<a href="./pages/account/signin.php">ログイン</a>
-    </p>
-    <p class="start-signin">
-      <a href="./pages/account/browse.php">ログインせずに使う</a>
-    </p>
-  </section>
-
+  <main class="start__inner">
+    <div class="start__text">
+      <h1 class="start__title">SPOTIVEへようこそ。</h1>
+      <p class="start__lead">スポーツ観戦をもっと身近に。</p>
+    </div>
+    <div class="start__actions">
+      <a class="start__btn" href="./pages/account/account-type.php">はじめる</a>
+      <!-- 別の端末で登録した人など、印が無くてもアカウントを持っている人のために -->
+      <p class="start__sub">
+        アカウントをお持ちの方は<a href="./pages/account/signin.php">ログイン</a>
+      </p>
+      <p class="start__sub">
+        <a href="./pages/account/browse.php">ログインせずに使う</a>
+      </p>
+    </div>
+  </main>
 </body>
 
 </html>

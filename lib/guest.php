@@ -146,6 +146,41 @@ function guest_auto_login(): void
 }
 
 /**
+ * 送信（POST）でログインが必要な操作の先頭で、require_login() の代わりに呼ぶ（csrf_verify() のあとに）。
+ * ログインしていなければその場でゲストにログインさせ、そのユーザーを返す。
+ * guest_auto_login() と違って開き直さないので、送られた内容を失わずに続けられる。
+ * ゲストを受け付けていない・失敗したときは require_login() と同じくログイン画面へ送る。
+ * 使ってよいのは「共有でよい」操作だけ（AGENTS.md「ゲスト」の表。今は遠征プランの作成）。
+ */
+function require_login_or_guest(): array
+{
+  $user = current_user();
+  if ($user !== null) {
+    return $user;
+  }
+
+  if (guest_enabled()) {
+    try {
+      guest_login();
+      // current_user() は 1 回目（未ログイン）の結果を覚えているので、ここで読み直す
+      $user = db_one(
+        'SELECT * FROM users WHERE id = :id AND status = "active" AND deleted_at IS NULL',
+        ['id' => (int) ($_SESSION['user_id'] ?? 0)]
+      );
+      if ($user !== null) {
+        return $user;
+      }
+    } catch (AppError $e) {
+      flash($e->getMessage(), 'error');
+    } catch (PDOException $e) {
+      error_log('[SPOTIVE] DB error: ' . $e->getMessage());
+      flash('ただいまゲストとしてご利用いただけません。時間をおいてお試しください。', 'error');
+    }
+  }
+  return require_login();
+}
+
+/**
  * ゲストには使わせない画面の先頭で呼ぶ。ゲストなら案内を出して $backPath へ戻す。
  * $backPath はアプリのルートからのパス（例：'pages/setting/mypage.php'）。
  * $allowLocal が true の画面は、guest_can_register() のとき（localhost で試すとき）だけゲストにも使わせる。

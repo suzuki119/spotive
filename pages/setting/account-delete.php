@@ -40,6 +40,8 @@ if (($_GET['done'] ?? '') === '1') {
   exit;
 }
 
+// ログインせずに開いた人もゲストにして、下の guest_forbid() でマイページへ案内する（ログイン画面へは送らない）
+guest_auto_login();
 $user   = require_login();
 // ゲスト（お試し用の共通アカウント）には使わせない
 guest_forbid($user, 'ゲストのアカウントは退会できません。');
