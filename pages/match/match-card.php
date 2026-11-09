@@ -5,7 +5,7 @@
  * 試合カード 1 枚。試合一覧・お気に入りの両方から require して使う。
  *
  *   左 … 両チームのロゴ（vs）と、その下に競技名
- *   右 … リーグと節（B.PREMIER 第1節 GAME2）、対戦カード、日付｜開始時間、会場、料金
+ *   右 … リーグと節（プロバスケ 第1節 GAME2）、対戦カード、日付｜開始時間、会場、料金
  *
  * チーム名は略称（data/teams.json の shortName）で出す。フルネームは試合の詳細で出し、ここでは読み上げ（alt・aria-label）に使う。
  *
@@ -70,7 +70,7 @@ $sportImage = match_sport_image($match['sport']);   // チームの画像が無�
   </div>
 
   <div class="match-card__body">
-    <!-- 「B.PREMIER 第1節 GAME2」。リーグの情報が無い大会は主催者名 -->
+    <!-- 「プロバスケ 第1節 GAME2」。リーグの情報が無い大会は主催者名 -->
     <p class="match-card__sub">
       <?php if ($match['league'] === '' && $match['organizer'] !== '') : ?>
         主催：<?= h($match['organizer']) ?>

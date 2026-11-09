@@ -68,7 +68,7 @@ function detail_from_match(string $id): ?array
     'price_max'   => isset($match['priceMax']) ? (int) $match['priceMax'] : null,
     'ticket_url'  => (string) ($match['ticketUrl'] ?? ''),
     'image'       => (string) ($match['image'] ?? ''),
-    // 「B.PREMIER 2026-27 第1節 GAME2」の各部分（仮データ）
+    // 「プロバスケ 2026-27 第1節 GAME2」の各部分（仮データ）
     'league'      => (string) ($match['league'] ?? ''),
     'season'      => (string) ($match['season'] ?? ''),
     'round'       => (string) ($match['round'] ?? ''),

@@ -223,6 +223,8 @@ $favLogo = static function (?array $team, array $match) use ($sportLogo): void {
 
     <section class="home__section">
       <h2 class="home__heading">今から観戦できる試合</h2>
+      <!-- 実在のリーグ・チームの情報と誤解されないように -->
+      <p class="home__note">試合・チーム・会場は、すべて架空のデモデータです。</p>
       <label class="home__radius">
         <span class="home__radius-label">表示する範囲</span>
         <select class="home__radius-select" data-radius>

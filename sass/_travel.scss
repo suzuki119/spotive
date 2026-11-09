@@ -88,6 +88,8 @@ $travel-done: map.get($sport-colors, soccer); // 購入済み・予約済み（�
 
   // 「この条件でプランを作成」。CTA なのでアクセントのオレンジ
   &__cta {
+    // 未ログインのときは <a> になる。<button> と同じく、padding を含めて 100% の幅にする
+    box-sizing: border-box;
     display: flex;
     align-items: center;
     justify-content: space-between;

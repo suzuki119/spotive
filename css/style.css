@@ -3598,6 +3598,11 @@ a.nearby-links__item:hover .nearby-links__image {
 .home__slide[hidden] {
   display: none;
 }
+.home__note {
+  margin: -8px 0 16px;
+  font-size: 12px;
+  color: #6B7280;
+}
 .home__radius {
   display: inline-flex;
   align-items: center;
@@ -3915,8 +3920,10 @@ img.team-logo {
 }
 .now-match__meta {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
-  gap: 12px;
+  gap: 4px 12px;
+  overflow: hidden;
 }
 .now-match__time {
   font-family: "Jost", "Noto Sans JP", sans-serif;
@@ -3927,6 +3934,7 @@ img.team-logo {
   display: flex;
   align-items: center;
   gap: 4px;
+  margin-left: -1px;
   padding-left: 12px;
   border-left: 1px solid #E5E7EB;
   font-size: 14px;
@@ -5492,6 +5500,7 @@ li + li .mypage-settings__link {
   }
 }
 .travel__cta {
+  box-sizing: border-box;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -6132,6 +6141,12 @@ li + li .mypage-settings__link {
   color: #FFFFFF;
   font-weight: 700;
   text-decoration: underline;
+}
+.start__note {
+  font-size: 12px;
+  line-height: 1.6;
+  text-align: center;
+  opacity: 0.8;
 }
 
 .input {
