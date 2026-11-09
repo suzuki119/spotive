@@ -20,6 +20,7 @@ declare(strict_types=1);
 
 require_once __DIR__ . '/../../lib/travel.php';
 require_once __DIR__ . '/../../lib/favorite.php';
+require_once __DIR__ . '/../../lib/guest.php';
 
 // -------------------------------------------------------------------
 // プランの作成（POST）
@@ -28,10 +29,11 @@ $error = null;
 $input = $_GET;
 
 if (is_post()) {
-  $user  = require_login();
   $input = $_POST;
   try {
     csrf_verify();
+    // ログインせずに使っている人は、その場でゲストにして作る（ゲストのプランは共有でよい。AGENTS.md「ゲスト」）
+    $user   = require_login_or_guest();
     $planId = travel_create_plan($user, $_POST);
     flash('観戦プランを作成しました。', 'success');
     redirect('travel-plan.php?id=' . $planId);
@@ -409,6 +411,7 @@ $teamGroups = [
 
     <script src="<?= h(asset('js/main.js')) ?>"></script>
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="<?= h(asset('js/common/gsi-tiles.js')) ?>"></script>
     <script src="<?= h(asset('js/pages/travel.js')) ?>"></script>
     <?php require __DIR__ . '/../menu-bar.php'; ?>
   </body>

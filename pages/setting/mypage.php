@@ -157,7 +157,7 @@ $fmtMd = static fn(string $date): string => $date === '' ? '' : date('m/d', (int
         <p class="mypage-profile__name"><?= h((string) $user['nickname']) ?></p>
         <p class="mypage-profile__level"><?= h(level_label((int) $user['trust_level'])) ?></p>
       </div>
-      <a class="mypage-profile__setting" href="account-setting.php">アカウント設定</a>
+      <a class="mypage-profile__setting" href="setting.php">設定の変更</a>
     </section>
 
     <?php if ($isOrganizer) : ?>
@@ -340,6 +340,12 @@ $fmtMd = static fn(string $date): string => $date === '' ? '' : date('m/d', (int
       <ul class="mypage-settings__list">
         <li><a class="mypage-settings__link" href="setting.php">プロフィール・通知・アカウントなどの設定</a></li>
       </ul>
+
+      <!-- logout.php は POST しか受けないので、リンクではなくフォームで送る（設定画面のログアウトと同じ） -->
+      <form class="mypage-settings__logout" action="<?= h(url('pages/account/logout.php')) ?>" method="post">
+        <?= csrf_field() ?>
+        <button class="mypage-settings__logout-btn" type="submit">ログアウト</button>
+      </form>
     </nav>
   </main>
 

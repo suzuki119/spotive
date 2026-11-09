@@ -147,9 +147,14 @@
 // ---- ‹ 今日 › ［カレンダー］ ----
 .schedule-days {
   display: grid;
-  grid-template-columns: 1fr auto auto auto 1fr;
+  // 左右の 1fr は 0 まで縮めてよい（狭い画面で、ボタンが画面の外へ押し出されないように）
+  grid-template-columns: minmax(0, 1fr) auto auto auto minmax(0, 1fr);
   align-items: center;
-  gap: 16px;
+  gap: 8px;
+
+  @media (min-width: $bp-tablet) {
+    gap: 16px;
+  }
 
   // 左右の余白で「‹ 今日 ›」を真ん中に置き、カレンダーのボタンは右端に寄せる
   &::before {
@@ -186,9 +191,16 @@
     }
   }
 
+  // スマホは幅が足りないのでアイコンだけの丸いボタン、タブレット以上は文字も出す
   &__calendar {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
     justify-self: end;
-    padding: 4px 12px;
+    width: 36px;
+    height: 36px;
+    padding: 0;
     border: 1px solid $color-secondary;
     border-radius: $radius-full;
     background: $color-bg;
@@ -202,6 +214,29 @@
     &:hover {
       background: $color-secondary;
       color: $color-bg;
+    }
+
+    @media (min-width: $bp-tablet) {
+      width: auto;
+      height: auto;
+      padding: 4px 12px;
+    }
+  }
+
+  // スマホでは見せずに読み上げだけ（.visually-hidden と同じ）
+  &__calendar-text {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+
+    @media (min-width: $bp-tablet) {
+      position: static;
+      width: auto;
+      height: auto;
+      overflow: visible;
+      clip: auto;
     }
   }
 }
@@ -258,13 +293,94 @@
     gap: 24px;
   }
 
-  &__title {
-    min-width: 120px;
-    margin: 0;
+  // 「2026年10月 ▾」。押すと月の一覧が開く
+  &__picker {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    min-width: 136px;
+    padding: 4px 12px;
+    border: 1px solid $color-border;
+    border-radius: $radius-md;
+    background: $color-bg;
     color: $color-secondary;
+    font: inherit;
     font-size: 18px;
     font-weight: 700;
-    text-align: center;
+    justify-content: center;
+    cursor: pointer;
+
+    &:hover {
+      background: $color-bg-gray;
+    }
+
+    &[aria-expanded="true"] {
+      border-color: $color-primary;
+      color: $color-primary;
+    }
+  }
+
+  &__picker-arrow {
+    font-size: 12px;
+  }
+
+  // 月の一覧（開いている間は日付の代わりに出す）
+  &__months {
+    display: grid;
+    gap: 4px;
+    max-height: 320px;
+    margin: 16px 0 0;
+    padding: 0;
+    overflow-y: auto;
+    list-style: none;
+
+    &[hidden] {
+      display: none;
+    }
+  }
+
+  &__month {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 16px;
+    border-radius: $radius-md;
+    color: $color-secondary;
+    font-weight: 700;
+    cursor: pointer;
+
+    &:hover,
+    &:focus-visible {
+      background: $color-bg-gray;
+      outline: none;
+    }
+
+    &[aria-selected="true"] {
+      background: $color-primary-light;
+      color: $color-primary;
+    }
+
+    &.is-empty {
+      color: $color-text-sub;
+      font-weight: 400;
+    }
+  }
+
+  &__month-count {
+    padding: 4px 12px;
+    border-radius: $radius-full;
+    background: $color-primary;
+    color: $color-bg;
+    font-family: $font-heading;
+    font-size: 12px;
+    font-weight: 600;
+
+    .is-empty & {
+      background: none;
+      color: $color-text-sub;
+      font-family: $font-body;
+      font-weight: 400;
+    }
   }
 
   &__step {

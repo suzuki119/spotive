@@ -10,8 +10,15 @@ declare(strict_types=1);
 
 require_once __DIR__ . '/../../config/db.php';
 require_once __DIR__ . '/../../lib/auth.php';   // csrf_field()（ログアウトの POST 用）
+require_once __DIR__ . '/../../lib/guest.php';
 
 session_boot();
+
+// パスワードの変更は、ログインしている本人だけ。ゲストはパスワードでログインしないので開けない
+// （開いても password-setting.php が断る）
+$settingUser       = current_user();
+$canChangePassword = $settingUser !== null && !is_guest($settingUser);
+$passwordNote      = is_guest($settingUser) ? 'ゲストは変更できません' : 'ログインが必要です';
 
 ?>
 <!DOCTYPE html>
@@ -34,7 +41,7 @@ session_boot();
 <body>
   <header class="headerr">
     <div class="inner">
-      <section class="header">
+      <section class="header header--setting">
         <span class="header-account">
           <!-- 戻る：来た画面があればそこへ（js/main.js）、URL を直接開いたときはマイページへ -->
           <a href="mypage.php" class="setting-back">
@@ -63,14 +70,24 @@ session_boot();
               </span>
               <img src="../../images/icons/setting-next.svg" alt="" class="setting-account-next">
             </a>
-            <!-- 準備中（ページがまだ無い）。押せない表示にする -->
-            <span class="setting-account-content is-disabled" role="link" aria-disabled="true">
-              <span>
-                <div class="setting-account-img"><img src="../../images/icons/setting-key.svg" alt=""></div>
-                <p>パスワード</p>
+            <?php if ($canChangePassword) : ?>
+              <a href="password-setting.php" class="setting-account-content">
+                <span>
+                  <div class="setting-account-img"><img src="../../images/icons/setting-key.svg" alt=""></div>
+                  <p>パスワード</p>
+                </span>
+                <img src="../../images/icons/setting-next.svg" alt="" class="setting-account-next">
+              </a>
+            <?php else : ?>
+              <!-- ゲスト・未ログインでは開けないので、押せない表示にする -->
+              <span class="setting-account-content is-disabled" role="link" aria-disabled="true">
+                <span>
+                  <div class="setting-account-img"><img src="../../images/icons/setting-key.svg" alt=""></div>
+                  <p>パスワード</p>
+                </span>
+                <span class="setting-soon"><?= h($passwordNote) ?></span>
               </span>
-              <span class="setting-soon">準備中</span>
-            </span>
+            <?php endif; ?>
           </article>
         </section>
 
@@ -102,15 +119,16 @@ session_boot();
               <span class="setting-soon">準備中</span>
             </span>
 
-            <a href="<?= h(url('pages/notification/notification.php')) ?>" class="setting-notification-content">
+            <!-- 準備中（設定を保存する仕組みがまだ無い）。押せない表示にする -->
+            <span class="setting-notification-content is-disabled" role="link" aria-disabled="true">
               <span>
                 <div class="setting-notification-img">
                   <img src="../../images/icons/notice.svg" alt="">
                 </div>
                 <p>アプリからのお知らせ</p>
               </span>
-              <img src="../../images/icons/setting-next.svg" alt="" class="setting-notification-next">
-            </a>
+              <span class="setting-soon">準備中</span>
+            </span>
           </article>
         </section>
         <!-- __________________________________________________________________ -->
@@ -118,15 +136,16 @@ session_boot();
           <h2>観戦</h2>
 
           <article>
-            <a href="<?= h(url('pages/favorite/favorite.php')) ?>" class="setting-game-content">
+            <!-- 準備中（設定を保存する仕組みがまだ無い）。押せない表示にする -->
+            <span class="setting-game-content is-disabled" role="link" aria-disabled="true">
               <span>
                 <div class="setting-game-img">
                   <img src="../../images/icons/setting-heart.svg" alt="">
                 </div>
                 <p>お気に入りチーム</p>
               </span>
-              <img src="../../images/icons/setting-next.svg" alt="" class="setting-game-next">
-            </a>
+              <span class="setting-soon">準備中</span>
+            </span>
 
             <!-- 準備中（ページがまだ無い）。押せない表示にする -->
             <span class="setting-game-content is-disabled" role="link" aria-disabled="true">
@@ -147,45 +166,49 @@ session_boot();
           <h2>遠征サポート設定</h2>
 
           <article>
-            <a href="<?= h(url('pages/travel/travel.php')) ?>" class="setting-expedition-content">
+            <!-- 準備中（設定を保存する仕組みがまだ無い）。押せない表示にする -->
+            <span class="setting-expedition-content is-disabled" role="link" aria-disabled="true">
               <span>
                 <div class="setting-expedition-img">
                   <img src="../../images/icons/setting-departure.svg" alt="">
                 </div>
                 <p>出発地</p>
               </span>
-              <img src="../../images/icons/setting-next.svg" alt="" class="setting-expedition-next">
-            </a>
+              <span class="setting-soon">準備中</span>
+            </span>
 
-            <a href="<?= h(url('pages/travel/travel.php')) ?>" class="setting-expedition-content">
+            <!-- 準備中（設定を保存する仕組みがまだ無い）。押せない表示にする -->
+            <span class="setting-expedition-content is-disabled" role="link" aria-disabled="true">
               <span>
                 <div class="setting-expedition-img">
                   <img src="../../images/icons/setting-train.svg" alt="">
                 </div>
                 <p>交通手段</p>
               </span>
-              <img src="../../images/icons/setting-next.svg" alt="" class="setting-expedition-next">
-            </a>
+              <span class="setting-soon">準備中</span>
+            </span>
 
-            <a href="<?= h(url('pages/travel/travel.php')) ?>" class="setting-expedition-content">
+            <!-- 準備中（設定を保存する仕組みがまだ無い）。押せない表示にする -->
+            <span class="setting-expedition-content is-disabled" role="link" aria-disabled="true">
               <span>
                 <div class="setting-expedition-img">
                   <img src="../../images/icons/setting-hotel.svg" alt="">
                 </div>
                 <p>宿泊条件</p>
               </span>
-              <img src="../../images/icons/setting-next.svg" alt="" class="setting-expedition-next">
-            </a>
+              <span class="setting-soon">準備中</span>
+            </span>
 
-            <a href="<?= h(url('pages/travel/travel.php')) ?>" class="setting-expedition-content">
+            <!-- 準備中（設定を保存する仕組みがまだ無い）。押せない表示にする -->
+            <span class="setting-expedition-content is-disabled" role="link" aria-disabled="true">
               <span>
                 <div class="setting-expedition-img">
                   <img src="../../images/icons/setting-money.svg" alt="">
                 </div>
                 <p>予算</p>
               </span>
-              <img src="../../images/icons/setting-next.svg" alt="" class="setting-expedition-next">
-            </a>
+              <span class="setting-soon">準備中</span>
+            </span>
           </article>
         </section>
 

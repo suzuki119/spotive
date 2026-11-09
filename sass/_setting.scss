@@ -6,6 +6,7 @@
   display: grid;
   row-gap: 24px;
   padding-top: 96px;
+  padding-bottom: $menu-bar-space; // 画面下のメニューバーに最後の項目（ログアウト）が隠れないようにする
 
   h2 {
     margin-bottom: 12px;
@@ -99,4 +100,96 @@ $setting-groups: (
   article span p {
     color: $color-error;
   }
+}
+
+// 上のヘッダー（戻る・お知らせ）。fixed なので外の .inner の幅が効かない。
+// 下の項目（.inner の中）と左右の位置を揃えるため、同じ幅にする
+.header--setting {
+  width: 90%;
+  max-width: 600px;
+}
+
+// ---- 設定から開く入力画面（account-setting.php・password-setting.php）----
+// 設定画面のカードと同じ見た目（白・角丸）に、入力欄を並べる
+.setting-form {
+  display: grid;
+  row-gap: 16px;
+  padding: 16px;
+  background-color: $color-bg;
+  border-radius: $radius-lg;
+
+  &__field {
+    display: grid;
+    row-gap: 8px;
+  }
+
+  &__label {
+    font-size: 14px;
+  }
+
+  &__hint {
+    margin-top: 8px;
+    color: $color-text-sub;
+    font-size: 12px;
+    font-weight: normal;
+  }
+
+  &__submit {
+    width: 100%;
+    padding: 12px 16px;
+    background-color: $color-primary;
+    border-radius: $radius-md;
+    color: $color-bg;
+    text-align: center;
+    cursor: pointer;
+
+    &:hover {
+      background-color: $color-primary-dark;
+    }
+  }
+}
+
+// 項目の一覧（_form.scss の .detail）。下の余白は設定画面の並び（.setting の row-gap）に任せる
+.setting .detail {
+  margin: 0;
+}
+
+// 退会への入口。ログアウト（.setting-logout）と同じく、赤い枠と文字で区別する
+.setting-danger {
+  &__link {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px;
+    background-color: $color-bg;
+    border: solid 0.5px $color-error;
+    border-radius: $radius-lg;
+    color: $color-error;
+  }
+}
+
+// 退会のような、取り消せない操作のボタン
+.setting-form__submit--danger {
+  background-color: $color-error;
+
+  &:hover {
+    background-color: $color-error-dark;
+  }
+}
+
+// 「やめる」など、送らずに戻るリンク
+.setting-form__cancel {
+  padding: 12px 16px;
+  color: $color-text-sub;
+  text-align: center;
+}
+
+// カードの中の箇条書き（退会で消えるもの など）
+.setting-form__list {
+  display: grid;
+  row-gap: 8px;
+  padding-left: 16px;
+  font-size: 14px;
+  font-weight: normal;
+  list-style: disc;
 }

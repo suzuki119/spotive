@@ -20,6 +20,7 @@
 declare(strict_types=1);
 
 require_once __DIR__ . '/../../lib/favorite.php';
+require_once __DIR__ . '/../../lib/icon.php';
 
 const HOME_NOW_LIMIT = 10;   // 「今から観戦できる試合」に出す数（距離で絞っても、この数まで）
 const HOME_NOW_RADIUS_KM = [1, 3, 5, 10, 30];   // 「現在地から○km以内」の選択肢
@@ -85,203 +86,217 @@ $teamNamesJson = (string) json_encode(
 
 
 /**
- * 対戦カードのロゴ部分（チーム vs チーム）。チームが無い大会は競技名を出す。
+ * ロゴが無いときの代わり。images/sports/ の競技の画像、それも無い競技は競技の色の丸にアイコンを出す。
+ * $label が空なら飾りとして読み上げない。
+ */
+$sportLogo = static function (array $match, string $class, string $label, int $size): void {
+  $image = match_sport_image($match['sport']);
+  if ($image !== '') : ?>
+    <img class="<?= h($class) ?>" src="<?= h(url($image)) ?>" alt="<?= h($label) ?>" width="<?= $size ?>" height="<?= $size ?>" />
+  <?php elseif ($label === '') : ?>
+    <span class="<?= h($class) ?> team-logo--<?= h(match_sport_key($match['sport'])) ?>" aria-hidden="true"><?= icon_html(match_sport_icon($match['sport'])) ?></span>
+  <?php else : ?>
+    <span class="<?= h($class) ?> team-logo--<?= h(match_sport_key($match['sport'])) ?>" role="img" aria-label="<?= h($label) ?>"><?= icon_html(match_sport_icon($match['sport'])) ?></span>
+    <?php endif;
+};
+
+/**
+ * 対戦カードのロゴ部分（チーム vs チーム）。チームが無い大会は競技の画像を出す。
  * 表示だけの小さな部品なので、ここに置いている。
  */
-$teamsVs = static function (array $match, string $block): void {
+$teamsVs = static function (array $match, string $block) use ($sportLogo): void {
   if (count($match['teams']) < 2) {
-?>
-    <span class="<?= h($block) ?>__solo team-logo team-logo--<?= h(match_sport_key($match['sport'])) ?>">
-      <?= h(match_sport_label($match['sport'])) ?>
-    </span>
-    <?php
+    $sportLogo($match, 'team-logo', match_sport_label($match['sport']), 48);
     return;
   }
   foreach ($match['teams'] as $i => $team) :
-    if ($i === 1) :
-    ?><span class="<?= h($block) ?>__vs">vs</span><?php
-                                                endif;
-                                                if ($team['logo'] !== '') :
-                                                  ?><img class="team-logo" src="<?= h(url($team['logo'])) ?>" alt="<?= h($team['name']) ?>" width="48" height="48" /><?php
-                                                                                                                                                                    else :
-                                                                                                                                                                      ?><span class="team-logo team-logo--<?= h(match_sport_key($match['sport'])) ?>" role="img" aria-label="<?= h($team['name']) ?>"><?= h($team['shortName']) ?></span><?php
-                                                                                                                                                                                                                                                                                                                                        endif;
-                                                                                                                                                                                                                                                                                                                                      endforeach;
-                                                                                                                                                                                                                                                                                                                                    };
-
+    if ($i === 1) : ?>
+      <span class="<?= h($block) ?>__vs">vs</span>
+    <?php endif;
+    if ($team['logo'] !== '') : ?>
+      <img class="team-logo" src="<?= h(url($team['logo'])) ?>" alt="<?= h($team['name']) ?>" width="48" height="48" />
+    <?php else :
+      $sportLogo($match, 'team-logo', $team['name'], 48);
+    endif;
+  endforeach;
+};
 
 /**
- * お気に入りの試合の、片方のチームのロゴ。ロゴが無いチームは、競技の色の丸に略称を入れて代わりにする
+ * お気に入りの試合の、片方のチームのロゴ。ロゴが無いチームは、競技の画像で代わりにする
  * （何も出さないと、どのチームの試合か分からなくなる）
  */
-$favLogo = static function (?array $team, array $match): void {
+$favLogo = static function (?array $team, array $match) use ($sportLogo): void {
   if ($team === null) {
     return;
   }
   if ($team['logo'] !== '') : ?>
     <img class="fav-match__logo" src="<?= h(url($team['logo'])) ?>" alt="<?= h($team['name']) ?>" width="72" height="72" />
-  <?php else : ?>
-    <span class="fav-match__logo team-logo team-logo--<?= h(match_sport_key($match['sport'])) ?>" role="img" aria-label="<?= h($team['name']) ?>"><?= h($team['shortName']) ?></span>
-  <?php endif;
+<?php else :
+    $sportLogo($match, 'fav-match__logo team-logo', $team['name'], 72);
+  endif;
 };
 
 ?>
 <!DOCTYPE html>
 <html lang="ja">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>ホーム | SPOTIVE</title>
 
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Jost:wght@400;600&family=Noto+Sans+JP:wght@400;500;700&display=swap"
-      rel="stylesheet"
-    />
-    <link rel="stylesheet" href="<?= h(asset('css/style.css')) ?>" />
-  </head>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ホーム | SPOTIVE</title>
 
-  <body>
-    <?php
-    $appHeader = ['title' => 'SPOTIVE'];
-    require __DIR__ . '/../app-header.php';
-    ?>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Jost:wght@400;600&family=Noto+Sans+JP:wght@400;500;700&display=swap"
+    rel="stylesheet" />
+  <link rel="stylesheet" href="<?= h(asset('css/style.css')) ?>" />
+</head>
 
-    <main class="home">
-      <section class="home__section" data-fav>
-        <div class="home__head">
-          <h2 class="home__heading">お気に入り</h2>
-          <a class="home__more" href="<?= h(url('pages/favorite/favorite.php')) ?>">編集</a>
+<body>
+  <?php
+  $appHeader = ['title' => 'SPOTIVE'];
+  require __DIR__ . '/../app-header.php';
+  ?>
+
+  <main class="home">
+    <section class="home__section" data-fav>
+      <div class="home__head">
+        <h2 class="home__heading">お気に入り</h2>
+        <a class="home__more" href="<?= h(url('pages/favorite/favorite.php')) ?>">編集</a>
+      </div>
+
+      <p class="home__empty" id="home-favorite-empty">
+        お気に入りのチームを登録すると、試合がここに並びます。<br />
+        <a href="<?= h(url('pages/favorite/favorite.php')) ?>">チームを登録する</a>
+      </p>
+
+      <div class="fav-browser" data-fav-browser hidden>
+        <!-- ‹ 今日 › -->
+        <div class="fav-browser__days">
+          <button class="fav-browser__day-button" type="button" data-day-step="-1" aria-label="前の日">‹</button>
+          <p class="fav-browser__day" data-day-label aria-live="polite">今日</p>
+          <button class="fav-browser__day-button" type="button" data-day-step="1" aria-label="次の日">›</button>
         </div>
 
-        <p class="home__empty" id="home-favorite-empty">
-          お気に入りのチームを登録すると、試合がここに並びます。<br />
-          <a href="<?= h(url('pages/favorite/favorite.php')) ?>">チームを登録する</a>
+        <!-- お気に入りのチームのタブ（JS が作る） -->
+        <div class="fav-browser__tabs" role="tablist" aria-label="お気に入りのチーム" data-team-tabs></div>
+
+        <ul class="home__slider" data-fav-slider>
+          <?php foreach ($favoriteCandidates as $match) : ?>
+            <li class="home__slide" data-favorite-slide data-date="<?= h($match['date']) ?>" hidden>
+              <a
+                class="fav-match"
+                href="<?= h($match['detailPath'] === '' ? url('pages/favorite/favorite.php') : url($match['detailPath'])) ?>"
+                data-team-ids="<?= h(implode(' ', $match['teamIds'])) ?>">
+                <?php $homeTeam = $match['teams'][0] ?? null;
+                $awayTeam = $match['teams'][1] ?? null; ?>
+                <span class="fav-match__side">
+                  <?php $favLogo($homeTeam, $match); ?>
+                </span>
+                <span class="fav-match__center">
+                  <span class="fav-match__round"><?= h(match_league_label($match)) ?></span>
+                  <span class="fav-match__time"><?= $match['time'] === '' ? '時間未定' : h($match['time']) ?></span>
+                  <span class="fav-match__venue">
+                    <img src="<?= h(url('images/icons/point.svg')) ?>" alt="" width="11" height="14" />
+                    <?= h($match['venue']) ?>
+                  </span>
+                </span>
+                <span class="fav-match__side">
+                  <?php $favLogo($awayTeam, $match); ?>
+                </span>
+              </a>
+            </li>
+          <?php endforeach; ?>
+        </ul>
+
+        <!-- その日に試合が無いとき -->
+        <p class="fav-browser__none" data-fav-none hidden>
+          <span data-fav-none-text>この日の試合はありません。</span>
+          <button class="fav-browser__next" type="button" data-fav-next hidden></button>
         </p>
 
-        <div class="fav-browser" data-fav-browser hidden>
-          <!-- ‹ 今日 › -->
-          <div class="fav-browser__days">
-            <button class="fav-browser__day-button" type="button" data-day-step="-1" aria-label="前の日">‹</button>
-            <p class="fav-browser__day" data-day-label aria-live="polite">今日</p>
-            <button class="fav-browser__day-button" type="button" data-day-step="1" aria-label="次の日">›</button>
-          </div>
+        <!-- 何枚目か（2 枚以上のとき） -->
+        <div class="fav-browser__dots" data-fav-dots aria-hidden="true"></div>
+      </div>
+    </section>
 
-          <!-- お気に入りのチームのタブ（JS が作る） -->
-          <div class="fav-browser__tabs" role="tablist" aria-label="お気に入りのチーム" data-team-tabs></div>
+    <section class="home__section">
+      <h2 class="home__heading">今から観戦できる試合</h2>
+      <label class="home__radius">
+        <span class="home__radius-label">表示する範囲</span>
+        <select class="home__radius-select" data-radius>
+          <option value="">すべての試合</option>
+          <?php foreach (HOME_NOW_RADIUS_KM as $km) : ?>
+            <option value="<?= (int) $km ?>">現在地から<?= (int) $km ?>km以内</option>
+          <?php endforeach; ?>
+        </select>
+      </label>
+      <p class="home__status" data-radius-status role="status" hidden></p>
+      <p class="home__empty" data-now-empty hidden>この範囲で、これから観戦できる試合はありません。</p>
 
-          <ul class="home__slider" data-fav-slider>
-            <?php foreach ($favoriteCandidates as $match) : ?>
-              <li class="home__slide" data-favorite-slide data-date="<?= h($match['date']) ?>" hidden>
-                <a
-                  class="fav-match"
-                  href="<?= h($match['detailPath'] === '' ? url('pages/favorite/favorite.php') : url($match['detailPath'])) ?>"
-                  data-team-ids="<?= h(implode(' ', $match['teamIds'])) ?>"
-                >
-                  <?php $homeTeam = $match['teams'][0] ?? null; $awayTeam = $match['teams'][1] ?? null; ?>
-                  <span class="fav-match__side">
-                    <?php $favLogo($homeTeam, $match); ?>
-                  </span>
-                  <span class="fav-match__center">
-                    <span class="fav-match__round"><?= h(match_league_label($match)) ?></span>
-                    <span class="fav-match__time"><?= $match['time'] === '' ? '時間未定' : h($match['time']) ?></span>
-                    <span class="fav-match__venue">
-                      <img src="<?= h(url('images/icons/point.svg')) ?>" alt="" width="11" height="14" />
-                      <?= h($match['venue']) ?>
+      <?php if ($nowMatches === []) : ?>
+        <p class="home__empty">これから行われる試合はまだありません。</p>
+      <?php else : ?>
+        <ul class="home__list" data-now-list data-limit="<?= HOME_NOW_LIMIT ?>">
+          <?php foreach ($nowMatches as $i => $match) : ?>
+            <li data-now-item <?= $i < HOME_NOW_LIMIT ? '' : 'hidden' ?>>
+              <a
+                class="now-match"
+                href="<?= h($match['detailPath'] === '' ? url('pages/match/match-list.php') : url($match['detailPath'])) ?>"
+                <?php if ($match['coords'] !== null) : ?>
+                data-lat="<?= (float) $match['coords']['lat'] ?>"
+                data-lng="<?= (float) $match['coords']['lng'] ?>"
+                <?php endif; ?>>
+                <span class="now-match__main">
+                  <span class="now-match__teams"><?php $teamsVs($match, 'now-match'); ?></span>
+                  <span class="now-match__info">
+                    <span class="now-match__league">
+                      <?= h(match_league_label($match)) ?>
+                      <?= $match['organizer'] !== '' ? '・' . h($match['organizer']) : '' ?>
                     </span>
-                  </span>
-                  <span class="fav-match__side">
-                    <?php $favLogo($awayTeam, $match); ?>
-                  </span>
-                </a>
-              </li>
-            <?php endforeach; ?>
-          </ul>
-
-          <!-- その日に試合が無いとき -->
-          <p class="fav-browser__none" data-fav-none hidden>
-            <span data-fav-none-text>この日の試合はありません。</span>
-            <button class="fav-browser__next" type="button" data-fav-next hidden></button>
-          </p>
-
-          <!-- 何枚目か（2 枚以上のとき） -->
-          <div class="fav-browser__dots" data-fav-dots aria-hidden="true"></div>
-        </div>
-      </section>
-
-      <section class="home__section">
-        <h2 class="home__heading">今から観戦できる試合</h2>
-        <label class="home__radius">
-          <span class="home__radius-label">表示する範囲</span>
-          <select class="home__radius-select" data-radius>
-            <option value="">すべての試合</option>
-            <?php foreach (HOME_NOW_RADIUS_KM as $km) : ?>
-              <option value="<?= (int) $km ?>">現在地から<?= (int) $km ?>km以内</option>
-            <?php endforeach; ?>
-          </select>
-        </label>
-        <p class="home__status" data-radius-status role="status" hidden></p>
-        <p class="home__empty" data-now-empty hidden>この範囲で、これから観戦できる試合はありません。</p>
-
-        <?php if ($nowMatches === []) : ?>
-          <p class="home__empty">これから行われる試合はまだありません。</p>
-        <?php else : ?>
-          <ul class="home__list" data-now-list data-limit="<?= HOME_NOW_LIMIT ?>">
-            <?php foreach ($nowMatches as $i => $match) : ?>
-              <li data-now-item <?= $i < HOME_NOW_LIMIT ? '' : 'hidden' ?>>
-                <a
-                  class="now-match"
-                  href="<?= h($match['detailPath'] === '' ? url('pages/match/match-list.php') : url($match['detailPath'])) ?>"
-                  <?php if ($match['coords'] !== null) : ?>
-                    data-lat="<?= (float) $match['coords']['lat'] ?>"
-                    data-lng="<?= (float) $match['coords']['lng'] ?>"
-                  <?php endif; ?>
-                >
-                  <span class="now-match__main">
-                    <span class="now-match__teams"><?php $teamsVs($match, 'now-match'); ?></span>
-                    <span class="now-match__info">
-                      <span class="now-match__league">
-                        <?= h(match_league_label($match)) ?>
-                        <?= $match['organizer'] !== '' ? '・' . h($match['organizer']) : '' ?>
-                      </span>
-                      <span class="now-match__title">
-                        <?php if (count($match['teams']) === 2) : ?>
-                          <?= h($match['teams'][0]['shortName']) ?><span class="now-match__title-vs">vs</span><?= h($match['teams'][1]['shortName']) ?>
-                        <?php else : ?>
-                          <?= h($match['title']) ?>
-                        <?php endif; ?>
-                      </span>
-                      <span class="now-match__meta">
-                        <span class="now-match__time"><?= h(home_when($match)) ?></span>
-                        <span class="now-match__distance is-hidden" data-distance>
-                          <img src="<?= h(url('images/icons/point.svg')) ?>" alt="" width="11" height="14" />
-                          <span data-distance-text></span>
-                        </span>
+                    <span class="now-match__title">
+                      <?php if (count($match['teams']) === 2) : ?>
+                        <?= h($match['teams'][0]['shortName']) ?><span class="now-match__title-vs">vs</span><?= h($match['teams'][1]['shortName']) ?>
+                      <?php else : ?>
+                        <?= h($match['title']) ?>
+                      <?php endif; ?>
+                    </span>
+                    <span class="now-match__meta">
+                      <span class="now-match__time"><?= h(home_when($match)) ?></span>
+                      <span class="now-match__distance is-hidden" data-distance>
+                        <img src="<?= h(url('images/icons/point.svg')) ?>" alt="" width="11" height="14" />
+                        <span data-distance-text></span>
                       </span>
                     </span>
                   </span>
-                  <!-- 半券：会場と料金（「予算内で観たい」に答えられるよう、料金も一覧で見せる） -->
-                  <span class="now-match__ticket">
-                    <span class="now-match__venue">
-                      <img src="<?= h(url('images/icons/point.svg')) ?>" alt="" width="11" height="14" />
-                      <?= h($match['venue']) ?>
-                    </span>
-                    <span class="now-match__price"><?= h(match_price_label($match['price'])) ?></span>
+                </span>
+                <!-- 半券：会場・料金（「予算内で観たい」に答えられるよう、料金も一覧で見せる） -->
+                <span class="now-match__ticket">
+                  <span class="now-match__venue">
+                    <img src="<?= h(url('images/icons/point.svg')) ?>" alt="" width="11" height="14" />
+                    <?= h($match['venue']) ?>
                   </span>
-                </a>
-              </li>
-            <?php endforeach; ?>
-          </ul>
-        <?php endif; ?>
-      </section>
-    </main>
+                  <span class="now-match__price"><?= h(match_price_label($match['price'])) ?></span>
+                </span>
+              </a>
+            </li>
+          <?php endforeach; ?>
+        </ul>
+      <?php endif; ?>
+    </section>
+  </main>
 
-    <script type="application/json" id="favorite-state"><?= favorite_state_json($favoriteState) ?></script>
-    <script type="application/json" id="team-names"><?= $teamNamesJson ?></script>
-    <script src="<?= h(asset('js/main.js')) ?>"></script>
-    <script src="<?= h(asset('js/common/favorite-store.js')) ?>"></script>
-    <script src="<?= h(asset('js/pages/home.js')) ?>"></script>
-    <?php require __DIR__ . '/../menu-bar.php'; ?>
-  </body>
+  <script type="application/json" id="favorite-state">
+    <?= favorite_state_json($favoriteState) ?>
+  </script>
+  <script type="application/json" id="team-names">
+    <?= $teamNamesJson ?>
+  </script>
+  <script src="<?= h(asset('js/main.js')) ?>"></script>
+  <script src="<?= h(asset('js/common/favorite-store.js')) ?>"></script>
+  <script src="<?= h(asset('js/pages/home.js')) ?>"></script>
+  <?php require __DIR__ . '/../menu-bar.php'; ?>
+</body>
+
 </html>

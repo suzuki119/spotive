@@ -9,13 +9,15 @@ declare(strict_types=1);
 
 require_once __DIR__ . '/../../lib/layout.php';
 
-page_header('プライバシーポリシー', 'プライバシーポリシー');
+setting_page_header('プライバシーポリシー');
 ?>
 
-<p class="form-page__lead">このページは準備中です。</p>
+<!-- 設定へは上の戻るで戻れる -->
+<section>
+  <h2>プライバシーポリシー</h2>
+  <div class="setting-form">
+    <p>このページは準備中です。</p>
+  </div>
+</section>
 
-<p class="form-page__note">
-  <a href="<?= h(url('pages/setting/setting.php')) ?>">設定へ戻る</a>
-</p>
-
-<?php page_footer();
+<?php setting_page_footer();

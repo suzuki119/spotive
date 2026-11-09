@@ -284,6 +284,31 @@ input[type="radio"] {
   color: $form-muted;
 }
 
+// 項目ごとに背景を交互に変える版。dt と dd を .detail__row で 1 行ずつ包んで使う
+.detail--striped {
+  display: block;
+  overflow: hidden;
+  border: 1px solid $color-border;
+  border-radius: $radius-lg;
+}
+
+.detail__row {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 4px;
+  padding: 12px 16px;
+  background: $color-bg;
+
+  &:nth-child(even) {
+    background: $color-bg-gray;
+  }
+
+  @media (min-width: $bp-tablet) {
+    grid-template-columns: 160px 1fr;
+    gap: 16px;
+  }
+}
+
 .table {
   width: 100%;
   margin-bottom: 24px;

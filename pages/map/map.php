@@ -304,6 +304,7 @@ $mapTeamShortNamesJson = json_encode(
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
   <script src="<?= h(asset('js/main.js')) ?>"></script>
+  <script src="<?= h(asset('js/common/gsi-tiles.js')) ?>"></script>
   <script src="<?= h(asset('js/pages/map.js')) ?>"></script>
   <?php require __DIR__ . '/../menu-bar.php'; ?>
 </body>

@@ -345,15 +345,17 @@ $mypage-shadow: 0 2px 12px rgba($color-secondary, 0.1);
 
   &__main {
     display: grid;
-    grid-template-columns: 72px 1fr 72px;
+    grid-template-columns: minmax(0, 72px) 1fr minmax(0, 72px); // 狭い画面では、真ん中のスコアを残してロゴを縮める
     align-items: center;
     gap: 8px;
     padding: 24px 16px;
   }
 
   &__logo {
-    width: 72px;
-    height: 72px;
+    width: 100%;
+    max-width: 72px;
+    height: auto;
+    aspect-ratio: 1;
     object-fit: contain;
   }
 
@@ -532,5 +534,28 @@ $mypage-shadow: 0 2px 12px rgba($color-secondary, 0.1);
 
   li + li &__link {
     border-top: 1px solid $color-border;
+  }
+
+  // ログアウト。設定画面（.setting-logout）と同じく、赤い枠と文字でほかの項目と区別する
+  &__logout {
+    margin-top: 16px;
+  }
+
+  &__logout-btn {
+    display: block;
+    width: 100%;
+    padding: 16px;
+    border: 1px solid $color-error;
+    border-radius: $radius-lg;
+    background: $color-bg;
+    color: $color-error;
+    font: inherit;
+    font-weight: 700;
+    text-align: left;
+    cursor: pointer;
+
+    &:hover {
+      background: $color-error-light;
+    }
   }
 }

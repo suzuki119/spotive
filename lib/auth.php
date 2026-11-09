@@ -241,6 +241,13 @@ function is_browsing_visitor(): bool
 
 function logout_user(): void
 {
+  revoke_current_session();
+  session_forget();
+}
+
+/** いまのセッションを DB 側で失効させる（cookie とセッションの中身は残す） */
+function revoke_current_session(): void
+{
   session_boot();
   $hash = $_SESSION['session_hash'] ?? null;
   if (is_string($hash)) {
@@ -249,7 +256,6 @@ function logout_user(): void
       ['h' => $hash]
     );
   }
-  session_forget();
 }
 
 /** セッションの中身と cookie を消す */

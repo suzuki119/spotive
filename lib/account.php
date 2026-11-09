@@ -415,6 +415,58 @@ function account_verify_sms(int $userId, string $code): void
 }
 
 // ---------------------------------------------------------------------
+// パスワードの変更
+// ---------------------------------------------------------------------
+
+/**
+ * パスワードを変える。今のパスワードで本人か確かめてから保存する。
+ * 変えたら、ほかの端末のログインはすべて切る（今の端末はそのまま）。
+ * 入力の誤りは AppError（fields に current / password / password_confirm）で返す。
+ */
+function account_change_password(array $user, array $in): void
+{
+  // 今のパスワードを総当たりで当てられないよう、試せる回数を絞る
+  rate_limit_hit('password_change:user:' . (int) $user['id'], 5, 900);
+
+  $current = (string) ($in['current'] ?? '');
+  $new     = (string) ($in['password'] ?? '');
+  $confirm = (string) ($in['password_confirm'] ?? '');
+
+  $row = db_one('SELECT password_hash FROM users WHERE id = :id', ['id' => $user['id']]);
+  if ($row === null || $current === '' || !password_verify($current, (string) $row['password_hash'])) {
+    throw new AppError('入力内容を確認してください。', ['current' => '今のパスワードが違います。']);
+  }
+
+  $v = (new Validator(['password' => $new]))
+    ->required('password', '新しいパスワード')
+    ->password('password');
+  $errors = $v->errors();
+  if (!isset($errors['password']) && $new === $current) {
+    $errors['password'] = '今と同じパスワードです。別のパスワードにしてください。';
+  }
+  if (!isset($errors['password']) && $new !== $confirm) {
+    $errors['password_confirm'] = '確認用のパスワードが一致しません。';
+  }
+  if ($errors !== []) {
+    throw new AppError('入力内容を確認してください。', $errors);
+  }
+
+  session_boot();
+  $currentSession = (string) ($_SESSION['session_hash'] ?? '');
+
+  db_transaction(static function () use ($user, $new, $currentSession): void {
+    db_update('users', ['password_hash' => hash_password($new)], 'id = :id', ['id' => $user['id']]);
+    db_run(
+      'UPDATE auth_sessions SET revoked_at = NOW()
+        WHERE user_id = :u AND token_hash <> :h AND revoked_at IS NULL',
+      ['u' => $user['id'], 'h' => $currentSession]
+    );
+  });
+
+  audit_log((int) $user['id'], 'user.password_changed', 'user', (int) $user['id']);
+}
+
+// ---------------------------------------------------------------------
 // 信頼レベル
 // ---------------------------------------------------------------------
 

@@ -29,27 +29,6 @@ require_once __DIR__ . '/../../lib/icon.php';
 /** 試合の写真が無いときに上に出す写真 */
 const DETAIL_DEFAULT_IMAGE = 'images/sample/sample-match.png';
 
-/** 競技コード => アイコン（images/icons/ のファイル名）。js/pages/map.js の SPORTS と揃える（表示名は lib/match.php） */
-const DETAIL_SPORT_ICONS = [
-  'soccer'      => 'sport-soccer',
-  'baseball'    => 'sport-baseball',
-  'basketball'  => 'sport-basketball',
-  'volleyball'  => 'sport-volleyball',
-  'futsal'      => 'sport-soccer',
-  'tennis'      => 'sport-tennis',
-  'badminton'   => 'sport-badminton',
-  'rugby'       => 'sport-rugby',
-  'tabletennis' => 'sport-tabletennis',
-];
-
-/** 競技コード => 競技の画像（images/sports/ のファイル名）。あればアイコンの代わりに使う。js/pages/map.js の SPORTS と揃える */
-const DETAIL_SPORT_IMAGES = [
-  'soccer'     => 'soccer.png',
-  'baseball'   => 'base.png',
-  'basketball' => 'basket.png',
-  'volleyball' => 'balley.png',
-  'futsal'     => 'soccer.png',
-];
 
 /** 仮データの試合 1 件を、画面で使う形にする。見つからなければ null */
 function detail_from_match(string $id): ?array
@@ -203,8 +182,8 @@ if ($game !== null) {
   $sportKey  = match_sport_key($game['sport']);
   $sportInfo = [
     'label' => $game['sport'] !== '' ? match_sport_label($game['sport']) : 'その他',
-    'icon'  => DETAIL_SPORT_ICONS[$sportKey] ?? 'sport-other',
-    'image' => DETAIL_SPORT_IMAGES[$sportKey] ?? '',
+    'icon'  => match_sport_icon($game['sport']),
+    'image' => match_sport_image($game['sport']),
   ];
 
   try {
@@ -333,7 +312,7 @@ $embed = ($_GET['embed'] ?? '') === '1';
         <?php if ($heroImage !== '') : ?>
           <img class="match-detail__hero-image" src="<?= h(url($heroImage)) ?>" alt="" width="402" height="205" />
         <?php elseif (($sportInfo['image'] ?? '') !== '') : ?>
-          <img class="match-detail__hero-sport" src="<?= h(url('images/sports/' . $sportInfo['image'])) ?>" alt="" width="96" height="96" />
+          <img class="match-detail__hero-sport" src="<?= h(url($sportInfo['image'])) ?>" alt="" width="96" height="96" />
         <?php else : ?>
           <?= icon_html((string) ($sportInfo['icon'] ?? 'stadium'), 'match-detail__hero-icon') ?>
         <?php endif; ?>

@@ -17,6 +17,8 @@ declare(strict_types=1);
 require_once __DIR__ . '/../../lib/travel.php';
 require_once __DIR__ . '/../../lib/guest.php';
 
+// ログインせずに使っている人は、ゲストにログインさせてから開く
+guest_auto_login();
 $user   = require_login();
 $userId = (int) $user['id'];
 $planId = (int) ($_GET['id'] ?? 0);

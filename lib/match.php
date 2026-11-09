@@ -44,6 +44,41 @@ function match_sport_label(string $sport): string
   return MATCH_SPORT_LABELS[$sport] ?? $sport;
 }
 
+/** 競技コード => アイコン（images/icons/ のファイル名）。js/pages/map.js の SPORTS と揃える */
+const MATCH_SPORT_ICONS = [
+  'soccer'      => 'sport-soccer',
+  'baseball'    => 'sport-baseball',
+  'basketball'  => 'sport-basketball',
+  'volleyball'  => 'sport-volleyball',
+  'futsal'      => 'sport-soccer',
+  'tennis'      => 'sport-tennis',
+  'badminton'   => 'sport-badminton',
+  'rugby'       => 'sport-rugby',
+  'tabletennis' => 'sport-tabletennis',
+];
+
+/** 競技のアイコン名（icon_html() に渡す）。知らない競技は sport-other */
+function match_sport_icon(string $sport): string
+{
+  return MATCH_SPORT_ICONS[match_sport_key($sport)] ?? 'sport-other';
+}
+
+/** 競技コード => 競技の画像（images/sports/ のファイル名）。あればアイコンの代わりに使う。js/pages/map.js の SPORTS と揃える */
+const MATCH_SPORT_IMAGES = [
+  'soccer'     => 'soccer.png',
+  'baseball'   => 'base.png',
+  'basketball' => 'basket.png',
+  'volleyball' => 'balley.png',
+  'futsal'     => 'soccer.png',
+];
+
+/** 競技の画像のパス（url() に渡す）。画像の無い競技は空文字 */
+function match_sport_image(string $sport): string
+{
+  $file = MATCH_SPORT_IMAGES[match_sport_key($sport)] ?? '';
+  return $file === '' ? '' : 'images/sports/' . $file;
+}
+
 /** 料金の表示。null は未登録、0 円は無料 */
 function match_price_label(?int $yen): string
 {
@@ -114,14 +149,14 @@ function load_teams(): array
 }
 
 /**
- * 仮のロゴ。チームごとのロゴ画像ができたら消す。
- * チームの番号（team-003 なら 3）で順に割り当てるので、同じチームはどの画面でも同じロゴになる
+ * 仮のロゴ（エンブレム）。チームごとのロゴ画像ができたら消す。
+ * チームの番号（team-003 なら 3）で順に割り当てるので、同じチームはどの画面でも同じロゴになる。
+ * 対戦する 2 チームが同じになったときは match_next_placeholder() でもう片方にする。
+ * 画像は表示の最大（試合カードの 96px）の 2 倍の 192px に縮めたもの
  */
 const MATCH_PLACEHOLDER_LOGOS = [
-  'images/teams/team1.png',
-  'images/teams/team2.png',
-  'images/teams/team3.png',
-  'images/teams/team4.png',
+  'images/teams/emblem-001.png',
+  'images/teams/emblem-002.png',
 ];
 
 /**

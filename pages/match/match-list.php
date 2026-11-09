@@ -21,6 +21,7 @@ declare(strict_types=1);
 require_once __DIR__ . '/../../lib/match.php';
 require_once __DIR__ . '/../../lib/match-search.php';
 require_once __DIR__ . '/../../lib/favorite.php';
+require_once __DIR__ . '/../../lib/icon.php';
 
 // -------------------------------------------------------------------
 // 試合の取得と、競技での絞り込み
@@ -44,17 +45,10 @@ $days = group_matches_by_date($matches);
 
 // 競技のタブ（試合を探す画面と共通）
 $tabs = ['' => 'すべて'];
-$sportLabels = [
-  'baseball' => '野球',
-  'soccer' => 'サッカー',
-  'basketball' => 'バスケットボール',
-  'volleyball' => 'バレーボール',
-  'tennis' => 'テニス',
-];
 foreach ($upcoming as $match) {
   $key = match_search_sport_key((string) $match['sport']);
   if ($key !== '') {
-    $tabs[$key] = $sportLabels[$key] ?? $key;
+    $tabs[$key] = match_sport_label($key);
   }
 }
 
@@ -97,7 +91,7 @@ $favoriteState = favorite_client_state();
           data-calendar-open
           aria-haspopup="dialog"
           aria-controls="calendar-sheet"
-        >カレンダー</button>
+        ><?= icon_html('date') ?><span class="schedule-days__calendar-text">カレンダー</span></button>
       </div>
       <p class="schedule-list__count"><span data-day-count><?= count($matches) ?></span>件の試合</p>
 
@@ -184,14 +178,29 @@ $favoriteState = favorite_client_state();
         <span class="calendar-sheet__handle" aria-hidden="true"></span>
         <div class="calendar-sheet__head">
           <button class="calendar-sheet__step" type="button" data-month-step="-1" aria-label="前の月">‹</button>
-          <h2 class="calendar-sheet__title" id="calendar-title" data-month-label>9月</h2>
+          <h2 class="visually-hidden" id="calendar-title">日付を選ぶ</h2>
+          <button
+            class="calendar-sheet__picker"
+            type="button"
+            aria-haspopup="listbox"
+            aria-expanded="false"
+            aria-controls="calendar-months"
+            data-month-picker
+          >
+            <span data-month-label>9月</span>
+            <span class="calendar-sheet__picker-arrow" aria-hidden="true">▾</span>
+          </button>
           <button class="calendar-sheet__step" type="button" data-month-step="1" aria-label="次の月">›</button>
         </div>
-        <ol class="calendar-sheet__week" aria-hidden="true">
-          <li>日</li><li>月</li><li>火</li><li>水</li><li>木</li><li>金</li><li>土</li>
-        </ol>
-        <div class="calendar-sheet__grid" data-calendar-grid role="grid"></div>
-        <p class="calendar-sheet__note">点のある日に試合があります。</p>
+        <div data-calendar-days>
+          <ol class="calendar-sheet__week" aria-hidden="true">
+            <li>日</li><li>月</li><li>火</li><li>水</li><li>木</li><li>金</li><li>土</li>
+          </ol>
+          <div class="calendar-sheet__grid" data-calendar-grid role="grid"></div>
+          <p class="calendar-sheet__note">点のある日に試合があります。</p>
+        </div>
+        <!-- 月の一覧。開いている間は日付の代わりに出す -->
+        <ul class="calendar-sheet__months" id="calendar-months" role="listbox" aria-label="月を選ぶ" data-month-list hidden></ul>
         <button class="calendar-sheet__close" type="button" data-calendar-close>閉じる</button>
       </section>
     </div>
@@ -204,6 +213,7 @@ $favoriteState = favorite_client_state();
     <?= favorite_state_json($favoriteState) ?>
   </script>
   <script src="<?= h(asset('js/common/favorite-store.js')) ?>"></script>
+  <script src="<?= h(asset('js/common/search-tabs.js')) ?>"></script>
   <script src="<?= h(asset('js/pages/match-list.js')) ?>"></script>
   <?php require __DIR__ . '/../menu-bar.php'; ?>
 </body>

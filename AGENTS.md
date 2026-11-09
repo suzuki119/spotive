@@ -53,10 +53,18 @@
 | マイページ | `pages/setting/mypage.php` | 観戦者としての自分（お気に入り・遠征・観戦記録）。主催者ページと設定へは**入口を 1 つずつ**置くだけ | ヘッダーのアカウントのアイコン、メニューの「マイページ」 |
 | 設定 | `pages/setting/setting.php` | 設定項目の一覧。各画面へのリンクを並べるだけ | マイページ、メニューの「設定」 |
 | アカウント | `pages/setting/account-setting.php` | プロフィールの変更・アカウント情報・ログイン中の端末・退会 | 設定、マイページのプロフィール |
+| パスワード | `pages/setting/password-setting.php` | パスワードの変更（変えたら、ほかの端末のログインを切る） | 設定 |
 | 主催者ページ | `pages/administrators/administrators.php` | 大会の一覧・登録・編集、アクセス数、チームの管理（主催者の操作はすべてここ） | マイページの入口、ヘッダー。旧 `pages/organizer/dashboard.php` はここへ転送する |
 
 - **準備中の項目のために、中身の無いページを作らない。** 一覧の側で「準備中」と出して押せない表示にする（`aria-disabled="true"`。メニューバーの `href => null`、設定画面の `.is-disabled` と同じ）
 - **開けない画面へのリンクを出さない。** リンクを出す条件は、開く側の条件と同じ関数で決める（主催者ページなら `can_action_level($user, 'create_tournament', LEVEL_USER)`）
+- **設定から開く画面は、設定画面と同じ見た目にして、設定へ戻れるようにする。** 対象は設定画面に並ぶ項目のうち「サポート」（よくある質問・お問い合わせ）**以外**のすべて。サポートは今の共通の枠（`lib/layout.php` の `page_header()`）のままにする
+  - 上は設定画面と同じヘッダー（`.header.header--setting`）。左の戻る（`.setting-back`）の `href` は `setting.php` にする（来た画面があれば `js/main.js` がそこへ戻す）
+  - 中身は `<div class="inner"><div class="setting">` の中に、見出し `<h2>` を持つ `<section>` を並べる。入力欄は白い角丸のカード（`.setting-form`）、項目の一覧は交互に背景色を変える `.detail.detail--striped`、退会のような取り消せない操作への入口は赤い枠の `.setting-danger`
+  - 下にメニューバー（`pages/menu-bar.php`）を出す。ゲストのときは帯（`pages/guest-bar.php`）を、お知らせ（`take_flash()`）とあわせて `.setting` の先頭に出す
+  - スタイルは `sass/_setting.scss` に書く
+  - 枠は `lib/layout.php` の `setting_page_header()` / `setting_page_footer()` を使う（ヘッダー・メニューバー・ゲストの帯・お知らせを出す）。画面ごとに HTML の枠を書かない
+  - 今の状態：アカウント・パスワード・退会・プライバシーポリシー・利用規約は対応済み。準備中の項目も、作るときはこの見た目にする
 
 会員登録の流れは 1 本です。主催者も、まずふつうの会員登録でアカウントを作ります。
 
@@ -387,7 +395,7 @@ sass/
 ├── _travel.scss             ← ページ固有（pages/travel/）
 ├── _notification.scss       ← ページ固有（pages/notification/notification.php）
 ├── _mypage.scss             ← ページ固有（pages/setting/mypage.php のマイページ）
-├── _setting.scss            ← ページ固有（pages/setting/setting.php の設定画面）
+├── _setting.scss            ← ページ固有（pages/setting/setting.php の設定画面と、設定から開く画面）
 ├── _plus.scss               ← ページ固有（pages/plus/plus.php のサブスク）
 └── _administrators.scss     ← ページ固有（pages/administrators/administrators.php の主催者ページ）
 ```
@@ -578,7 +586,7 @@ SPOTIVE は現在**デモサイト**です。「登録した大会が実際に�
 
 | 扱い | 書き方 | 今の対象 |
 | --- | --- | --- |
-| ゲストには使わせない | 画面・操作の先頭で `guest_forbid()` を呼ぶ（`$allowLocal = true` なら `allow_register` のときだけ使わせる） | 退会、プロフィール変更、主催者登録、大会の掲載・編集、遠征プランの削除 |
+| ゲストには使わせない | 画面・操作の先頭で `guest_forbid()` を呼ぶ（`$allowLocal = true` なら `allow_register` のときだけ使わせる） | 退会、パスワードの変更、プロフィール変更、主催者登録、大会の掲載・編集、遠征プランの削除 |
 | ブラウザに保存する（未ログインと同じ扱い） | `current_user()` の代わりに `current_member()` を使う（ゲストなら `null` を返す） | お気に入りのチーム、お知らせの既読 |
 | 共有でよい | そのまま | 遠征プランの作成と「購入済み」の印 |
 
