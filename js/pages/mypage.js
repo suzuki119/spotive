@@ -1,7 +1,7 @@
 /**
  * mypage.js
  * マイページ（pages/setting/mypage.php）の処理。
- *   ・Records のタブ（B.LEAGUE / プロ野球 / …）で、観戦記録を競技ごとに切り替える
+ *   ・Records のタブ（プロ野球 / プロサッカー / …）で、観戦記録を競技ごとに切り替える
  */
 
 document.addEventListener("DOMContentLoaded", () => {

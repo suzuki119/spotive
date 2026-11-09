@@ -305,6 +305,7 @@ $font-body: "Noto Sans JP", sans-serif;
 | --- | --- | --- |
 | Leaflet | 1.9.4（固定） | 地図、試合詳細 |
 | Leaflet.markercluster | 1.5.3（固定） | 地図（ピンのまとめ表示） |
+| 地理院タイル（国土地理院。淡色地図・標準地図） | CDN ではなく画像タイルを直接読む（キー不要） | 地図、遠征プランの地図。`js/common/gsi-tiles.js` が Leaflet のレイヤーを作る |
 | the-new-css-reset | 未固定 | アカウント・設定などのページ |
 
 ここに無いライブラリを足すときは、先にチームに共有してからこの表に追記してください。
@@ -469,6 +470,8 @@ git add css/style.css
 
 - バージョンは **1.9.4 に固定**します。各自でバージョンを変えないでください
 - OpenStreetMap を使うときは、地図の隅に必ずクレジット表記を出します（Leaflet の `attribution` オプション。ライセンス上の義務です）
+- 地図の下地は、日本地図の見やすさのために**地理院タイル**（淡色地図 `pale`・標準地図 `std`）を主に使い、OpenStreetMap は選べる下地の 1 つとして残しています。地理院タイルのレイヤーは **`js/common/gsi-tiles.js` の `SpotiveGsiTiles.layer()` で作る**（ページごとに `L.tileLayer` を書かない）。ページでは Leaflet のあとにこのファイルを読み込みます
+- 地理院タイルはクレジット表記（「地理院タイル」）が義務です。ズーム 5〜8 では小縮尺地図の元データの出典も必要で、`gsi-tiles.js` がそのズームのときだけ足します。**出典の文言は国土地理院の案内のとおりで、変えないでください**
 
 ### 画像
 
@@ -488,13 +491,16 @@ WebP を基本にします。PNG は透過が必要なときに使ってくだ�
 
 ```
 images/
-├── common/    ← ロゴ、全ページ共通の画像
-├── icons/     ← アイコン（SVG）
-├── top/       ← トップページ専用
-├── sports/    ← 競技別の画像
-├── teams/     ← チームロゴ、チーム画像
-└── events/    ← 試合・イベント画像
+├── logo/           ← ロゴ、全ページ共通の画像
+├── icons/          ← アイコン（SVG）。天気・競技・設定・周辺施設など
+├── sports/         ← 競技別の画像（ボール、スタート画面の写真）
+├── teams/          ← チームのエンブレム（`emblem-001.png` のように 3 桁の連番）
+├── users/          ← ユーザーのアイコン
+├── sample/         ← 仮の画像（試合・アイコンのサンプル）。本物に差し替えたら消す
+└── Administrator/  ← 主催者ページのデザイン参考画像（画面には出さない）
 ```
+
+フォルダが足りなくなったら、用途別に追加してください（このツリーも一緒に更新）。
 
 **サイズの目安**
 
@@ -523,7 +529,7 @@ SPOTIVE は PHP と MySQL を使います。**データベースの正は `db/sc
 ユーザー登録・本人確認・主催者認証・大会の確認（Lv.1〜4）のテーブルと、公開用ビュー `v_public_tournaments` があります（本人確認・主催者認証・大会の確認は、デモ版では使っていません。下記参照）。
 
 一方で、企画書の主役である**観戦者向けの「試合」データ（プロ野球・Bリーグ・Jリーグの試合、チケット価格帯、チーム、会場）のテーブルはまだありません。**
-`data/matches.json` `data/teams.json` `data/areas.json` は、画面を作るための**仮データ**です。DB ができるまでの置き換え用と考えてください。
+`data/matches.json` `data/teams.json` `data/areas.json` `data/venues.json`（会場の座標・都道府県・エリア）`data/records.json`（マイページの観戦記録）`data/hotels.json` は、画面を作るための**仮データ**です。DB ができるまでの置き換え用と考えてください。
 
 そのため、今の段階では次のように扱います。
 
@@ -614,9 +620,10 @@ lib/                   ← 共通の処理（認証・大会・バリデーシ�
 pages/                 ← 各ページ。機能ごとにフォルダを分ける（pages/map/map.php、pages/match/match-list.php）
 data/                  ← 観戦用の仮データ（JSON）
 js/
-├── common/            ← 複数ページで使う JS
-└── pages/             ← ページ専用の JS（ページと同じ名前にする）
-tools/                 ← コマンドラインで使う管理用スクリプト（運営アカウントの作成、チームの管理者の登録など）
+├── main.js            ← 全ページ共通（戻るボタンなど）
+├── common/            ← 複数ページで使う JS（favorite-store・gsi-tiles・header・modal・navigation・search-tabs）
+└── pages/             ← ページ専用の JS（ページと同じ名前にする。account/ はアカウント系の画面用）
+tools/                 ← コマンドラインで使う管理用スクリプト（add-team-admin.php：チームの管理者の登録、create-admin.php：運営アカウントの作成、check-db.php：DB の確認）
 docs/                  ← 機能ごとの設計メモ（例：docs/away-travel.md）
 ```
 

@@ -10,8 +10,8 @@
   },
   {
     "id": "team-002",
-    "name": "東京ユナイテッド",
-    "shortName": "東京U",
+    "name": "東京ステラーズ",
+    "shortName": "東京ST",
     "sport": "soccer",
     "areaId": "area-13",
     "homeVenue": "東京セントラルフィールド",
@@ -55,8 +55,8 @@
   },
   {
     "id": "team-007",
-    "name": "福岡シーガルズ",
-    "shortName": "福岡SG",
+    "name": "福岡マリーナス",
+    "shortName": "福岡M",
     "sport": "volleyball",
     "areaId": "area-40",
     "homeVenue": "はかた総合体育館",
@@ -118,7 +118,7 @@
   },
   {
     "id": "team-014",
-    "name": "京都フェニックス",
+    "name": "京都ゲイルズ",
     "shortName": "京都",
     "sport": "basketball",
     "areaId": "area-26",

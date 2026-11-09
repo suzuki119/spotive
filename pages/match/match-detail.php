@@ -27,7 +27,7 @@ require_once __DIR__ . '/../../lib/weather.php';
 require_once __DIR__ . '/../../lib/icon.php';
 
 /** 試合の写真が無いときに上に出す写真 */
-const DETAIL_DEFAULT_IMAGE = 'images/sample/sample-match.png';
+const DETAIL_DEFAULT_IMAGE = 'images/sample/sample-match.webp';
 
 
 /** 仮データの試合 1 件を、画面で使う形にする。見つからなければ null */
@@ -68,7 +68,7 @@ function detail_from_match(string $id): ?array
     'price_max'   => isset($match['priceMax']) ? (int) $match['priceMax'] : null,
     'ticket_url'  => (string) ($match['ticketUrl'] ?? ''),
     'image'       => (string) ($match['image'] ?? ''),
-    // 「B.PREMIER 2026-27 第1節 GAME2」の各部分（仮データ）
+    // 「プロバスケ 2026-27 第1節 GAME2」の各部分（仮データ）
     'league'      => (string) ($match['league'] ?? ''),
     'season'      => (string) ($match['season'] ?? ''),
     'round'       => (string) ($match['round'] ?? ''),

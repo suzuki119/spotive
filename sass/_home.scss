@@ -87,6 +87,13 @@ $home-shadow: 0 2px 8px rgba($color-secondary, 0.08);
   }
 
   // 現在地から○km以内
+  // 「架空のデモデータです」の注意書き
+  &__note {
+    margin: -8px 0 16px;
+    font-size: 12px;
+    color: $color-text-sub;
+  }
+
   &__radius {
     display: inline-flex;
     align-items: center;
@@ -426,10 +433,14 @@ img.team-logo {
     overflow-wrap: anywhere;
   }
 
+  // 狭い画面では右の列が細くなるので、日時と距離を折り返して枠からはみ出さないようにする。
+  // 折り返したときに距離の左の区切り線が行頭に残らないよう、はみ出した線は隠す
   &__meta {
     display: flex;
+    flex-wrap: wrap;
     align-items: center;
-    gap: 12px;
+    gap: 4px 12px;
+    overflow: hidden;
   }
 
   &__time {
@@ -442,6 +453,8 @@ img.team-logo {
     display: flex;
     align-items: center;
     gap: 4px;
+    // 区切り線を 1px 左へずらす。行頭に回ったときは .now-match__meta の外に出て見えなくなる
+    margin-left: -1px;
     padding-left: 12px;
     border-left: 1px solid $color-border;
     font-size: 14px;

@@ -238,7 +238,7 @@ function match_short_date(string $date): string
  *   league:string, season:string, round:string, game:string
  * }
  *
- * league / season / round / game は「B.PREMIER 2026-27 第1節 GAME2」の各部分。
+ * league / season / round / game は「プロバスケ 2026-27 第1節 GAME2」の各部分。
  * いまは仮データ（data/matches.json）にだけあり、主催者の大会には無い（空文字）。
  */
 function match_row(
@@ -269,8 +269,8 @@ function match_row(
 }
 
 /**
- * 「B.PREMIER 第1節 GAME2」の形。リーグの情報が無い試合（主催者の大会など）は競技名。
- * $withSeason を true にすると「B.PREMIER 2026-27」のようにシーズンを添える（節とゲームは付けない）
+ * 「プロバスケ 第1節 GAME2」の形。リーグの情報が無い試合（主催者の大会など）は競技名。
+ * $withSeason を true にすると「プロバスケ 2026-27」のようにシーズンを添える（節とゲームは付けない）
  */
 function match_league_label(array $match, bool $withSeason = false): string
 {

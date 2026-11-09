@@ -311,7 +311,7 @@ document.addEventListener("DOMContentLoaded", () => {
       sport: sportKey(m.sport),
       sportName: m.sport,
       league: sportOf(sportKey(m.sport)).label,
-      // 「B.PREMIER 第1節 GAME2」（仮データ。lib/match.php の match_league_label() と同じ形）
+      // 「プロバスケ 第1節 GAME2」（仮データ。lib/match.php の match_league_label() と同じ形）
       roundText: [m.league, m.round, m.game].filter(Boolean).join(" "),
       title: m.title,
       teamIds: [m.homeTeamId, m.awayTeamId].filter(Boolean),

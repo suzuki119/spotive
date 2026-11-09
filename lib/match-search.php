@@ -42,9 +42,9 @@ const MATCH_SEARCH_NEAR_KM = [1, 3, 5, 10, 30];
 const MATCH_SEARCH_TABS = [
   ''           => 'ALL',
   'baseball'   => 'プロ野球',
-  'soccer'     => 'Jリーグ',
-  'basketball' => 'B.LEAGUE',
-  'volleyball' => 'SV LEAGUE',
+  'soccer'     => 'プロサッカー',
+  'basketball' => 'プロバスケ',
+  'volleyball' => 'プロバレー',
 ];
 
 /** 都道府県の並び順（JIS の番号順）。選択肢をこの順に出す */

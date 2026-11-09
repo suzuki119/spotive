@@ -66,6 +66,8 @@ if (is_browsing_visitor()) {
       <p class="start__sub">
         <a href="./pages/account/browse.php">ログインせずに使う</a>
       </p>
+      <!-- 実在のリーグ・チームの情報と誤解されないように -->
+      <p class="start__note">掲載している試合・チーム・会場は、すべて架空のデモデータです。</p>
     </div>
   </main>
 </body>
