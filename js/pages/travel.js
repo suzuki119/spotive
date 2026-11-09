@@ -23,10 +23,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // スクロールの邪魔をしないよう、ホイールでの拡大縮小は切る
     const map = L.map(mapEl, { scrollWheelZoom: false });
-    L.tileLayer("https://cyberjapandata.gsi.go.jp/xyz/pale/{z}/{x}/{y}.png", {
-      maxZoom: 18,
-      attribution: '<a href="https://maps.gsi.go.jp/development/ichiran.html" target="_blank" rel="noopener">地理院タイル</a>',
-    }).addTo(map);
+    // 地理院タイルは js/common/gsi-tiles.js で作る（ズーム 5〜8 で必要な元データの出典も、そこで足す）
+    SpotiveGsiTiles.layer("pale").addTo(map);
 
     // ピンの色は SCSS（_travel.scss の .travel-route__pin）で付ける
     const pin = (latlng, modifier, label) =>

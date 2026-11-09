@@ -1,6 +1,5 @@
 // ホーム画面（pages/home/home.php）専用のスタイル。
 // スマホを基準に書き、min-width で広い画面に広げる（AGENTS.md「対応デバイス」）。
-@use "sass:color";
 @use "sass:map";
 @use "variables" as *;
 
@@ -453,41 +452,25 @@ img.team-logo {
   }
 
   // 半券。点線で切り離したように見せる。
-  // 背景は競技の色を淡くしたもの（濃いままだと文字が読みにくいため）。左の競技の画像と合わせて、何の競技か一目で分かるようにする
+  // 背景は上の部分と同じ白
   &__ticket {
     display: flex;
     align-items: center;
     gap: 12px;
     padding: 12px 16px;
-    background: color.mix(map.get($sport-colors, other), $color-bg, 16%);
-    // 切り取り線。淡い背景と白の境目で消えないよう、背景より濃い競技の色にする
-    border-top: 2px dashed color.mix(map.get($sport-colors, other), $color-bg, 48%);
+    position: relative;
+    background: $color-bg;
     border-radius: 0 $radius-lg $radius-lg $radius-lg;
 
-    @each $sport, $color in $sport-colors {
-      &--#{$sport} {
-        background: color.mix($color, $color-bg, 16%);
-        border-top-color: color.mix($color, $color-bg, 48%);
-      }
-    }
-  }
-
-  // 競技の画像（images/sports/）。画像の無い競技はアイコン。淡い背景の上で沈まないよう白い丸に乗せる
-  &__sport {
-    display: grid;
-    flex-shrink: 0;
-    place-items: center;
-    width: 32px;
-    height: 32px;
-    border-radius: $radius-full;
-    background: $color-bg;
-    color: $color-secondary;
-    font-size: 16px; // 中のアイコンの大きさ
-
-    img {
-      width: 24px;
-      height: 24px;
-      object-fit: contain;
+    // 切り取り線。上の白い部分との境目が分かるよう、枠線の色にする。
+    // 右上は角丸なので、角丸が始まる手前（$radius-lg）で止める
+    &::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: $radius-lg;
+      border-top: 2px dashed $color-border;
     }
   }
 

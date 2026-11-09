@@ -149,14 +149,14 @@ function load_teams(): array
 }
 
 /**
- * 仮のロゴ。チームごとのロゴ画像ができたら消す。
- * チームの番号（team-003 なら 3）で順に割り当てるので、同じチームはどの画面でも同じロゴになる
+ * 仮のロゴ（エンブレム）。チームごとのロゴ画像ができたら消す。
+ * チームの番号（team-003 なら 3）で順に割り当てるので、同じチームはどの画面でも同じロゴになる。
+ * 対戦する 2 チームが同じになったときは match_next_placeholder() でもう片方にする。
+ * 画像は表示の最大（試合カードの 96px）の 2 倍の 192px に縮めたもの
  */
 const MATCH_PLACEHOLDER_LOGOS = [
-  'images/teams/team1.png',
-  'images/teams/team2.png',
-  'images/teams/team3.png',
-  'images/teams/team4.png',
+  'images/teams/emblem-001.png',
+  'images/teams/emblem-002.png',
 ];
 
 /**

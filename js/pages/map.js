@@ -264,14 +264,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // 背景地図（タイル）。拡大縮小に応じて画像を差し替えるので Google マップのように動く。
   // OpenStreetMap・地理院タイルとも、クレジット表記はライセンス上の義務
-  const gsiPale = L.tileLayer("https://cyberjapandata.gsi.go.jp/xyz/pale/{z}/{x}/{y}.png", {
-    maxZoom: 18,
-    attribution: '<a href="https://maps.gsi.go.jp/development/ichiran.html" target="_blank" rel="noopener">地理院タイル</a>',
-  });
-  const gsiStd = L.tileLayer("https://cyberjapandata.gsi.go.jp/xyz/std/{z}/{x}/{y}.png", {
-    maxZoom: 18,
-    attribution: '<a href="https://maps.gsi.go.jp/development/ichiran.html" target="_blank" rel="noopener">地理院タイル</a>',
-  });
+  // 地理院タイルは js/common/gsi-tiles.js で作る（ズーム 5〜8 で必要な元データの出典も、そこで足す）
+  const gsiPale = SpotiveGsiTiles.layer("pale");
+  const gsiStd = SpotiveGsiTiles.layer("std");
   const osm = L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
     maxZoom: 19,
     attribution: '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> contributors',
