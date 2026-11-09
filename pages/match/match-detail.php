@@ -27,7 +27,7 @@ require_once __DIR__ . '/../../lib/weather.php';
 require_once __DIR__ . '/../../lib/icon.php';
 
 /** 試合の写真が無いときに上に出す写真 */
-const DETAIL_DEFAULT_IMAGE = 'images/sample/sample-match.png';
+const DETAIL_DEFAULT_IMAGE = 'images/sample/sample-match.webp';
 
 
 /** 仮データの試合 1 件を、画面で使う形にする。見つからなければ null */
